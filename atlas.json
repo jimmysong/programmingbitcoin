@@ -1,5 +1,28 @@
 {
   "files": [
     "chapter.html"
-  ]
+  ],
+  "formats": {
+    "pdf": {
+      "version": "web",
+      "toc": true,
+      "index": true,
+      "syntaxhighlighting": true
+    },
+    "epub": {
+      "toc": true,
+      "index": true,
+      "syntaxhighlighting": true
+    },
+    "mobi": {
+      "toc": true,
+      "index": true,
+      "syntaxhighlighting": true
+    },
+    "html": {
+      "toc": true,
+      "index": true,
+      "syntaxhighlighting": true
+    }
+  }
 }
