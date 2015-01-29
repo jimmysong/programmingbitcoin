@@ -32,6 +32,6 @@
       "consolidated": false
     }
   },
-  "theme": "",
-  "title": "atlas basic template"
+  "theme": "oreillymedia/animal_theme",
+  "title": "New ORM Book"
 }
