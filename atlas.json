@@ -1,7 +1,16 @@
 {
   "branch": "master",
   "files": [
-    "chapter.html"
+    "cover.html",
+    "titlepage.html",
+    "copyright.html",
+    "toc.html",
+    "preface.html",
+    "ch01.html",
+    "appendix.html",
+    "ix.html",
+    "author_bio.html",
+    "colo.html"
   ],
   "formats": {
     "pdf": {
