@@ -8,9 +8,7 @@
     "preface.html",
     "ch01.html",
     "appendix.html",
-    "ix.html",
-    "author_bio.html",
-    "colo.html"
+    "ix.html"
   ],
   "formats": {
     "pdf": {
