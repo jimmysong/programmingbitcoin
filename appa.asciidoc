@@ -1,4 +1,4 @@
 [appendix]
-== Resources
+== Appendix Title
 
-The following list of resources ...
+An appendix is generally used for extra material that supplements your main book content.

@@ -1,16 +1,8 @@
 [[unique_chapter_id]]
-== Chapter Title
+== Chapter Title Goes Here
 
-Chapter text begins here.
+Put some introductory text here.
 
-=== Top-Level Heading
+=== Your First Section Heading Here
 
-Within a chapter, the first and highest heading level uses three equals signs.
-
-==== Second-Level Heading
-
-The second-level heading uses four equals signs.
-
-===== Third-level heading
-
-The third-level heading uses five equals signs.
+Put more content here.
