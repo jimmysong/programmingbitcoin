@@ -39,6 +39,7 @@
       "consolidated": false
     }
   },
+  "templating": false,
   "theme": "oreillymedia/animal_theme",
   "title": "New ORM Book"
 }
