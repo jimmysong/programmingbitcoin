@@ -16,20 +16,24 @@
       "toc": true,
       "index": true,
       "syntaxhighlighting": true,
-      "show_comments": false
+      "show_comments": false,
+      "color_count": "1",
+      "trim_size": "7inx9.1875in"
     },
     "epub": {
       "toc": true,
       "index": true,
       "syntaxhighlighting": true,
       "epubcheck": true,
-      "show_comments": false
+      "show_comments": false,
+      "downsample_images": false
     },
     "mobi": {
       "toc": true,
       "index": true,
       "syntaxhighlighting": true,
-      "show_comments": false
+      "show_comments": false,
+      "downsample_images": false
     },
     "html": {
       "toc": true,
@@ -39,7 +43,9 @@
       "consolidated": false
     }
   },
+  "theme": "oreillymedia/animal_theme_sass",
+  "title": "New ORM Book",
   "templating": false,
-  "theme": "oreillymedia/animal_theme",
-  "title": "New ORM Book"
+  "print_isbn13": "",
+  "lang": "en"
 }
