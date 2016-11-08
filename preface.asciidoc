@@ -47,12 +47,12 @@ If you feel your use of code examples falls outside fair use or the permission g
 [role = "safarienabled"]
 [NOTE]
 ====
-pass:[<a href="http://oreilly.com/safari" class="orm:hideurl:ital"><em class="hyperlink">Safari</em></a>] (formerly Safari Books Online) is membership-based training and reference platform for enterprise, government, educators, and individuals.
+pass:[<a href="http://oreilly.com/safari" class="orm:hideurl"><em class="hyperlink">Safari</em></a>] (formerly Safari Books Online) is a membership-based training and reference platform for enterprise, government, educators, and individuals.
 ====
 
 Members have access to thousands of books, training videos, Learning Paths, interactive tutorials, and curated playlists from over 250 publishers, including O’Reilly Media, Harvard Business Review, Prentice Hall Professional, Addison-Wesley Professional, Microsoft Press, Sams, Que, Peachpit Press, Adobe, Focal Press, Cisco Press, John Wiley & Sons, Syngress, Morgan Kaufmann, IBM Redbooks, Packt, Adobe Press, FT Press, Apress, Manning, New Riders, McGraw-Hill, Jones & Bartlett, and Course Technology, among others.
 
-For more information, please visit pass:[<a href="http://oreilly.com/safari" class="orm:hideurl:ital">http://oreilly.com/safari</a>]. 
+For more information, please visit pass:[<a href="http://oreilly.com/safari" class="orm:hideurl"><em>http://oreilly.com/safari</em></a>]. 
 
 === How to Contact Us
 
