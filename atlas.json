@@ -18,7 +18,8 @@
       "syntaxhighlighting": true,
       "show_comments": false,
       "color_count": "1",
-      "trim_size": "7inx9.1875in"
+      "trim_size": "7inx9.1875in",
+      "antennahouse_version": "AHFormatterV62_64-MR4"
     },
     "epub": {
       "toc": true,
