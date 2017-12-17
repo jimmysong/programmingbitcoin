@@ -2,31 +2,31 @@
 
 == Introduction
 
-Learning about new mathematical structures can be a bit intimidating and in this chapter, I hope to dispel the myth that high level math is super difficult. Finite Fields, in particular, actually don't require all that much in terms of knowledge than, say High School level math.
+Learning about new mathematical structures can be a bit intimidating; however in this chapter, I hope to dispel the myth that high level math is super difficult. In particular, Finite Fields actually don't require much more, in terms of knowledge, than say High School level math.
 
-Think of Finite Fields as something that you could have learned in High School instead of Trigonomotry, just that the education system you're a part of decided that Trigonomotry was more important for you to learn.
+Think of Finite Fields as something that you could have learned in High School instead of Trigonometry, but it just so happened that your education system decided that Trigonometry was more important for you to learn.
 
-In any case, this is my way of telling you that Finite Fields are not that hard to learn and require no more background than what you knew by your second year in High School.
+In any case, this is my way of telling you that Finite Fields are not that hard to learn and require no more background knowledge than what you had learned by your second year in High School.
 
 == Finite Field Definition
 
 Mathematically, a Finite Field is defined as follows:
 
-A finite set of numbers and two operations *+* and *⋅* that satisfy the following:
+A finite set of numbers and two operations *+* and *⋅* that satisfy the following conditions:
 
-* if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
-* if *a* is in the set, *-a* is in the set, or what we call the _additive inverse_.
-* if *a* is in the set and is not 0, *a^-1^* is in the set, or what we call the _multiplicative inverse_.
+* if *a* and *b* are in the set, *a+b* and *a⋅b* are also in the set. We call this the _closed_ property.
+* if *a* is in the set, *-a* is in the set. We call this the _additive inverse_ property.
+* if *a* is in the set and is not 0, *a^-1^* is in the set. We call this the _multiplicative inverse_ property.
 
-Let's unpack each of the following.
+Let's unpack each of these properties.
 
-We have a set of numbers that's finite. Because the set is finite, we can designate a number *p* which is how big the set is. This is what we call the _order_ of the set. 
+First off, we have a set of numbers that's finite. Because the set is finite, we can designate a number *p* to be the size of the set. We call *p* the _order_ of the set.
 
-The second part is that we are closed under addition and multiplication. This means that we have to define addition and multiplication in a way as to not go over *p-1*. We'll get to how exactly we define addition and multiplication later, but the key concept here to learn is that we can *define addition and subtraction differently than the traditional addition and subtraction*.
+Secondly, we are closed under the addition and multiplication operations. This means that we must define addition and multiplication in such a way as to not exceed *p-1* [FIXME: what specifically cannot exceed p-1?]. We'll get to how exactly we define addition and multiplication later, but the key concept here is that we can *define addition and subtraction differently than the traditional algebraic definitions of addition and subtraction*.
 
-The third part is that we have the additive inverse. That is, if *a* is in the set, *-a* is in the set. Using this, we can define subtraction. Subtraction is the inverse of addition. Once again, we have to make sure subtraction is defined in a way as to not go under 0. We will define subtraction specifically to a finite field.
+Thirdly, we have the additive inverse. That is, if *a* is in the set, *-a* is also in the set. Using this property, we can define subtraction as the inverse of addition. We must also ensure subtraction is defined in such a way as to not be less than 0 [FIXME: what specifically cannot be less than 0?]. In this chapter, we will define subtraction specifically for a finite field.
 
-The fourth part is that we have the multiplicative inverse. That is, if *a* is in the set, *a^-1^* is in the set. That is *a⋅a^-1^=1*. Using this, we can define division, the inverse of multiplication. This will be the trickiest to define in a finite field, but we will do so.
+Fourthly, we have the multiplicative inverse. That is, if *a* is in the set, *a^-1^* is also in the set. That is *a⋅a^-1^=1*. Using this property, we can define division as the inverse of multiplication. Division will be the trickiest operation on a finite field to define, but we will also do so in this chapter.
 
 == Defining Finite Sets
 
@@ -34,21 +34,21 @@ If the order (or size) of the set is *p*, we can call the elements of the set, 0
 
 F~p~ = {0, 1, 2, ... p-1}
 
-The field is defined by what's in the field. In this case a bunch of numbers. That's what F~p~ is, we call a specific finite field "field of 13" or "field of 28" or whatever the size of it is (again, the size is what mathematicians call _order_). The numbers between the {}`s represent what elements are in the field. We name the elements 0, 1, 2, etc because they're convenient for our purposes. 
+The field is defined by what's in the field. In this case a bunch of numbers. That's what F~p~ is: we call a specific finite field "field of 13", or "field of 28", or whatever its size is (again, the size is what mathematicians call _order_). The numbers between the {}`s represent the elements in the field. We name the elements 0, 1, 2, ... because these labels are convenient for our purposes.
 
 A Finite Field of order 8 looks like this:
 
 F~8~ = {0, 1, 2, 3, 4, 5, 6, 7}
 
-A Finite Field of order 17 would look like this:
+A Finite Field of order 17 can be written as:
 
 F~17~= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 
-A Finite Field of order 981
+A Finite Field of order 981 can be abbreviated as:
 
 F~981~= {0, 1, 2, ... 980}
 
-Notice the order of the field is always 1 more than the largest element.
+Notice that the order of the field is always 1 greater than the field's largest element.
 
 === Defining Addition
 
