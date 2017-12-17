@@ -1,0 +1,13 @@
+= Programming Bitcoin
+
+== Preface
+
+_placeholder_
+
+== Mission
+
+_placeholder_
+
+== Summary
+
+_placeholder_
