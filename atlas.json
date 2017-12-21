@@ -7,14 +7,13 @@
     "preface.asciidoc",
     "ch01.asciidoc",
     "appa.asciidoc",
-    "ix.html",
     "author_bio.html"
   ],
   "formats": {
     "pdf": {
       "version": "web",
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
       "color_count": "1",
@@ -23,7 +22,7 @@
     },
     "epub": {
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "epubcheck": true,
       "show_comments": false,
@@ -31,14 +30,14 @@
     },
     "mobi": {
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
       "downsample_images": false
     },
     "html": {
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
       "consolidated": false
