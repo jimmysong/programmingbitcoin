@@ -1,7 +1,6 @@
 {
   "branch": "master",
   "files": [
-    "cover.html",
     "titlepage.html",
     "copyright.html",
     "toc.html",
@@ -45,8 +44,9 @@
     }
   },
   "theme": "oreillymedia/animal_theme_sass",
-  "title": "New ORM Book",
+  "title": "Programming Bitcoin",
   "templating": false,
-  "print_isbn13": "",
-  "lang": "en"
+  "print_isbn13": "9781492031499",
+  "lang": "en",
+  "accent_color": "cmyk(26%, 89%, 0%, 0%)"
 }
