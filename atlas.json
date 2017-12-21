@@ -7,7 +7,8 @@
     "preface.asciidoc",
     "ch01.asciidoc",
     "appa.asciidoc",
-    "ix.html"
+    "ix.html",
+    "author_bio.html"
   ],
   "formats": {
     "pdf": {
