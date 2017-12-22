@@ -54,7 +54,9 @@ For a variety of reasons which will become clear later, we're mostly interested 
 
 ==== Constructing a Finite Set in Python
 
-We want to represent each finite field element and in Python, we'll be creating a class that represents a single finite field element. Naturally, we'll name the class `FieldElement`. The bare bones of the class is pretty intuitive:
+We want to represent each finite field element and in Python, we'll be creating a class that represents a single finite field element. Naturally, we'll name the class `FieldElement`. 
+
+The class represents an actual element in a field F~prime~. The bare bones of the class is pretty intuitive:
 
 [source,python]
 ----
@@ -69,8 +71,6 @@ class FieldElement:
     def __eq__(self, other): # <3>
         return self.num == other.num and self.prime == other.prime
 ----
-
-The class represents an actual element in a field F~prime~.
 <1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the `$$__init__$$` method simply assigns the initialization values.
 <3> The `$$__eq__$$` method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal. This specific method allows us to do things like this:
@@ -84,7 +84,6 @@ b = FieldElement(6, 13)
 
 print(a == b) # <1>
 ----
-
 <1> This should return `False`. The idea is that we can define equality for this set using the built in Python operators like `==` here.
 
 ==== Exercise {counter:exercise}
@@ -150,6 +149,25 @@ Essentially the result of the modulo (%) operation is always between 0 and 59, i
 
 We'll be using modulo as we define field arithmetic.
 
+==== Modulo Arithmetic in Python
+
+Python uses the `%` operator for modulo arithmetic. It looks like this:
+
+[code,python]
+----
+print(7 % 3) # <1>
+----
+<1> This should print `1`
+
+We can also use the modulo operator on negative numbers like this:
+
+[code,python]
+----
+print(-27 % 13) # <1>
+----
+<1> This should print `12`
+
+
 === Finite Field Addition and Subtraction
 
 Remember that we need to define Finite Field addition in a way as to make sure that the result is still in the set. That is, we want to make sure that addition in a Finite Field is *closed*.
@@ -184,7 +202,7 @@ a, b ∈ F~p~, a+~f~b = (a+b)%p
 
 We can also define the additive inverse this way.
 
-a ∈ F~p~ implies that -~p~a ∈ F~p~
+a ∈ F~p~ implies that -~f~a ∈ F~p~
 
 -~f~a = (-a) % p
 
@@ -192,7 +210,7 @@ Again, for clarity, we use -~f~ to distinguish field subtraction and negation fr
 
 In F~19~:
 
--9 = (-9) % 19 = 10
+-~f~9 = (-9) % 19 = 10
 
 Which means that:
 
@@ -214,14 +232,46 @@ and so on.
 
 ==== Exercise {counter:exercise}
 
-Solve these problems in F~57~
+Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
 
-44+~f~33
-9-~f~29
-17+~f~42+~f~49
-52-~f~30-~f~38
+. 44+33
+. 9-29
+. 17+42+49
+. 52-30-38
 
+==== Coding Addition and Subtraction in Python
 
+In the class `FieldElement` we can now define `$$__add__$$` and `$$__sub__$$` methods. The idea of these methods is that we want something like this to work:
+
+[source,python]
+----
+from ecc import FieldElement
+
+a = FieldElement(7, 13)
+b = FieldElement(12, 13)
+c = FieldElement(6, 13)
+
+print(a+b==c) # <1>
+----
+<1> We want this to print `True`
+
+In Python we can define what addition means for our class with the `$$__add__$$` method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new instance of the class `FieldElement` like so:
+
+[source,python]
+----
+    def __add__(self, other):
+        if self.prime != other.prime: # <1>
+            raise RuntimeError('cannot add two numbers in different Fields')
+        num = (self.num + other.num) % self.prime # <2>
+        return self.__class__(num, self.prime) # <3>
+----
+<1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't make any sense.
+<2> Addition in a Finite Field is defined with the modulo operator, which we use here.
+<3> We have to return an instance of the class, which we can conveniently access with `$$self.__class__$$`. We pass the two initializing arguments, `num` and `self.prime` as defined in the `$$__init__$$` method above.
+
+==== Exercise {counter:exercise}
+
+Write the corresponding `$$__sub__$$` method which defines the subtraction of two field elements.
 
 === Finite Field Multiplication and Exponentiation
 
@@ -230,16 +280,19 @@ Just as we defined a new addition (+~f~) for Finite Fields that was _closed_, we
 As you most likely learned in elementary school, multiplication is simply adding a number many times.
 
 5⋅3 = 5+5+5 = 15
+
 8⋅17 = 8+8+8+...(17 total 8's)...+8 = 136
 
 We can define multiplication on a Finite Field the same way. Operating in F~19~ once again,
 
 5⋅~f~3 = 5+~f~5+~f~5
+
 8⋅~f~17 = 8+~f~8+~f~8+~f~...(17 total 8's)...+~f~8
 
 We already know how to do the right side, and that yields a number within the F~19~ set:
 
 5⋅~f~3 = 5+~f~5+~f~5 = 15 % 19 = 15
+
 8⋅~f~17 = 8+~f~8+~f~8+~f~...(17 total 8's)...+~f~8 = (8⋅17) % 19 = 136 % 19 = 3
 
 Note that the second result is pretty unintuitive. We don't normally think of 8⋅17 as 3, but that's part of what's necessary in order to define multiplication in a way that's closed. That is, the result of field multiplication is always in the set {0,1,...18}.
@@ -253,19 +306,18 @@ In a finite field, we can do exponentiation using modulo arithmetic as before.
 In F~19~:
 
 7^3^=343 % 19=1
+
 9^12^=7
 
 Exponentiation again gives us counter-intuitive results. We don't normally think 7^3^=1 or 9^12^=7. Again, part of why Finite Fields work is because the operations *always* result in a number within the field.
 
 ==== Exercise {counter:exercise}
 
-Solve the following equations in F~97~:
+Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are field versions):
 
-95⋅45⋅31
-
-17⋅13⋅19⋅44
-
-12^7^⋅77^49^
+. 95⋅45⋅31
+. 17⋅13⋅19⋅44
+. 12^7^⋅77^49^
 
 ==== Exercise {counter:exercise}
 
@@ -281,6 +333,6 @@ For p = 7, 11, 17, 31, 43, what is this set in F~p~?
 
 {1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
 
-
+==== Coding Multiplication and Exponentiation in Python
 
 
