@@ -1,6 +1,7 @@
 [[chapter_finite_fields]]
 == Finite Fields
 
+[.lead]
 Learning about new mathematical structures can be a bit intimidating and in this chapter, I hope to dispel the myth that high level math is super difficult. Finite Fields, in particular, actually don't require all that much in terms of knowledge than, say High School level math.
 
 Think of Finite Fields as something that you could have learned in High School instead of Trigonomotry, just that the education system you're a part of decided that Trigonomotry was more important for you to learn.
@@ -33,7 +34,7 @@ If the order (or size) of the set is *p*, we can call the elements of the set, 0
 
 F~p~ = {0, 1, 2, ... p-1}
 
-The field is defined by what's in the field. In this case a bunch of numbers. That's what F~p~ is, we call a specific finite field "field of 13" or "field of 28" or whatever the size of it is (again, the size is what mathematicians call _order_). The numbers between the {}`s represent what elements are in the field. We name the elements 0, 1, 2, etc because they're convenient for our purposes. 
+The field is defined by what's in the field. In this case a bunch of numbers which we call _elements_. F~p~ is a specific finite field called "field of 13" or "field of 28" or whatever the size of it is (again, the size is what mathematicians call _order_). The numbers between the {}`s represent what elements are in the field. We name the elements 0, 1, 2, etc because they're convenient for our purposes. 
 
 A Finite Field of order 8 looks like this:
 
@@ -48,6 +49,47 @@ A Finite Field of order 981
 F~981~= {0, 1, 2, ... 980}
 
 Notice the order of the field is always 1 more than the largest element.
+
+For a variety of reasons which will become clear later, we're mostly interested in _prime_ fields. These are fields that have an order that's prime. That is, p in F~p~ is prime.
+
+==== Constructing a Finite Set in Python
+
+We want to represent each finite field element and in Python, we'll be creating a class that represents a single finite field element. Naturally, we'll name the class `FieldElement`. The bare bones of the class is pretty intuitive:
+
+.ecc.py
+----
+class FieldElement:
+
+    def __init__(self, num, prime):
+        if num < 0 or num >= prime:
+	    raise ValueError('num should be between 0 and {}-1'.format(prime))
+        self.num = num	
+        self.prime = prime
+
+    def __eq__(self, other):
+        return self.num == other.num and self.prime == other.prime
+----
+
+The class represents an actual element in a field F~prime~. We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value. The rest of the `__init__` method simply assigns the initialization values.
+
+The `__eq__` method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal. This specific method allows us to do things like this:
+
+.python
+----
+from ecc.py import FieldElement
+
+a = FieldElement(7, 13)
+b = FieldElement(6, 13)
+
+print(a == b)
+----
+
+This should return `False`. The idea is that we can define equality for this set using the built in Python operators like `==` here.
+
+==== Exercise {counter:exercise}
+
+Write the corresponding method `__ne__` which checks if two `FieldElement` objects are _not equal_ to each other.
+
 
 === Modulo Arithmetic
 
@@ -169,7 +211,7 @@ In F~19~:
 
 and so on.
 
-==== Exercise 1
+==== Exercise {counter:exercise}
 
 Solve these problems in F~57~
 
@@ -205,6 +247,38 @@ Exponentiation is simply multiplying a number many times.
 
 7^3^=7⋅7⋅7=343
 
+In a finite field, we can do exponentiation using modulo arithmetic as before.
+
+In F~19~:
+
+7^3^=343 % 19=1
+9^12^=7
+
+Exponentiation again gives us counter-intuitive results. We don't normally think 7^3^=1 or 9^12^=7. Again, part of why Finite Fields work is because the operations *always* result in a number within the field.
+
+==== Exercise {counter:exercise}
+
+Solve the following equations in F~97~:
+
+95⋅45⋅31
+
+17⋅13⋅19⋅44
+
+12^7^⋅77^49^
+
+==== Exercise {counter:exercise}
+
+For k = 1, 3, 7, 13, 18, what is this set in F~19~?
+
+{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
+
+Do you notice anything about these sets?
+
+==== Exercise {counter:exercise}
+
+For p = 7, 11, 17, 31, 43, what is this set in F~p~?
+
+{1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
 
 
 
