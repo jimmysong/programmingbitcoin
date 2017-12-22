@@ -56,39 +56,40 @@ For a variety of reasons which will become clear later, we're mostly interested 
 
 We want to represent each finite field element and in Python, we'll be creating a class that represents a single finite field element. Naturally, we'll name the class `FieldElement`. The bare bones of the class is pretty intuitive:
 
-.ecc.py
+[source,python]
 ----
 class FieldElement:
 
     def __init__(self, num, prime):
-        if num < 0 or num >= prime:
+        if num < 0 or num >= prime: # <1>
 	    raise ValueError('num should be between 0 and {}-1'.format(prime))
-        self.num = num	
+        self.num = num # <2>
         self.prime = prime
 
-    def __eq__(self, other):
+    def __eq__(self, other): # <3>
         return self.num == other.num and self.prime == other.prime
 ----
 
-The class represents an actual element in a field F~prime~. We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value. The rest of the `__init__` method simply assigns the initialization values.
+The class represents an actual element in a field F~prime~.
+<1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
+<2> The rest of the `$$__init__$$` method simply assigns the initialization values.
+<3> The `$$__eq__$$` method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal. This specific method allows us to do things like this:
 
-The `__eq__` method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal. This specific method allows us to do things like this:
-
-.python
+[source, python]
 ----
 from ecc.py import FieldElement
 
 a = FieldElement(7, 13)
 b = FieldElement(6, 13)
 
-print(a == b)
+print(a == b) # <1>
 ----
 
-This should return `False`. The idea is that we can define equality for this set using the built in Python operators like `==` here.
+<1> This should return `False`. The idea is that we can define equality for this set using the built in Python operators like `==` here.
 
 ==== Exercise {counter:exercise}
 
-Write the corresponding method `__ne__` which checks if two `FieldElement` objects are _not equal_ to each other.
+Write the corresponding method `$$__ne__$$` which checks if two `FieldElement` objects are _not equal_ to each other.
 
 
 === Modulo Arithmetic
