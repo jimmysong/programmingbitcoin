@@ -72,8 +72,8 @@ class FieldElement:
         return self.num == other.num and self.prime == other.prime
 ----
 <1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
-<2> The rest of the `\_\_init\_\_` method simply assigns the initialization values.
-<3> The `\_\_eq\_\_` method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal. This specific method allows us to do things like this:
+<2> The rest of the $$__init__$$ method simply assigns the initialization values.
+<3> The $$__eq__$$ method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal. This specific method allows us to do things like this:
 
 [source, python]
 ----
@@ -88,7 +88,7 @@ print(a == b) # <1>
 
 ==== Exercise {counter:exercise}
 
-Write the corresponding method `\_\_ne\_\_` which checks if two `FieldElement` objects are _not equal_ to each other.
+Write the corresponding method $$__ne__$$ which checks if two `FieldElement` objects are _not equal_ to each other.
 
 
 === Modulo Arithmetic
@@ -241,7 +241,7 @@ Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
 
 ==== Coding Addition and Subtraction in Python
 
-In the class `FieldElement` we can now define `\_\_add\_\_` and `\_\_sub\_\_` methods. The idea of these methods is that we want something like this to work:
+In the class `FieldElement` we can now define $$__add__$$ and $$__sub__$$ methods. The idea of these methods is that we want something like this to work:
 
 [source,python]
 ----
@@ -255,7 +255,7 @@ print(a+b==c) # <1>
 ----
 <1> We want this to print `True`
 
-In Python we can define what addition means for our class with the `\_\_add\_\_` method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new instance of the class `FieldElement` like so:
+In Python we can define what addition means for our class with the $$__add__$$ method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new instance of the class `FieldElement` like so:
 
 [source,python]
 ----
@@ -267,11 +267,11 @@ In Python we can define what addition means for our class with the `\_\_add\_\_`
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't make any sense.
 <2> Addition in a Finite Field is defined with the modulo operator, which we use here.
-<3> We have to return an instance of the class, which we can conveniently access with `$$self.__class\_\_`. We pass the two initializing arguments, `num` and `self.prime` as defined in the `\_\_init\_\_` method above.
+<3> We have to return an instance of the class, which we can conveniently access with $$self.__class__$$. We pass the two initializing arguments, `num` and `self.prime` as defined in the $$__init__$$ method above.
 
 ==== Exercise {counter:exercise}
 
-Write the corresponding `\_\_sub\_\_` method which defines the subtraction of two field elements.
+Write the corresponding $$__sub__$$ method which defines the subtraction of two field elements.
 
 === Finite Field Multiplication and Exponentiation
 
@@ -337,7 +337,7 @@ Intuitively this results in every element of a Prime Field being equivalent. In 
 ==== Coding Multiplication in Python
 
 
-In the class `FieldElement` we can now define the `\_\_mul\_\_` method. We want this to work:
+In the class `FieldElement` we can now define the $$__mul__$$ method. We want this to work:
 
 [source,python]
 ----
@@ -351,15 +351,15 @@ print(a*b==c) # <1>
 ----
 <1> We want this to print `True`
 
-As we did with addition and subtraction above, we can define what multiplication means for our class with the `\_\_mul\_\_` method.
+As we did with addition and subtraction above, we can define what multiplication means for our class with the $$__mul__$$ method.
 
 ==== Exercise {counter:exercise}
 
-Write the corresponding `\_\_mul\_\_` method which defines the multiplication of two field elements.
+Write the corresponding $$__mul__$$ method which defines the multiplication of two field elements.
 
 ==== Coding Exponentiation in Python
 
-We can do the same for exponentiation, which in Python can be defined with the `\_\_pow\_\_` method. The difference here is that the exponent is *not* a field element, so has to be treated a bit differently. We want something like this to work:
+We can do the same for exponentiation, which in Python can be defined with the $$__pow__$$ method. The difference here is that the exponent is *not* a field element, so has to be treated a bit differently. We want something like this to work:
 
 [source,python]
 ----
@@ -416,7 +416,36 @@ You probably noticed that n^(p-1)^ is always 1. This is a beautiful result from 
 
 n^(p-1)^%p=1 where p is prime
 
-Since we are operating in prime fields, this will always be true. The other fact that we have to wrap around is that division is really multiplication with the inverse. Thus:
+Since we are operating in prime fields, this will always be true.
+
+.Fermat's Little Theorem
+****
+There's are many proofs of this theorem, but perhaps the simplest is utilizing what we saw in the exercise above. Namely that the sets:
+
+{1, 2, 3, ... p-2, p-1} = {n%p, 2n%p, 3n%p, ... (p-2)n%p, (p-1)n%p}
+
+The resulting numbers might not be in the right order, but the same numbers are in both sets.
+
+We can then multiply every element to get this:
+
+1⋅2⋅3⋅...⋅(p-2)⋅(p-1) % p = n⋅2n⋅3n⋅...⋅(p-2)n⋅(p-1)n % p
+
+The left side is the same as (p-1)! % p where *!* is the factorial (e.g. 5! = 5⋅4⋅3⋅2⋅1). The right side, we can gather up all the n's and get:
+
+(p-1)!⋅n^(p-1)^ % p
+
+Thus:
+
+(p-1)! % p = (p-1)! ⋅n^(p-1)^ % p
+
+The (p-1)! on both sidse cancel giving us:
+
+1 = n^(p-1)^ % p
+
+This proves Fermats' Little Theorem
+****
+
+The other fact that we have to wrap around is that division is really multiplication with the inverse. Thus:
 
 a/b=a⋅(1/b)=a⋅b^-1^
 
@@ -436,9 +465,28 @@ So in other words, we can calculate the inverse using the exponent function. In 
 
 This is a relatively expensive calculation as exponentiating grows very fast as we use bigger and bigger primes. Indeed division is the most expensive operation for that reason. To lessen the expensiveness, we can utilize the `pow` function in Python. `pow` is a function that will exponentiate. Thus something like `pow(7,17)` does the same thing as `7\*\*17`. The `pow` function, however, has an optional third argument which makes things more efficient. Specifically, `pow` will modulo by the third argument. Thus, `pow(7,17,19)` will give the same result as `7\*\*17%19` but do so faster because the modulo function is done after each round of multiplication.
 
-Note that in Python3, division is separated into `\_\_truediv\_\_` and `\_\_floordiv\_\_`. The first does normal division, the second does integer division.
+Note that in Python3, division is separated into $$__truediv__$$ and $$__floordiv__$$. The first does normal division, the second does integer division.
 
 ==== Exercise {counter:exercise}
 
-Write the corresponding `\_\_truediv\_\_` method which defines the division of two field elements.
+Solve the following equations in F~31~:
+
+3 / 24
+
+17^-3^
+
+4^-4^⋅11
+
+==== Exercise {counter:exercise}
+
+For k = 1, 3, 7, 13, 18, what is this set in F~19~?
+
+{k/0, k/1, k/2, k/3, ... k/18}
+
+Do you notice anything about these sets?
+
+
+==== Exercise {counter:exercise}
+
+Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
 

@@ -1,0 +1,58 @@
+[[chapter_elliptic_curves]]
+== Elliptic Curves
+
+[.lead]
+As in the previous chapter, elliptic curves can look intimidating if you haven't seen them before. Also as in the previous chapter, the actual math isn't very difficult. Most of Elliptic Curves could have been taught to you around the second year of High School. In this chapter, we'll get to what these curves are and what we can do with them.
+
+=== Definition
+
+Elliptic Curves are really just like many equations you've been seeing since around 8th grade. They have y on one side and x on the other in some form. They specifically have a form like this:
+
+y^2^=x^3^+ax+b
+
+This is a little different than what you've seen, but truthfully, isn't really that different. For example, you are probably familiar with the linear equation:
+
+y = mx + b
+
+You may even remember that *m* here has the name _slope_ and *b*, _y-intercept_. You can also graph linear equations like this:
+
+TODO: Graph of linear equation
+
+Similarly, you're probably familiar with the quadratic equation and its graph:
+
+y = ax^2^+bx+c
+
+TODO: Graph of quadratic equation
+
+And sometime in high school, you did even higher orders on x, something called the cubic equation and its graph:
+
+y = ax^3^+bx^2^+cx+d
+
+TODO: Graph of cubic equation
+
+An elliptic curve isn't all that different. The only real difference between the elliptic curve and the cubic curve above is the *y^2^* term on the right side. This has the effect of making the graph symmetric over the x-axis like so:
+
+TODO: Graph of elliptic curve equation
+
+You may also have noticed that the elliptic curve is less steep than the cubic curve. Again, this is because of the *y^2^* term on the right. At times, the curve may even be disjoint like this:
+
+TODO: Graph of another elliptic curve equation
+
+If it helps, an elliptic curve is more or less made by taking a cubic equation graph, taking only the stuff above the x-axis, flattening it out and then mirroring the top half on the bottom half of the x-axis.
+
+TODO: Diagram showing what's described in prev paragraph
+
+Specifically, the elliptic curve used in Bitcoin is called secp256k1 and it uses this particular equation:
+
+y^2^=x^3^+7
+
+The canonical form is `y^2^=x^3^+ax+b` so you can also think of the curve as being `a=0`, `b=7`. The curve looks like this:
+
+TODO: Graph of secp256k1 over reals
+
+=== Point Addition
+
+The main reason that Elliptic Curves are useful is because of something called Point Addition. 
+
+
+
