@@ -38,7 +38,7 @@ You may also have noticed that the elliptic curve is less steep than the cubic c
 
 TODO: Graph of another elliptic curve equation
 
-If it helps, an elliptic curve is more or less made by taking a cubic equation graph, taking only the stuff above the x-axis, flattening it out and then mirroring the top half on the bottom half of the x-axis.
+If it helps, an elliptic curve is more or less made by taking a cubic equation graph, taking only the part above the x-axis, flattening it out and then mirroring the top half on the bottom half of the x-axis.
 
 TODO: Diagram showing what's described in prev paragraph
 
@@ -46,13 +46,52 @@ Specifically, the elliptic curve used in Bitcoin is called secp256k1 and it uses
 
 y^2^=x^3^+7
 
-The canonical form is `y^2^=x^3^+ax+b` so you can also think of the curve as being `a=0`, `b=7`. The curve looks like this:
+The canonical form is y^2^=x^3^+ax+b so you can also think of the curve as being `a=0`, `b=7`. The curve looks like this:
 
 TODO: Graph of secp256k1 over reals
+
+=== Coding Elliptic Curves in Python
+
+We are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
+
+[source,python]
+----
+class Point:
+
+    def __init__(self, x, y, a, b):
+        self.a = a
+        self.b = b
+        self.x = x
+        self.y = y
+            if self.y$$**$$2 != self.x$$**$$3+self.a*self.x + self.b: # <1>
+	         raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
+----
+<1> We check here that the point is actually on the curve.
 
 === Point Addition
 
 The main reason that Elliptic Curves are useful is because of something called Point Addition. 
+
+It turns out that every elliptic curve and a line will intersect at either 1 or 3 points.
+
+TODO: Graph of various intersections of elliptic curves and lines
+
+The two exceptions are when a line is _tangent_ to the curve and when a line is exactly vertical.
+
+TODO: Graph of tangent and vertical lines.
+
+We will come back to these two cases later.
+
+What's interesting is that we can define something called *point addition* using this fact. Like with Field Addition, we define point addition ourselves. In our case, point addition is defined this way:
+
+For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
+
+* Find the point intersects the elliptic curve a third time by drawing a line through P~1~ and P~2~
+* Reflect the resulting point over the x-axis
+
+Visually, it looks something like this:
+
+TODO: Graph of point addition
 
 
 
