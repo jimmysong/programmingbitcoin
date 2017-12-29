@@ -141,5 +141,75 @@ Associativity means that (P+Q) + R=P + (Q+R). This isn't obvious and is the reas
 
 TODO: Show associativity visually.
 
+==== Exercise {counter:exercise}
 
+We have to account for the point at infinity somehow, and the easiest way to do so is to have (x,y)=(None,None). Make sure we can initialize the point at infinity.
 
+==== Exercise {counter:exercise}
+
+We are going to write the $$__add__$$ method for the `Point` class. Handle the case when one of the points is the point at infinity.
+
+==== Exercise {counter:exercise}
+
+Now handle the case where the two points are negatives of each other. That is, they have the same x, but a different y.
+
+=== Point Addition for when x~1~≠x~2~
+
+When we have points where the x's differ, we can add using a fairly simple formula. To help with intuition, it helps first to find the slope created by the two points. You can figure this out using a formula you probably learned in middle school:
+
+P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
+
+P~1~+P~2~=P~3~
+
+s=(y~2~-y~1~)/(x~2~-x~1~)
+
+This is the slope and we can figure out where the x~3~ intersection is. Once we know that, we can calculate y~3~. P~3~ can thus be derived using this formula:
+
+x~3~=s^2^-x~1~-x~2~
+
+y~3~=s(x~1~-x~3~)-y~1~
+
+Remember that y~3~ is the reflection over the x-axis.
+
+.Deriving The Point Addition Formula
+****
+Let's start with the fact that the line that goes through P~1~ and P~2~ looks like this:
+
+s=(y~2~-y~1~)/(x~2~-x~1~)
+
+y=s(x-x~1~)+y~1~
+
+The second formula here is the equation of the line that intersects at both P~1~ and P~2~. Now using this formula and plugging it into the elliptic curve equation, we get:
+
+x^3^+ax+b=y^2^=(s(x-x~1~)+y~1~)^2^
+
+x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-(sx~1~-y~1~)^2^=0
+
+We know that x~1~, x~2~ and x~3~ are solutions to this equation, thus:
+
+(x-x~1~)(x-x~2~)(x-x~3~)=0
+
+x^3^-(x~1~+x~2~+x~3~)x^2^ +(x~1~x~2~+x~1~x~3~+x~2~x~3~)x-x~1~x~2~x~3~=0
+
+From above, we know that:
+
+x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-(sx~1~-y~1~)^2^=0
+
+Thus:
+
+s^2^=x~1~+x~2~+x~3~
+
+We can use this to derive the formula for x~3~:
+
+x~3~=s^2^-x~1~-x~2~
+
+We can plug this in to the formula for the line above:
+
+y=s(x-x~1~)+y~1~
+
+But we have to reflect over the x-axis, so this has to be negated:
+
+y~3~=s(x~1~-x~3~)-y~1~
+
+That's how we arrive at this formula.
+****
