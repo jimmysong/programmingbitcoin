@@ -195,7 +195,7 @@ From above, we know that:
 
 x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-(sx~1~-y~1~)^2^=0
 
-Thus:
+We know that each coefficient has to equal each other. The first one that's interesting is the one in front of x^2^:
 
 s^2^=x~1~+x~2~+x~3~
 
@@ -209,7 +209,59 @@ y=s(x-x~1~)+y~1~
 
 But we have to reflect over the x-axis, so this has to be negated:
 
-y~3~=s(x~1~-x~3~)-y~1~
+y~3~=-(s(x-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
 
 That's how we arrive at this formula.
+****
+
+==== Exercise {counter:exercise}
+
+For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+
+==== Exercise {counter:exercise}
+
+Write the $$__add__$$ method where x~1~≠x~2~
+
+=== Point Addition for when P~1~=P~2~
+
+When the x coordinates are the same and the y coordinate is different, we have the situation where the points are opposite each other over the x-axis. We know that this means:
+
+P~1~=-P~2~ or P~1~+P~2~=I
+
+What happens when P~1~=P~2~? Visually, we have to calculate the line that's *tangent* to the curve at P~1~ and find the point at which the line intersects the curve.
+
+Once again, we'll have to find the slope of the tangent point.
+
+P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
+
+P~1~+P~1~=P~3~
+
+s=(3x~1~^2^+a)/(2y~1~)
+
+The rest of the formula goes through as before, except x~1~=x~2~, so we can combine them:
+
+x~3~=s^2^-2x~1~
+
+y~3~=s(x~1~-x~3~)-y~1~
+
+
+.Deriving the Tangent LIne
+****
+We can derive the slope of the tangent line using some slightly more advanced math. Specifically calculus. We know that the slope at a given point is
+
+dy/dx
+
+To get this, we need to take the derivative of both sides of the elliptic curve equation:
+
+y^2^=x^3^+ax+b
+
+Taking the derivative we get:
+
+2y dy=(3x^2^+a) dx
+
+Solving for dy/dx, we get:
+
+dy/dx=(3x^2^+a)/(2y)
+
+That's how we arrive at the slope formula. The rest of the results from the point addition formula derivation hold.
 ****
