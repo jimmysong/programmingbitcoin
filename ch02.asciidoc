@@ -71,7 +71,7 @@ class Point:
 
 ----
 <1> We check here that the point is actually on the curve.
-<2> Points are equal iff they are on the same curve and have the same coordinates
+<2> Points are equal if they are on the same curve and have the same coordinates
 
 ==== Exercise {counter:exercise}
 
