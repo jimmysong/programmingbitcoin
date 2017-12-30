@@ -265,3 +265,11 @@ dy/dx=(3x^2^+a)/(2y)
 
 That's how we arrive at the slope formula. The rest of the results from the point addition formula derivation hold.
 ****
+
+==== Exercise {counter:exercise}
+
+For the curve y^2^=x^3^+5x+7, what is (-1,1) + (-1,1)?
+
+==== Exercise {counter:exercise}
+
+Write the $$__add__$$ method where x~1~=x~2~ and y~1~=y~2~
