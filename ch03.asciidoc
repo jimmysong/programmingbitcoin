@@ -1,0 +1,32 @@
+[[chapter_elliptic_curve cryptography]]
+== Elliptic Curve Cryptography
+
+The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts to get Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
+
+=== Elliptic Curves over Reals
+
+We discussed in the last chapter what an Elliptic curve looks like visually because we were plotting the curve over *real* numbers. Specifically, it's not just integers or even rational numbers, but all *real* numbers. Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
+
+What's interesting is that *real* numbers are also a field. Note unlike a *finite* field, there are an infinite number of real numbers, but otherwise the same properties hold:
+
+* if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
+* if *a* is in the set, *-a* is in the set, or what we call the _additive inverse_.
+* if *a* is in the set and is not 0, *a^-1^* is in the set, or what we call the _multiplicative inverse_.
+
+Clearly, all of these are true as normal addition and multiplication apply for the first part, -x applies for the second part and 1/x applies for the third part.
+
+The nice thing about real numbers is that we can easily plot what's going on and see the whole thing visually as we did in the last chapter. For example, y^2^=x^3^+7 can be plotted like this:
+
+TODO: graph of secp256k1 curve
+
+What's interesting is that we can use this equation over any field, including the Finite Fields we explored in Chapter 1. The only difference is that we have to use the addition/subtraction/multiplication/division as we defined them, not the "normal" versions that the real numbers use.
+
+=== Elliptic Curves over Finite Fields
+
+For example, we can see what to do for the equation y^2^=x^3^+7 over F~103~. Let's see if the point (17,64) is on the curve:
+
+64^2^%103=79
+(17^3^+7)%103=79
+
+Indeed, that point is on the curve using the Finite Field math.
+
