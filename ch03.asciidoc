@@ -30,3 +30,54 @@ For example, we can see what to do for the equation y^2^=x^3^+7 over F~103~. Let
 
 Indeed, that point is on the curve using the Finite Field math.
 
+Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different:
+
+TODO: graph of secp256k1 curve over finite field
+
+As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete.
+
+What's important here to realize is that we can evaluate the same equation using the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works. This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
+
+==== Exercise {counter:exercise}
+
+Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
+
+(192,105), (17,56), (200,119), (1,193), (42,99)
+
+=== Coding Elliptic Curves over Finite Fields
+
+Because we defined an Ellptic curve point and utilize the +,-,* and / operators for Finite Fields, we can actually just combine the two classes to evaluate Elliptic Curve Points over a Finite Field.
+
+[source,python]
+----
+a = FieldElement(num=0, prime=105)
+b = FieldElement(num=7, prime=105)
+x = FieldElement(num=192, prime=223)
+y = FieldElement(num=105, prime=105)
+
+p1 = Point(x, y, a, b)
+----
+
+When initializing `Point`, we will run through this part of the code:
+
+[source,python]
+----
+class Point:
+
+    def __init__(self, x, y, a, b):
+        self.a = a
+        self.b = b
+        self.x = x
+        self.y = y
+        if self.y$$**$$2 != self.x$$**$$3+self.a*self.x + self.b: # <1>
+	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
+----
+<1> Check to see whether the point is on the curve.
+
+The addition (+), exponentiation (**) and equality (==) here will end up utilizing the $$__add__$$, $$__pow__$$ and $$__eq__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
+
+==== Exercise {counter:exercise}
+
+Write a test called test_on_curve that tests whether the points from the previous exercise over the curve y^2^=x^3^+7 over F~223~ are valid or not.
+
+
