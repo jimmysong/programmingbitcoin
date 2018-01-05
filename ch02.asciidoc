@@ -63,7 +63,7 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-        if self.y$$**$$2 != self.x$$**$$3+self.a*self.x + self.b: # <1>
+        if self.y**2 != self.x**3+self.a*self.x + self.b: # <1>
 	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
 
     def __eq__(self, other): # <2>

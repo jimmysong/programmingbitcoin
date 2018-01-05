@@ -50,10 +50,10 @@ Because we defined an Ellptic curve point and utilize the +,-,* and / operators 
 
 [source,python]
 ----
-a = FieldElement(num=0, prime=105)
-b = FieldElement(num=7, prime=105)
+a = FieldElement(num=0, prime=223)
+b = FieldElement(num=7, prime=223)
 x = FieldElement(num=192, prime=223)
-y = FieldElement(num=105, prime=105)
+y = FieldElement(num=105, prime=223)
 
 p1 = Point(x, y, a, b)
 ----
@@ -80,4 +80,74 @@ The addition (+), exponentiation (**) and equality (==) here will end up utilizi
 
 Write a test called test_on_curve that tests whether the points from the previous exercise over the curve y^2^=x^3^+7 over F~223~ are valid or not.
 
+=== Point Addition over Finite Fields
+
+We can use all the same equations over finite fields, including the linear equation:
+
+y=mx+b
+
+It turns out that a "line" in a finite field is not quite what you'd expect, either:
+
+TODO: graph of a line over a finite field
+
+Still, the equation works and we can calculate what y should be for a given x.
+
+Remarkably, point addition works over finite fields as well. This is because the elliptic curve and line equations still work! The same exact formulas we used to calculate Point Addition over Reals work just as well over Finite Fields. Specifically:
+
+when x~1~≠x~2~
+
+P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
+
+P~1~+P~2~=P~3~
+
+s=(y~2~-y~1~)/(x~2~-x~1~)
+
+x~3~=s^2^-x~1~-x~2~
+
+y~3~=s(x~1~-x~3~)-y~1~
+
+when P~1~=P~2~
+
+P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
+
+P~1~+P~1~=P~3~
+
+s=(3x~1~^2^+a)/(2y~1~)
+
+x~3~=s^2^-2x~1~
+
+y~3~=s(x~1~-x~3~)-y~1~
+
+All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some Cryptographic primitives.
+
+==== Coding Point Addition over Finite Fields
+
+Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$$, $$__mul__$$, $$__truediv__$$ and $$__pow__$$, we can simply initialize `Point` with `FieldElement` objects and point addition will work:
+
+[source,python]
+----
+a = FieldElement(num=0, prime=223)
+b = FieldElement(num=7, prime=223)
+x1 = FieldElement(num=192, prime=223)
+y1 = FieldElement(num=105, prime=223)
+x1 = FieldElement(num=17, prime=223)
+y1 = FieldElement(num=56, prime=223)
+
+p1 = Point(x1, y1, a, b)
+p2 = Point(x2, y2, a, b)
+
+print(p1+p2)
+----
+
+==== Exercise {counter:exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find:
+
+(170,142) + (60,139)
+(47,71) + (17,56)
+(143,98) + (76,66)
+
+==== Exercise {counter:exercise}
+
+Write unit tests to test point addition
 
