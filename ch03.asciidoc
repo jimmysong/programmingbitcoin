@@ -151,3 +151,45 @@ For the curve y^2^=x^3^+7 over F~223~, find:
 
 Write unit tests to test point addition
 
+=== Scalar multiplication for Elliptic Curves
+
+Because we can add a point to itself, we can introduce some new notation:
+
+(170,142) + (170,142) = 2*(170,142)
+
+Similarly, because we have associativity, we can actually add the point again:
+
+2*(170,142) + (170,142) = 3*(170, 142)
+
+We can actually do this as many times as we want. This is what we call Scalar Multiplication. That is, we have a _scalar_ number in front of the point. We can do this because we have defined point addition.
+
+What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
+
+TODO: graph of where the point ends up when scalar is 2, 10, 17, etc
+
+This is because point addition is non-linear. That is, not easy to calculate. In fact, doing the scalar multiplication is more or less straightforward, but doing the opposite, scalar division, is not.
+
+This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
+
+.Why is this called the Discrete Log Problem?
+****
+You may be wondering why the problem of scalar *multiplication* is referred to as the discrete *log* problem.
+
+We called the operation between the points "addition", but we could easily have called it a point "operation". Typically, a new operation that you define in math utilizes the dot operator (⋅). The dot operator is also used for multiplication, and it sometimes helps to think that way:
+
+P~1~⋅P~2~=P~3~
+
+When you do lots of multiplying, that's the same as exponentiation. Scalar multiplication when we called it "point addition" becomes scalar exponentiation:
+
+P^7^=Q
+
+The discrete log problem is really the ability to reverse this:
+
+log~P~Q=7
+
+The log equation on the left is not analytically calculatable. That is, there is no known formula that you can plug in to get the answer generally. This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Scalar Division" problem instead of Discrete Log.
+****
+
+=== Defining the curve for Bitcoin
+
+It turns out that we can choose much larger primes than we've
