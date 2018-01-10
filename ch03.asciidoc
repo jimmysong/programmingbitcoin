@@ -171,6 +171,16 @@ This is because point addition is non-linear. That is, not easy to calculate. In
 
 This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
+The interesting thing about Scalar Multiplication is that at a certain number, we get to the point at infinity (remember, point at infinity is a lot like zero). If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set like this:
+
+{ G, 2G, 3G, 4G, ... nG }
+
+It turns out that this set is called a Group and because n is finite, we have a Finite Group. Groups are interesting mathematically because they behave a lot like addition:
+
+G+4G=5G or aG+bG=(a+b)G
+
+When we combine the fact that scalar multiplication is easy to go in one direction but hard in the other and the mathematical properties of a Group, we have exactly what we need for Elliptic Curve Cryptography.
+
 .Why is this called the Discrete Log Problem?
 ****
 You may be wondering why the problem of scalar *multiplication* is referred to as the discrete *log* problem.
@@ -190,6 +200,8 @@ log~P~Q=7
 The log equation on the left is not analytically calculatable. That is, there is no known formula that you can plug in to get the answer generally. This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Scalar Division" problem instead of Discrete Log.
 ****
 
+
+
 === Defining the curve for Bitcoin
 
-It turns out that we can choose much larger primes than we've
+It turns out that we can choose much larger primes than we've been using. 
