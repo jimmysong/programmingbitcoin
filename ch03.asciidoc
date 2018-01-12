@@ -200,6 +200,60 @@ log~P~Q=7
 The log equation on the left is not analytically calculatable. That is, there is no known formula that you can plug in to get the answer generally. This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Scalar Division" problem instead of Discrete Log.
 ****
 
+=== Mathematical Groups
+
+Unlike fields, groups have only a single operation. In our case, Point Addition is our operation. We also have a few other properties like closure, invertibility, commutativity and associativity. Lastly, we need the identity.
+
+It turns out that we have all of these things with Point Addition. Let's look at each property
+
+==== Closure
+
+This is perhaps the easiest to prove since we generated the group in the first place by adding G over and over. Thus, two different elements look like this:
+
+aG + bG
+
+We know that the result is going to be:
+
+(a+b)G
+
+How do we know if this element is in the group? If a+b < n, then we know it's in the group by definition. If a+b >= n, then we know a < n and b < n, so a+b<2n so a+b-n<n.
+
+(a+b-n)G=aG+bG-nG=aG+bG-O=aG+bG
+
+So we know that this element is in the group, proving closure.
+
+==== Invertibility
+
+Visually, invertibility is easy to see:
+
+TODO: show graph of points on opposite sides of the x-axis
+
+Mathematically, we know that if aG is in the group, (n-a)G is also in the group. You can add them together to get 0.
+
+==== Commutativity
+
+Again, this is very easy to see visually:
+
+TODO: show that points can reverse order
+
+The equations for figuring out the third point also make this clear:
+
+P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
+
+x~3~=s^2^-x~1~-x~2~
+
+y~3~=s(x~1~-x~3~)-y~1~=s(x~2~-x~3~)-y~2~
+
+You can swap P~1~ and P~2~ to get the exact same equation.
+
+==== Associativity
+
+This is the hardest to prove but can be seen visually:
+
+TODO: show that (A+B)+C=A+(B+C)
+
+Mathematically, this is a bit more involved.
+
 
 
 === Defining the curve for Bitcoin
