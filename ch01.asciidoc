@@ -4,7 +4,7 @@
 [.lead]
 Learning about new mathematical structures can be a bit intimidating and in this chapter, I hope to dispel the myth that high level math is super difficult. Finite Fields, in particular, actually don't require all that much in terms of knowledge than, say High School level math.
 
-Think of Finite Fields as something that you could have learned in High School instead of Trigonomotry, just that the education system you're a part of decided that Trigonomotry was more important for you to learn.
+Think of Finite Fields as something that you could have learned in High School instead of Trigonometry, just that the education system you're a part of decided that Trigonometry was more important for you to learn.
 
 In any case, this is my way of telling you that Finite Fields are not that hard to learn and require no more background than what you knew by your second year in High School.
 
