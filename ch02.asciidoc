@@ -30,7 +30,7 @@ y = ax^3^+bx^2^+cx+d
 
 TODO: Graph of cubic equation
 
-An elliptic curve isn't all that different. The only real difference between the elliptic curve and the cubic curve above is the *y^2^* term on the right side. This has the effect of making the graph symmetric over the x-axis like so:
+An elliptic curve isn't all that different. The only real difference between the elliptic curve and the cubic curve above is the *y^2^* term on the left side. This has the effect of making the graph symmetric over the x-axis like so:
 
 TODO: Graph of elliptic curve equation
 
