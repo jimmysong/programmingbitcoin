@@ -433,7 +433,7 @@ But, if we have s, we can do this.
 TODO: make another illustrative example.
 
 
-
+==== Signing and Verification
 
 Now that we have the secp256k1 curve defined, we can now start understanding how to use it for the purposes of public key cryptography. The main equation here to know is this one:
 
