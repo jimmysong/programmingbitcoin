@@ -1,0 +1,18 @@
+[[chapter_txparsing]]
+
+=== Transactions
+
+Transactions are at the heart of Bitcoin. Transactions, simply put, are value transfers from one entity to another. We'll see in Chapter 7 how "entities" in this case are really smart contracts. But we're getting ahead of ourselves. Lets first look at what transactions in Bitcoin are, what they look like and how they are parsed.
+
+==== Transaction Components
+
+At a high level, a transaction really only has 4 components. They are:
+
+1. Version
+2. Inputs
+3. Outputs
+4. Locktime
+
+
+
+
