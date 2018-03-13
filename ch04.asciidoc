@@ -302,3 +302,9 @@ We can now create the wif method on the PrivateKey class.
         # encode_base58_checksum the whole thing
         return encode_base58_checksum(prefix + secret_bytes + suffix)
 ----
+
+=== Big and Little Endian Redux
+
+It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and wif. A lot of stuff coming up in Chapter 5 onward will utilze Little Endian encoding. For this reason, we turn to these two exercises.
+
+TODO: exercise on turning numbers into little endian and back

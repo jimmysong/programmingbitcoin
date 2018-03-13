@@ -1,10 +1,10 @@
 [[chapter_txparsing]]
 
-=== Transactions
+== Transactions
 
 Transactions are at the heart of Bitcoin. Transactions, simply put, are value transfers from one entity to another. We'll see in Chapter 7 how "entities" in this case are really smart contracts. But we're getting ahead of ourselves. Lets first look at what transactions in Bitcoin are, what they look like and how they are parsed.
 
-==== Transaction Components
+=== Transaction Components
 
 At a high level, a transaction really only has 4 components. They are:
 
@@ -13,6 +13,32 @@ At a high level, a transaction really only has 4 components. They are:
 3. Outputs
 4. Locktime
 
+At this point a general overview of these fields might be helpful. Version defines what the format of the transaction is supposed to be, Inputs define what bitcoins are being spent, Outputs define where the bitcoins are going and Locktime defines what time this transaction starts being valid. We'll go through each component in depth.
 
+Here is a hexadecimal dump of a typical transaction that shows which parts are which.
+
+TODO: hex dump of transaction with version/inputs/outputs/locktime highlighted in different backgrounds.
+
+=== Version
+
+TODO: hex dump highlighting just the version field.
+
+When you see a version number in something, it's meant to give the receiver information about what the versioned thing is supposed to represent. If, for example, you are running Windows 3.1, that's a version number that's very differnt than Windows 8 or Windows 10. You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
+
+In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version has never been updated since version 1.
+
+You may notice here that the actual value in hexadecimal is 01000000, which doesn't look like 1. It actually is when the interpreted as a little-endian integer (recall the discussion from chapter 4).
+
+TODO: exercise on parsing version number from bytes and serializing a number to bytes
+
+=== Inputs
+
+TODO: hex dump highlighting just the inputs
+
+Each input is an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
+
+TODO: explain how all bitcoin inputs are previous transaction outputs
+
+The inputs field can contain more than one input. This makes sense as you could use a single 100 bill to pay for a 70 dollar meal or a 50 and a 20. There are situations where there could be lots of inputs.
 
 
