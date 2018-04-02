@@ -2,3 +2,100 @@
 
 == Script
 
+The ability to lock and unlock coins is at the heart of what it means to transfer Bitcoin.
+
+In this chapter we examine the mechanism by which Bitcoins are locked and unlocked, what you might call a smart contract.
+
+TODO: more intro as to what script is.
+
+=== Mechanics of SCRIPT
+
+If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. SCRIPT is the smart contract langauge, or the programming language used to express how bitcoins are to be transferred.
+
+Think of a personal check. In a sense, a personal check is a type of contract. A personal check is an agreement to transfer some amount of money from one person to another. Bitcoin has the digital equivalent of a contract in SCRIPT.
+
+SCRIPT is a limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is not Turing complete.
+
+TODO: sidebar on why Turing completeness is not a good idea
+
+What you are required to do as part of a transaction is to assign Bitcoins to a *locking* script. The locking script is what's specified in ScriptPubKey (see chapter 5). Think of this as the locked box where some money is deposited which only the person with the key to the box can open. The money inside, of course, can only be accessed by someone with the key.
+
+The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) and proves ownership of the locked box in order to spend the funds.
+
+=== How SCRIPT works
+
+SCRIPT, as a language, operates with a stack by processing one item at a time. There are two possible types of items: elements and operations.
+
+Elements are just data. They are byte strings of length 1 to 75. A typical element might be a der signature or a sec pubkey.
+
+Operations do something to the data. They pop zero or more elements from the processing stack and push zero or more elements back on the stack. A typical elment might be something like OP_DUP, which will duplicate the top element (popping 0) and putting a new element on top (pushing 1).
+
+TODO OP_DUP diagram
+
+At the end of processing all the items in the stack, the top element of the stack must be non-zero for the script to execute successfully. Having no elements on the stack or having the top element be zero would result in a failed execution. Failed execution generally means that the transaction which includes the unlocking script is invalid.
+
+=== Example Operations
+
+Besides OP_DUP, there are other operations. OP_HASH160 does a sha256 followed by a ripemd160 to the top element of the stack (popping 1) and putting a new element back (pushing 1)
+
+TODO OP_HASH160 diagram
+
+Another very important operation is OP_CHECKSIG. OP_CHECKSIG pops 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey. If so, OP_CHECKSIG pushes a 1 onto the stack, otherwise puts a 0 on the stack.
+
+TODO OP_CHECKSIG diagram
+
+=== Parsing the script fields
+
+Both ScriptPubKey and ScriptSig are parsed the same way. If the byte is between 0x01 and 0x4B (which we call n), we read the next n bytes as an element. Otherwise, the byte represents an operation, which we have to look up. Here are some operations and their byte code:
+
+0x75 - OP_DUP
+
+0x93 - OP_ADD
+
+0xa9 - OP_HASH160
+
+0xac - OP_CHECKSIG
+
+There are many more and the full list can be found at http://wiki.bitcoin.it
+
+==== Coding a Script parser
+
+[source,python]
+----
+class Script:
+
+    @classmethod
+    def parse(cls, binary):
+        s = BytesIO(binary)
+        elements = []
+        current = s.read(1)
+        while current != b'':
+            op_code = current[0]
+            if op_code > 1 and op_code <= 75:
+                # we have an element
+                elements.append(s.read(op_code))
+            else:
+                elements.append(op_code)
+            current = s.read(1)
+        return cls(elements)
+----
+
+=== Combining the script fields
+
+Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two scripts combine. What we do in Bitcoin is take the items from ScriptSig and ScriptPubKey like so:
+
+TODO Diagram of how they combine
+
+Each item is processed one at a time until no items are left to be processed or if the script exits early.
+
+To show exactly how all this works, we'll next take a look at the original script pay-to-pubkey
+
+=== p2pk
+
+Pay-to-pubkey (aka p2pk) was used almost exclusively during the early days of bitcoin.
+
+
+
+=== Addresses and Script
+
+Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, bech32) and create the appropriate ScriptPubKey.
