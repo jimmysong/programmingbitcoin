@@ -92,8 +92,23 @@ To show exactly how all this works, we'll next take a look at the original scrip
 
 === p2pk
 
-Pay-to-pubkey (aka p2pk) was used almost exclusively during the early days of bitcoin.
+Pay-to-pubkey (aka p2pk) was used almost exclusively during the early days of bitcoin. Most of coins thought to belong to Satoshi, for example, are in p2pk outputs. There are some limitations that we'll discuss in a few pages, but here, let's focus on how p2pk works.
 
+We learned back in chapter 3 how signing and verification work in ECDSA. Specifically, you need the message (z), the public key (P) and the signature (r,s). The mechanics of p2pk are simply that you send bitcoins to a public key and let the owner of the private key determine where the bitcoins should go.
+
+Specifying where the bitcoins go is the job of the scriptPubKey. As stated above, this is the lock box that receive the bitcoins. The actual scriptPubKey looks like this:
+
+TODO Diagram of p2pk scriptPubKey
+
+Note the OP_CHECKSIG, as that will be very important. The scriptSig is the part that unlocks the received bitcoins. In the case of p2pk, the scriptSig is just the signature.
+
+TODO digram of p2pk scriptSig
+
+The scriptPubKey and scriptSig combine to make a processing stack that looks like this:
+
+TODO diagram of the p2pk script stack
+
+At this point, the script is processed one item at a time.
 
 
 === Addresses and Script
