@@ -90,6 +90,19 @@ Each item is processed one at a time until no items are left to be processed or 
 
 To show exactly how all this works, we'll next take a look at the original script pay-to-pubkey
 
+=== Types of scripts
+
+There are many types of standard scripts in Bitcoin including the following:
+
+p2pk - Pay-to-pubkey
+p2pkh - Pay-to-pubkey-hash
+p2sh - Pay-to-script-hash
+p2wpkh - Pay-to-witness-pubkey-hash
+p2wsh - Pay-to-witness-script-hash
+
+Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, bech32) and create the appropriate ScriptPubKey. All of the above have a particular type of address format so people can pay to them.
+
+We'll cover pay-to-pubkey and pay-to-pubkey-hash for the rest of the chapter.
 === p2pk
 
 Pay-to-pubkey (aka p2pk) was used almost exclusively during the early days of bitcoin. Most of coins thought to belong to Satoshi, for example, are in p2pk outputs. There are some limitations that we'll discuss in a few pages, but here, let's focus on how p2pk works.
@@ -120,8 +133,14 @@ Incidentally, we can see here why scriptPubkey is called scriptPubKey. The Publi
 
 === Problems with p2pk
 
-There are several problems with p2pk
+Pay-to-pub-key is pretty intuitive in the sense that there is a public key that anyone can send some bitcoins to and a signature that can be produced by the owner of the private key to spend that amount. This works well, but there are some problems.
 
-=== Addresses and Script
+First, the public keys are long. We know from chapter 3 that SECP256K1 public points are 33 bytes in compressed and 65 bytes in uncompressed sec format. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain characters as they are control characters or newlines or similar. The sec format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed formats 66 and 130 characters respectively, which is way bigger than most identifiers. To compound this, early Bitcoin transactions simply didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to address.
 
-Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, bech32) and create the appropriate ScriptPubKey.
+Second, because the public keys are long, this causes a more subtle problem. The UTXO set becomes bigger since this large public key has to be kept around and indexed to see if it's spendable. This may require more resources on the part of nodes.
+
+Third, because we're storing the public key in the scriptPubkey field, it's known to everyone. That means should ECDSA someday be broken, these outputs could be stolen. This is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and would affect all of those things, too. For example, quantum computing has the potential to break RSA and ECDSA, so having something else in addition to protect these outputs would be nice.
+
+=== Solving the problems with p2pkh
+
+Pay-to-pubkey-hash was a way
