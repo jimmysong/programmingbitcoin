@@ -110,6 +110,17 @@ TODO diagram of the p2pk script stack
 
 At this point, the script is processed one item at a time.
 
+TODO showing how p2pk stack resolves
+
+OP_CHECKSIG consumes 2 stack items (pubkey and signature) and determines if they are valid for this transaction. OP_CHECKSIG will put a 1 back if the signature is valid, 0 if not.
+
+This means that the script stack will validate if the signature is valid, but fail if the signature is not. Essentially, we are in a situation where the scriptSig will only unlock the scriptPubKey if the signature is valid for that pubkey. That is, we know the secret.
+
+Incidentally, we can see here why scriptPubkey is called scriptPubKey. The Public Key in uncompressed SEC format is the main item in scriptPubKey in p2pk (the other being a OP_CHECKSIG). Similarly, scriptSig is named as such because p2pk has just the DER format signature in that field.
+
+=== Problems with p2pk
+
+There are several problems with p2pk
 
 === Addresses and Script
 
