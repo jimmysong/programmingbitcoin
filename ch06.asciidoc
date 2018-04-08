@@ -143,4 +143,22 @@ Third, because we're storing the public key in the scriptPubkey field, it's know
 
 === Solving the problems with p2pkh
 
-Pay-to-pubkey-hash was a way
+Pay-to-pubkey-hash has a bunch of advantages over p2pk:
+
+1. The addresses are shorter.
+2. It's protected by ECDSA/SHA256 and RIPEMD160.
+
+Addresses are shorter due to the use of the SHA256 and RIPEMD160 hashing algorithms. We utilize both in succession and call that HASH160. The result of HASH160 is 160-bits or 20 bytes, which can be encoded into an address.
+
+The actual result is an address that you may have seen on the Bitcoin network, something that looks like this:
+
+1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH
+
+This address actually has within it the 20 bytes in hex that look like this:
+
+751e76e8199196d454941c45d1b3a323f1433bd6
+
+These 20 bytes are the result of doing a HASH160 operation on this SEC pubkey:
+
+0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+
