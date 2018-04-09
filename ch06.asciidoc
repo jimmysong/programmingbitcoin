@@ -103,6 +103,7 @@ p2wsh - Pay-to-witness-script-hash
 Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, bech32) and create the appropriate ScriptPubKey. All of the above have a particular type of address format so people can pay to them.
 
 We'll cover pay-to-pubkey and pay-to-pubkey-hash for the rest of the chapter.
+
 === p2pk
 
 Pay-to-pubkey (aka p2pk) was used almost exclusively during the early days of bitcoin. Most of coins thought to belong to Satoshi, for example, are in p2pk outputs. There are some limitations that we'll discuss in a few pages, but here, let's focus on how p2pk works.
@@ -162,3 +163,35 @@ These 20 bytes are the result of doing a HASH160 operation on this SEC pubkey:
 
 0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
 
+=== p2pkh
+
+Pay-to-pubkey-hash (aka p2pkh) was used during early days of bitcoin, though not nearly as much as p2pk.
+
+Once again, the lock bok where the bitcoins go is the job of the scriptPubKey. The actual scriptPubKey looks like this:
+
+TODO Diagram of p2pkh scriptPubKey
+
+Note that OP_CHECKSIG is still here and OP_HASH160 makes an appearance. Also note that the sec pubkey has disappeared and has been replaced by the 20 byte hash.
+
+The scriptSig, or the unlocking part of the script looks like this:
+
+TODO Diagram of p2pkh scriptSig
+
+As before the scriptSig has the DER signature. Unlike p2pk, however, the scriptSig now also has the SEC pubkey. In essence, the pubkey has moved from scriptPubKey to scriptSig.
+
+The scriptPubKey and scriptSig combine to make a processing stack that looks like this:
+
+TODO Diagram of the p2pkh script stack
+
+At this point, the script is processed one item at a time.
+
+TODO showing how p2pkh stack resolves
+
+Essentially, the hash of the public key is what the scriptPubKey contains. The OP_DUP, OP_HASH160 and OP_EQUALVERIFY essentially check that the public key does indeed hash to this value. The rest of the operations are the same as p2pk in the sense that the signature is checked for validity against the very pubkey whose hash was checked.
+
+=== Scripts can be anything
+
+Note that scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the bitcoins can be unlocked in any manner that you wish. The one limitation is that you can't use loops.
+
+TODO exercises on simple scripts
+TODO Peter Todd's SHA1 pinata

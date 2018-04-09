@@ -1,0 +1,3 @@
+== Transaction Creation and Validation
+
+One of the trickiest things for a transaction is the process of validating a transaction. Closely following that is the act of creating the transaction itself. In this chapter, we'll cover the exact steps to validating a transaction and then creating one for ourselves.
