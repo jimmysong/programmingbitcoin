@@ -25,3 +25,13 @@ In order to prevent double-spending, each input has to be checked to see if it's
 In Bitcoin, we can determine whether an input is being double spent by keeping track of the unspent transaction outputs (aka UTXOs). If an input is in the UTXO set, the transaction is NOT double-spending. If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set.
 
 Light clients that do not have access to the blockchain have to trust other nodes for their information, including input spentness information. Of course, if the light client is the only one with the private key, then spending UTXOs that require that key should be impossible for anyone else, but there are cases where the same key is shared on multiple machines.
+
+Simply put, a full node can check the spentness of an input pretty easily, a light node has to get this information from someone else.
+
+=== Checking the sum of the inputs vs the sum of the outputs
+
+The second part of the validation is making sure that the input sum is greater than or equal to the output sum. This ensures that the transaction does not create new coins. The one exception is a Coinbase transaction which we'll talk more about in the next chapter. The inputs don't have an amount, so this must be looked up on the blockchain. Once again, full nodes will have access to the amounts associated with the unspent output, but light nodes will have to depend on full nodes to supply this information.
+
+The actual input sum - output sum is what we call the transaction fee. This amount goes to the miner and may in some cases be 0. Fees vary depending on other transactions trying to get into the blockchain. A lot of transactions trying to get into the blockchain will generally lead to higher fees and not as many will generally lead to lower fees.
+
+=== 
