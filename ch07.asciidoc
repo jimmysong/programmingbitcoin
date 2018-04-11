@@ -16,3 +16,12 @@ The second aspect makes sure no new Bitcoins are created (except in a special tr
 
 The third aspect makes sure that the smart contract resolves to True. In the vast majority of transactions, this means checking that the one or more signatures in the scriptSig are valid.
 
+Let's look at how each is done.
+
+=== Checking the spentness of inputs
+
+In order to prevent double-spending, each input has to be checked to see if it's previously been spent. In order to check that this input has *not* been used in any other transaction, we actually need access to the entire blockchain. We cannot glean from the transaction itself whether it's valid or not, no more than we can look at a line in a random personal check and determine whether that's overdrafting or not. The only way to know is to know what the entire set of transactions is.
+
+In Bitcoin, we can determine whether an input is being double spent by keeping track of the unspent transaction outputs (aka UTXOs). If an input is in the UTXO set, the transaction is NOT double-spending. If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set.
+
+Light clients that do not have access to the blockchain have to trust other nodes for their information, including input spentness information. Of course, if the light client is the only one with the private key, then spending UTXOs that require that key should be impossible for anyone else, but there are cases where the same key is shared on multiple machines.
