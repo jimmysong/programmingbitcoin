@@ -34,4 +34,17 @@ The second part of the validation is making sure that the input sum is greater t
 
 The actual input sum - output sum is what we call the transaction fee. This amount goes to the miner and may in some cases be 0. Fees vary depending on other transactions trying to get into the blockchain. A lot of transactions trying to get into the blockchain will generally lead to higher fees and not as many will generally lead to lower fees.
 
-=== 
+TODO Code for fees, exercise for fees
+
+=== Checking the Signature
+
+Perhaps the trickiest part of validating a transaction is the process of checking its signatures. A transaction typically has at least one signature per input. If there are multisig outputs being spent, there may be more. As we learned in Chapter 4, the ECDSA signature algorithm requires that for each input, we need the public key (P), the signature hash (z), and the Signature (r,s). Once these are determined, the process of verifying the signature is pretty simple as we already coded in Chapter 4:
+
+```python
+
+point = Point.parse(sec)
+signature = Signature.parse(der)
+point.verify(z, signature)  # True
+```
+
+The sec and der formats make getting the P, r and s pretty simple. The hard part is getting the actual signature hash (z). You would think that this would be easy since you can just hash the transaction. But you can't do that since the signature itself is part of the scriptSig and a signature can't sign itself.
