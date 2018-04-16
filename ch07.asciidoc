@@ -48,3 +48,24 @@ point.verify(z, signature)  # True
 ```
 
 The sec and der formats make getting the P, r and s pretty simple. The hard part is getting the actual signature hash (z). You would think that this would be easy since you can just hash the transaction. But you can't do that since the signature itself is part of the scriptSig and a signature can't sign itself.
+
+Instead, what you need to do is to modify the transaction before actually signing it. That is, you have to compute the z in a very particular way. The procedure is as follows.
+
+==== Step 1: Empty all the scriptSigs
+
+The first step is to empty all the scriptSigs when checking the signature. The same procedure is used for creating the signature, except the scriptSig is usually already empty.
+
+TODO image of scriptSig being emptied
+
+==== Step 2: Replace the scriptSig of the input being signed with the previous scriptPubKey
+
+Each input points to a previous transaction output, which itself has a scriptPubKey. We take this scriptPubKey and put that in place of the empty scriptSig. You would think that this would require a lookup on the blockchain, and this may be the case. In practice, you already know the scriptPubKey as the input was chosen as one where you have the private key to unlock it. Therefore, you know the address it was sent to and thus, the scriptPubKey.
+
+TODO image of scriptSig being replaced by scriptPubKey
+
+==== Step 3: Append the hash type
+
+Lastly, we add a 4-byte hash type to the end. This is to specify what the signature is authorizing. The signature can authorize that this input has to go with all the other inputs and outputs (SIGHASH_ALL), go with a specific output (SIGHASH_SINGLE) or go with none of the outputs (SIGHASH_NONE). The latter two have some theoretical use cases, but in practice, almost every transaction is signed with SIGHASH_ALL. That is, the entire transaction has to go through, or the input signature is invalid.
+
+TODO image of hash type being appended
+
