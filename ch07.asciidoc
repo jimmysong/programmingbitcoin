@@ -77,3 +77,27 @@ Once validation of transactions is understood, the creation of transactions is m
 
 The rest of this chapter will be concerned with creating a transaction whose scriptPubKey is a p2pkh output.
 
+=== Creating a transaction
+
+The construction of a transaction is most easily done by answering some basic questions:
+
+1. Where do we want the bitcoins to go?
+2. What outputs are assigned to our private key(s) that we can spend?
+3. How quickly do we want these transactions to get into the blockchain?
+
+The first question is about how much we want to pay whom. We can pay one or more addresses. For the sake of this example, say we want to pay XXXX address 0.01 BTC.
+
+The second question is about what's in our wallet. What do we have available to spend? For the sake of this example, let's say we have one output that's 1.2 BTC. Since this is way more than 0.01 BTC, we'll want to send the rest back to ourselves. Though it's generally bad privacy and security practice to re-use addresses, we'll send the bitcoins back to the same address.
+
+# TODO Sidebar on why it's important not to re-use addresses
+
+The third question is really about fees. If we want to get the transaction in faster, we'll want to pay more fees and if we don't mind waiting, we'll want to pay less. In our case, we'll use 0.0001 BTC as our fee.
+
+# TODO Sidebar about fee estimation
+
+=== Combining to make a transaction
+
+Our plan now laid out. We will have one input at
+
+
+
