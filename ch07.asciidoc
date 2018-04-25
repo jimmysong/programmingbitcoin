@@ -97,7 +97,10 @@ The third question is really about fees. If we want to get the transaction in fa
 
 === Combining to make a transaction
 
-Our plan now laid out. We will have one input at
+Our plan now laid out. We will have one input and two outputs.
 
+# TODO code for creating a transaction
 
+# TODO testnet faucet: Getting coins to play with
 
+# TODO exercise for making your own testnet transaction
