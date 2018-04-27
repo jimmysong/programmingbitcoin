@@ -101,6 +101,12 @@ Our plan now laid out. We will have one input and two outputs.
 
 # TODO code for creating a transaction
 
+=== Signing a transaction
+
+The actual signing of the transaction is the trickiest part. Thankfully, we know how to get the sighash, or the z, from earlier in this chapter. We have to have the private key to actually sign the transaction and signing the z to produce the r and s of the signature is exactly what we need to do.
+
+# TODO code for signing a transaction
+
 # TODO testnet faucet: Getting coins to play with
 
 # TODO exercise for making your own testnet transaction
