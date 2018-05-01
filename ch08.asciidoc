@@ -2,4 +2,10 @@
 
 So far, we've been doing single-key transactions, ones where only a single private key has to sign in order to disperse the funds. But what if we wanted something a little more complicated? A company that does $100 million in Bitcoin transactions might not want all of the funds in a single public key as that key can be stolen by an employee and all funds lost. What can we do?
 
-The solution is multi-sig, or multiple signatures. This was built into Bitcoin from the beginning, but was a bit clunky at first and so it wasn't used.
+The solution is multi-sig, or multiple signatures. This was built into Bitcoin from the beginning, but was a bit clunky at first and so it wasn't used. In fact, as we'll discover, it turns out Satoshi never really tested OP_CHECKMULTISIG as it has a very obvious off-by-one error. The bug has had to stay in the protocol as fixing it would require a hard fork.
+
+=== Bare Multisig
+
+Bare Multisig was the first attempt at creating a transaction that could be signed by multiple parties. To understand Bare Multisig, one must first understand the OP_CHECKMULTISIG operator. As discussed in Chapter X, Script has a lot of different OP codes, of which OP_CHECKMULTISIG is one. The operator consumes a lot of elements from the stack and returns whether or not a certain number of signatures are valid for this transaction.
+
+# TODO diagram of OP_CHECKMULTISIG
