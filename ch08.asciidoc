@@ -26,4 +26,21 @@ Bare multisig is a bit ugly, but it's very much functional. You can have m of n 
 
 3. Third problem is that because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the original whitepaper is actually encoded in this transaction: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into uncompressed public keys. Nevermind that these are not valid points, the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software and is in that sense very abusive.
 
-In order to combat these problems, 
+In order to combat these problems, pay-to-script-hash or p2sh was born.
+
+=== Pay to Script Hash
+
+Pay to Script Hash is a very general solution to the long address problem. It's possible to have a more complicated script than a multisig and there's no real way to compress them into addresses, either. To make this work, we have to be able to take the hash of a bunch of script elements and then somehow reveal the pre-image script elements later. This is at the heart of the design around pay-to-script-hash.
+
+Pay to script hash was introduced in 2011 to a lot of controversy. There were multiple proposals, but as we'll see, the reasoning behind how pay-to-script-hash works was kludgy, but sound.
+
+Essentially, pay-to-script-hash executes a very special rule only when the script goes in this pattern:
+
+<redeemScript> OP_HASH160 <hash> OP_EQUAL
+
+If this exact sequence ends up being true, then whatever is in the redeemScript is then interpreted as script again and then put on the stack. Again, this is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence and only interprets the redeemScript as additional script elements if this sequence is encountered.
+
+If this sounds hacky, it is. But before we get to that, let's look a little closer at exactly how this plays out.
+
+Let's take a simple 1-of-2 multisig like this:
+
