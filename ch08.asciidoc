@@ -42,5 +42,25 @@ If this exact sequence ends up being true, then whatever is in the redeemScript 
 
 If this sounds hacky, it is. But before we get to that, let's look a little closer at exactly how this plays out.
 
-Let's take a simple 1-of-2 multisig like this:
+Let's take a simple 1-of-2 multisig scriptPubKey like this:
+
+TODO: pic of multisig
+
+What we need to do for p2sh is to take a hash of this and store the original script. We put the hash of the multisig as the scriptPubKey with everything but the original script like so:
+
+OP_HASH160 <hash> OP_EQUAL
+
+The multisig pubkey that is hashed is known as the redeemScript and that is what we reveal as part of the redemption.
+
+Redeeming a p2sh script involves not only revealing the redeemScript, but also solving the redeemScript. At this point, you might wonder, where is the redeemScript stored? The redeemScript is not on the blockchain until actual redemption, so it must be stored locally by the creator of the pay-to-script-hash address.
+
+Redemption for the 1-of-2 multisig looks like this:
+
+OP_0 <signature> <redeemScript>
+
+This produces the stack
+
+TODO diagram of what's happening
+
+Note that the OP_0 needs to be there because of the OP_CHECKMULTISIG bug.
 
