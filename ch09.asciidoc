@@ -1,0 +1,9 @@
+## Blocks
+
+Transactions essentially transfer bitcoins from one party to another and are authorized by signatures. This definitely ensures that the sender actually authorized the transaction, but what if the sender sends the same amount to multiple people? This is called the double-spending problem and is so called because the owner of an output may try to spend the same output twice. How is the receiver to be assured that they actually received the amount?
+
+This is where the major innovation of Bitcoin comes in with Blocks. Think of Blocks as a way to order transactions. By ordering transactions, a double-spend cannot happen as the transaction that happens later is not valid.
+
+Now it would be really nice if we could order transactions one at a time, but that would require everyone to agree which transaction is supposed to be next and would cause a lot of overhead in coming to consensus. We can also order large batches of transactions, maybe once per day, but that wouldn't be very practical as the transactions would settle only once per day.
+
+Bitcoin settles every 10 minutes in batches of transactions and that's what blocks are.

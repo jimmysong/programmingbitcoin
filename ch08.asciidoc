@@ -78,8 +78,17 @@ OP_EVAL would be taking the top element of the script and expanded it.
 
 Unfortunately, this much more elegant solution comes with an unwanted side-effect, namely Turing-completeness. Turing completeness is undesirable as it makes the security of a smart contract much harder to guarantee. Thus, the more hacky, but less vulnerable option of special-casing was chosen as part of BIP16. This was implemented in 2011 and continues to be a part of the network today.
 
+==== More complicated scripts
+
+The nice thing about p2sh is that the redeemScript can be as long as you want. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO output by pushing the burden of remembering the script back to the user.
+
+As we'll see later, this will be used for backwards compatibility with Segwit.
+
 ==== Addresses
 
 P2SH addresses have a very similar structure to P2PKH addresses. Namely, there's 20 bytes that are being encoded with a particular prefix and a checksum that helps identify if any of the characters are wrong encoded in Base58.
 
 Specifically, P2SH uses the 5 byte one mainnet which translates to addresses that start with a 3 in base58.
+
+# TODO code for creating p2sh addresses
+
