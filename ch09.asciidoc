@@ -6,4 +6,19 @@ This is where the major innovation of Bitcoin comes in with Blocks. Think of Blo
 
 Now it would be really nice if we could order transactions one at a time, but that would require everyone to agree which transaction is supposed to be next and would cause a lot of overhead in coming to consensus. We can also order large batches of transactions, maybe once per day, but that wouldn't be very practical as the transactions would settle only once per day.
 
-Bitcoin settles every 10 minutes in batches of transactions and that's what blocks are.
+Bitcoin settles every 10 minutes in batches of transactions. These batches of transactions what blocks are. In this chapter we'll go through how to parse them and how to check what's called the proof of work.
+
+### Headers vs Full Blocks
+
+Blocks are batches of transactions and the block header is metadata about the block itself. It has the following fields:
+
+* Version
+* Previous Block
+* Merkle Root
+* Timestamp
+* Bits
+* Nonce
+
+This is the metadata for every block. The nice thing is that each field is fixed length. Version is 4 bytes, Previous Block is 32 bytes, Merkle Root is 32 bytes, Timestamp is 4 bytes, Bits is 4 bytes and Nonce is 4 bytes. The headers therefore, take up exactly 80 bytes for each block. As of this writing there are roughly 520,000 blocks so that ends up being roughl 40 megabytes. The entire blockchain, on the other hand, is roughly 150 GB, so the headers are roughly .027% of the size. This ends up becoming an important design consideration when we look at Simplified Payment Verification in Chapter 10.
+
+### Version
