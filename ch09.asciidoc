@@ -22,3 +22,5 @@ Blocks are batches of transactions and the block header is metadata about the bl
 This is the metadata for every block. The nice thing is that each field is fixed length. Version is 4 bytes, Previous Block is 32 bytes, Merkle Root is 32 bytes, Timestamp is 4 bytes, Bits is 4 bytes and Nonce is 4 bytes. The headers therefore, take up exactly 80 bytes for each block. As of this writing there are roughly 520,000 blocks so that ends up being roughl 40 megabytes. The entire blockchain, on the other hand, is roughly 150 GB, so the headers are roughly .027% of the size. This ends up becoming an important design consideration when we look at Simplified Payment Verification in Chapter 10.
 
 ### Version
+
+Version in normal software refers to a particular state. That is, a particular version reflects a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for.
