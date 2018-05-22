@@ -23,4 +23,27 @@ This is the metadata for every block. The nice thing is that each field is fixed
 
 ### Version
 
-Version in normal software refers to a particular state. That is, a particular version reflects a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for.
+Version in normal software refers to a particular state. That is, a particular version reflects a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for. In the past this was used as a way to indicate a single feature that was ready. Version 2 meant that the software was ready for BIP0016, or pay-to-script-hash as described previously.
+
+Unfortunately, this means that only one feature may be signaled on the network at a time. To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time. The way this works is discussed later.
+
+### Previous Block
+
+All blocks have to point to the parent. This is why the data structure is called a block*chain*, because we have a linked list of blocks that go all the way back to what we call the Genesis Block. We will note here that the block actually ends in a bunch of 0's, which we discuss more during the proof-of-work discussion.
+
+### Merkle Root
+
+Merkle Roots will be discussed more in Chapter 11, but essentially encode all the ordered transactions in a nice 32 byte hash. We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the merkle root along with data from the server to get a proof-of-inclusion.
+
+### Timestamp
+
+The timestamp is a unix-style timestamp taking up 4 bytes. Unix timestamps simply encode the number of seconds since January 1, 1970. This timestamp is used in two places. The first for validating timestamp-based locktimes on transactions included and in calculating a new difficulty every 2016 blocks.
+
+### Bits
+
+Bits is a field that encodes the amount of work necessary in this block. This will be discussed more in the proof-of-work section.
+
+### Nonce
+
+Nonce stands for "number used only once" or n-once. This number is what is changed by miners when looking for proof-of-work.
+
