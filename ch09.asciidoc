@@ -47,3 +47,19 @@ Bits is a field that encodes the amount of work necessary in this block. This wi
 
 Nonce stands for "number used only once" or n-once. This number is what is changed by miners when looking for proof-of-work.
 
+### Proof of work
+
+Proof of work is what secures a block. To understand what proof-of-work is, it's easiest to look at the hash of a block like this:
+
+TODO: add a block hex
+
+The double-sha256 of this block looks like this:
+
+TODO: add a double-sha256 of the block
+
+Now when we interpret this as a little-endian number it's actually quite small for a 256-bit number:
+
+TODO: show number
+
+We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits, 0.25. The first three bits, 0.125 and so on. In this case, we have the first n bits, which is 0.5^70^ or about 1 in x.
+
