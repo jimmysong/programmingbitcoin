@@ -63,3 +63,15 @@ TODO: show number
 
 We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits, 0.25. The first three bits, 0.125 and so on. In this case, we have the first n bits, which is 0.5^70^ or about 1 in x.
 
+Every block in Bitcoin must be below a certain *target*. Target is a relatively small 256-bit number that is computed directly from the bits field. Specifically, the formula for calculating the bits comes down to this:
+
+TODO: image of the formula
+
+target = coefficient * 2^(8*(exponent-3))^
+
+In this case, the target, when computed with this formula is:
+
+TODO: show target number
+
+A valid proof of work is a hash of the block which, when interpreted as a little-endian integer is below the target number. Proof of work hashes are exceedingly rare and the process of mining is essentially the process of finding one of these hashes. To find a single proof-of-work with the above target, the network as a whole must calculate x hashes. To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof of work like this.
+
