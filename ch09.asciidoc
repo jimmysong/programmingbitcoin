@@ -73,5 +73,15 @@ In this case, the target, when computed with this formula is:
 
 TODO: show target number
 
-A valid proof of work is a hash of the block which, when interpreted as a little-endian integer is below the target number. Proof of work hashes are exceedingly rare and the process of mining is essentially the process of finding one of these hashes. To find a single proof-of-work with the above target, the network as a whole must calculate x hashes. To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof of work like this.
+A valid proof of work is a hash of the block which, when interpreted as a little-endian integer is below the target number. Proof of work hashes are exceedingly rare and the process of mining is essentially the process of finding one of these hashes. To find a single proof-of-work with the above target, the network as a whole must calculate x hashes. To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof of work.
+
+#### Difficulty
+
+Target is a bit hard to work with. We know that this is the number that the hash must be below, but as humans, it's hard to fathom the difference between a 180-bit number and a 190-bit number. The first is a thousand times smaller, but from looking at targets, it's not easy to contextualize.
+
+To make different targets easier to compare, the concept of difficulty was born. Essentialy, difficulty is inversely proportional to target to make comparisons easier. The specific formula is:
+
+TODO: formula for difficulty
+
+The difficulty on testnet when there haven't been any blocks found in a while is 1. This gives us context for how difficult mainnet is. Generally, the difficulty number can be thought of as how much more difficult mainnet is than testnet.
 
