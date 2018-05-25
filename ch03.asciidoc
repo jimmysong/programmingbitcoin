@@ -337,8 +337,8 @@ Furthermore, we can verify in Python whether the generator point, G, has the ord
 >>> x = FieldElement(gx, p)
 >>> y = FieldElement(gy, p)
 >>> seven = FieldElement(7, p)
->>> zero = FieldElement(7, p)
->>> G = Point(x, y, seven, zero)
+>>> zero = FieldElement(0, p)
+>>> G = Point(x, y, zero, seven)
 >>> n*G
 Point(infinity)
 ----
