@@ -83,5 +83,17 @@ To make different targets easier to compare, the concept of difficulty was born.
 
 TODO: formula for difficulty
 
-The difficulty on testnet when there haven't been any blocks found in a while is 1. This gives us context for how difficult mainnet is. Generally, the difficulty number can be thought of as how much more difficult mainnet is than testnet.
+The difficulty on testnet when there haven't been any blocks found in 20 minutes resets to 1. This gives us context for how difficult mainnet is. Generally, the difficulty number can be thought of as how much more difficult mainnet is than testnet.
+
+This is the number that gets shown in block explorers and so on as difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
+
+#### Difficulty Adjustment
+
+Every 2016 blocks, target/difficulty/bits are adjusted according to this formula:
+
+TODO: formula for adjustment
+
+The nice thing about this formula is that you only need the headers to calculate what the next block target should be. If the block doesn't have the correct bits, then we can safely reject that block.
+
+Incidentally, because the formula only looks at the bits for the block right before it, the formula often results in a difficulty of 1 on testnet.
 
