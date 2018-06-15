@@ -97,3 +97,10 @@ The nice thing about this formula is that you only need the headers to calculate
 
 Incidentally, because the formula only looks at the bits for the block right before it, the formula often results in a difficulty of 1 on testnet.
 
+TODO: example for difficulty adjustment
+
+### Checking that the Proof-of-Work is sufficient
+
+Proof-of-work is simply the double-sha256 of the block header. If this number, interpreted as a little-endian integer is lower than the target, we have a valid proof-of-work. If not, the block is not valid. Note that this is very easy to check. All we need to calculate is a single double-sha256 to check. On the other hand, creating the proof-of-work is really difficult. We would need to calculate on average X number of double-sha256 hashes at a difficulty of Y. This is what we would call an asymmetric problem and the reason why proof-of-work is an effective way to measure that the block producer has expended a sufficient amount of energy.
+
+There's a reason why this process is likened to mining. It takes roughly 2-90 tons of processing dirt and rock in order to find a single ounce of gold. In the same way, we have to process lots of numerical dirt and rock in order to find a proof-of-work. Proof-of-work is rare and uniformly distributed, making finding one just as difficult with one type of header versus another.
