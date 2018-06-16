@@ -130,8 +130,8 @@ a = FieldElement(num=0, prime=223)
 b = FieldElement(num=7, prime=223)
 x1 = FieldElement(num=192, prime=223)
 y1 = FieldElement(num=105, prime=223)
-x1 = FieldElement(num=17, prime=223)
-y1 = FieldElement(num=56, prime=223)
+x2 = FieldElement(num=17, prime=223)
+y2 = FieldElement(num=56, prime=223)
 
 p1 = Point(x1, y1, a, b)
 p2 = Point(x2, y2, a, b)
@@ -144,7 +144,9 @@ print(p1+p2)
 For the curve y^2^=x^3^+7 over F~223~, find:
 
 (170,142) + (60,139)
+
 (47,71) + (17,56)
+
 (143,98) + (76,66)
 
 ==== Exercise {counter:exercise}
