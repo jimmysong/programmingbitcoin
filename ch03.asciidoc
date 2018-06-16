@@ -144,7 +144,9 @@ print(p1+p2)
 For the curve y^2^=x^3^+7 over F~223~, find:
 
 (170,142) + (60,139)
+
 (47,71) + (17,56)
+
 (143,98) + (76,66)
 
 ==== Exercise {counter:exercise}
