@@ -8,7 +8,7 @@ The solution is multi-sig, or multiple signatures. This was built into Bitcoin f
 
 Bare Multisig was the first attempt at creating a transaction that could be signed by multiple parties. To understand Bare Multisig, one must first understand the OP_CHECKMULTISIG operator. As discussed in Chapter X, Script has a lot of different OP codes, of which OP_CHECKMULTISIG is one. The operator consumes a lot of elements from the stack and returns whether or not a certain number of signatures are valid for this transaction.
 
-# TODO diagram of OP_CHECKMULTISIG
+TODO diagram of OP_CHECKMULTISIG
 
 Essentially, the elements consumed by OP_CHECKMULTISIG is supposed to be:
 
@@ -90,5 +90,5 @@ P2SH addresses have a very similar structure to P2PKH addresses. Namely, there's
 
 Specifically, P2SH uses the 5 byte one mainnet which translates to addresses that start with a 3 in base58.
 
-# TODO code for creating p2sh addresses
+TODO code for creating p2sh addresses
 

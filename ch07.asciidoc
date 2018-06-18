@@ -89,27 +89,27 @@ The first question is about how much we want to pay whom. We can pay one or more
 
 The second question is about what's in our wallet. What do we have available to spend? For the sake of this example, let's say we have one output that's 1.2 BTC. Since this is way more than 0.01 BTC, we'll want to send the rest back to ourselves. Though it's generally bad privacy and security practice to re-use addresses, we'll send the bitcoins back to the same address.
 
-# TODO Sidebar on why it's important not to re-use addresses
+TODO Sidebar on why it's important not to re-use addresses
 
 The third question is really about fees. If we want to get the transaction in faster, we'll want to pay more fees and if we don't mind waiting, we'll want to pay less. In our case, we'll use 0.0001 BTC as our fee.
 
-# TODO Sidebar about fee estimation
+TODO Sidebar about fee estimation
 
 === Combining to make a transaction
 
 Our plan now laid out. We will have one input and two outputs.
 
-# TODO code for creating a transaction
+TODO code for creating a transaction
 
 === Signing a transaction
 
 The actual signing of the transaction is the trickiest part. Thankfully, we know how to get the sighash, or the z, from earlier in this chapter. We have to have the private key to actually sign the transaction and signing the z to produce the r and s of the signature is exactly what we need to do.
 
-# TODO code for signing a transaction
+TODO code for signing a transaction
 
-# TODO exercise for creating the library function for signature creation
+TODO exercise for creating the library function for signature creation
 
-# TODO testnet faucet: Getting coins to play with
+TODO testnet faucet: Getting coins to play with
 
-# TODO exercise for making your own testnet transaction
+TODO exercise for making your own testnet transaction
 
