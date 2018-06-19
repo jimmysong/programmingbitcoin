@@ -1,0 +1,56 @@
+## Networking
+
+The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. XXX nodes are running on the network as of this writing and communicate constantly.
+
+The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years. Two things to understand first about the Bitcoin networking protocol.The nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
+
+With that in mind, let's start with the very first message that one node sends to another, the version message.
+
+### Network Messages
+
+Network messages have a particular form that looks like this
+
+TODO show breakdown of the message format
+
+The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted.
+
+The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at (TODO insert url). Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
+
+The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the field is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB. Note the number is interpreted in little-endian, so in our case here, that is 101 bytes.
+
+The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the double-sha256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and double-sha256 has none. That said, the hash function is common in the rest of the protocol and is thus used here.
+
+TODO Exercises
+
+### Parsing the payload
+
+Each command has a separate payload specification. Here is the one for version:
+
+TODO version payload spec.
+
+Here is the one for inv:
+
+TODO inv payload spec
+
+The idea is that nodes know how to actually send and receive such payloads wrapped inside a network envelope. A fully functional bitcoin node needs to know what to do with every possible network message.
+
+### Network handshake
+
+The network handshake for two nodes is how node communication is established. It goes something like this:
+
+ * A wants to connect to B and sends the version message.
+ * B receives the version message and responds with the verack message and sends its own version message.
+ * A receives the version and verack messages and continues communication
+
+Once the handshake is finished, A and B can communicate however they want. Note that there is no authentication here and it's up to the nodes to verify all data that come in themselves. A node sending a bad tx or block, for example, can expect to get banned by other nodes.
+
+### Connecting to the network
+
+Network communication is tricky due to its asynchronous nature. To experiment, we can establish a connection to a random node on the network synchronously, however:
+
+TODO show code
+
+Connecting this way will only really show a little bit of data. Furthermore, we can't send until we've received and can't respond intelligently to more than 1 message at a time. A more robust implementation looks like this
+
+TODO show code
+

@@ -1,0 +1,3 @@
+## Segwit
+
+Segwit stands for segregated witness and was a large part of the 
