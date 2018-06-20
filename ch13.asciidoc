@@ -1,1 +1,37 @@
 ## Advanced Topics
+
+If you've made it this far, congratulations! You've learned quite a bit about Bitcoin's inner workings and hopefully, you are inspired to learn a lot more. Indeed, this book only scratches the surface and there's quite a bit more to learn. In this chapter, we'll go through what other things you can learn and ways to contribute to the community.
+
+### Wallets
+
+Creating a wallet is a difficult task as securing private keys turns out to be very difficult. That said, there are a bunch of standards for creating wallets that can help in this regard.
+
+#### Heirarchical Deterministic Wallets
+
+For privacy purposes, you generally need to  create lots of multiple addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
+
+To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path.
+
+Additionally, BIP0044 defines exactly what each layer means and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
+
+#### Mnemonic Seeds
+
+Writing down and transcribing a 256-bit seed turns out to be a pain and fraught with errors. To combat this, BIP0039 is a way to encode the seed into a bunch of English words. There are 2048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed. The standard defines exactly how this gets implemented and combined with BIP0032 and BIP0044, is how most wallets backup and restore wallets.
+
+### Payment Channels and Lightning Network
+
+Payment Channels are the atomic unit of the Lightning Network and learning how they work is a good next step.
+
+TODO fill this in
+
+### Contributing
+
+A large part of the Bitcoin ethic is in contributing back to the community. The main way you can do that is through open source projects. There are almost too many to list, but here's a sample:
+
+TODO list of projects
+
+Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas and so on.
+
+TODO more reasons
+
+
