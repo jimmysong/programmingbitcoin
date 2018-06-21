@@ -16,7 +16,7 @@ y = mx + b
 
 You may even remember that *m* here has the name _slope_ and *b*, _y-intercept_. You can also graph linear equations like this:
 
-image::linear.png
+image::linear.png[Linear Equation]
 
 Similarly, you're probably familiar with the quadratic equation and its graph:
 
