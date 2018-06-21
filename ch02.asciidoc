@@ -10,13 +10,13 @@ Elliptic Curves are really just like many equations you've been seeing since aro
 
 y^2^=x^3^+ax+b
 
-This is a little different than what you've seen, but truthfully, isn't really that different. For example, you are probably familiar with the linear equation:
+This is probably somewhat familiar as you've worked with other equations that look similar. For example, you are probably learned the linear equation back in middle school:
 
 y = mx + b
 
 You may even remember that *m* here has the name _slope_ and *b*, _y-intercept_. You can also graph linear equations like this:
 
-TODO: Graph of linear equation
+image::linear.png
 
 Similarly, you're probably familiar with the quadratic equation and its graph:
 
