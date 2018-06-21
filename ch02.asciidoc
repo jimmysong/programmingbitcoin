@@ -27,21 +27,21 @@ Similarly, you're probably familiar with the quadratic equation and its graph:
 
 y = ax^2^+bx+c
 
-TODO: Graph of quadratic equation
+image::quadratic.png[Quadratic Equation]
 
 And sometime in high school, you did even higher orders on x, something called the cubic equation and its graph:
 
 y = ax^3^+bx^2^+cx+d
 
-TODO: Graph of cubic equation
+image::cubic.png[Cubic Equation]
 
 An elliptic curve isn't all that different. The only real difference between the elliptic curve and the cubic curve above is the *y^2^* term on the right side. This has the effect of making the graph symmetric over the x-axis like so:
 
-TODO: Graph of elliptic curve equation
+image::elliptic2.png[Elliptic Curve Equation]
 
 You may also have noticed that the elliptic curve is less steep than the cubic curve. Again, this is because of the *y^2^* term on the right. At times, the curve may even be disjoint like this:
 
-TODO: Graph of another elliptic curve equation
+image::elliptic1.png[Elliptic Curve Equation]
 
 If it helps, an elliptic curve is more or less made by taking a cubic equation graph, taking only the part above the x-axis, flattening it out and then mirroring the top half on the bottom half of the x-axis.
 
