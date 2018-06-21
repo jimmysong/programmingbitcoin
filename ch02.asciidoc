@@ -1,3 +1,8 @@
+= Programming Bitcoin
+Jimmy Song
+v1.0, 2018-06-21
+:imagesdir: images
+
 [[chapter_elliptic_curves]]
 == Elliptic Curves
 

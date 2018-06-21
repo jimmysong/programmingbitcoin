@@ -185,7 +185,7 @@ Addition being closed means:
 
 a+~f~b ∈ F~19~
 
-We denote finite field addition with *+~f~* to avoid confusion with the normal integer addition *+*.
+We denote finite field addition with +~f~ to avoid confusion with the normal integer addition +.
 
 If we utilize modulo arithmetic, we can guarantee this to be the case. We can define __a+~f~b__ this way:
 
