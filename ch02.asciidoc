@@ -45,7 +45,9 @@ image::elliptic1.png[Elliptic Curve Equation]
 
 If it helps, an elliptic curve is more or less made by taking a cubic equation graph, taking only the part above the x-axis, flattening it out and then mirroring the top half on the bottom half of the x-axis.
 
-TODO: Diagram showing what's described in prev paragraph
+image::process1.png[Start]
+image::process2.png[Stretch]
+image::process3.png[Symmetric]
 
 Specifically, the elliptic curve used in Bitcoin is called secp256k1 and it uses this particular equation:
 
@@ -53,11 +55,11 @@ y^2^=x^3^+7
 
 The canonical form is y^2^=x^3^+ax+b so you can also think of the curve as being `a=0`, `b=7`. The curve looks like this:
 
-TODO: Graph of secp256k1 over reals
+image::elliptic3.png[secp256k1 Curve]
 
 === Coding Elliptic Curves in Python
 
-We are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
+For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
 
 [source,python]
 ----
@@ -78,6 +80,22 @@ class Point:
 <1> We check here that the point is actually on the curve.
 <2> Points are equal iff they are on the same curve and have the same coordinates
 
+This allows us to do something like this:
+
+[source, python]
+----
+>>> from ecc import Point
+>>> p1 = Point(-1, -1, 5, 7)
+>>> p2 = Point(-1, -2, 5, 7)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "ecc.py", line 143, in __init__
+    raise ValueError('({}, {}) is not on the curve'.format(self.x, self.y))
+ValueError: (-1, -2) is not on the curve
+----
+
+We want the $$__init__$$ method to throw an error when the point is actually not on the curve.
+
 ==== Exercise {counter:exercise}
 
 Determine which of these points are on the curve y^2^=x^3^+5x+7:
@@ -89,18 +107,19 @@ Determine which of these points are on the curve y^2^=x^3^+5x+7:
 
 Write the $$__ne__$$ method for `Point`.
 
-
 === Point Addition
 
 The main reason that Elliptic Curves are useful is because of something called Point Addition. 
 
 It turns out that for every elliptic curve, a line will intersect at either 1 or 3 points.
 
-TODO: Graph of various intersections of elliptic curves and lines
+image::intersect1.png[Line intersecting at 1 point]
+image::intersect3.png[Line intersecting at 3 points]
 
 The two exceptions are when a line is _tangent_ to the curve and when a line is exactly vertical.
 
-TODO: Graph of tangent and vertical lines.
+image::intersect2-1.png[Vertical Line]
+image::intersect2-2.png[Tangent Line]
 
 We will come back to these two cases later.
 
@@ -113,7 +132,7 @@ For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
 
 Visually, it looks something like this:
 
-TODO: Graph of various point addition possibilities
+image::pointaddition.png[Point Addition]
 
 As you can see, point addition is not easily predictable. We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve. That is, point addition is non-linear.
 
@@ -136,7 +155,7 @@ P + (-P) = I
 
 Visually, these are points opposite each other in the elliptic curve.
 
-TODO: Show vertical point addition image
+image::intersect2-1.png[Vertical Line]
 
 This is why we call this point the point at infinity. We have one extra point in the elliptic curve which makes the vertical line intersect a third time.
 
@@ -144,7 +163,10 @@ Commutativity means that P+Q=Q+P. This is obvious since the line going through P
 
 Associativity means that (P+Q) + R=P + (Q+R). This isn't obvious and is the reason for flipping over the x-axis.
 
-TODO: Show associativity visually.
+image::associativity1.png[Case 1]
+image::associativity2.png[Case 1]
+
+You can see that in both cases, the final point is exactly the same
 
 ==== Exercise {counter:exercise}
 
