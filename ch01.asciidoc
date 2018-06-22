@@ -1,3 +1,6 @@
+= Programming Bitcoin
+:imagesdir: images
+
 [[chapter_finite_fields]]
 == Finite Fields
 
@@ -100,8 +103,7 @@ Write the corresponding method $$__ne__$$ which checks if two `FieldElement` obj
 
 We can define addition on the finite set using something called modulo arithmetic. Modulo arithmetic is something you probably did back in elementary school. Remember problems like this?
 
-
-TODO: Put long division image 27)7‾‾‾‾‾ with 3 R 6 on top
+image::longdivision.png[Long Division]
 
 Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We can actually define modulo in the same way. We use the operator *%* for "modulo".
 
@@ -109,7 +111,7 @@ Whenever the division wasn't even, there was something called the "remainder" wh
 
 Because
 
-TODO: Put long division image 7)3‾‾‾‾‾ with 2 R 1 on top
+image::longdivision-2.png[Long Division]
 
 We can do the same for larger numbers:
 
