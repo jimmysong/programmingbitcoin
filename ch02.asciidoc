@@ -1,6 +1,4 @@
 = Programming Bitcoin
-Jimmy Song
-v1.0, 2018-06-21
 :imagesdir: images
 
 [[chapter_elliptic_curves]]
@@ -164,7 +162,7 @@ Commutativity means that P+Q=Q+P. This is obvious since the line going through P
 Associativity means that (P+Q) + R=P + (Q+R). This isn't obvious and is the reason for flipping over the x-axis.
 
 image::associativity1.png[Case 1]
-image::associativity2.png[Case 1]
+image::associativity2.png[Case 2]
 
 You can see that in both cases, the final point is exactly the same. While this doesn't prove the associativity of Point addition, the visual should at least give you the intuition that this is true.
 
@@ -201,7 +199,7 @@ class Point:
         self.y = y
 	if self.x is None and self.y is None: <1>
 	    return
-        if self.y**2 != self.x**3+self.a*self.x + self.b:
+        if self.y**2 != self.x**3 + self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
     
 

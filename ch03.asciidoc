@@ -1,3 +1,6 @@
+= Programming Bitcoin
+:imagesdir: images
+
 [[chapter_elliptic_curve cryptography]]
 == Elliptic Curve Cryptography
 
@@ -10,14 +13,16 @@ We discussed in the last chapter what an Elliptic curve looks like visually beca
 What's interesting is that *real* numbers are also a field. Note unlike a *finite* field, there are an infinite number of real numbers, but otherwise the same properties hold:
 
 * if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
-* if *a* is in the set, *-a* is in the set, or what we call the _additive inverse_.
-* if *a* is in the set and is not 0, *a^-1^* is in the set, or what we call the _multiplicative inverse_.
+* The additive identity, *0* exists. This means *a + 0 = a*
+* The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
+* If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
+* If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
 
-Clearly, all of these are true as normal addition and multiplication apply for the first part, -x applies for the second part and 1/x applies for the third part.
+Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse. Normal math applies to everything here.
 
 The nice thing about real numbers is that we can easily plot what's going on and see the whole thing visually as we did in the last chapter. For example, y^2^=x^3^+7 can be plotted like this:
 
-TODO: graph of secp256k1 curve
+image::elliptic3.png[secp256k1 Curve]
 
 What's interesting is that we can use this equation over any field, including the Finite Fields we explored in Chapter 1. The only difference is that we have to use the addition/subtraction/multiplication/division as we defined them, not the "normal" versions that the real numbers use.
 
@@ -32,9 +37,9 @@ Indeed, that point is on the curve using the Finite Field math.
 
 Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different:
 
-TODO: graph of secp256k1 curve over finite field
+image::elliptic3.png[Elliptic Curve over a Finite Field]
 
-As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete.
+As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete. About the only pattern is that the curve is symmetric right around the middle, which is due to the fact that the graph is symmetric, not over the x-axis as in the curve over reals, but about half-way up the y-axis.
 
 What's important here to realize is that we can evaluate the same equation using the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works. This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
 
@@ -50,12 +55,13 @@ Because we defined an Ellptic curve point and utilize the +,-,* and / operators 
 
 [source,python]
 ----
-a = FieldElement(num=0, prime=223)
-b = FieldElement(num=7, prime=223)
-x = FieldElement(num=192, prime=223)
-y = FieldElement(num=105, prime=223)
-
-p1 = Point(x, y, a, b)
+>>> from ecc import FieldElement, Point
+>>> a = FieldElement(num=0, prime=223)
+>>> b = FieldElement(num=7, prime=223)
+>>> x = FieldElement(num=192, prime=223)
+>>> y = FieldElement(num=105, prime=223)
+>>> p1 = Point(x, y, a, b)
+Point(192, 105)_223
 ----
 
 When initializing `Point`, we will run through this part of the code:
@@ -69,16 +75,61 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-        if self.y$$**$$2 != self.x$$**$$3+self.a*self.x + self.b: # <1>
+	if self.x is None and self.y is None:
+	    return
+        if self.y**2 != self.x**3 + self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
 ----
-<1> Check to see whether the point is on the curve.
 
-The addition (+), exponentiation (**) and equality (==) here will end up utilizing the $$__add__$$, $$__pow__$$ and $$__eq__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
+The addition (+), multiplication (*), exponentiation (**) and equality (!=) here will end up utilizing the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
 
-==== Exercise {counter:exercise}
+We've already coded the two classes that we need to implement Elliptic Curve points over a Finite Field. However, to check our work, it will be useful to create a test suite. We will do this using the results of the previous exercise.
 
-Write a test called test_on_curve that tests whether the points from the previous exercise over the curve y^2^=x^3^+7 over F~223~ are valid or not.
+[source,python]
+----
+from unittest import TestCase
+
+class ECCTest(TestCase):
+
+    def test_on_curve(self):
+        prime = 223
+        a = FieldElement(0, prime)
+        b = FieldElement(7, prime)
+        
+        valid_points = ((192,105), (17,56), (1,193))
+        invalid_points = ((200,119), (42,99))
+        
+        # iterate over valid points
+        for x_raw, y_raw in valid_points:
+            x = FieldElement(x_raw, prime)
+            y = FieldElement(y_raw, prime)
+            # Creating the point should not result in an error
+            Point(x, y, a, b) # <1>
+
+        # iterate over invalid points
+        for x_raw, y_raw in invalid_points:
+            x = FieldElement(x_raw, prime)
+            y = FieldElement(y_raw, prime)
+            # check that creating the point results in a ValueError
+            with self.assertRaises(ValueError):
+                Point(x, y, a, b) # <1>
+----
+<1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, utilize all the overloaded methods in `FieldElement`
+
+We can now run this test like so:
+
+[source,python]
+----
+>>> import ecc
+>>> from helper import run_test # <1>
+>>> run_test(ecc.ECCTest('test_on_curve'))
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+----
+<1> helper is a module with some very useful utility functions, including the ability to run unit tests individually.
 
 === Point Addition over Finite Fields
 
@@ -88,7 +139,7 @@ y=mx+b
 
 It turns out that a "line" in a finite field is not quite what you'd expect, either:
 
-TODO: graph of a line over a finite field
+image::linefinitefield.png[Line over a finite field]
 
 Still, the equation works and we can calculate what y should be for a given x.
 
@@ -120,46 +171,49 @@ y~3~=s(x~1~-x~3~)-y~1~
 
 All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some Cryptographic primitives.
 
-==== Coding Point Addition over Finite Fields
-
-Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$$, $$__mul__$$, $$__truediv__$$ and $$__pow__$$, we can simply initialize `Point` with `FieldElement` objects and point addition will work:
-
-[source,python]
-----
-a = FieldElement(num=0, prime=223)
-b = FieldElement(num=7, prime=223)
-x1 = FieldElement(num=192, prime=223)
-y1 = FieldElement(num=105, prime=223)
-x1 = FieldElement(num=17, prime=223)
-y1 = FieldElement(num=56, prime=223)
-
-p1 = Point(x1, y1, a, b)
-p2 = Point(x2, y2, a, b)
-
-print(p1+p2)
-----
 
 ==== Exercise {counter:exercise}
 
 For the curve y^2^=x^3^+7 over F~223~, find:
 
 (170,142) + (60,139)
+
 (47,71) + (17,56)
+
 (143,98) + (76,66)
+
+=== Coding Point Addition over Finite Fields
+
+Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$$, $$__mul__$$, $$__truediv__$$, $$__pow__$$, $$__eq__$$ and $$__ne__$$, we can simply initialize `Point` with `FieldElement` objects and point addition will work:
+
+[source,python]
+----
+>>> from ecc import FieldElement, Point
+>>> a = FieldElement(num=0, prime=223)
+>>> b = FieldElement(num=7, prime=223)
+>>> x1 = FieldElement(num=192, prime=223)
+>>> y1 = FieldElement(num=105, prime=223)
+>>> x1 = FieldElement(num=17, prime=223)
+>>> y1 = FieldElement(num=56, prime=223)
+>>> p1 = Point(x1, y1, a, b)
+>>> p2 = Point(x2, y2, a, b)
+>>> print(p1+p2)
+Point(170,142)_223
+----
 
 ==== Exercise {counter:exercise}
 
-Write unit tests to test point addition
+Extend `ECCTest` to test for the additions from the previous exercise.
 
 === Scalar multiplication for Elliptic Curves
 
 Because we can add a point to itself, we can introduce some new notation:
 
-(170,142) + (170,142) = 2*(170,142)
+(170,142) + (170,142) = 2⋅(170,142)
 
 Similarly, because we have associativity, we can actually add the point again:
 
-2*(170,142) + (170,142) = 3*(170, 142)
+2⋅(170,142) + (170,142) = 3⋅(170, 142)
 
 We can actually do this as many times as we want. This is what we call Scalar Multiplication. That is, we have a _scalar_ number in front of the point. We can do this because we have defined point addition.
 
@@ -171,7 +225,7 @@ This is because point addition is non-linear. That is, not easy to calculate. In
 
 This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
-The interesting thing about Scalar Multiplication is that at a certain number, we get to the point at infinity (remember, point at infinity is a lot like zero). If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set like this:
+The interesting thing about Scalar Multiplication is that at a certain number, we get to the point at infinity (remember, point at infinity is the additive identity or 0). If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set like this:
 
 { G, 2G, 3G, 4G, ... nG }
 
@@ -199,8 +253,24 @@ The discrete log problem is really the ability to reverse this:
 
 log~P~Q=7
 
-The log equation on the left is not analytically calculatable. That is, there is no known formula that you can plug in to get the answer generally. This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Scalar Division" problem instead of Discrete Log.
+The log equation on the left is not analytically calculatable. That is, there is no known formula that you can plug in to get the answer generally. This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Point Division" problem instead of Discrete Log.
 ****
+
+==== Exercise {counter:exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find:
+
+2⋅(192,105)
+
+2⋅(143,98)
+
+2⋅(47,71)
+
+4⋅(47,71)
+
+8⋅(47,71)
+
+21⋅(47,71)
 
 === Mathematical Groups
 
@@ -216,7 +286,7 @@ If you haven't guessed by now, the identity is defined as the point at infinity.
 
 We call 0 the point at infinity because visually, it's the point that exists to help the math work out:
 
-TODO: show visual of how the vertical line goes to infinity
+image::intersect2-1.png[Vertical Line]
 
 ==== Closure
 
@@ -238,7 +308,7 @@ So we know that this element is in the group, proving closure.
 
 Visually, invertibility is easy to see:
 
-TODO: show graph of points on opposite sides of the x-axis
+image::intersect2-1.png[Vertical Line]
 
 Mathematically, we know that if aG is in the group, (n-a)G is also in the group. You can add them together to get 0.
 
@@ -246,7 +316,9 @@ Mathematically, we know that if aG is in the group, (n-a)G is also in the group.
 
 Again, this is very easy to see visually:
 
-TODO: show that points can reverse order
+image::pointaddition.png[Point Addition]
+
+Clearly, P+Q=Q+P because they end up drawing the same line.
 
 The equations for figuring out the third point also make this clear:
 
@@ -260,19 +332,24 @@ You can swap P~1~ and P~2~ to get the exact same equation.
 
 ==== Associativity
 
-This is the hardest to prove but can be seen visually:
+This is the hardest to prove but can be seen visually from the last chapter:
 
-TODO: show that (A+B)+C=A+(B+C)
+image::associativity1.png[Case 1]
+image::associativity2.png[Case 2]
 
 Mathematically, this is a bit more involved, but the math can be proven given the definition that we have.
 
 TODO: write out the proof for associativity.
 
+==== Exercise {counter:exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find the order of the group generated by (15,86)
+
 === Defining the curve for Bitcoin
 
-While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire space of primes. That is try every single point in the group. That is, if the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
+While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. That is try every single point in the group. That is, if the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
 
-But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of elliptic curve cryptography depends on computers *not* being able to go through the entire space of the group.
+But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of Elliptic Curve Cryptography depends on computers *not* being able to go through the entire space of the group.
 
 Any Elliptic Curve has to be defined with the following parameters:
 
@@ -311,7 +388,7 @@ Number of atoms in the universe ~ 10^80^
 
 A trillion (10^9^) computers doing a trillion computations every trillionth (10^-9^) of a second for a trillion years is still only 10^56^ computations. It's simply infeasible to brute force a private key.
 
-Think of finding a private key this way. It is easier to find a particular atom in the Milky Way than to find a private key in Bitcoin.
+Think of finding a private key this way. It is a billion times easier to find a particular atom in the Milky Way than to find a private key in Bitcoin.
 ****
 
 ==== Working with secp256k1
@@ -337,8 +414,8 @@ Furthermore, we can verify in Python whether the generator point, G, has the ord
 >>> x = FieldElement(gx, p)
 >>> y = FieldElement(gy, p)
 >>> seven = FieldElement(7, p)
->>> zero = FieldElement(7, p)
->>> G = Point(x, y, seven, zero)
+>>> zero = FieldElement(0, p)
+>>> G = Point(x, y, zero, seven)
 >>> n*G
 Point(infinity)
 ----
@@ -371,12 +448,14 @@ B = 7
 
 class S256Point(Point):
 
+    zero = S256Field(0) # <1>
+
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)
         if type(x) == int:
             super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
         else:
-            super().__init__(x=x, y=y, a=a, b=b)  # <1>
+            super().__init__(x=x, y=y, a=a, b=b)  # <2>
 
     def __repr__(self):
         if self.x is None:
@@ -384,7 +463,8 @@ class S256Point(Point):
         else:
             return 'Point({},{})'.format(self.x, self.y)
 ----
-<1> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
+<1> `zero` needs to be defined as a `S256Field` object so that the equality in the $$__add__$$ method still works.
+<2> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
 
 This should give us an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
 
@@ -427,7 +507,9 @@ We already know G as the generator point. P=eG where e is the secret. The questi
 If you know the secret e, you can do this:
 
 R = uG + vP
+
 R = uG + veG
+
 kG = (u+ve)G
 
 You can choose u and v in a way as to get
