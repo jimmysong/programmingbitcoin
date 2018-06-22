@@ -201,7 +201,7 @@ class Point:
         self.y = y
 	if self.x is None and self.y is None: <1>
 	    return
-        if self.y**2 != self.x**3+self.a*self.x + self.b: # <1>
+        if self.y**2 != self.x**3+self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
     
 
