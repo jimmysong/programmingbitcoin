@@ -627,18 +627,101 @@ Now checking that the order of G is N is trivial:
 Point(infinity)
 ----
 
+=== Public Key Cryptography
 
+We can now describe Public Key Cryptography and how we can use Elliptic Curves over finite fields to build this up. In general, we need a finite cyclical group, which we have with point addition in order to make everything work.
 
+The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute P when we know e and G, but we cannot easily compute s when we know P and G. This is the Discrete Log Problem described earlier.
+
+We'll use the fact that it's extremely difficult to compute e to create signing and verification.
+
+Generally, we call `e` the Private Key and `P` the Public Key. We'll note here that the private key is a single 256-bit number and the public key is a coordinate (x,y) where x and y are _each_ 256-bit numbers.
 
 === Signing and Verification
 
-To set up the motivation for why public key cryptography exists, imagine this scenario. You want to prove that you know a secret, say, a medicine for regrowing hair, that you want to sell. The buyer (a giant pharmaceutical company) is rightfully skeptical and demands some proof that the medicine works. How would you do this?
+To set up the motivation for why signing and verification exists, imagine this scenario. You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards.
 
-If you reveal your formula to the buyer, the buyer might just take the formula and not pay you. What can you do?
+Now if someone could observe you and interact with you, proving this would be easy. Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow. You, being a very good archer do this and prove that you are indeed, a very good archer. The target, if specified by the challenger, is easy for that challenger to verify.
 
-Essentially, you want to reveal possession of the secret without revealing the secret itself. How can that be achieved? In our example, the pharmaceutical company can choose several bald people and give you some time with them to apply the medicine. They know it's very difficult to regrow hair on bald people's heads, so being able to do so would prove you have the formula. Once the hair regrows, voila, you've proven you've got the formula and you can start negotiations to sell the formula.
+Unfortunately, this doesn't scale very well. If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges. What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer.
 
-This is the same problem we're trying to solve in public key cryptography, except the secret isn't some hair regrowth medicine, but a 256-bit number. We want to prove possession of the secret without revealing the secret itself. In order to do this, you have to have a difficult problem that only the possessor of the secret would be able to solve. In the above example, the difficult problem was regrowing hair on bald people. The difficult problem, in our case, is this:
+If, for example, you shot an arrow into a target of your choosing, then the people observing afterwards won't necessarily be convinced. After all, you may be a sneaky person that paints the target around wherever your arrow happened to land. So what can you do?
+
+Here's a very clever thing you can do. Forge the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow. Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit. The tip clearly had to be forged before the arrow was shot, so this can prove you are indeed a good archer.
+
+This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number. We want to prove possession of the secret without revealing the secret itself. We do this by putting the target into our calculation and hitting that target.
+
+==== Forging the Target
+
+The forging of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
+
+The secret in our case is `e` satisfying:
+
+eG = P
+
+Where P is the public key and e is the private key.
+
+The target that we're going to aim at is more or less random. We are going to choose a random value `k` which is a 256-bit number. We then do this:
+
+kG = R
+
+R is our target. This is what we're aiming for. And in fact, we're only going to care about the x-coordinate of R, which we'll call r. You may have guessed already that r here stands for random.
+
+We claim at this point that this equation is equivalent to the Discrete Log Problem:
+
+uG+vP=kG where k was chosen randomly and u,v≠0 can be chosen and G,P are known
+
+This is due to the fact that:
+
+uG+vP=kG implies vP=(k-u)G
+
+we know v≠0, so we can divide by the scalar multiple v.
+
+P=((k-u)/v)G
+
+If we can choose k, u and v to solve this equation, then we can solve for e:
+
+eG=((k-u)/v)G implies e = (k-u)/v
+
+This means either we can break the Discrete Log problem or we knew e all along. Since we assume Discrete Log is hard, we can say e is known by the one who came up with u and v.
+
+The one flaw with this argument is that you're trusting k is actually known by the signer.
+
+u=1, v=1, R=G+P
+
+This is the equivalent of the signer can just painting a target around wherever the arrow landed. How do we prove intent?
+
+This, we can do by making one of the arguments, u have r as a component:
+
+u = f(r)
+
+The simplest function of r is just the identity function:
+
+u = r
+
+Then we can solve for v:
+
+e = (k-r)/v
+v = (k-r)/e
+
+At which point, if you know e, then you can do:
+
+uG+vP=rG+((k-r)/e)P=rG+((k-r)/e)eG=rG+(k-r)G=rG+kG-rG=kG=R=(r,y)
+
+And indeed, this could be a signature algorithm, but it leaves you vulnerable to this:
+
+uG=R-vP
+
+G=(1/r)(R-vP)
+
+((k-r)/e)P=R-uG
+(k-r)P=e(R-uG)
+
+
+
+
+
+
 
 uG+vP where u,v≠0
 
