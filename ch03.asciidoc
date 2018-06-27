@@ -685,67 +685,35 @@ eG=((k-u)/v)G implies e = (k-u)/v
 
 This means either we can break the Discrete Log problem or we knew e all along. Since we assume Discrete Log is hard, we can say e is known by the one who came up with u and v.
 
-The one flaw with this argument is that you're trusting k is actually known by the signer.
+One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting. This is an agreed to result of the shooting at the target. William Tell, for example, was shooting so that he could save his son. You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive. This has to be incorporated into our equations.
 
-u=1, v=1, R=G+P
+In signature/verification parlance, this is called the _signature hash_. This generally is the hash of the message that both parties agree to that reveal the intent of the shooter. We denote this with the letter `z`. This is incorporated into our uG+vP calculation this way:
 
-This is the equivalent of the signer can just painting a target around wherever the arrow landed. How do we prove intent?
+u = r/s, v = z/s
 
-This, we can do by making one of the arguments, u have r as a component:
+Since r is used in the calculation of u, we now have the tip of the arrow forged. We also have the intent of the shooter incorporated into v, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
 
-u = f(r)
+To make the equation work, we can calculate s:
 
-The simplest function of r is just the identity function:
+uG+vP=R=kG
 
-u = r
+uG+veG=kG
 
-Then we can solve for v:
+u+ve=k
 
-e = (k-r)/v
-v = (k-r)/e
+r/s+ze/s=k
 
-At which point, if you know e, then you can do:
+(r+ze)/s=k
 
-uG+vP=rG+((k-r)/e)P=rG+((k-r)/e)eG=rG+(k-r)G=rG+kG-rG=kG=R=(r,y)
+s=(r+ze)/k
 
-And indeed, this could be a signature algorithm, but it leaves you vulnerable to this:
+This is indeed the basis of the signature algorithm and the two numbers actually communicated as part of the signature are r and s.
 
-uG=R-vP
-
-G=(1/r)(R-vP)
-
-((k-r)/e)P=R-uG
-(k-r)P=e(R-uG)
-
-
-
-
-
-
+Verification is simple:
 
 uG+vP where u,v≠0
 
-We already know G as the generator point. P=eG where e is the secret. The question becomes, can you manipulate this sum? That is, can you make the result some point R=kG that is chosen beforehand?
-
-If you know the secret e, you can do this:
-
-R = uG + vP
-
-R = uG + veG
-
-kG = (u+ve)G
-
-You can choose u and v in a way as to get
-
-d = u+ve
-
-If you don't know e, you are now forced to solve this equation:
-
-kG = uG + vP
-(k-u)G = vP
-
-Remember, at this point that Discrete Scalar division is impossible (you can't divide both sides by v as that's the same as the Discrete Log Problem). To solve this equation, you either have to choose u in a way as to get the (k-u)G result to be vP or choose v in a way as to get vP to be (k-u)G. In other words, you have to be able to solve one of two discrete log problems!
-
+uG+vP=(r/s)G+(ze/s)G=((r+ze)/s)G=((r+ze)/((r+ze)/k))G=kG=(r,y)
 
 ===== Choosing a point
 
