@@ -858,13 +858,6 @@ class S256Point(Point):
 So given a public key (or point on the elliptic curve), we can verify whether a signature is valid or not.
 
 
-==== DER Signature Format
-
-TODO: describe
-
-TODO exercise to verify
-
-
 ==== Signing In-depth
 
 Given that we know how verification should work, signing is more or less straightforward. The only missing step is figuring out what k, and thus R=kG to use.
@@ -881,7 +874,39 @@ Signing Procedure:
 
 Note that the pubkey P and z have to be transmitted to whoever wants to verify as well. We'll see later that z is computed and P is sent along with the signature.
 
-TODO exercise to sign something
+==== Creating a Signature
+
+We can now create a signature using some of the primitives that we have.
+
+[source,python]
+----
+>>> from ecc import S256Point, G, N
+>>> from random import randint
+>>> from helper import little_endian_to_int, double_sha256
+>>> e = int.from_bytes(double_sha256('my secret'), 'big') # <1>
+>>> z = int.from_bytes(double_sha256('my message'), 'big') # <2>
+>>> k = randint(0, N)
+>>> r = (k*G).x.num # <3>
+>>> k_inv = pow(k, N-2, N)
+>>> s = (z+r*e) * k_inv % N # <4>
+>>> point = e*G # <5>
+>>> print(point, z, r, s)
+
+----
+<1> This would be something like a "brain wallet". Please don't use this for a real secret.
+<2> This is the message that we're signing.
+<3> kG = (r,y) so we take the x coordinate only
+<4> s = (z+re)/k. We mod by N because we know this is a cyclical group of order N
+<5> The public point needs to be known by the verifier
+
+==== Exercise {counter:exercise}
+
+Sign the following message with the secret
+
+```
+e = 12345
+z = int.from_bytes(double_sha256('Programming Bitcoin!'), 'big')
+```
 
 ==== Programming Message Signing
 
@@ -922,7 +947,7 @@ from random import randint
 
 The `s` here has to be a low value
 
-TODO: sidebar - importance of k being really random
+MAYBE: sidebar - importance of k being really random
 
-TODO: sidebar - deterministic k values
+MAYBE: sidebar - deterministic k values
 
