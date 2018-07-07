@@ -2,7 +2,7 @@
 
 == Serialization
 
-We've created a lot of classes thus far, including PrivateKey, S256Point and Signature. We now need to start thinking about how to transmit thes objects to other computers on the network, or even to disk as we'll need to store objects of these classes. This is where serialization comes into play. We want to communicate or store a S256Point or a Signature or a PrivateKey. Ideally, we want to do this efficiently for reasons we'll see in Chapter 9 (Networking).
+We've created a lot of classes thus far, including PrivateKey, S256Point and Signature. We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk as we'll need to store objects of these classes. This is where serialization comes into play. We want to communicate or store a S256Point or a Signature or a PrivateKey. Ideally, we want to do this efficiently for reasons we'll see in Chapter 9 (Networking).
 
 === Uncompressed SEC format
 
@@ -18,7 +18,7 @@ Here is how the uncompressed SEC format for a given point P=(x,y) is generated:
 
 TODO: sidebar - what is big and little endian?
 
-This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into a 32 bytes. Here's how this is done in code:
+This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into 32 bytes. Here's how this is done in code:
 
 [source,python]
 ----
@@ -305,6 +305,6 @@ We can now create the wif method on the PrivateKey class.
 
 === Big and Little Endian Redux
 
-It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and wif. A lot of stuff coming up in Chapter 5 onward will utilze Little Endian encoding. For this reason, we turn to these two exercises.
+It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and wif. A lot of stuff coming up in Chapter 5 onward will utilize Little Endian encoding. For this reason, we turn to these two exercises.
 
 TODO: exercise on turning numbers into little endian and back

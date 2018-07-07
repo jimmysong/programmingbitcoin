@@ -11,7 +11,7 @@ In this chapter we examine the mechanism by which Bitcoins are locked and unlock
 
 === Mechanics of SCRIPT
 
-If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. SCRIPT is the smart contract langauge, or the programming language used to express how bitcoins are to be transferred.
+If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. SCRIPT is the smart contract language, or the programming language used to express how bitcoins are to be transferred.
 
 Think of a personal check. In a sense, a personal check is a type of contract. A personal check is an agreement to transfer some amount of money from one person to another. Bitcoin has the digital equivalent of a contract in SCRIPT.
 
@@ -26,7 +26,7 @@ There are a lot of reasons for this, but let's start with program execution. Any
 There are other reasons to avoid Turing Completeness and that's because smart contracts, and programs in general, with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to have behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which is what happens to smart contracts with bad code.
 ****
 
-What you are required to do as part of a transaction is to assign Bitcoins to a *locking* script. The locking script is what's specified in ScriptPubKey (see chapter 5). Think of this as the lock box where some money is deposited which only the person with the key to the box can open. The money inside, of course, can only be accessed by someone with the key.
+What you are required to do as part of a transaction is to assign Bitcoins to a *locking* script. The locking script is what's specified in ScriptPubKey (see chapter 5). Think of this as the locked box where some money is deposited which only the person with the key to the box can open. The money inside, of course, can only be accessed by someone with the key.
 
 The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) and proves ownership of the locked box in order to spend the funds.
 
@@ -90,7 +90,7 @@ OP_CODES = {...}
 class Script:
 
     def __init__(self, elements):
-        self.elements = elements  # <1>
+        self.elements = elements
 
     def __repr__(self):
         result = ''
@@ -108,7 +108,7 @@ class Script:
         current = s.read(1)
         while current != b'':
             op_code = current[0]
-            if op_code >= 1 and op_code <= 75:  # <2>
+            if op_code >= 1 and op_code <= 75:  # <1>
                 # we have an element
                 elements.append(s.read(op_code))
             else:
@@ -129,12 +129,11 @@ class Script:
         return result
 
 ----
-<1> The elements attribute is a list of items in this script. p2pkh (later in this chapter), would be OP_DUP, OP_HASH160, 20-byte hash, OP_EQUALVERIFY, OP_CHECKSIG, or 5 items.
-<2> We have an element, not an operation if it's between 1 and 75 (`4b`), so op_code is a bit of a misnomer here.
+<1> We have an element, not an operation if it's between 1 and 75 (`4b`), so op_code is a bit of a misnomer here.
 
 === Combining the script fields
 
-It's important to realize at this point that the lock box (ScriptPubKey) and the unlocking (ScriptSig) are in *different* transactions. Specifically, the lock box is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction *points to the receiving transaction*. Essentially, we have a situation like this:
+It's important to realize at this point that the locked box (ScriptPubKey) and the unlocking (ScriptSig) are in *different* transactions. Specifically, the locked box is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction *points to the receiving transaction*. Essentially, we have a situation like this:
 
 images::script2.png[ScriptPubKey and ScriptSig]
 
@@ -158,7 +157,7 @@ Pay-to-pubkey (aka p2pk) was used a lot during the early days of bitcoin. Most c
 
 We learned back in chapter 3 how signing and verification work in ECDSA. Specifically, you need the message (z), the public key (P) and the signature (r,s). The mechanics of p2pk are simply that you send bitcoins to a public key and let the owner of the private key unlock through a signature and determine where the bitcoins should go. Effectively, the ScriptPubKey puts those bitcoins under the control of the private key owner.
 
-Specifying where the bitcoins go is the job of the scriptPubKey. As stated above, this is the lock box that receive the bitcoins. The actual scriptPubKey looks like this:
+Specifying where the bitcoins go is the job of the scriptPubKey. As stated above, this is the locked box that receives the bitcoins. The actual scriptPubKey looks like this:
 
 images::p2pk1.png[P2PK ScriptPubKey]
 
@@ -328,7 +327,7 @@ OP_EQUAL will consume 2 items and put a 1 back if equal, 0 back if not.
 
 images::ex9.png[Example 1 End]
 
-Note that this isn't particularly hard to figure out and requires no signature. As a result, this sort of script is vulnerable to being taken by pretty much anyone. Think of this as a lock box with a very flimsy lock that anyone can break into. It turns out that most transactions have some signature component in them as a script without some signature component is very easily stolen.
+Note that this isn't particularly hard to figure out and requires no signature. As a result, this sort of script is vulnerable to being taken by pretty much anyone. Think of this as a locked box with a very flimsy lock that anyone can break into. It turns out that most transactions have some signature component in them as a script without some signature component is very easily stolen.
 
 ==== Exercise {counter:exercise}
 

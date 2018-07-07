@@ -24,13 +24,13 @@ Pay to witness pubkey hash (p2wpkh) is the new type of script that coins can be 
 
 Transaction Malleability is the ability to change the transaction's ID without substantively altering the transaction itself. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was insolvent back in 2013. This turned out not to be the case, but the term has since stuck.
 
-Malleability of the ID turns out to be an important consideration when doing second-layer protocols like lightning. A changing transaction ID makes lightning much more difficult, so fixing malleability was a priority.
+Malleability of the ID turns out to be an important consideration when doing second-layer protocols like Lightning. A changing transaction ID makes Lightning much more difficult, so fixing malleability was a priority.
 
 The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction are pretty fixed, though, so from a malleability standpoint, this is not a problem. The one field that does allow for some manipulation of the ID, however, is the scriptSig field on each input. At a deep level, this is because the scriptSig is emptied before actually signing the transaction and thus, signatures can be good for multiple possible scriptSigs.
 
 ### Fixing malleability
 
-The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the txid stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
+The authors of Segwit fixed malleability by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the txid stays stable as the malleability vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
 
 If this sounds familiar, it should. This is similar to how p2sh works in that newer nodes do additional validation that older nodes do not and is the basis for why this is a soft fork and not a hard fork.
 
