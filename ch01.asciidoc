@@ -75,6 +75,9 @@ class FieldElement:
 
     def __eq__(self, other): # <3>
         return self.num == other.num and self.prime == other.prime
+
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
 ----
 <1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method simply assigns the initialization values.
@@ -274,7 +277,7 @@ In Python we can define what addition means for our class with the $$__add__$$ m
 <2> Addition in a Finite Field is defined with the modulo operator, which we use here.
 <3> We have to return an instance of the class, which we can conveniently access with $$self.__class__$$. We pass the two initializing arguments, `num` and `self.prime` as defined in the $$__init__$$ method above.
 
-Note that we can use `FiniteField` instead of `self.__class__`, but this would not make the method easily subclassable. We will be subclassing `FiniteField` later, so we take pains to make sure we are not restricting ourselves.
+Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily subclassable. We will be subclassing `FieldElement` later, so we take pains to make sure we are not restricting ourselves.
 
 ==== Exercise {counter:exercise}
 
@@ -385,7 +388,7 @@ Note that because the exponent is an integer, instead of another instance of `Fi
 <1> This is a perfectly fine way to do it, but `pow(self.num, exponent, self.prime)` is more efficient.
 <2> We have to return an instance of the class as before.
 
-Why don't we force the exponent to be a `FiniteField` object? It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out. In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
+Why don't we force the exponent to be a `FieldElement` object? It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out. In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
 
 ==== Exercise {counter:exercise}
 
