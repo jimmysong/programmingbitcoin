@@ -310,7 +310,7 @@ The key insight to set up Public Key Cryptography is the fact that scalar multip
 
 If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication. The x-coordinates don't always increase or decrease and neither do the y-coordinates. About the only pattern in this set is that between 10 and 11, the x coordinates seem to be aligned (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
 
-Scalar Multiplication looks really random and that's what we're going to use for what we call an *assymetric* problem. An *assymetric* problem is one that's easy to calculate in one direction, but hard to reverse. For example, it's easy enough to calculate 12⋅(47,71). But if we were presented this:
+Scalar Multiplication looks really random and that's what we're going to use for what we call an *asymmetric* problem. An *asymmetric* problem is one that's easy to calculate in one direction, but hard to reverse. For example, it's easy enough to calculate 12⋅(47,71). But if we were presented this:
 
 s⋅(47,71)=(194,172)
 
