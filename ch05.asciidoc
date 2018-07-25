@@ -25,7 +25,7 @@ TODO: hex dump highlighting just the version field.
 
 When you see a version number in something, it's meant to give the receiver information about what the versioned thing is supposed to represent. If, for example, you are running Windows 3.1, that's a version number that's very differnt than Windows 8 or Windows 10. You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
 
-In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version has never been updated since version 1.
+In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions utilizing an OP code called OP_CHECKSEQUENCEVERIFY as defined in BIP0068)
 
 You may notice here that the actual value in hexadecimal is 01000000, which doesn't look like 1. It actually is when the interpreted as a little-endian integer (recall the discussion from chapter 4).
 
@@ -37,7 +37,12 @@ TODO: hex dump highlighting just the inputs
 
 Each input is an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
 
-TODO: explain how all bitcoin inputs are previous transaction outputs
+Bitcoin's inputs are almost always outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend it. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that inputs have to have:
+
+* A pointer to the previous Bitcoins given to you
+* Proof that these are yours to spend
+
+It is the second part that ends up needing ECDSA. You don't want people to be able to forge this, so inputs contain signatures which only the owner of the private key can spend.
 
 The inputs field can contain more than one input. This makes sense as you could use a single 100 bill to pay for a 70 dollar meal or a 50 and a 20. There are situations where there could be lots of inputs. In our analogy, we can pay for a 70 dollar meal with 14 5-dollar bills or even 7000 pennies. Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
 

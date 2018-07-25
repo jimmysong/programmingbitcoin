@@ -221,7 +221,7 @@ What's interesting about scalar multiplication is that it's really hard to predi
 
 TODO: graph of where the point ends up when scalar is 2, 10, 17, etc
 
-This is because point addition is non-linear. That is, not easy to calculate. In fact, doing the scalar multiplication is more or less straightforward, but doing the opposite, scalar division, is not.
+This is because point addition is non-linear. That is, not easy to calculate. In fact, doing the scalar multiplication is more or less straightforward, but doing the opposite, Point division, is not.
 
 This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
@@ -772,7 +772,7 @@ To whit, here are the steps:
 ****
 The calculation of z requires two rounds of double-sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
 
-There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. THis is how Google found a SHA1 collision in 2017. Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
+There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017. Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
 
 There is no known SHA2 (of which SHA256 is a part) birthday attack, but is doubled in case one is found.
 ****
