@@ -10,7 +10,7 @@ There are two scenarios that we're concerned with. Paying someone and getting pa
 
 If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that indeed, they've received it. Once they've verified that the transaction has been included in a block, they'll give you the good or service you are expecting in return. Once you've sent the transaction to the other party, there really isn't anything for you to do than wait.
 
-When getting paid Bitcoins, however, we have a dilemma. If we are connected and have the full blockchain, we don't need to worry as we can observe that the transaction paying us is in a block at which point we'd give them our goods or services. If we don't have the full blockchain, as with a phone, what can we do?
+When getting paid Bitcoins, however, we have a dilemma. If we are connected and have the full blockchain, we don't need to worry as we can observe that the transaction paying us is in a sufficiently buried block at which point we'd give them our goods or services. If we don't have the full blockchain, as with a phone, what can we do?
 
 It turns out that the answer lies in the Merkle Root field. We can get just the block headers and get proof that a particular transaction is in a block that we know about. Since the block is secured by proof-of-work, we know that a proof of inclusion in that block is sufficient. The rest of this chapter goes into what the proof of inclusion looks like and how we both construct it and verify it.
 
@@ -105,3 +105,4 @@ TODO Exercise for this
 
 It should be obvious at this point why Simplified Payment Verification is useful. However, SPV is not without some significant downsides. The full details are outside the scope of this book, but note that despite the programming being pretty straightforward, most wallets on phones actually do not use SPV, but simply trust nodes from the wallet vendors.
 
+TODO Bloom filters?

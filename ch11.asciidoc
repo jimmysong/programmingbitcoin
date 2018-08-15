@@ -2,7 +2,9 @@
 
 The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. XXX nodes are running on the network as of this writing and communicate constantly.
 
-The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years. Two things to understand first about the Bitcoin networking protocol.The nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
+The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years.
+
+The nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
 
 With that in mind, let's start with the very first message that one node sends to another, the version message.
 
@@ -54,3 +56,6 @@ Connecting this way will only really show a little bit of data. Furthermore, we 
 
 TODO show code
 
+TODO show code to download headers
+
+TODO do exercise to validate each header?

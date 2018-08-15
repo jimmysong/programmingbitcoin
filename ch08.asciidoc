@@ -20,11 +20,11 @@ In essence, this OP code asks that m of n of the pubkeys sign. m can be less tha
 
 Bare multisig is a bit ugly, but it's very much functional. You can have m of n signatures required to release funds and there is plenty of utility in making outputs multisig, especially if you're a business. However, bare multisig suffers from a few problems:
 
-1. First problem is the obviously long length of the output. A hypothetical bare multisig address has to encompass many different public keys and that makes it extremely long. Unlike p2pkh or even p2pk, these are not easily sent.
+1. First problem is the obviously long length of the output. A hypothetical bare multisig address has to encompass many different public keys and that makes it extremely long. Unlike p2pkh or even p2pk, these are not easily sent even over email and it's not at all obvious who has what control.
 
 2. Second problem is that because the output is so long, it's rather taxing on node software. Nodes have to keep track of outputs that have not been spent, so keeping it ready and perhaps in memory is ideal. A large output is more expensive to keep in memory, being 5-20x larger than a normal p2pkh output.
 
-3. Third problem is that because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the original whitepaper is actually encoded in this transaction: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into uncompressed public keys. Nevermind that these are not valid points, the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software and is in that sense very abusive.
+3. Third problem is that because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the original whitepaper is actually encoded in this transaction: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. Nevermind that these are not valid points, the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software and is in that sense very abusive.
 
 In order to combat these problems, pay-to-script-hash or p2sh was born.
 
@@ -80,7 +80,7 @@ Unfortunately, this much more elegant solution comes with an unwanted side-effec
 
 ==== More complicated scripts
 
-The nice thing about p2sh is that the redeemScript can be as long as you want. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO output by pushing the burden of remembering the script back to the user.
+The nice thing about p2sh is that the redeemScript can be arbitrarily long. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO output by pushing the burden of remembering the script back to the user.
 
 As we'll see later, this will be used for backwards compatibility with Segwit.
 
@@ -92,3 +92,4 @@ Specifically, P2SH uses the 5 byte one mainnet which translates to addresses tha
 
 TODO code for creating p2sh addresses
 
+TODO p2sh z calculation explanation and exercise

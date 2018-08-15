@@ -2,11 +2,11 @@
 
 Transactions essentially transfer bitcoins from one party to another and are authorized by signatures. This definitely ensures that the sender actually authorized the transaction, but what if the sender sends the same amount to multiple people? This is called the double-spending problem and is so called because the owner of an output may try to spend the same output twice. How is the receiver to be assured that they actually received the amount?
 
-This is where the major innovation of Bitcoin comes in with Blocks. Think of Blocks as a way to order transactions. By ordering transactions, a double-spend cannot happen as the transaction that happens later is not valid.
+This is where a major innovation of Bitcoin comes in with Blocks. Think of Blocks as a way to order transactions. By ordering transactions, a double-spend cannot happen as the transaction that happens later is not considered valid.
 
 Now it would be really nice if we could order transactions one at a time, but that would require everyone to agree which transaction is supposed to be next and would cause a lot of overhead in coming to consensus. We can also order large batches of transactions, maybe once per day, but that wouldn't be very practical as the transactions would settle only once per day.
 
-Bitcoin settles every 10 minutes in batches of transactions. These batches of transactions what blocks are. In this chapter we'll go through how to parse them and how to check what's called the proof of work.
+Bitcoin settles every 10 minutes in batches of transactions. These batches of transactions are what we call blocks. In this chapter we'll go through how to parse them and how to check what's called the proof of work.
 
 ### Headers vs Full Blocks
 
@@ -25,11 +25,11 @@ This is the metadata for every block. The nice thing is that each field is fixed
 
 Version in normal software refers to a particular state. That is, a particular version reflects a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for. In the past this was used as a way to indicate a single feature that was ready. Version 2 meant that the software was ready for BIP0016, or pay-to-script-hash as described previously.
 
-Unfortunately, this means that only one feature may be signaled on the network at a time. To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time. The way this works is discussed later.
+Unfortunately, this means that only one feature may be signaled on the network at a time. To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time. The way this works is discussed later in this chapter.
 
 ### Previous Block
 
-All blocks have to point to the parent. This is why the data structure is called a block*chain*, because we have a linked list of blocks that go all the way back to what we call the Genesis Block. We will note here that the block actually ends in a bunch of 0's, which we discuss more during the proof-of-work discussion.
+All blocks have to point to the parent. This is why the data structure is called a block*chain*, because we have a linked list of blocks that go all the way back to what we call the Genesis Block. We will note here that the block actually ends in a bunch of 0's, which we discuss more during the proof-of-work section.
 
 ### Merkle Root
 
@@ -83,9 +83,9 @@ To make different targets easier to compare, the concept of difficulty was born.
 
 TODO: formula for difficulty
 
-The difficulty on testnet when there haven't been any blocks found in 20 minutes resets to 1. This gives us context for how difficult mainnet is. Generally, the difficulty number can be thought of as how much more difficult mainnet is than testnet.
+The difficulty on testnet when there haven't been any blocks found in 20 minutes resets to 1. This gives us context for how difficult mainnet is. Generally, the difficulty number can be thought of as how much more difficult mainnet is than testnet's easiest difficulty.
 
-This is the number that gets shown in block explorers and so on as difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
+This is the number that gets shown in block explorers and bihgoit price charting services as difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
 
 #### Difficulty Adjustment
 
@@ -104,3 +104,5 @@ TODO: example for difficulty adjustment
 Proof-of-work is simply the double-sha256 of the block header. If this number, interpreted as a little-endian integer is lower than the target, we have a valid proof-of-work. If not, the block is not valid. Note that this is very easy to check. All we need to calculate is a single double-sha256 to check. On the other hand, creating the proof-of-work is really difficult. We would need to calculate on average X number of double-sha256 hashes at a difficulty of Y. This is what we would call an asymmetric problem and the reason why proof-of-work is an effective way to measure that the block producer has expended a sufficient amount of energy.
 
 There's a reason why this process is likened to mining. It takes roughly 2-90 tons of processing dirt and rock in order to find a single ounce of gold. In the same way, we have to process lots of numerical dirt and rock in order to find a proof-of-work. Proof-of-work is rare and uniformly distributed, making finding one just as difficult with one type of header versus another.
+
+TODO add some more on PoW

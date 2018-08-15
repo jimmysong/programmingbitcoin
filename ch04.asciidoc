@@ -201,7 +201,7 @@ def encode_base58(s):
         else:
             break
     prefix = b'1' * count
-    # convert from binary to hex, then hex to integer
+    # convert from binary format to integer
     num = int.from_bytes(s, 'big')
     result = bytearray()
     while num > 0:  # <2>

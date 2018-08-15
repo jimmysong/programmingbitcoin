@@ -24,11 +24,11 @@ The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) a
 
 === How SCRIPT works
 
-SCRIPT, as a language, operates with a stack by processing one item at a time. There are two possible types of items: elements and operations.
+SCRIPT, as a language, operates by processing one item at a time. There are two possible types of items: elements and operations.
 
 Elements are just data. They are byte strings of length 1 to 75. A typical element might be a der signature or a sec pubkey.
 
-Operations do something to the data. They pop zero or more elements from the processing stack and push zero or more elements back on the stack. A typical elment might be something like OP_DUP, which will duplicate the top element (popping 0) and putting a new element on top (pushing 1).
+Operations do something to the data. They consume zero or more elements from the processing stack and put zero or more elements back on the stack. A typical elment might be something like OP_DUP, which will duplicate the top element (consuming 0) and putting a new element on top (putting 1).
 
 TODO OP_DUP diagram
 
@@ -36,11 +36,11 @@ At the end of processing all the items in the stack, the top element of the stac
 
 === Example Operations
 
-Besides OP_DUP, there are other operations. OP_HASH160 does a sha256 followed by a ripemd160 to the top element of the stack (popping 1) and putting a new element back (pushing 1)
+Besides OP_DUP, there are other operations. OP_HASH160 does a sha256 followed by a ripemd160 to the top element of the stack (consuming 1) and putting a new element back (putting 1)
 
 TODO OP_HASH160 diagram
 
-Another very important operation is OP_CHECKSIG. OP_CHECKSIG pops 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey. If so, OP_CHECKSIG pushes a 1 onto the stack, otherwise puts a 0 on the stack.
+Another very important operation is OP_CHECKSIG. OP_CHECKSIG consumes 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey. If so, OP_CHECKSIG pushes a 1 onto the stack, otherwise puts a 0 on the stack.
 
 TODO OP_CHECKSIG diagram
 
@@ -108,7 +108,7 @@ We'll cover pay-to-pubkey and pay-to-pubkey-hash for the rest of the chapter.
 
 Pay-to-pubkey (aka p2pk) was used almost exclusively during the early days of bitcoin. Most of coins thought to belong to Satoshi, for example, are in p2pk outputs. There are some limitations that we'll discuss in a few pages, but here, let's focus on how p2pk works.
 
-We learned back in chapter 3 how signing and verification work in ECDSA. Specifically, you need the message (z), the public key (P) and the signature (r,s). The mechanics of p2pk are simply that you send bitcoins to a public key and let the owner of the private key determine where the bitcoins should go.
+We learned back in chapter 3 how signing and verification work in ECDSA. Specifically, you need the message (z), the public key (P) and the signature (r,s). The mechanics of p2pk are simply that you send bitcoins to a public key and let the owner of the private key determine where the bitcoins should go. Effectively, you are putting those bitcoins under the control of the private key owner.
 
 Specifying where the bitcoins go is the job of the scriptPubKey. As stated above, this is the lock box that receive the bitcoins. The actual scriptPubKey looks like this:
 
@@ -136,7 +136,7 @@ Incidentally, we can see here why scriptPubkey is called scriptPubKey. The Publi
 
 Pay-to-pub-key is pretty intuitive in the sense that there is a public key that anyone can send some bitcoins to and a signature that can be produced by the owner of the private key to spend that amount. This works well, but there are some problems.
 
-First, the public keys are long. We know from chapter 3 that SECP256K1 public points are 33 bytes in compressed and 65 bytes in uncompressed sec format. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain characters as they are control characters or newlines or similar. The sec format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed formats 66 and 130 characters respectively, which is way bigger than most identifiers. To compound this, early Bitcoin transactions simply didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to address.
+First, the public keys are long. We know from chapter 3 that SECP256K1 public points are 33 bytes in compressed and 65 bytes in uncompressed sec format. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain byte ranges as they are control characters or newlines or similar. The sec format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed formats 66 and 130 characters respectively, which is way bigger than most identifiers. To compound this, early Bitcoin transactions simply didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to communicate by email, much less by voice!
 
 Second, because the public keys are long, this causes a more subtle problem. The UTXO set becomes bigger since this large public key has to be kept around and indexed to see if it's spendable. This may require more resources on the part of nodes.
 
@@ -167,7 +167,7 @@ These 20 bytes are the result of doing a HASH160 operation on this SEC pubkey:
 
 Pay-to-pubkey-hash (aka p2pkh) was used during early days of bitcoin, though not nearly as much as p2pk.
 
-Once again, the lock bok where the bitcoins go is the job of the scriptPubKey. The actual scriptPubKey looks like this:
+Once again, the lockbox where the bitcoins go is the job of the scriptPubKey. The actual scriptPubKey looks like this:
 
 TODO Diagram of p2pkh scriptPubKey
 

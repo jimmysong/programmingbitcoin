@@ -45,7 +45,7 @@ The interesting thing here is that for an older node, processing stops at the <2
 
 ## P2SH-P2WPKH
 
-P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them for a variety of reasons. P2wpkh uses bech32 addresses which older wallets won't understand.
+P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of them. Simply put, p2wpkh uses bech32 addresses which older wallets won't understand.
 
 The segwit authors found an ingenious way to make segwit backwards compatibly by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh.
 

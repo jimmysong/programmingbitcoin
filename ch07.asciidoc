@@ -73,7 +73,7 @@ TODO Exercise to do this in code
 
 === Creating transactions
 
-Once validation of transactions is understood, the creation of transactions is more or less straightforward. The key to making the creation of transactions work is to make sure that all the validations that are performed act as expected. For example, you will not want to create a transaction where the inputs are less than the outputs, creating extra bitcoins. Such transactions won't get validated and your propagation of them on the network may get you banned. To create a transaction, you must first have some outputs that have been sent to you. That is, outputs whose scriptPubKey you can unlock. The vast majority of the time, you will need one or more private keys corresponding to the public keys that are in the scriptPubKey.
+Once validation of transactions is understood, the creation of transactions is more or less straightforward. The key to making the creation of transactions work is to make sure that all the validations that are performed act as expected. For example, you will not want to create a transaction where the inputs are less than the outputs, creating extra bitcoins. Such transactions won't be valid and your propagation of them on the network may get you banned. To create a transaction, you must first have some outputs that have been sent to you. That is, outputs whose scriptPubKey you can unlock. The vast majority of the time, you will need one or more private keys corresponding to the public keys that are hashed in the scriptPubKey.
 
 The rest of this chapter will be concerned with creating a transaction whose scriptPubKey is a p2pkh output.
 

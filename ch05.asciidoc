@@ -69,6 +69,8 @@ Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of b
 
 ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart contract language SCRIPT. Think of ScriptPubKey as the lock box that can only be opened by the holder of the key. A one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe. We'll explore what this is in more detail in chapter 6.
 
+TODO sidebar on the importance of the UTXO set
+
 ==== Locktime
 
 Locktime is a way to time-delay a transaction. A transaction with a locktime of 525,000 cannot go into the blockchain until block 525,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater than 500,000,000, it is a unix time stamp. If it is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
