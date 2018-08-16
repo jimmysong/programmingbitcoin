@@ -17,11 +17,72 @@ At this point a general overview of these fields might be helpful. Version defin
 
 Here is a hexadecimal dump of a typical transaction that shows which parts are which.
 
-TODO: hex dump of transaction with version/inputs/outputs/locktime highlighted in different backgrounds.
+image::tx1.png[Transaction Version, Inputs, Outputs and Locktime]
+
+The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
+
+With this in mind, we can start constructing the Transaction class, which we'll call `Tx`:
+
+[source,python]
+----
+class Tx:
+
+    def __init__(self, version, tx_ins, tx_outs, locktime):
+        self.version = version
+        self.tx_ins = tx_ins  # <1>
+        self.tx_outs = tx_outs
+        self.locktime = locktime
+
+    def __repr__(self):
+        tx_ins = ''
+        for tx_in in self.tx_ins:
+            tx_ins += tx_in.__repr__() + '\n'
+        tx_outs = ''
+        for tx_out in self.tx_outs:
+            tx_outs += tx_out.__repr__() + '\n'
+        return 'version: {}\ntx_ins:\n{}\ntx_outs:\n{}\nlocktime: {}\n'.format(
+            self.version,
+            tx_ins,
+            tx_outs,
+            self.locktime,
+        )
+----
+<1> Input and Output are very generic terms so we specify what kind of inputs they are. We'll define the specific object types they are later.
+
+The rest of this chapter will be concerned with parsing a transaction. This is very useful to know as this teaches you about the actual serialized format. You may at this point write some code like this:
+
+[source,python]
+----
+class Tx:
+    ...
+
+    @classmethod  # <1>
+    def parse(cls, serialization):
+        version = serialization[0:4]  # <2>
+	...
+----
+<1> This method would have to be a class method as the serialization would have to be converted to a `Tx` object.
+<2> We assume here that the variable `serialization` is a byte array.
+
+This could definitely work, but practically speaking, the serialization of the transaction may be very large. Ideally, we want to be able to parse from a _stream_ instead. This will allow us to not need the entire transaction serialization before we start parsing and from an engineering point, that allows to fail early and be more efficient. Thus, the code for parsing a transaction will look more like this:
+
+[source,python]
+----
+class Tx:
+    ...
+
+    @classmethod
+    def parse(cls, stream):
+        serialized_version = stream.read(4)  # <1>
+	...
+----
+<1> The `read` method will allow us to parse on the fly as we won't have to wait on I/O 
+
+This is advantageous from an engineering perspective as the stream can be a socket connection on the network or a file handle. Our method will be able to handle any sort of stream and return us the `Tx` object that we need.
 
 === Version
 
-TODO: hex dump highlighting just the version field.
+image::tx2.png[Version]
 
 When you see a version number in something, it's meant to give the receiver information about what the versioned thing is supposed to represent. If, for example, you are running Windows 3.1, that's a version number that's very differnt than Windows 8 or Windows 10. You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
 
@@ -29,7 +90,9 @@ In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, 
 
 You may notice here that the actual value in hexadecimal is 01000000, which doesn't look like 1. It actually is when the interpreted as a little-endian integer (recall the discussion from chapter 4).
 
-TODO: exercise on parsing version number from bytes and serializing a number to bytes
+==== Exercise {counter:exercise}
+
+Write the version parsing part of the parse method that we've defined. To do this properly, you'll have to convert 4 bytes into a little-endian integer.
 
 === Inputs
 
