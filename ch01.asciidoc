@@ -331,9 +331,7 @@ Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are
 
 ==== Exercise {counter:exercise}
 
-For k = 1, 3, 7, 13, 18, what is this set in F~19~?
-
-{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
+For k = 1, 3, 7, 13, 18 what is the set {k⋅0, k⋅1, k⋅2, k⋅3, … k⋅18} in F19?
 
 Do you notice anything about these sets?
 
