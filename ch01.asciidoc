@@ -51,9 +51,9 @@ A Finite Field of order 17 would look like this:
 
 F~17~= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 
-A Finite Field of order 981
+A Finite Field of order 983
 
-F~981~= {0, 1, 2, ... 980}
+F~983~= {0, 1, 2, ... 982}
 
 Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* have a  _prime_ order. This is because the properties of a finite field don't hold otherwise.
 
