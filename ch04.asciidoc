@@ -130,7 +130,7 @@ class S256Field(FieldElement):
 
 Another class that we need to learn to serialize are signatures. Much like the SEC format, it needs to encode two different numbers, r and s. Unfortunately, unlike S256Point, Signature cannot be compressed as s cannot be derived solely from r.
 
-The standard for serializing signatures is called DER format. DER stands for ... and was used by Satoshi to create Bitcoin. This was most likely because the standard was already defined in 2008 and it was easy enough to adopt, rather than creating a new standard.
+The standard for serializing signatures is called DER (Distinguished Encoding Rules) format. DER was used by Satoshi to create Bitcoin. This was most likely because the standard was already defined in 2008 and it was easy enough to adopt, rather than creating a new standard.
 
 DER Signatures are created like this:
 
