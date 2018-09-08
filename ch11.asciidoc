@@ -1,3 +1,8 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_networking]]
+
 ## Networking
 
 The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. XXX nodes are running on the network as of this writing and communicate constantly.

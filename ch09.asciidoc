@@ -1,3 +1,8 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_blocks]]
+
 ## Blocks
 
 Transactions essentially transfer bitcoins from one party to another and are authorized by signatures. This definitely ensures that the sender actually authorized the transaction, but what if the sender sends the same amount to multiple people? This is called the double-spending problem and is so called because the owner of an output may try to spend the same output twice. How is the receiver to be assured that they actually received the amount?

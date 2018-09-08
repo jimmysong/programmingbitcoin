@@ -1,3 +1,8 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_segwit]]
+
 ## Segwit
 
 Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the actual activation was controversial, the actual features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what this enables.

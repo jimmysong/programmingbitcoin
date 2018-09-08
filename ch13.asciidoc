@@ -1,3 +1,8 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_advanced]]
+
 ## Advanced Topics
 
 If you've made it this far, congratulations! You've learned quite a bit about Bitcoin's inner workings and hopefully, you are inspired to learn a lot more. Indeed, this book only scratches the surface and there's quite a bit more to learn. In this chapter, we'll go through what other things you can learn and ways to contribute to the community.

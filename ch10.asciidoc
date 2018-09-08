@@ -1,3 +1,9 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_spv]]
+
+
 ## Simplified Payment Verification
 
 The one field that we didn't investigate much in the last chapter is the Merkle Root field. The reason is that in order to understand why it's useful, we have to learn a few things about what Merkle Trees are and what properties they have. In this chapter, we're going to learn exactly what a Merkle Root is. This will be motivated by something called a Proof of Inclusion.
