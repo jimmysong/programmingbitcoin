@@ -1,3 +1,6 @@
+= Programming Bitcoin
+:imagesdir: images
+
 [[chapter_txparsing]]
 
 == Transactions
