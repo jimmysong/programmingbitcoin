@@ -12,25 +12,31 @@ The one field that we didn't investigate much in the last chapter is the Merkle 
 
 For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 161.5GB, which is a lot more than many phones can handle. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
 
-There are two scenarios that we're concerned with. Paying someone and getting paid.
+For any wallet, there are two scenarios that we're concerned with. Paying someone and getting paid.
 
-If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that indeed, they've received it. Once they've verified that the transaction has been included in a block, they'll give you the good or service you are expecting in return. Once you've sent the transaction to the other party, there really isn't anything for you to do than wait.
+If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that they've been paid. Once they've verified that the transaction has been included in a block sufficiently deep, they'll give you the good or service you are expecting in return. Once you've sent the transaction to the other party, there really isn't anything for you to do than wait until they give you what you were exchanging the Bitcoins for.
 
 When getting paid Bitcoins, however, we have a dilemma. If we are connected and have the full blockchain, we don't need to worry as we can observe that the transaction paying us is in a sufficiently buried block at which point we'd give them our goods or services. If we don't have the full blockchain, as with a phone, what can we do?
 
-It turns out that the answer lies in the Merkle Root field. We can get just the block headers and get proof that a particular transaction is in a block that we know about. Since the block is secured by proof-of-work, we know that a proof of inclusion in that block is sufficient. The rest of this chapter goes into what the proof of inclusion looks like and how we both construct it and verify it.
+It turns out that the answer lies in the Merkle Root field. We can get just the block headers and get proof that a particular transaction is in a block that we know about. Since the block header is secured by proof-of-work, we know that a proof of inclusion in that block is sufficient. The rest of this chapter goes into what the proof of inclusion looks like and how we both construct it and verify it.
 
-A Merkle Tree is a computer science structure designed for efficient proofs of inclusion. The prerequisite is an ordered list of things, in our case, transactions, and a hash function, in our case, double-sha256. What we do is this:
+=== Merkle Tree
+
+A Merkle Tree is a computer science structure designed for efficient proofs of inclusion. The prerequisite is an ordered list of things and a hash function. In our case, transactions and double_sha256 are what we use. To construct the Merkle Tree, we follow this algorithm:
 
 1. Hash all the items of the ordered list with the provided hash function
 2. If there is exactly 1 hash, we are done
-3. If there is an odd number of hashes, we add a copy of the last hash in the list to the end so that we have two of the same ones.
+3. If there is an odd number of hashes, we add a copy of the last hash in the list to the end so that we have an even number.
 4. We pair the hashes in order and hash the concatenation to get the parent level.
 5. Go to 2.
 
-The idea is to come to a single hash that represents all of the hashes. We'll go through each thing we need below.
+The idea is to come to a single hash that represents all of the hashes. The gist of getting the Merkle Tree looks like this:
 
-TODO Diagram for Merkle Tree
+image::merkle1.png[Merkle Tree]
+
+The bottom row is what we call the leaves of the tree. These get combined to produce the *parent level* and after one more iteration, we get the Merkle Root.
+
+We'll go through each part of this process below.
 
 ### Merkle Parent
 
@@ -40,10 +46,20 @@ H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash
 
 P=H(L||R)
 
-TODO Code for this
-TODO Exercise for this
+The actual calculation in Python is relatively straightforward:
+
+[source,python]
+----
+>>> from helper import double_sha256
+>>> hash1, hash2 = ...
+>>> parent = double_sha256(hash1 + hash2)
+----
 
 At this point, it's important to note that we can show that either the left or right hash is a "part" of the parent by revealing the other hash. That is, if we want to know that L is a part of P, someone can prove this is so, by revealing R and the fact that we're the left hash. We can combine L and R in the same way to produce P. This would prove that L and R are part of P.
+
+#### Exercise {counter:exercise}
+
+Write the merkle_parent function.
 
 ### Merkle Parent Level
 
@@ -55,15 +71,48 @@ The Merkle Tree solution is to simply duplicate the last item. So, for a list li
 
 Note that since the Merkle Parent always consists of two hashes, we end up with exactly half the number of hashes before, rounded up. The rounding up is because an odd number of hashes is expanded to be one more.
 
-TODO Code for this
-TODO Exercise for this
+[source,python]
+----
+>>> from helper import merkle_parent
+>>> hashes = [...]
+>>> if len(hashes) % 2 == 1:
+...     hashes.append(hashes[-1])  # <1>
+...
+>>> parent_level = []
+>>> for i in range(0, len(hashes), 2):  # <2>
+...     parent = merkle_parent(hashes[i], hashes[i+1])
+...     parent_level.append(parent)
+...
+----
+<1> This will add the last hash on the list (hashes[-1]) to the end of the list. This should make the length even.
+<2> This is how we skip by two in Python. `i` will be 0 the first time through the loop, 2 the second and so on.
+
+This will give us a new list of hashes that correspond to the Merkle Parent Level
+
+#### Exercise {counter:exercise}
+
+Write the `merkle_parent_level` function.
 
 ### Merkle Root
 
-The process of getting the Merkle Root is to simply calculate the Merkle Parent Level until we get a single hash. The final hash is called the Merkle Root.
+The process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash. The final hash is called the Merkle Root. As each level will halve the number of hashes, this will result in a single item eventually.
 
-TODO Code for this
-TODO Exercise for this
+[source,python]
+----
+>>> from helper import merkle_parent_level
+>>> hashes = [...]
+>>> current_hashes = hashes
+>>> while len(current_hashes) > 1:  # <1>
+...     current_hashes = merkle_parent_level(current_hashes)
+...
+>>> root = current_hashes[0]  # <2>
+----
+<1> We loop until there's 1 hash left.
+<2> We've exited the loop so there should only be 1 item
+
+#### Exercise {counter:exercise}
+
+Write the `merkle_root` function.
 
 ### Merkle Root in Blocks
 
@@ -71,8 +120,37 @@ The way we calculate the merkle root in Blocks may seem pretty straightforward, 
 
 In practice, this simply means reversing the hash at the bottom and reversing the hash at the top.
 
-TODO Code for this
-TODO Exercise for this
+[source,python]
+----
+>>> from helper import merkle_root
+>>> tx_hashes = [...]
+>>> hashes = [h[::-1] for h in tx_hashes]  # <1>
+>>> root = merkle_root(hashes)[::-1]  # <2>
+----
+<1> This reverses each hash using a *list comprehension*
+<2> This reverses the root that we get back.
+
+To make this calculatable for a `Block`, we have to adjust the class a bit:
+
+[source,python]
+----
+    
+class Block:
+
+    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):  # <1>
+        self.version = version
+        self.prev_block = prev_block
+        self.merkle_root = merkle_root
+        self.timestamp = timestamp
+        self.bits = bits
+        self.nonce = nonce
+        self.tx_hashes = tx_hashes
+----
+<1> We now allow the transaction hashes to be set as part of the initialization of the block. The hashes would have to be in order.
+
+#### Exercise {counter:exercise}
+
+Write the `validate_merkle_root` method for `Block`.
 
 ### Merkle Proofs
 
