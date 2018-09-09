@@ -120,8 +120,8 @@ Now that we have our z, we can take the public key in SEC format and the signatu
 [source,python]
 ----
 >>> from ecc import S256Point, Signature
->>> sec = bytes.fromhex('210349...8a')
->>> der = bytes.fromhex('483045...ed')
+>>> sec = bytes.fromhex('0349...8a')
+>>> der = bytes.fromhex('3045...ed')
 >>> point = S256Point.parse(sec)
 >>> signature = Signature.parse(der)
 >>> point.verify(z, signature)  # <1>
@@ -284,9 +284,27 @@ Write the `sign_input` method for the `Tx` class, which does the above.
 
 ==== Creating your own transactions on testnet
 
+The first step to creating your own transactions is to get some coins for yourself. In order to do that you'll need an address. If you completed the exercises in Chapter 4, you should have your own testnet address and private key. If you don't remember, here's how:
 
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> private_key = PrivateKey(secret=90210)  # <1>
+>>> print(private_key.point.address(testnet=True)
+mqNK1JUujDXeufN9bDVKtzzvriqjnZLxHU
+----
+<1> Please use some secret other than this number
 
-TODO testnet faucet: Getting coins to play with
+Now that you have an address, you can get some coins at a myriad of testnet faucets. Faucets are where you can get testnet coins for free. You can Google "testnet bitcoin faucet" to find them or use this website: https://en.bitcoin.it/wiki/Testnet#Faucets. You will want to enter your address as generated above.
 
-TODO exercise for making your own testnet transaction
+After you get some coins, see if you can spend them using the library you've been writing. This is usually a big accomplishment for a budding Bitcoin developer, so please take some time to see if you can complete this exercise.
+
+==== Exercise {counter:exercise}
+
+Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
+
+==== Exercise {counter:exercise}
+
+Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
+
 
