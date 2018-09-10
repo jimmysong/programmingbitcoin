@@ -40,7 +40,7 @@ We'll go through each part of this process below.
 
 ### Merkle Parent
 
-Given two hashes, we need some way to produce another hash that represents both of them. As they are ordered, we will call the two hashes the *left* hash and the *right* hash. Tho combination, we call the *parent* hash. The formula for getting the parent is pretty simple:
+Given two hashes, we need some way to produce another hash that represents both of them. As they are ordered, we will call the two hashes the *left* hash and the *right* hash. The combination, we call the *parent* hash. The formula for getting the parent is pretty simple:
 
 H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash
 

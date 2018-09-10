@@ -57,7 +57,7 @@ image::elliptic3.png[secp256k1 Curve]
 
 === Coding Elliptic Curves in Python
 
-For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
+For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specific form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
 
 [source,python]
 ----
@@ -141,7 +141,7 @@ The reason why we have "addition" in the Point Addition name is that Point Addit
 * Identity
 * Commutativity
 * Associativity
-* Invertibiltiy
+* Invertibility
 
 Identity here means that there's a zero. That is, there exists some point (I) which when added to a point (P) results in P. We'll call this point the point at infinity (reasons for this will become clear in a bit). That is:
 

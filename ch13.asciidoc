@@ -11,11 +11,11 @@ If you've made it this far, congratulations! You've learned quite a bit about Bi
 
 Creating a wallet is a difficult task as securing private keys turns out to be very difficult. That said, there are a bunch of standards for creating wallets that can help in this regard.
 
-#### Heirarchical Deterministic Wallets
+#### Hierarchical Deterministic Wallets
 
-For privacy purposes, you generally need to  create lots of multiple addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
+For privacy purposes, you generally need to create lots of multiple addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
 
-To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path.
+To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Hierarchical deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path.
 
 Additionally, BIP0044 defines exactly what each layer means and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
 
