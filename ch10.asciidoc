@@ -1,224 +1,160 @@
 = Programming Bitcoin
 :imagesdir: images
 
-[[chapter_spv]]
+[[chapter_networking]]
 
+## Networking
 
-## Simplified Payment Verification
+The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. 9400+ nodes are running on the network as of this writing and communicate constantly.
 
-The one field that we didn't investigate much in the last chapter is the Merkle Root field. The reason is that in order to understand why it's useful, we have to learn a few things about what Merkle Trees are and what properties they have. In this chapter, we're going to learn exactly what a Merkle Root is. This will be motivated by something called a Proof of Inclusion.
+The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years.
 
-### Motivation
+The nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
 
-For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 161.5GB, which is a lot more than many phones can handle. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
+With that in mind, let's start with the very first message that one node sends to another, the version message.
 
-For any wallet, there are two scenarios that we're concerned with. Paying someone and getting paid.
+### Network Messages
 
-If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that they've been paid. Once they've verified that the transaction has been included in a block sufficiently deep, they'll give you the good or service you are expecting in return. Once you've sent the transaction to the other party, there really isn't anything for you to do than wait until they give you what you were exchanging the Bitcoins for.
+Network messages have a particular form that looks like this
 
-When getting paid Bitcoins, however, we have a dilemma. If we are connected and have the full blockchain, we don't need to worry as we can observe that the transaction paying us is in a sufficiently buried block at which point we'd give them our goods or services. If we don't have the full blockchain, as with a phone, what can we do?
+image:network1.png[Network Message]
 
-It turns out that the answer lies in the Merkle Root field. We can get just the block headers and get proof that a particular transaction is in a block that we know about. Since the block header is secured by proof-of-work, we know that a proof of inclusion in that block is sufficient. The rest of this chapter goes into what the proof of inclusion looks like and how we both construct it and verify it.
+The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted. Magic bytes are also useful to make sure the node is on the right network. You would not want a Bitcoin node to connect to a Litecoin node, for example. Thus, a Litecoin node has a differnt magic. Bitcoin testnet also has a different magic `0b110907` as opposed to the Bitcoin mainnet magic `f9beb4d9` above.
 
-=== Merkle Tree
+The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at https://wiki.bitcoin.it. Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
 
-A Merkle Tree is a computer science structure designed for efficient proofs of inclusion. The prerequisite is an ordered list of things and a hash function. In our case, transactions and double_sha256 are what we use. To construct the Merkle Tree, we follow this algorithm:
+The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the field is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB. Note the number is interpreted in little-endian, so in our case here, that is 101 bytes.
 
-1. Hash all the items of the ordered list with the provided hash function
-2. If there is exactly 1 hash, we are done
-3. If there is an odd number of hashes, we add a copy of the last hash in the list to the end so that we have an even number.
-4. We pair the hashes in order and hash the concatenation to get the parent level.
-5. Go to 2.
+The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the double-sha256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and double-sha256 has none. That said, the hash function is common in the rest of the protocol and is thus used here.
 
-The idea is to come to a single hash that represents all of the hashes. The gist of getting the Merkle Tree looks like this:
-
-image::merkle1.png[Merkle Tree]
-
-The bottom row is what we call the leaves of the tree. These get combined to produce the *parent level* and after one more iteration, we get the Merkle Root.
-
-We'll go through each part of this process below.
-
-### Merkle Parent
-
-Given two hashes, we need some way to produce another hash that represents both of them. As they are ordered, we will call the two hashes the *left* hash and the *right* hash. Tho combination, we call the *parent* hash. The formula for getting the parent is pretty simple:
-
-H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash
-
-P=H(L||R)
-
-The actual calculation in Python is relatively straightforward:
+The code to handle network messages requires us to create a new class:
 
 [source,python]
 ----
->>> from helper import double_sha256
->>> hash1, hash2 = ...
->>> parent = double_sha256(hash1 + hash2)
-----
+NETWORK_MAGIC = b'\xf9\xbe\xb4\xd9'
+TESTNET_NETWORK_MAGIC = b'\x0b\x11\x09\x07'
 
-At this point, it's important to note that we can show that either the left or right hash is a "part" of the parent by revealing the other hash. That is, if we want to know that L is a part of P, someone can prove this is so, by revealing R and the fact that we're the left hash. We can combine L and R in the same way to produce P. This would prove that L and R are part of P.
+class NetworkEnvelope:
+
+    def __init__(self, command, payload, testnet=False):
+        self.command = command
+        self.payload = payload
+	if testnet:
+	    self.magic = TESTNET_NETWORK_MAGIC
+	else:
+	    self.magic = NETWORK_MAGIC
+
+    def __repr__(self):
+        return '{}: {}'.format(
+            self.command.decode('ascii'),
+            self.payload.hex(),
+        )
+----
 
 #### Exercise {counter:exercise}
 
-Write the merkle_parent function.
+Determine what this network message is:
 
-### Merkle Parent Level
-
-Given an ordered list of more than two hashes, we can calculate an entire list of parents, or what we call the Merkle Parent Level. If we have an even number of hashes, this is straightforward, as we can simply pair them up in order. If we have an odd number of hashes, then we need to do something else as we have a lone hash at the end.
-
-The Merkle Tree solution is to simply duplicate the last item. So, for a list like [A, B, C] what we do is add C again to get [A, B, C, C]. At this point, we can calculate the merkle parent of A and B and calculate the merkle parent of C and C to get:
-
-[H(A||B), H(C||C)]
-
-Note that since the Merkle Parent always consists of two hashes, we end up with exactly half the number of hashes before, rounded up. The rounding up is because an odd number of hashes is expanded to be one more.
-
-[source,python]
-----
->>> from helper import merkle_parent
->>> hashes = [...]
->>> if len(hashes) % 2 == 1:
-...     hashes.append(hashes[-1])  # <1>
-...
->>> parent_level = []
->>> for i in range(0, len(hashes), 2):  # <2>
-...     parent = merkle_parent(hashes[i], hashes[i+1])
-...     parent_level.append(parent)
-...
-----
-<1> This will add the last hash on the list (hashes[-1]) to the end of the list. This should make the length even.
-<2> This is how we skip by two in Python. `i` will be 0 the first time through the loop, 2 the second and so on.
-
-This will give us a new list of hashes that correspond to the Merkle Parent Level
+f9beb4d976657261636b000000000000000000005df6e0e2
 
 #### Exercise {counter:exercise}
 
-Write the `merkle_parent_level` function.
+Write the `parse` and `serialize` methods for `NetworkEnvelope`.
 
-### Merkle Root
+### Parsing the payload
 
-The process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash. The final hash is called the Merkle Root. As each level will halve the number of hashes, this will result in a single item eventually.
+Each command has a separate payload specification. Here is the one for version:
 
-[source,python]
-----
->>> from helper import merkle_parent_level
->>> hashes = [...]
->>> current_hashes = hashes
->>> while len(current_hashes) > 1:  # <1>
-...     current_hashes = merkle_parent_level(current_hashes)
-...
->>> root = current_hashes[0]  # <2>
-----
-<1> We loop until there's 1 hash left.
-<2> We've exited the loop so there should only be 1 item
+image:network2.png[Version Message]
 
-#### Exercise {counter:exercise}
+The fields for version are meant to give enough information for two nodes to be able to be able to communicate.
 
-Write the `merkle_root` function.
+Version specifies the network protocol version being communicated. Services give information about what services are available to connecting nodes. Timestamp here is 8 bytes (as opposed to 4 bytes in the block header) and is the same unix timestamp in little endian.
 
-### Merkle Root in Blocks
+IP addresses can be IPv6 or IPv4. If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP. The port is 2 bytes and in little_endian.
 
-The way we calculate the merkle root in Blocks may seem pretty straightforward, but due to endian-ness issues, this turns out to be a bit counterintuitive. Specifically, we have to calculate the hash of a transaction and use the little-endian ordering as the leaves for the Merkle Tree. After we calculate the Merkle Root, we have to again interpret that in little-endian in order to compare against the Merkle Root stored in the block.
+Nonce is a number used only once for reply messages. User Agent identifies the software being run. The latest block helps the other node know which block you are synced up to.
 
-In practice, this simply means reversing the hash at the bottom and reversing the hash at the top.
+Relay is used for Bloom Filters, which we'll get to in Chapter 12.
+
+Setting some reasonable defaults, our VersionMessage class looks like this:
 
 [source,python]
 ----
->>> from helper import merkle_root
->>> tx_hashes = [...]
->>> hashes = [h[::-1] for h in tx_hashes]  # <1>
->>> root = merkle_root(hashes)[::-1]  # <2>
-----
-<1> This reverses each hash using a *list comprehension*
-<2> This reverses the root that we get back.
+class VersionMessage:
 
-To make this calculatable for a `Block`, we have to adjust the class a bit:
 
-[source,python]
-----
-    
-class Block:
-
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):  # <1>
+    def __init__(
+            self,
+            version=70015,
+            services=0,
+            timestamp=None,
+            receiver_services=0,
+            receiver_ip=b'\x00\x00\x00\x00',
+            receiver_port=8333,
+            sender_services=0,
+            sender_ip=b'\x00\x00\x00\x00',
+            sender_port=8333,
+            nonce=None,
+            user_agent=b'/programming-bitcoin:0.1/',
+            latest_block=0,
+            relay=True,
+    ):
         self.version = version
-        self.prev_block = prev_block
-        self.merkle_root = merkle_root
-        self.timestamp = timestamp
-        self.bits = bits
-        self.nonce = nonce
-        self.tx_hashes = tx_hashes
+        self.services = services
+        if timestamp is None:
+            self.timestamp = int(time.time())
+        else:
+            self.timestamp = timestamp
+        self.receiver_services = receiver_services
+        self.receiver_ip = receiver_ip
+        self.receiver_port = receiver_port
+        self.sender_services = sender_services
+        self.sender_ip = sender_ip
+        self.sender_port = sender_port
+        if nonce is None:
+            self.nonce = int_to_little_endian(randint(0, 2**64), 8)
+        else:
+            self.nonce = nonce
+        self.user_agent = user_agent
+        self.latest_block = latest_block
+        self.relay = relay
 ----
-<1> We now allow the transaction hashes to be set as part of the initialization of the block. The hashes would have to be in order.
-
-As a full node, if we are given all of the transaction hashes, we can now calculate the merkle root and check that the merkle root is what we expect.
 
 #### Exercise {counter:exercise}
 
-Write the `validate_merkle_root` method for `Block`.
-
-### Using a Merkle Tree 
-
-Now that we know how a Merkle Tree is constructed, we can now use it to get a proof-of-inclusion. For nodes that don't have the entire blockchain, they can get proofs that certain transactions were included in a block without having to know all the transactions of a block. The essence of how we can do this is the following.
-
-image::merkleproof.png[Merkle Proof]
-
-Say that we have two transactions that we are interested in, which would be the hashes marked by green boxes, H~K~ and H~N~ above. A full node can to prove to us that these transactions were a part of a block, by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~. We would then perform these calculations:
-
-H~KL~ = merkle_parent(H~K~, H~L~)
-
-H~MN~ = merkle_parent(H~M~, H~N~)
-
-H~IJKL~ = merkle_parent(H~IJ~, H~KL~)
-
-H~MNOP~ = merkle_parent(H~MN~, H~OP~)
-
-H~IJKLMNOP~ = merkle_parent(H~IJKL~, H~MNOP~)
-
-H~ABCDEFGHIJKLMNOP~ = merkle_parent(H~ABCDEFGH~, H~IJKLMNOP~)
-
-The merkle root is H~ABCDEFGHIJKLMNOP~, which we can check against the block header whose proof-of-work we've already validated.
-
-.How secure is an SPV proof?
-****
-The full node can send us a limited amount of information about the block and the light node can recalculate the merkle root, which can then be verified against the block header. This does not guarantee that the transaction is in a block, but it does assure the light node that the full node would have had to spend a lot of hashing power into creating a valid proof-of-work. As long as the reward for creating such aproof-of-work is greater than the amounts in the transactions, the light node can at least know that the full node has no clear economic incentive to lie.
-
-Indeed, since the block header can be requested from multiple nodes, light nodes have an easy way to verify if one node is trying to show them block headers that are not the longest. It only takes a single honest node to invalidate 100 dishonest ones since proof-of-work is objective. Therefore, it's not easy to isolate a light node enough to be able to deceive in this way. This, of course, assumes that there are lots of nodes on the network in the first place and that a good number of them are being honest.
-
-In other words, light client security is based on a robust network of nodes and a little bit of game theory based on econmic incentives. For a transaction up to the block reward, (12.5 BTC as of this writing), there's very little nothing to worry about. For a 1000 BTC transaction (80x the mining award), the block reward is not enough, so the full nodes, if they're controlled by your counterparty, may have economic incentive to deceive you. Transactions that large should be done using a full node.
-****
-
-### Merkle Block
-
-The full node needs to send the information about the tree structure and which hash is at which position in the Merkle Tree. A light node then needs to be able to reconstruct the partial Merkle Tree to actually validate the transaction. The format in which the full node communicates this to the light node is using something called a Merkle Block.
+Write the `serialize` method for `VersionMessage`.
 
 
 
+###
 
-To begin, let's examine the Merkle Path which can be seen in the diagram as all the ancestors of the transaction in question. If we are given all the siblings and whether we're on the left or the right at each level, we would have enough data to reconstruct the Merkle Root. Then we can examine if the root we've calculated matches the root that we know about in the block. If the two match, we have a proof of inclusion.
+Here is the one for inv:
 
-It turns out that to know whether we're on the left or right requires that we just know the transaction's position at the very bottom layer. In our diagram, the 0-based index of our transaction at the bottom layer (or layer 0) is 10. The index at layer 1 is 5. The index at layer 2 is 2, The index at layer 3 is 1 and the index at layer 4 is 0 since that's the Merkle Root. The formula for finding the index at the next layer looks like this:
+TODO inv payload spec
 
-index~layer n+1~=floor(index~layer n~/2)
+The idea is that nodes know how to actually send and receive such payloads wrapped inside a network envelope. A fully functional bitcoin node needs to know what to do with every possible network message.
 
-This makes sense since the number of items in the parent layer is half that of the current layer.
+### Network handshake
 
-TODO Code for this
-TODO Exercise for this
+The network handshake for two nodes is how node communication is established. It goes something like this:
 
-### Merkle Proof Construction
+ * A wants to connect to B and sends the version message.
+ * B receives the version message and responds with the verack message and sends its own version message.
+ * A receives the version and verack messages and continues communication
 
-To actually construct the proof, we need the index at layer 0 and all the sibling indexes.
+Once the handshake is finished, A and B can communicate however they want. Note that there is no authentication here and it's up to the nodes to verify all data that come in themselves. A node sending a bad tx or block, for example, can expect to get banned by other nodes.
 
-TODO Code for this
-TODO Exercise for this
+### Connecting to the network
 
-### Merkle Proof Verification
+Network communication is tricky due to its asynchronous nature. To experiment, we can establish a connection to a random node on the network synchronously, however:
 
-Once we receive the Merkle Proof from the server, we can now combine the information to verify that the transaction was indeed included in the block.
+TODO show code
 
-TODO Code for this
-TODO Exercise for this
+Connecting this way will only really show a little bit of data. Furthermore, we can't send until we've received and can't respond intelligently to more than 1 message at a time. A more robust implementation looks like this
 
-### SPV Problems
+TODO show code
 
-It should be obvious at this point why Simplified Payment Verification is useful. However, SPV is not without some significant downsides. The full details are outside the scope of this book, but note that despite the programming being pretty straightforward, most wallets on phones actually do not use SPV, but simply trust nodes from the wallet vendors.
+TODO show code to download headers
 
-TODO Bloom filters?
+TODO do exercise to validate each header?
