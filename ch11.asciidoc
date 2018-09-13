@@ -17,23 +17,55 @@ With that in mind, let's start with the very first message that one node sends t
 
 Network messages have a particular form that looks like this
 
-TODO show breakdown of the message format
+image:network1.png[Network Message]
 
-The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted.
+The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted. Magic bytes are also useful to make sure the node is on the right network. You would not want a Bitcoin node to connect to a Litecoin node, for example. Thus, a Litecoin node has a differnt magic. Same thing with testnet, as the magic on the testnet network is different than mainnet.
 
-The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at (TODO insert url). Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
+The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at https://wiki.bitcoin.it. Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
 
 The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the field is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB. Note the number is interpreted in little-endian, so in our case here, that is 101 bytes.
 
 The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the double-sha256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and double-sha256 has none. That said, the hash function is common in the rest of the protocol and is thus used here.
 
-TODO Exercises
+The code to handle network messages requires us to create a new class:
+
+[source,python]
+----
+NETWORK_MAGIC = b'\xf9\xbe\xb4\xd9'
+TESTNET_NETWORK_MAGIC = b'\xf9\xbe\xb4\xd9'
+
+class NetworkEnvelope:
+
+    def __init__(self, command, payload):
+        self.command = command
+        self.payload = payload
+
+    def __repr__(self):
+        return '{}: {}'.format(
+            self.command.decode('ascii'),
+            self.payload.hex(),
+        )
+----
+
+#### Exercise {counter:exercise}
+
+Determine what this network message is:
+
+f9beb4d976657261636b000000000000000000005df6e0e2
+
+#### Exercise {counter:exercise}
+
+Write the `parse` and `serialize` methods for `NetworkEnvelope`.
 
 ### Parsing the payload
 
 Each command has a separate payload specification. Here is the one for version:
 
-TODO version payload spec.
+image:network2.png[Version Message]
+
+The fields for version are meant to give enough information for two nodes to be able to be able to communicate.
+
+###
 
 Here is the one for inv:
 

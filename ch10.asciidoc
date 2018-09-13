@@ -148,17 +148,49 @@ class Block:
 ----
 <1> We now allow the transaction hashes to be set as part of the initialization of the block. The hashes would have to be in order.
 
+As a full node, if we are given all of the transaction hashes, we can now calculate the merkle root and check that the merkle root is what we expect.
+
 #### Exercise {counter:exercise}
 
 Write the `validate_merkle_root` method for `Block`.
 
-### Merkle Proofs
+### Using a Merkle Tree 
 
-TODO Diagram for a Merkle Proof
+Now that we know how a Merkle Tree is constructed, we can now use it to get a proof-of-inclusion. For nodes that don't have the entire blockchain, they can get proofs that certain transactions were included in a block without having to know all the transactions of a block. The essence of how we can do this is the following.
 
-Once we have a Merkle Tree as a server, we can now send Merkle Proofs. Merkle Proofs prove that the transaction is inside the Merkle Tree represented by the Merkle Root. This is similar to proving that a hash is a part of a Merkle Parent by revealing its sibling and indeed we will be utilizing that property. Recall that in proving that a hash is a part of a Merkle parent, we need to specify whether our hash is the left or right one and also the other hash. A Merkle Proof is essentially proving this at each level.
+image::merkleproof.png[Merkle Proof]
 
-### Merkle Path
+Say that we have two transactions that we are interested in, which would be the hashes marked by green boxes, H~K~ and H~N~ above. A full node can to prove to us that these transactions were a part of a block, by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~. We would then perform these calculations:
+
+H~KL~ = merkle_parent(H~K~, H~L~)
+
+H~MN~ = merkle_parent(H~M~, H~N~)
+
+H~IJKL~ = merkle_parent(H~IJ~, H~KL~)
+
+H~MNOP~ = merkle_parent(H~MN~, H~OP~)
+
+H~IJKLMNOP~ = merkle_parent(H~IJKL~, H~MNOP~)
+
+H~ABCDEFGHIJKLMNOP~ = merkle_parent(H~ABCDEFGH~, H~IJKLMNOP~)
+
+The merkle root is H~ABCDEFGHIJKLMNOP~, which we can check against the block header whose proof-of-work we've already validated.
+
+.How secure is an SPV proof?
+****
+The full node can send us a limited amount of information about the block and the light node can recalculate the merkle root, which can then be verified against the block header. This does not guarantee that the transaction is in a block, but it does assure the light node that the full node would have had to spend a lot of hashing power into creating a valid proof-of-work. As long as the reward for creating such aproof-of-work is greater than the amounts in the transactions, the light node can at least know that the full node has no clear economic incentive to lie.
+
+Indeed, since the block header can be requested from multiple nodes, light nodes have an easy way to verify if one node is trying to show them block headers that are not the longest. It only takes a single honest node to invalidate 100 dishonest ones since proof-of-work is objective. Therefore, it's not easy to isolate a light node enough to be able to deceive in this way. This, of course, assumes that there are lots of nodes on the network in the first place and that a good number of them are being honest.
+
+In other words, light client security is based on a robust network of nodes and a little bit of game theory based on econmic incentives. For a transaction up to the block reward, (12.5 BTC as of this writing), there's very little nothing to worry about. For a 1000 BTC transaction (80x the mining award), the block reward is not enough, so the full nodes, if they're controlled by your counterparty, may have economic incentive to deceive you. Transactions that large should be done using a full node.
+****
+
+### Merkle Block
+
+The full node needs to send the information about the tree structure and which hash is at which position in the Merkle Tree. A light node then needs to be able to reconstruct the partial Merkle Tree to actually validate the transaction. The format in which the full node communicates this to the light node is using something called a Merkle Block.
+
+
+
 
 To begin, let's examine the Merkle Path which can be seen in the diagram as all the ancestors of the transaction in question. If we are given all the siblings and whether we're on the left or the right at each level, we would have enough data to reconstruct the Merkle Root. Then we can examine if the root we've calculated matches the root that we know about in the block. If the two match, we have a proof of inclusion.
 
