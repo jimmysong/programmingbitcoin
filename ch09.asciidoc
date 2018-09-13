@@ -357,6 +357,10 @@ Calculate the new bits given the first and last blocks of this 2016 block diffic
 
 TODO find the block hexes of a 2016 block DAP
 
+#### Exercise {counter:exercise}
+
+Write the calculate_new_bits function.
+
 #### Conclusion
 
 We've learned how to calculate proof of work, how to calculate the difficulty adjustment for a block in addition to learning about Coinbase Transactions. We'll now move onto the one field we haven't really covered, which is the merkle root in the next chapter.
