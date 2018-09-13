@@ -15,35 +15,35 @@ Bare Multisig was the first attempt at creating a transaction that could be sign
 
 The transaction is called "bare" multisig because it's a really long ScriptPubKey. Here's what a ScriptPubKey for a 1-of-2 multisig looks like.
 
-images::multisig1.png[Bare Multisig ScriptPubKey]
+image::multisig1.png[Bare Multisig ScriptPubKey]
 
 This is the smallest reasonable multisig that you can get, and it's already really long. Note that p2pkh is only 25 bytes whereas this one is 101 bytes, and this is a 1 of 2! Here's what the ScriptSig looks like:
 
-images::multisig2.png[Bare Multisig ScriptSig]
+image::multisig2.png[Bare Multisig ScriptSig]
 
 We only need 1 signature for this 1-of-2 multisig, so this is a lot shorter, though something like a 5-of-7 would require 5 DER signatures and would be a lot longer (360 bytes or so). Here's how the two would combine
 
-images::multisig3.png[Bare Multisig Combination]
+image::multisig3.png[Bare Multisig Combination]
 
 We've generalized here so we can see what a m-of-n multisig would look like. Note the OP_0 at the top. The script stack, then starts like this:
 
-images::multisig4.png[Bare Multisig Start]
+image::multisig4.png[Bare Multisig Start]
 
 OP_0 will place a 0 on the stack.
 
-images::multisig5.png[Bare Multisig Step 1]
+image::multisig5.png[Bare Multisig Step 1]
 
 The signatures are elements so they'll go straight to the stack.
 
-images::multisig6.png[Bare Multisig Step 2]
+image::multisig6.png[Bare Multisig Step 2]
 
 OP_m will place the number m on the stack, the public keys will go straight to the stack and OP_n will place the number n on the stack.
 
-images::multisig7.png[Bare Multisig Step 3]
+image::multisig7.png[Bare Multisig Step 3]
 
 At this point, OP_CHECKMULTISIG will consume m+n+3 elements (due to off-by-one bug, see sidebar) and return 1 if m of the signatures are valid for m distinct public keys from the list of n public keys. Assuming that the signatures are valid, we are left with:
 
-images::multisig8.png[Bare Multisig End]
+image::multisig8.png[Bare Multisig End]
 
 .OP_CHECKMULTISIG Off-by-one Bug
 ****
@@ -74,7 +74,7 @@ Pay to script hash was introduced in 2011 to a lot of controversy. There were mu
 
 Essentially, pay-to-script-hash executes a very special rule only when the script goes in this pattern:
 
-images::p2sh1.png[p2sh Pattern]
+image::p2sh1.png[p2sh Pattern]
 
 If this exact sequence ends up with a 1, then the RedeemScript is interpreted as script and then processed as if it's part of the Script. This is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence. The RedeemScript does not get interpreted as script elements unless this sequence is encountered.
 
@@ -82,11 +82,11 @@ If this sounds hacky, it is. But before we get to that, let's look a little clos
 
 Let's take a simple 1-of-2 multisig ScriptPubKey like this:
 
-images::p2sh2.png[p2sh RedeemScript]
+image::p2sh2.png[p2sh RedeemScript]
 
 This is a ScriptPubKey for a Bare Multisig. What we need to do to convert this to p2sh is to take a hash of this and keep this script. We call this the RedeemScript, because the SCRIPT is only revealed during redemption. We put the hash of the RedeemScript as the ScriptPubKey like so:
 
-images::p2sh3.png[p2sh ScriptPubKey]
+image::p2sh3.png[p2sh ScriptPubKey]
 
 The hash here is the hash of the RedeemScript, or what was previously the ScriptPubKey. We've essentially compressed the ScriptPubKey by taking the Hash160 of the RedeemScript.
 
@@ -94,33 +94,33 @@ Creating the ScriptSig for a p2sh script involves not only revealing the RedeemS
 
 The ScriptSig for the 1-of-2 multisig looks like this:
 
-images::p2sh4.png[p2sh ScriptSig]
+image::p2sh4.png[p2sh ScriptSig]
 
 This produces the Script:
 
-images::p2sh5.png[p2sh Combination]
+image::p2sh5.png[p2sh Combination]
 
 Note that the OP_0 needs to be there because of the OP_CHECKMULTISIG bug. The key to understanding p2sh is the execution of the exact sequence:
 
-images::p2sh1.png[p2sh Pattern]
+image::p2sh1.png[p2sh Pattern]
 
 Upon execution of this sequence, if the result is 1, the RedeemScript is put in for the Script processing. In other words, if we reveal a RedeemScript that hashes to the hash in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead. We are essentially hashing the script that locks the funds and putting that into the blockchain instead of the script itself.
 
 Let's go through exactly how this works. We'll start with the script elements to process like this:
 
-images::p2sh6.png[p2sh Start]
+image::p2sh6.png[p2sh Start]
 
 OP_0 will put a 0 on the stack, the two signatures and the RedeemScript will go on the stack as elements, leading to this:
 
-images::p2sh7.png[p2sh Step 1]
+image::p2sh7.png[p2sh Step 1]
 
 OP_HASH160 will hash the RedeemScript, which will make the stack look like this:
 
-images::p2sh8.png[p2sh Step 2]
+image::p2sh8.png[p2sh Step 2]
 
 The 20-byte hash will go on top:
 
-images::p2sh9.png[p2sh Step 3]
+image::p2sh9.png[p2sh Step 3]
 
 And finally, OP_EQUAL will compare the top two elements. If the software that's being run by the node checking is pre-BIP0016, we would end up with this:
 
@@ -128,7 +128,7 @@ images: p2sh10.png[p2sh pre-BIP0016 End]
 
 On the other hand, BIP0016 nodes (which is most nodes on the network since about 2013), will now take the RedeemScript and parse that as Script:
 
-images::p2sh2.png[p2sh RedeemScript]
+image::p2sh2.png[p2sh RedeemScript]
 
 These now go into the Script column instead of a 1 being put back like so:
 
@@ -144,7 +144,7 @@ images: p2sh13.png[p2sh Step 6]
 
 This is a bit hacky and there's a lot of special-cased code in Bitcoin to handle this. Why didn't the core devs do something a lot less hacky and more intuitive? Well, it turns out that there was indeed another proposal BIPXX which used something called OP_EVAL, which would have been a lot more elegant. A script like this would have sufficed:
 
-images::op_eval.png[OP_EVAL]
+image::op_eval.png[OP_EVAL]
 
 OP_EVAL would consume the top element of the script and put the interpreted SCRIPT elements into the Script column.
 
