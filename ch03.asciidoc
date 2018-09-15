@@ -631,7 +631,7 @@ Point(infinity)
 
 We can now describe Public Key Cryptography and how we can use Elliptic Curves over finite fields to build this up. In general, we need a finite cyclical group, which we have with point addition in order to make everything work.
 
-The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute P when we know e and G, but we cannot easily compute e when we know P and G. This is the Discrete Log Problem described earlier.
+The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute P when we know e and G, but we cannot easily compute `e` when we know P and G. This is the Discrete Log Problem described earlier.
 
 We'll use the fact that it's extremely difficult to compute e to create signing and verification.
 
