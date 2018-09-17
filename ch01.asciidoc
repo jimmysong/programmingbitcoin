@@ -542,4 +542,4 @@ Thankfully, we can do even better. We already know how to force a number into th
 
 === Conclusion
 
-In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing this in Chapter 3 for Elliptic Curve Cryptography.
