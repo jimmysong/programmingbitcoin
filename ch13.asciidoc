@@ -1,42 +1,70 @@
 = Programming Bitcoin
 :imagesdir: images
 
-[[chapter_advanced]]
+[[chapter_segwit]]
 
-## Advanced Topics
+## Segwit
 
-If you've made it this far, congratulations! You've learned quite a bit about Bitcoin's inner workings and hopefully, you are inspired to learn a lot more. Indeed, this book only scratches the surface and there's quite a bit more to learn. In this chapter, we'll go through what other things you can learn and ways to contribute to the community.
+Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the actual activation was controversial, the actual features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what this enables.
 
-### Wallets
+As a brief overview, Segwit is a multitude of things:
 
-Creating a wallet is a difficult task as securing private keys turns out to be very difficult. That said, there are a bunch of standards for creating wallets that can help in this regard.
+* Block size increase
+* Transaction Malleability Fix
+* Network transmission reduction
+* Clear upgrade path
 
-#### Heirarchical Deterministic Wallets
+We'll go through all of these in detail
 
-For privacy purposes, you generally need to create lots of addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
+### Pay to Witness Pubkey Hash
 
-To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path.
+Pay to witness pubkey hash (p2wpkh) is the new type of script that coins can be sent to. Essentially, this is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the data elsewhere. The rearrangement is largely for two reasons: transaction malleability fix and reduced network transmission.
 
-Additionally, BIP0044 defines exactly what each layer means and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
+#### Transaction Malleability
 
-#### Mnemonic Seeds
+Transaction Malleability is the ability to change the transaction's ID without substantively altering the transaction itself. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was insolvent back in 2013. This turned out not to be the case, but the term has since stuck.
 
-Writing down and transcribing a 256-bit seed turns out to be a pain and fraught with errors. To combat this, BIP0039 is a way to encode the seed into a bunch of English words. There are 2048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed. The standard defines exactly how this gets implemented and combined with BIP0032 and BIP0044, is how most wallets backup and restore wallets.
+Malleability of the ID turns out to be an important consideration when doing second-layer protocols like lightning. A changing transaction ID makes lightning much more difficult, so fixing malleability was a priority.
 
-### Payment Channels and Lightning Network
+The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction are pretty fixed, though, so from a malleability standpoint, this is not a problem. The one field that does allow for some manipulation of the ID, however, is the scriptSig field on each input. At a deep level, this is because the scriptSig is emptied before actually signing the transaction and thus, signatures can be good for multiple possible scriptSigs.
 
-Payment Channels are the atomic unit of the Lightning Network and learning how they work is a good next step.
+### Fixing malleability
 
-TODO fill this in
+The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the txid stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
 
-### Contributing
+If this sounds familiar, it should. This is similar to how p2sh works in that newer nodes do additional validation that older nodes do not and is the basis for why this is a soft fork and not a hard fork.
 
-A large part of the Bitcoin ethic is in contributing back to the community. The main way you can do that is through open source projects. There are almost too many to list, but here's a sample:
+### Segwit Mechanics
 
-TODO list of projects
+To understand Segwit, it helps to look at what the transaction looks like when sent to an old node versus a new node:
 
-Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas and so on.
+TODO hex dumps of both
 
-TODO more reasons
+The difference is that segwit transactions have a couple of markers and have the witness program field. Otherwise, the two transactions look more or less the same.
 
+The actual way in which Segwit gets processed is similar to p2sh in that there is a special rule that triggers in a specific stack state. With p2sh, this was the combination of <redeem script> OP_HASH160 <hash> OP_EQUAL. In our case, it's <20-byte hash> 0.
+
+This triggers grabbing the pubkey and signature from the witness program and the 20-byte hash, pubkey and signature are combined to be processed exactly as would p2pkh. Namely: <signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG.
+
+The interesting thing here is that for an older node, processing stops at the <20-byte hash> 0. The top element is non-zero, so this evaluates to true and no more validation is done. Only upgraded nodes do the rest of the validation, much like p2sh. Note that this means less data is sent over the network as older nodes simply don't need the pubkey and signature that they're not going to verify anyway. Also, we give nodes the option of not having to verify transactions that are X blocks old if they don't want to. In a sense, they signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating itself if it so chooses.
+
+## P2SH-P2WPKH
+
+P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of them. Simply put, p2wpkh uses bech32 addresses which older wallets won't understand.
+
+The segwit authors found an ingenious way to make segwit backwards compatibly by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh.
+
+The way this works is that the address is a normal p2sh address, but the redeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
+
+TODO hexdump of each
+
+The difference with p2wpkh is that the scriptSig is the fixed redeemScript that would normally be the scriptPubkey. The way this plays out looks like this:
+
+TODO some diagram of what happens
+
+As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a node post-BIP0016, but pre-Segwit would stop with the 20-byte hash. Both would not do the full validation and would accept the transaction.
+
+### Other improvements
+
+Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new sha256 hash for each input. Lastly, the network transmission layer needed changing as nodes now need a way to request the segwit data. There are now network messages that specifically ask for blocks and transactions with segwit data.
 

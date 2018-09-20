@@ -1,70 +1,278 @@
 = Programming Bitcoin
 :imagesdir: images
 
-[[chapter_segwit]]
+[[chapter_bloomfilters]]
 
-## Segwit
+## Bloom Filters
 
-Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the actual activation was controversial, the actual features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what this enables.
+In the previous chapter we learned how to validate a Merkle Block. Another node can prove to us that transactions we're interested in are in a particular block through the merkleblock command. But how does the other node know which transactions we're interested in?
 
-As a brief overview, Segwit is a multitude of things:
+We could tell the other node our addresses (in reality, ScriptPubKeys). The other node can check for transactions that are relevant to these addresses, but that would be compromising our privacy. We wouldn't want to reveal, for example, that we have 1000 BTC to another node which can then figure out what IP address we're at. If they happen to be bad guys, perhaps try to take that BTC away from us. Privacy leaks can be security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
 
-* Block size increase
-* Transaction Malleability Fix
-* Network transmission reduction
-* Clear upgrade path
+The solution is to tell the other node enough information to give us a _superset_ of all transactions we are interested in. To create this superset, we have to create something called a Bloom Filter
 
-We'll go through all of these in detail
+### What is a Bloom Filter?
 
-### Pay to Witness Pubkey Hash
+A Bloom Filter is a filter for all possible transactions. Nodes can quickly run transactions through the filter and send merkleblocks for transactions that come through the filter. Here's how it works.
 
-Pay to witness pubkey hash (p2wpkh) is the new type of script that coins can be sent to. Essentially, this is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the data elsewhere. The rearrangement is largely for two reasons: transaction malleability fix and reduced network transmission.
+Suppose there are 50 total transactions. There is one transaction we're interested in. We want to "hide" our transaction among a group of 5 different transactions. We need a function that will group each of the 50 transactions into 10 different buckets and we have the other node send to us every transaction in that bucket, in a manner of speaking. This grouping would have to be _deterministic_, that is, be the same grouping each time. So what do we do?
 
-#### Transaction Malleability
+The solution is to use a hash function and modulo to put each transaction into buckets.
 
-Transaction Malleability is the ability to change the transaction's ID without substantively altering the transaction itself. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was insolvent back in 2013. This turned out not to be the case, but the term has since stuck.
+A Bloom Filter is a computer science structure that can be used on any data in a set, so suppose that we have one item "hello world" that we want to create a Bloom Filter for. We need a hash function, so we'll use one we already have `double_sha256`. The process of figuring out what bucket our item goes into looks like this:
 
-Malleability of the ID turns out to be an important consideration when doing second-layer protocols like lightning. A changing transaction ID makes lightning much more difficult, so fixing malleability was a priority.
+[source,python]
+----
+>>> from helper import double_sha256
+>>> bit_field_size = 10  # <1>
+>>> bit_field = [0] * bit_field_size
+>>> h = double_sha256(b'hello world')  # <2>
+>>> bit = int.from_bytes(h, 'big') % bit_field_size  # <3>
+>>> bit_field[bit] = 1  # <4>
+>>> print(bit_field)
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+----
+<1> Our bit field is 10 bits long, or has 10 "buckets"
+<2> We take the item and hash it with our hash function.
+<3> We can now interpret this as a number and modulo by 10 to get which bucket this item goes into.
+<4> Our filter indicates which bucket the other node should send back.
 
-The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction are pretty fixed, though, so from a malleability standpoint, this is not a problem. The one field that does allow for some manipulation of the ID, however, is the scriptSig field on each input. At a deep level, this is because the scriptSig is emptied before actually signing the transaction and thus, signatures can be good for multiple possible scriptSigs.
+Conceptually, what we just did looks like this:
 
-### Fixing malleability
+image::bloomfilter1.png[Simple Bloom Filter]
 
-The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the txid stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
+The actual filter consists of:
 
-If this sounds familiar, it should. This is similar to how p2sh works in that newer nodes do additional validation that older nodes do not and is the basis for why this is a soft fork and not a hard fork.
+1. The size of the bit field
+2. The hash function we used (and how we converted that to a number)
+3. The bit_field, which tells the other node which bucket we're interested in.
 
-### Segwit Mechanics
+This works great for a single item, so would be great if we only had a single address/ScriptPubKey/Transaction ID that we're interested in. What do we do when there's more than 1 item?
 
-To understand Segwit, it helps to look at what the transaction looks like when sent to an old node versus a new node:
+We can run a second item through the same exact filter and set that bit to 1 as well. In effect, the other node will be sending us multiple buckets instead of a single bucket, but that should be fine. Let's create a Bloom Filter with another item 'goodbye':
 
-TODO hex dumps of both
+[source,python]
+----
+>>> from helper import double_sha256
+>>> bit_field_size = 10
+>>> bit_field = [0] * bit_field_size
+>>> for item in (b'hello world', b'goodbye'):  # <1>
+...     h = double_sha256(item)
+...     bit = int.from_bytes(h, 'big') % bit_field_size
+...     bit_field[bit] = 1
+>>> print(bit_field)
+[0, 0, 1, 0, 0, 0, 0, 0, 0, 1]
+----
+<1> We create a filter for two different items here, but this can easily be extended to many more.
 
-The difference is that segwit transactions have a couple of markers and have the witness program field. Otherwise, the two transactions look more or less the same.
+If the other node has 50 items, this filter will send back on average 10 items instead of the 5 from before because we're getting 2 buckets, not 1. Conceptually speaking, we are essentially doing this:
 
-The actual way in which Segwit gets processed is similar to p2sh in that there is a special rule that triggers in a specific stack state. With p2sh, this was the combination of <redeem script> OP_HASH160 <hash> OP_EQUAL. In our case, it's <20-byte hash> 0.
+image::bloomfilter2.png[Two Item Bloom Filter]
 
-This triggers grabbing the pubkey and signature from the witness program and the 20-byte hash, pubkey and signature are combined to be processed exactly as would p2pkh. Namely: <signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG.
+#### Exercise {counter:exercise}
 
-The interesting thing here is that for an older node, processing stops at the <20-byte hash> 0. The top element is non-zero, so this evaluates to true and no more validation is done. Only upgraded nodes do the rest of the validation, much like p2sh. Note that this means less data is sent over the network as older nodes simply don't need the pubkey and signature that they're not going to verify anyway. Also, we give nodes the option of not having to verify transactions that are X blocks old if they don't want to. In a sense, they signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating itself if it so chooses.
+Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
 
-## P2SH-P2WPKH
+### Going a step further
 
-P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of them. Simply put, p2wpkh uses bech32 addresses which older wallets won't understand.
+Supposing that we had 1 million possible items and we still wanted to get a hide our interested items behind 5 times the number of false positives, we would need a Bloom Filter that's 1,000,000 / 5 = 200,000 bits long. Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, only 20% of which would be items of interest. 200,000 bits is 25,000 bytes and is a lot to transmit. Can we do better?
 
-The segwit authors found an ingenious way to make segwit backwards compatibly by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh.
+It turns out we can. A Bloom Filter using multiple hash functions can, in fact, shorten the bit field considerably. If we used 5 hash functions over a bit field of 32, we would have 32!/(27!5!) ~ 200,000 possible 5-bit combinations in that 32-bit field. Of 1 million possible items, 5 items on average should have that 5-bit combination. Instead of transmitting 25k bytes, we can transmit just 32 bits or 4 bytes!
 
-The way this works is that the address is a normal p2sh address, but the redeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
+Here's what that would look like. For simplicity, we stick to the same 10-bit field but have 2 items:
 
-TODO hexdump of each
+[source,python]
+----
+>>> from helper import double_sha256, hash160
+>>> bit_field_size = 10
+>>> bit_field = [0] * bit_field_size
+>>> for item in (b'hello world', b'goodbye'):
+...     for hash_function in (double_sha256, hash160):  # <1>
+...         h = hash_function(item)
+...         bit = int.from_bytes(h, 'big') % bit_field_size
+...         bit_field[bit] = 1
+>>> print(bit_field)
+[1, 1, 1, 0, 0, 0, 0, 0, 0, 1]
+----
+<1> We iterate over 2 different hash functions here (`double_sha256` and `hash160`), but we could just as easily have more.
 
-The difference with p2wpkh is that the scriptSig is the fixed redeemScript that would normally be the scriptPubkey. The way this plays out looks like this:
+Conceptually, this is what we just did:
 
-TODO some diagram of what happens
+image::bloomfilter3.png[Multiple Hash Functions]
 
-As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a node post-BIP0016, but pre-Segwit would stop with the 20-byte hash. Both would not do the full validation and would accept the transaction.
+This means that we can manipulate our Bloom Filter to have the optimum number of bits and hash functions given a particular amount of hiding that we desire.
 
-### Other improvements
+### BIP0037 Bloom Filters
 
-Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new sha256 hash for each input. Lastly, the network transmission layer needed changing as nodes now need a way to request the segwit data. There are now network messages that specifically ask for blocks and transactions with segwit data.
+BIP0037 defines exactly how Bloom Filters are defined. As before, the things that we need to let the other node know about are:
+
+1. The size of the bit field. We send this in bytes (8 bits per byte) and round up if we need to.
+2. We also send over how many hash functions we want to use along with a "tweak" to make them unique and not reusable for anyone else.
+3. Lastly, we need to send over the actual bit field that results from running the Bloom Filter over our items.
+
+While we could define lots of hash functions (sha256, keccak, ripemd, blake, etc), in practice, we only really use a single hash function with a different seed. This allows the calculation to be more efficient.
+
+The hash function we utilze is called `murmur3` and the seed formula is defined this way:
+
+i*0xfba4c795 + tweak
+
+The `fba4c795` number is a constant utilized for Bitcoin Bloom Filters and is utilized so it won't conflict with other places. `i` is 0 for the first hash function, 1 for the second, 2 for the third and so on. The `tweak` is something you can define to make the hash function not conflict with anyone else using BIP0037. These hash functions and the size of the bit field are enough to actually calculate the bit field we need to send over.
+
+[source,python]
+----
+>>> from helper import murmur3  # <1>
+>>> from bloomfilter import BIP37_CONSTANT  # <2>
+>>> field_size = 2
+>>> num_functions = 2
+>>> tweak = 42
+>>> bit_field_size = field_size * 8
+>>> bit_field = [0] * bit_field_size
+>>> for phrase in (b'hello world', b'goodbye'):  # <3>
+...     for i in range(num_functions):  # <4>
+...         seed = i * BIP37_CONSTANT + tweak  # <5>
+...         h = murmur3(phrase, seed=seed)  # <6>
+...         bit = h % bit_field_size
+...         bit_field[bit] = 1
+>>> print(bit_field)
+[0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0]
+----
+<1> `murmur3` can be implemented in pure Python
+<2> BIP37_CONSTANT is the `fba4c795` number defined in BIP0037
+<3> We iterate over the same items as before.
+<4> We have 2 hash functions.
+<5> Seed formula as before
+<6> `murmur3` returns a number, which is nice, so we don't have to do any weird conversion
+
+We have a 2-byte field with 2 bits per item. This particular Bloom Filter has 4 bits set out of 16, so the probability of any random item passing through this filter is 1/4*1/4=1/16. If we have 160 items, we'll receive 10 items on average, 2 of which we'll be interested in.
+
+We can now start creating a `BloomFilter` class.
+
+[source,python]
+----
+class BloomFilter:
+
+    def __init__(self, size, function_count, tweak):
+        self.size = size
+        self.bit_field = [0] * (size * 8)
+        self.function_count = function_count
+        self.tweak = tweak
+----
+
+#### Exercise {counter:exercise}
+
+Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items?
+
+b'Hello World'
+b'Goodbye!'
+
+#### Exercise {counter:exercise}
+
+Write the `add` method for `BloomFilter`
+
+### Loading a Bloom Filter
+
+It is not enough just to create a Bloom Filter, we must also let the other node know the details of the filter so the other node can send us proofs-of-inclusion. The first thing we must do is set the optional relay flag in the version message (see Chapter 10) to 1. This tells the other node not to send over transactions unless they match a Bloom Filter. Of course, after the version message, we haven't sent any details to the other node about the actual Bloom Filter, so they won't send us anything until we send them the Bloom Filter information.
+
+The actual command to set the Bloom Filter is called `filterload`. The payload looks like this:
+
+image::filterload.png[filterload Command]
+
+The bit field is the bit field to match against. We also send along how many hash functions and the value of the tweak. The matched item flag is a way of asking the node to add any matched transactions to the Bloom Filter.
+
+#### Exercise {counter:exercise}
+
+Write the  `filterload` payload from the `BloomFilter` class.
+
+### Getting Merkle Blocks
+
+There is one more command that we need and that is getting the filtered blocks from the other node. We can utilize the `getdata` command to get blocks and transactions from another node. One of the options is to ask for Merkle Blocks using the Bloom Filter that we've sent.
+
+Here is what the payload looks like:
+
+image::getdata.png[getdat Command]
+
+We have the number of items as a varint to begin. The each item has a type. 1 is a Transaction (Chapter 5), 2 is a normal Block (Chapter 9), 3 is a Merkle Block (Chapter 11) and 4 is a Compact Block (not covered in this book).
+
+We can now create this message.
+
+[source,python]
+----
+class GetDataMessage:
+    
+    def __init__(self):
+        self.data = []  # <1>
+        
+    def add_data(self, data_type, identifier):  # <2>
+        self.data.append((data_type, identifier))
+----        
+<1> We have some data that we want.
+<2> Whatever we want to query, we add here to the message.
+
+#### Exercise {counter:exercise}
+
+Write the `serialize` method for the `GetDataMessage` class.
+
+### Getting Transactions of Interest
+
+We can now set a Bloom Filter with a peer node and get all the information we need to get transactions that are interesting to us. Utilizing the code we have from the last few chapters, we can get transactions that are important to us:
+
+(For the sake of brevity, the imports are omitted)
+[source,python]
+----
+>>> last_block_hex = '0000000000000085227e02d47d754bb64825bfd4522551f46ce19850993095d8'
+>>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
+>>> h160 = decode_base58(address)
+>>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
+>>> bf = BloomFilter(30, 5, 90210)  # <1>
+>>> bf.add(h160)  # <2>
+>>> node.handshake()
+>>> node.send(b'filterload', bf.filterload())  # <3>
+>>> starting_block = bytes.fromhex(last_block_hex)
+>>> getheaders_message = GetHeadersMessage(starting_block=starting_block)
+>>> node.send(b'getheaders', getheaders_message.serialize())  # <4>
+>>> headers_envelope = node.wait_for_commands({b'headers'})
+>>> stream = headers_envelope.stream()
+>>> headers = HeadersMessage.parse(stream)
+>>> get_data_message = GetDataMessage()  # <5>
+>>> for b in headers.blocks:
+...     if not b.check_pow():
+...         raise RuntimeError('proof of work is invalid')
+...     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
+>>> node.send(b'getdata', get_data_message.serialize())  # <7>
+>>> while True:
+>>>     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  # <8>
+>>>     stream = envelope.stream()
+>>>     if envelope.command == b'merkleblock':
+>>>         mb = MerkleBlock.parse(stream)
+>>>         if not mb.is_valid():  # <9>
+>>>             raise RuntimeError('invalid merkle proof')
+>>>     else:  # <10>
+>>>         prev_tx_obj = Tx.parse(stream, testnet=True)
+>>>         for i, tx_out in enumerate(prev_tx_obj.tx_outs):
+>>>             if tx_out.script_pubkey.address(testnet=True) == addr:  # <11>
+>>>                 print('found: {}:{}'.format(prev_tx_obj.hash().hex(), i))
+----
+<1> We are creating a Bloom Filter that's 30 bytes, 5 hash functions using a particularly popular 90's tweak.
+<2> The only thing we'll filter for is the address above.
+<3> We send the `filterload` command using the parameters from the Bloom Filter above.
+<4> We get all the headers after the one defined above.
+<5> We are creating a `getdata` message for Merkle Blocks that we think will have transactions interesting to us.
+<6> We are specifically asking for the Merkle Block for this Block header. Most of them will probably be complete misses.
+<7> We send the `getdata` message asking for Merkle Blocks for 2000 blocks after the block id at the top.
+<8> The only two commands that interest us are the `merkleblock` command, which proves inclusion andn the `tx` command which will give us the details of the possibly interesting transaction.
+<9> We have to check that the Merkle Block is valid.
+<10> Transactions may or may not be interesting. We have to parse to find out.
+<11> We're looking for UTXOs that correspond to the address at the top, and we print them to screen if we have one.
+
+What we've done in the above is look at 2000 blocks after a particular block for utxos of a particular address. This is without the use of any block explorer, which preserves, to some degree, our privacy.
+
+#### Exercise {counter:exercise}
+
+Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
+
+#### Conclusion
+
+In this chapter, we've managed to create everything necessary to connecting peer to peer as an SPV node, get the data necessary to construct a transaction and preserve privacy by using a Bloom Filter.
+
+We now turn to Segwit, which is a new type of Script that came into Bitcoin in 2017..
 
