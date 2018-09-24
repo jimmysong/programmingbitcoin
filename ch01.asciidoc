@@ -35,7 +35,9 @@ Let's unpack each of the following.
 
 We have a set of numbers that's finite. Because the set is finite, we can designate a number *p* which is how big the set is. This is what we call the _order_ of the set. 
 
-The first part says we are closed under addition and multiplication. This means that we have to define addition and multiplication in a way as to make sure that they stay in the set. We'll get to how exactly we define addition and multiplication later, but the key concept here to learn is that we can *define addition and subtraction differently than the traditional addition and subtraction*.
+The first part says we are closed under addition and multiplication. This means that we have to define addition and multiplication in a way as to make sure that they stay in the set. For example, a set containing {0,1,2} is *not* closed under addition since 1+2=3 and 3 is not in the set, neither is 2+2=4. Of course we can define addition a little differently to make this work, but using "normal" addition, this set is not closed under addition. On the other hand, the set {-1,0,1} is closed under normal multiplication. Any two numbers we choose can be multiplied and the result is always in the set. Again, we can define multiplication in a particular way to make these sets closed.
+
+We'll get to how exactly we define addition and multiplication later, but the key concept here to learn is that we can *define addition and subtraction differently than the traditional addition and subtraction*.
 
 The second and third parts mean that we have the additive and multiplicative identities. That means 0 and 1 are in the set. That is, if *a* is in the set, *-a* is in the set. Using this, we can define subtraction. Subtraction is the inverse of addition. Once again, we have to make sure subtraction is defined in a way as to not go under 0. We will define subtraction specifically to a finite field. Multiplication has the same property, so if *a* is in the set, *a^-1^* is in the set. That is *a⋅a^-1^=1*. Using this, we can define division, the inverse of multiplication. This will be the trickiest to define in a finite field, but we will do so.
 
@@ -110,6 +112,8 @@ Write the corresponding method $$__ne__$$ which checks if two `FieldElement` obj
 
 === Modulo Arithmetic
 
+One of the tools we can use in order to make a field closed under addition, subtraction, multiplication and division is to utilize something called Modulo Arithmetic.
+
 We can define addition on the finite set using something called modulo arithmetic. Modulo arithmetic is something you probably did back in elementary school. Remember problems like this?
 
 image::longdivision.png[Long Division]
@@ -164,7 +168,7 @@ Essentially the result of the modulo (%) operation is always between 0 and 59, i
 
 14738495684013 % 60 = 33
 
-We'll be using modulo as we define field arithmetic.
+We'll be using modulo as we define field arithmetic. Most operations in Finite Fields are implicitly using some modulo operator.
 
 ==== Modulo Arithmetic in Python
 

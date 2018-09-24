@@ -26,7 +26,7 @@ Some knowledge of math is required, especially for Chapters 1 and 2 as they intr
 
 General CS knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
 
-=== How is the book laid out?
+=== How is the book arranged?
 
 This book is split into 14 chapters and build one on top of the other. Each chapter is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
 
