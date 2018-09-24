@@ -5,6 +5,7 @@
 
 == Pay To Script Hash
 
+[.lead]
 So far, we've been doing single-key transactions, ones where only a single private key has to sign in order to disperse the funds. But what if we wanted something a little more complicated? A company that does $100 million in Bitcoin transactions might not want all of the funds in a single public key as that key can be stolen by an employee and all funds would then be lost. What can we do?
 
 The solution is multi-sig, or multiple signatures. This was built into Bitcoin from the beginning, but was clunky at first and so wasn't used. In fact, as we'll discover, it turns out Satoshi never really tested OP_CHECKMULTISIG as it has a very obvious off-by-one error (see sidebar). The bug has had to stay in the protocol as fixing it would require a hard fork.
@@ -238,6 +239,6 @@ We've validated 1 of the 2 signatures that are needed to unlock this p2sh multis
 
 Validate the second signature from the transaction above.
 
-==== Conclusion
+=== Conclusion
 
-We've learned how p2sh works and how it's much easier to use, despite its clunkiness. We now turn to Blocks.
+We've learned how p2sh works and how it's much easier to use, despite its clunkiness. We've covered Transactions for the last 4 chapters, we now turn to how they are grouped and that's Blocks.

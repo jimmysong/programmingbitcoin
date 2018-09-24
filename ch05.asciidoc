@@ -5,7 +5,8 @@
 
 == Transactions
 
-Transactions are at the heart of Bitcoin. Transactions, simply put, are value transfers from one entity to another. We'll see in Chapter 7 how "entities" in this case are really smart contracts. But we're getting ahead of ourselves. Lets first look at what transactions in Bitcoin are, what they look like and how they are parsed.
+[.lead]
+Transactions are at the heart of Bitcoin. Transactions, simply put, are value transfers from one entity to another. We'll see in Chapter 6 how "entities" in this case are really smart contracts. But we're getting ahead of ourselves. Lets first look at what transactions in Bitcoin are, what they look like and how they are parsed.
 
 === Transaction Components
 
@@ -425,6 +426,6 @@ Now that we have the amount method in `TxIn` which lets us access how many Bitco
 
 Write the fee method for the `Tx` class.
 
-==== Conclusion
+=== Conclusion
 
 We've covered exactly how to parse and serialize transactions. The fields that we didn't cover are related to Script, which we'll now turn to.

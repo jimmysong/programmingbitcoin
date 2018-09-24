@@ -4,6 +4,7 @@
 [[chapter_elliptic_curve cryptography]]
 == Elliptic Curve Cryptography
 
+[.lead]
 The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts to get Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
 === Elliptic Curves over Reals
@@ -947,7 +948,54 @@ from random import randint
 
 The `s` here has to be a low value
 
-MAYBE: sidebar - importance of k being really random
+.Importance of k being random
+****
 
-MAYBE: sidebar - deterministic k values
+There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
+
+Our secret is e and our z is the same.
+
+k~1~G=(r~1~,y), k~2~G=(r~2~,y)
+s~1~ = (z+r~1~e), s~2~ = (z+r~2~e)
+
+s~1~-s~2~ = (r~1~-r~2~)e
+e = (s~1~-s~2~) / (r~1~-r~2~)
+
+If anyone sees both signatures, they can run this formula and find our secret!
+
+To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique k every time. The specification is laid out in RFC6979 and the code looks like this:
+
+[source,python]
+----
+class PrivateKey:
+...
+    def deterministic_k(self, z):
+        k = b'\x00' * 32
+        v = b'\x01' * 32
+        if z > N:
+            z -= N
+        z_bytes = z.to_bytes(32, 'big')
+        secret_bytes = self.secret.to_bytes(32, 'big')
+        s256 = hashlib.sha256
+        k = hmac.new(k, v + b'\x00' + secret_bytes + z_bytes, s256).digest()
+        v = hmac.new(k, v, s256).digest()
+        k = hmac.new(k, v + b'\x01' + secret_bytes + z_bytes, s256).digest()
+        v = hmac.new(k, v, s256).digest()
+        while 1:
+            v = hmac.new(k, v, s256).digest()
+            candidate = int.from_bytes(v, 'big')
+            if candidate >= 1 and candidate < N:
+                return candidate  # <1>
+            k = hmac.new(k, v + b'\x00', s256).digest()
+            v = hmac.new(k, v, s256).digest()
+----
+<1> This algorithm'returns a candidate that's suitable.
+
+The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
+
+****
+
+### Conclusion
+
+We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message. We now turn to serializing a lot of these structures so that we can store them on disk, send them over the network and so on.
 

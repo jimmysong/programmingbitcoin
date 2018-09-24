@@ -2,9 +2,9 @@
 :imagesdir: images
 
 [[chapter_blocks]]
+== Blocks
 
-## Blocks
-
+[.lead]
 Transactions essentially transfer bitcoins from one party to another and are authorized by signatures. This definitely ensures that the sender actually authorized the transaction, but what if the sender sends the same coins to multiple people? This is called the double-spending problem and is so called because the owner of a lockbox may try to spend the same output twice. How is the receiver to be assured that they actually received the amount?
 
 This is where a major innovation of Bitcoin comes in with Blocks. Think of Blocks as a way to order transactions. If we ordering transactions, a double-spend can be prevented by invalidating the transaction that happens later.
@@ -13,7 +13,7 @@ Now it would be really nice if we could order transactions one at a time, but th
 
 Bitcoin finds a middle ground between these extremes by settling every 10 minutes in batches of transactions. These batches of transactions are what we call blocks. In this chapter we'll go through how to parse them and how to check what's called the proof of work. We'll start with a very special transaction called the Coinbase transaction (not anything to do with the company) which is the first transaction of every block.
 
-### Coinbase Transactions
+=== Coinbase Transactions
 
 We start with special transactions called Coinbases transactions. This has nothing to do with the company and is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by the miner and include all the transaction fees of the other transactions in the block.
 
@@ -27,11 +27,11 @@ First, by rule, Coinbase Transactions must have exactly one input. Second, that 
 
 These three determine whether a transaction is a Coinbase transaction or not.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `is_coinbase` method of the `Tx` class.
 
-#### ScriptSig
+==== ScriptSig
 
 One of the intriguing things about the Coinbase Transaction is that there's nothing that the transaction is unlocking as the previous transaction does not exist. So what's in there? What information is in there?
 
@@ -55,7 +55,7 @@ image::genesis.jpg[Genesis Block Coinbase ScriptSig]
 
 This proves that the Genesis Block was created some time *at or after* that date, and not before. This may also have been commentary about why Satoshi Nakamoto created Bitcoin. Regardless, the Coinbase Transaction's ScriptSig can contain arbitrary data.
 
-#### BIP0034
+==== BIP0034
 
 One of the rules for a Coinbase Transaction was added in BIP0034. This was due to a network problem where miners were using the *same* Coinbase Transaction for different blocks. This was possible in the early days as the 32-bit nonce space was enough to mine blocks. The Coinbase being the same means that the transaction id is also the same as the double_sha256 of the transaction is deterministic. To combat this, the Core developers soft-forked in a rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
 
@@ -73,11 +73,11 @@ The height must be interpreted as a little-endian integer and must equal the hei
 
 We now know which block the transaction was in! This forces Coinbase Transactions to have a differnet ScriptSig and thus different double_sha256 values.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `coinbase_height` method for the `Tx` class.
 
-### Headers vs Full Blocks
+=== Headers vs Full Blocks
 
 Blocks are batches of transactions and the block header is metadata about the transactions included in the block. The block header consists of:
 
@@ -119,17 +119,17 @@ class Block:
         self.nonce = nonce
 ----
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the parse, serialize and hash methods for block.
 
-### Version
+=== Version
 
 Version in normal software refers to a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for. In the past this was used as a way to indicate a single feature that was ready. Version 2 meant that the software was ready for BIP0016, or pay-to-script-hash as described previously.
 
 Unfortunately, this means that only one feature may be signaled on the network at a time. To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time.
 
-#### BIP9
+==== BIP9
 
 The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be 001 to indicate that the miner is utilizing BIP9. This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
 
@@ -153,19 +153,19 @@ True
 <2> The `&` operator is the "bitwise and" operator. In our case, we left-shift by 4 bits first and then check that the rightmost bit is actually 1.
 <3> We shift 1 to the left because BIP141 was assigned to bit 1.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
 
-### Previous Block
+=== Previous Block
 
 All blocks have to point to a parent block. This is why the data structure is called a block*chain*. Blocks link back all the way to what we call the Genesis Block. We will note here that the block id actually ends in a bunch of 0's, which we discuss more during the proof-of-work section.
 
-### Merkle Root
+=== Merkle Root
 
 The Merkle Root encodes all the ordered transactions in a nice 32 byte hash. We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the merkle root along with data from the server to get a proof-of-inclusion in Chapter 11.
 
-### Timestamp
+=== Timestamp
 
 The timestamp is a unix-style timestamp taking up 4 bytes. Unix timestamps simply encode the number of seconds since January 1, 1970. This timestamp is used in two places. The first for validating timestamp-based locktimes on transactions included in the block and in calculating a new difficulty every 2016 blocks.
 
@@ -176,15 +176,15 @@ Bitcoin's timestamp field in the block header is 32 bits. This means that once t
 Many people mistakenly believe that we only have until 68 years after 1970, or 2038, but that's only when the field is a signed integer (2^31^ seconds is 68 years), so we get the benefit of that extra bit, giving us until 2106.
 ****
 
-### Bits
+=== Bits
 
 Bits is a field that encodes the amount of work necessary in this block. This will be discussed more in the proof-of-work section below.
 
-### Nonce
+=== Nonce
 
 Nonce stands for "number used only once" or n-once. This number is what is changed by miners when looking for proof-of-work.
 
-### Proof of Work
+=== Proof of Work
 
 Proof of work is what secures Bitcoin and at a deep level, makes Bitcoin decentralized. Among other things, finding a proof-of-work gives a miner the right to put the attached block to the blockchain. As proof-of-work is very rare, this is not an easy task. But because proof-of-work is objective and easy to verify anyone can be a miner if they so choose.
 
@@ -209,7 +209,7 @@ We can calculate the probability of any random 256-bit number being this small. 
 
 Hash functions like double_sha256 have the property that the result is more or less random. Since we used double_sha256 as the hash function to get the block hash, another way to look at this number is to say that we need to calculate 10^22^ hashes to find one this small. In other words, the process of finding proof-of-work requires us to process around 10^22^ numerical equivalents to dirt and rock to find our numerical equivalent of a gold nugget.
 
-#### How a miner can generate new hashes
+==== How a miner can generate new hashes
 
 So where does the miner get new numerical dirt to process to see if it satisfies proof-of-work? This is where the nonce field comes in. The miners can change the nonce field at will.
 
@@ -217,7 +217,7 @@ Unfortunately, the 4 bytes or 32-bits, or 2^32^ possible nonces that a miner can
 
 What miners can then do is to change the Coinbase transaction, which then changes the merkle root, giving miners a fresh nonce space each time.
 
-#### Target
+==== Target
 
 Proof-of-work is the requirement that every block in Bitcoin must be below a certain *target*. Target is a small 256-bit number that is computed directly from the bits field.
 
@@ -260,11 +260,11 @@ We can actually see that the proof of work is lower by lining up the numbers in 
 
 `0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523`   # proof of work
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the target method for the Block class.
 
-#### Difficulty
+==== Difficulty
 
 Target is difficult to work with for human beings. We know that this is the number that the hash must be below, but as humans, it's hard to fathom the difference between a 180-bit number and a 190-bit number. The first is a thousand times smaller, but from looking at targets, such large numbers are not easy to contextualize.
 
@@ -286,19 +286,19 @@ The difficulty on testnet when there haven't been any blocks found in 20 minutes
 
 This is the number that gets shown in block explorers and bitcoin price charting services as difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the difficulty method for the Block class
 
-#### Checking that the Proof-of-Work is sufficient
+==== Checking that the Proof-of-Work is sufficient
 
 We already learned that proof-of-work can be calculated by computing the double-sha256 of the block header and interpreting this as a little-endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the check_pow method for the Block class.
 
-### Difficulty Adjustment
+=== Difficulty Adjustment
 
 In Bitcoin, each group of 2016 blocks is called a _difficulty adjustment period_. At the end of every difficulty adjustment period, the target is adjusted according to this formula:
 
@@ -351,17 +351,17 @@ def target_to_bits(target):
 
 If the block doesn't have the correct bits, then we can safely reject that block.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
 
 TODO find the block hexes of a 2016 block DAP
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the calculate_new_bits function.
 
-#### Conclusion
+=== Conclusion
 
 We've learned how to calculate proof of work, how to calculate the difficulty adjustment for a block in addition to learning about Coinbase Transactions. We'll now move onto the one field we haven't really covered, which is the merkle root in the next chapter.
 

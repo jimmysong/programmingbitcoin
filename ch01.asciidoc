@@ -5,6 +5,12 @@
 == Finite Fields
 
 [.lead]
+One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else. This book is going to start with the basic math that you need. The math that you learn here will allow us to understand Elliptic Curve Cryptography which in turn gives us the signing and verification algorithms that are at the heart of how Transactions work.
+
+Be aware that this chapter and the next chapter may feel a bit like you're eating some vegetables, especially if you haven't done formal math in a long time. I would encourage you to get through this as the concepts and code here will be utilized over and over again throughout the book.
+
+=== Learning Higher Level Math
+
 Learning about new mathematical structures can be a bit intimidating and in this chapter, I hope to dispel the myth that high level math is super difficult. Finite Fields, in particular, actually don't require all that much in terms of knowledge than, say High School level math.
 
 Think of Finite Fields as something that you could have learned in High School instead of Trigonomotry, just that the education system you're a part of decided that Trigonomotry was more important for you to learn.
@@ -542,4 +548,4 @@ Thankfully, we can do even better. We already know how to force a number into th
 
 === Conclusion
 
-In thes chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography.
+In thes chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.

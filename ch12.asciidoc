@@ -3,15 +3,16 @@
 
 [[chapter_bloomfilters]]
 
-## Bloom Filters
+== Bloom Filters
 
+[.lead]
 In the previous chapter we learned how to validate a Merkle Block. Another node can prove to us that transactions we're interested in are in a particular block through the merkleblock command. But how does the other node know which transactions we're interested in?
 
 We could tell the other node our addresses (in reality, ScriptPubKeys). The other node can check for transactions that are relevant to these addresses, but that would be compromising our privacy. We wouldn't want to reveal, for example, that we have 1000 BTC to another node which can then figure out what IP address we're at. If they happen to be bad guys, perhaps try to take that BTC away from us. Privacy leaks can be security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
 
 The solution is to tell the other node enough information to give us a _superset_ of all transactions we are interested in. To create this superset, we have to create something called a Bloom Filter
 
-### What is a Bloom Filter?
+=== What is a Bloom Filter?
 
 A Bloom Filter is a filter for all possible transactions. Nodes can quickly run transactions through the filter and send merkleblocks for transactions that come through the filter. Here's how it works.
 
@@ -69,11 +70,11 @@ If the other node has 50 items, this filter will send back on average 10 items i
 
 image::bloomfilter2.png[Two Item Bloom Filter]
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
 
-### Going a step further
+=== Going a step further
 
 Supposing that we had 1 million possible items and we still wanted to get a hide our interested items behind 5 times the number of false positives, we would need a Bloom Filter that's 1,000,000 / 5 = 200,000 bits long. Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, only 20% of which would be items of interest. 200,000 bits is 25,000 bytes and is a lot to transmit. Can we do better?
 
@@ -102,7 +103,7 @@ image::bloomfilter3.png[Multiple Hash Functions]
 
 This means that we can manipulate our Bloom Filter to have the optimum number of bits and hash functions given a particular amount of hiding that we desire.
 
-### BIP0037 Bloom Filters
+=== BIP0037 Bloom Filters
 
 BIP0037 defines exactly how Bloom Filters are defined. As before, the things that we need to let the other node know about are:
 
@@ -158,18 +159,18 @@ class BloomFilter:
         self.tweak = tweak
 ----
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items?
 
 b'Hello World'
 b'Goodbye!'
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `add` method for `BloomFilter`
 
-### Loading a Bloom Filter
+=== Loading a Bloom Filter
 
 It is not enough just to create a Bloom Filter, we must also let the other node know the details of the filter so the other node can send us proofs-of-inclusion. The first thing we must do is set the optional relay flag in the version message (see Chapter 10) to 1. This tells the other node not to send over transactions unless they match a Bloom Filter. Of course, after the version message, we haven't sent any details to the other node about the actual Bloom Filter, so they won't send us anything until we send them the Bloom Filter information.
 
@@ -179,11 +180,11 @@ image::filterload.png[filterload Command]
 
 The bit field is the bit field to match against. We also send along how many hash functions and the value of the tweak. The matched item flag is a way of asking the node to add any matched transactions to the Bloom Filter.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the  `filterload` payload from the `BloomFilter` class.
 
-### Getting Merkle Blocks
+=== Getting Merkle Blocks
 
 There is one more command that we need and that is getting the filtered blocks from the other node. We can utilize the `getdata` command to get blocks and transactions from another node. One of the options is to ask for Merkle Blocks using the Bloom Filter that we've sent.
 
@@ -208,11 +209,11 @@ class GetDataMessage:
 <1> We have some data that we want.
 <2> Whatever we want to query, we add here to the message.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `serialize` method for the `GetDataMessage` class.
 
-### Getting Transactions of Interest
+=== Getting Transactions of Interest
 
 We can now set a Bloom Filter with a peer node and get all the information we need to get transactions that are interesting to us. Utilizing the code we have from the last few chapters, we can get transactions that are important to us:
 
@@ -266,13 +267,13 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 
 What we've done in the above is look at 2000 blocks after a particular block for utxos of a particular address. This is without the use of any block explorer, which preserves, to some degree, our privacy.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
 
-#### Conclusion
+=== Conclusion
 
 In this chapter, we've managed to create everything necessary to connecting peer to peer as an SPV node, get the data necessary to construct a transaction and preserve privacy by using a Bloom Filter.
 
-We now turn to Segwit, which is a new type of Script that came into Bitcoin in 2017..
+We now turn to Segwit, which is a new type of Script that came into Bitcoin in 2017.
 

@@ -3,8 +3,9 @@
 
 [[chapter_segwit]]
 
-## Segwit
+== Segwit
 
+[.lead]
 Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the actual activation was controversial, the actual features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what Segwit enables.
 
 As a brief overview, Segwit did a multitude of things:
@@ -16,11 +17,11 @@ As a brief overview, Segwit did a multitude of things:
 
 We'll go through all of these in detail
 
-### Pay to Witness Pubkey Hash
+=== Pay to Witness Pubkey Hash
 
 Pay to witness pubkey hash (p2wpkh) is the new type of script that coins can be sent to. Essentially, this is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the data elsewhere. The rearrangement is largely for two reasons: transaction malleability fix and reduced network transmission.
 
-#### Transaction Malleability
+==== Transaction Malleability
 
 Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was insolvent back in 2013. This turned out not to be the case, but the term has since stuck.
 
@@ -32,13 +33,13 @@ The one field that does allow for some manipulation without changing its meaning
 
 The fact that ScriptSig is _malleable_, that is, able to be changed without changing the meaning of the transaction, means that the entire Transaction ID can be changed. This means, among other things, that any _dependent_ transactions (that is, a transaction spending one of the malleable transaction's outputs), cannot be constructed with certainty. The previous transaction hash is uncertain, so the dependent transaction cannot be constructed.
 
-### Fixing malleability
+=== Fixing malleability
 
 The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the transaction ID stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
 
 If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork and not a hard fork.
 
-### Segwit Mechanics
+=== Segwit Mechanics
 
 To understand Segwit, it helps to look at what the transaction looks like when sent to an old node versus a new node:
 
@@ -129,12 +130,12 @@ image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
 
 As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would stop at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do further validation of the actual signature and pubkey.
 
-### Other improvements
+=== Other improvements
 
 Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new double_sha256 hash for each input. The details of the z calculation is detailed in BIP0143.
 
 In addition, to allow newer nodes to get the Segwit serialization, there is now a service bit in the version message that indicates whether the Segwit versions of the transaction serializations will be understood or not. Various network commands have extensions to allow for requesting Segwit-specific serializations. The specifications are detailed in BIP0144.
 
-#### Conclusion
+==== Conclusion
 
 We've now covered what's so interesting about Segwit as a taste of what's now possible. The next chapter will cover next steps that you can take on your developer journey.

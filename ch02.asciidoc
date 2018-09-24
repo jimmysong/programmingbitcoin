@@ -5,6 +5,8 @@
 == Elliptic Curves
 
 [.lead]
+In this chapter we're going to learn the other higher-level math component that we need and that's Elliptic Curves. We'll be combining Elliptic Curves with Finite Fields in Chapter 3, but for now, we will be looking at what Elliptic Curves are in general first.
+
 As in the previous chapter, elliptic curves can look intimidating if you haven't seen them before. Also as in the previous chapter, the actual math isn't very difficult. Most of Elliptic Curves could have been taught to you around the second year of High School. In this chapter, we'll get to what these curves are and what we can do with them.
 
 === Definition
@@ -406,3 +408,7 @@ class Point:
 <1> For reasons which will become clear in the next chapter, we need to define zero specific to the class.
 <2> If the two points are equal and the y coordinate is zero, we return the point at infinity.
 <3> This is how we create a point at infinity
+
+=== Conclusion
+
+We've covered what Elliptic Curves are, how they work and how to do point addition on them. We now combine the concepts from Chapters 1 and 2 to build Elliptic Curve Cryptography

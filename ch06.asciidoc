@@ -5,6 +5,7 @@
 
 == Script
 
+[.lead]
 The ability to lock and unlock coins is at the heart of what it means to transfer Bitcoin.
 
 In this chapter we examine the mechanism by which Bitcoins are locked and unlocked, what you might call a smart contract. Script is what combines what you've learned in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend it. We're getting a little ahead of ourselves, though, so let's start with how SCRIPT works and go from there.
@@ -352,6 +353,6 @@ image::exercise2[Exercise 2]
 
 In 2013, Peter Todd created a script very similar to the exercise above and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached XXX and when Google actually found a hash collision for SHA1 in 2017, this script was promptly redeemed. The transaction had XXX coins which was XXX at the time.
 
-==== Conclusion
+=== Conclusion
 
 We've covered SCRIPT and how it works. We can now proceed to the actual creation and validation of transactions.
