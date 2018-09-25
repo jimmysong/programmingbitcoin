@@ -2,13 +2,12 @@
 :imagesdir: images
 
 [[chapter_spv]]
+== Simplified Payment Verification
 
-
-## Simplified Payment Verification
-
+[.lead]
 The one field that we didn't investigate much in the Chapter 9 is the Merkle Root field. The reason is that in order to understand why it's useful, we have to learn a few things about what Merkle Trees are and what properties they have. In this chapter, we're going to learn exactly what a Merkle Root is. This will be motivated by something called a Proof of Inclusion.
 
-### Motivation
+=== Motivation
 
 For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 170GB, which is a lot more than many phones can handle. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
 
@@ -41,7 +40,7 @@ The bottom row is what we call the leaves of the tree. All other nodes besides t
 
 We'll go through each part of this process below.
 
-### Merkle Parent
+=== Merkle Parent
 
 Given two hashes, we need some way to produce another hash that represents both of them. As they are ordered, we will call the two hashes the *left* hash and the *right* hash. Tho combination, we call the *parent* hash. The formula for getting the parent is pretty simple:
 
@@ -62,11 +61,11 @@ The actual calculation in Python is relatively straightforward:
 
 At this point, it's important to note that we can show that L is included in the parent, P, by revealing R. That is, if someone wanted to prove to us that L was used to produce P, they would show us R and let us know that L is the left child of P. We can then combine L and R to produce P and have proof that L was used to produce P. This is the most basic proof-of-inclusion.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the merkle_parent function.
 
-### Merkle Parent Level
+=== Merkle Parent Level
 
 Given an ordered list of more than two hashes, we can calculate an entire list of parents, or what we call the Merkle Parent Level. If we have an even number of hashes, this is straightforward, as we can simply pair them up in order. If we have an odd number of hashes, then we need to do something else as we have a lone hash at the end.
 
@@ -94,11 +93,11 @@ Note that since the Merkle Parent always consists of two hashes, we end up with 
 
 This will give us a new list of hashes that correspond to the Merkle Parent Level
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `merkle_parent_level` function.
 
-### Merkle Root
+=== Merkle Root
 
 The process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash. If, for example, we have items A through G, we combine to get the parent level:
 
@@ -127,11 +126,11 @@ The final hash is called the Merkle Root. As each level will halve the number of
 <1> We loop until there's 1 hash left.
 <2> We've exited the loop so there should only be 1 item
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `merkle_root` function.
 
-### Merkle Root in Blocks
+=== Merkle Root in Blocks
 
 The way we calculate the merkle root in Blocks should be pretty straightforward, but due to endian-ness issues, this turns out to be a bit counterintuitive. Specifically, we have to calculate the hash of a transaction and use the little-endian ordering as the leaves for the Merkle Tree. After we calculate the Merkle Root, we have to again interpret that in little-endian in order to compare against the Merkle Root stored in the block.
 
@@ -167,11 +166,11 @@ class Block:
 
 As a full node, if we are given all of the transaction hashes, we can now calculate the merkle root and check that the merkle root is what we expect.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `validate_merkle_root` method for `Block`.
 
-### Using a Merkle Tree 
+=== Using a Merkle Tree 
 
 Now that we know how a Merkle Tree is constructed, we can now utilize it to get a proof-of-inclusion. For nodes that don't have the entire blockchain, they can get proofs that certain transactions were included in a block without having to know all the transactions of a block. The essence of how we can do this is the following.
 
@@ -202,7 +201,7 @@ Indeed, since the block header can be requested from multiple nodes, light nodes
 In other words, light client security is based on a robust network of nodes and a little bit of game theory based on econmic incentives. For a transaction up to the block reward, (12.5 BTC as of this writing), there's very little to worry about. For large transactions (say 1000 BTC or 80x the mining award), the full nodes, if they're controlled by your counterparty, may have economic incentive to deceive you. Transactions that large should generally be done using a full node.
 ****
 
-### Merkle Block
+=== Merkle Block
 
 The full node needs to send the information about the tree structure and which hash is at which position in the Merkle Tree. A light node then needs to be able to reconstruct the partial Merkle Tree to actually validate the transaction. The format in which the full node communicates this to the light node is using something called a Merkle Block.
 
@@ -236,7 +235,7 @@ image::merkleproof.png[Merkle Proof]
 
 Going back to this diagram, the full node needs to send us the green boxes, H~K~ and H~N~ along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~. The full node sends us these items by utilizing depth-first ordering, flags and a list of hashes. We go through each step in detail.
 
-#### Merkle Tree Structure
+==== Merkle Tree Structure
 
 The first thing we need to do is create the general structure of the Merkle Tree. Because Merkle Trees built from the leaves upward, the only thing we really need is the number of leaves and we'll have the structure. The tree above has 16 leaves, which means we can create an empty Merkle Tree:
 
@@ -258,11 +257,11 @@ The first thing we need to do is create the general structure of the Merkle Tree
 <5> We don't know what any of the hashes are, so we set them to `None`
 <6> Note again that `merkle_tree` is a list of lists of hashes.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Create an empty Merkle Tree with 27 items and print each level.
 
-#### Coding a Merkle Tree
+==== Coding a Merkle Tree
 
 We can now create a `MerkleTree` class.
 
@@ -423,7 +422,7 @@ To do something a little more robust and allow for the possibility that the pare
 
 We now have code that can traverse the tree for the number of leaves that aren't powers of 2.
 
-#### Merkle Block Command
+==== Merkle Block Command
 
 The node communicating a Merkle Block needs to send us all the hashes we need to verify that the hash is indeed in the Merkle Tree. Indeed, the merkleblock network command does exactly this. We can see what that looks like:
 
@@ -450,11 +449,11 @@ def bytes_to_bit_field(some_bytes):
 
 The ordering for the bytes are a bit strange, but meant to be easy to convert into the bits we need.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the parse method for `MerkleBlock`.
 
-#### Utilizing Flags and Hashes
+==== Utilizing Flags and Hashes
 
 The flags are a list of bits that tell us about nodes in depth-first order.
 
@@ -528,11 +527,11 @@ class MerkleTree:
 <12> All hashes must be consumed or we got bad data.
 <13> All flag bits must be consumed or we got bad data.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `is_valid` method for `MerkleBlock`
 
-### Conclusion
+=== Conclusion
 
 It should be obvious at this point why Simplified Payment Verification is useful. However, SPV is not without some significant downsides. The full details are outside the scope of this book, but note that despite the programming being pretty straightforward, most wallets on phones actually do not use SPV, but simply trust nodes from the wallet vendors. The main drawback of SPV is that nodes you are connecting to know something about the transactions you are intersted in. This will be covered more in detail in the next chapter as we make Bloom Filters to tell nodes what transactions we are interested in.
 

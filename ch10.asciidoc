@@ -2,9 +2,9 @@
 :imagesdir: images
 
 [[chapter_networking]]
+== Networking
 
-## Networking
-
+[.lead]
 The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. 9400+ nodes are running on the network as of this writing and communicate constantly.
 
 The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years.
@@ -13,7 +13,7 @@ The nice thing about the networking protocol is that it is not consensus critica
 
 With that in mind, let's start with the very first message that one node sends to another, the version message.
 
-### Network Messages
+=== Network Messages
 
 Network messages have a particular form that looks like this
 
@@ -51,17 +51,17 @@ class NetworkEnvelope:
         )
 ----
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Determine what this network message is:
 
 f9beb4d976657261636b000000000000000000005df6e0e2
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `parse` and `serialize` methods for `NetworkEnvelope`.
 
-### Parsing the payload
+=== Parsing the payload
 
 Each command has a separate payload specification. Here is the one for version:
 
@@ -125,11 +125,11 @@ At this point, we need a way to serialize this message.
 
 The idea is that nodes know how to actually send and receive such payloads wrapped inside a network envelope. A fully functional bitcoin node needs to know what to do with every possible network message.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `serialize` method for `VersionMessage`.
 
-### Network handshake
+=== Network handshake
 
 The network handshake for two nodes is how node communication is established. It goes something like this:
 
@@ -139,7 +139,7 @@ The network handshake for two nodes is how node communication is established. It
 
 Once the handshake is finished, A and B can communicate however they want. Note that there is no authentication here and it's up to the nodes to verify all data that come in themselves. A node sending a bad tx or block, for example, can expect to get banned by other nodes.
 
-### Connecting to the network
+=== Connecting to the network
 
 Network communication is tricky due to its asynchronous nature. To experiment, we can establish a connection to a random node on the network synchronously.
 
@@ -254,11 +254,11 @@ Now that we have a node, we can now handshake with another node.
 <5> We expect to receive a verack for our version and the other node's version. We don't know which order, though
 
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `handshake` method for `SimpleNode`
 
-### Getting headers
+=== Getting headers
 
 Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading headers allows us to asynchronously ask for various blocks. For light nodes, downloading headers allows us to verify the proof-of-work in each block and give us an idea of how long the blockchain is. As we'll see in Chapter 11, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
 
@@ -292,11 +292,11 @@ class GetHeadersMessage:
 <2> A starting block is needed, otherwise we can't create a proper message.
 <3> The ending block we assume to be null, or as many as the server will send to us if not defined.
 
-#### Exercise {counter:exercise}
+==== Exercise {counter:exercise}
 
 Write the `serialize` method for `GetHeadersMessage`.
 
-### Headers response
+=== Headers response
 
 At this point, we can now create a node, handshake, and then ask for some headers.
 
@@ -391,6 +391,6 @@ We can now do something useful with the network connection that we've set up. We
 
 Note that this won't work on testnet as the difficulty adjustment algorithm is slightly different. To make sure blocks can proceed for testing, if a block hasn't been found in 20 minutes, the difficulty drops to 1, making it very easy to find a block. This is on purpose as to allow testers to be able to progress the network without expensive mining equipment. A $30 USB ASIC can typically find a few blocks per minute at the minimum difficulty.
 
-#### Conclusion
+=== Conclusion
 
-We've managed to connect to a node on the network, handshake and do something useful, which is download and verify that the blocks meet the consensus rules. In the next chapter, we focus on getting information about transactions that we're interested in from another node in a private, yet provable way.
+We've managed to connect to a node on the network, handshake and do something useful, which is download and verify that the block headers meet the consensus rules. In the next chapter, we focus on getting information about transactions that we're interested in from another node in a private, yet provable way.

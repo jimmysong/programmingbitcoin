@@ -5,6 +5,7 @@
 
 == Transaction Creation and Validation
 
+[.lead]
 One of the trickiest things for a transaction is the process of validating a transaction. Closely following that is the act of creating the transaction itself. In this chapter, we'll cover the exact steps to validating a transaction and then creating one for ourselves.
 
 === Validating Transactions
@@ -307,4 +308,6 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 
 Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
 
+=== Conclusion
 
+We've successfully validated existing transactions on the blockchain and we've also created our own transactions on testnet! This is the very simple case of p2pkh, we'll now turn to a more advanced smart contract on Bitcoin, p2sh.

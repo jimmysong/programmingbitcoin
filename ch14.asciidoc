@@ -1,0 +1,78 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_advanced]]
+== Advanced Topics
+
+If you've made it this far, congratulations! You've learned quite a bit about Bitcoin's inner workings and hopefully, you are inspired to learn a lot more. Indeed, this book only scratches the surface and there's quite a bit more to learn. In this chapter, we'll go through what other things you can learn and ways to contribute to the community.
+
+=== Wallets
+
+Creating a wallet is a difficult task as securing private keys turns out to be very difficult. That said, there are a bunch of standards for creating wallets that can help in this regard.
+
+==== Heirarchical Deterministic Wallets
+
+For privacy purposes, reusing addresses is very bad. That means we need to create lots of addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
+
+To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical Deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path. The specifications and test vectors are defined in the standard, so implementing your own HD wallet on testnet would be a great way to learn what Bitcoin development would be like.
+
+Additionally, BIP0044 defines exactly what each layer means and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies. Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better. Note that while many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and utilize their own standard (Electrum and Airbitz being two).
+
+==== Mnemonic Seeds
+
+Writing down and transcribing a 256-bit seed turns out to be a pain and fraught with errors. To combat this, BIP0039 is a way to encode the seed into a bunch of English words. There are 2048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed. The standard defines exactly how the backup gets translated to a BIP0032 seed. BIP0039 along with BIP0032 and BIP0044 is how most wallets backup and restore wallets. Writing a testnet wallet that implements this is another way to learn more about Bitcoin in general.
+
+=== Payment Channels and Lightning Network
+
+Payment Channels are the atomic unit of the Lightning Network and learning how they work is a good next step. There are many ways to implement Payment Channels, The BOLT standard is the specification that lightning nodes are supposed to use and has all the details. They are in progress and are available at:
+
+https://github.com/lightningnetwork/lightning-rfc/
+
+=== Contributing
+
+A large part of the Bitcoin ethic is in contributing back to the community. The main way you can do that is through open source projects. There are almost too many to list, but here's a sample:
+
+https://github.com/bitcoin/bitcoin - Bitcoin Core, or the reference client
+https://github.com/libbitcoin/libbitcoin - An alternate implementation of Bitcoin in C++, 
+https://github.com/btcsuite/btcd - A Golang-based implementation of Bitcoin
+https://github.com/bcoin-org/bcoin - A Javascript-based implementation of Bitcoin, maintained by purse.io
+
+https://github.com/richardkiss/pycoin - pycoin, a Python library for Bitcoin
+https://github.com/bitcoinj/bitcoinj - BitcoinJ, a Java library for Bitcoin
+https://github.com/bitcoinjs/bitcoinjs-lib - BitcoinJS, a Javascript library for Bitcoin
+
+https://github.com/bitpay/insight - Insight, a Bitcoin block explorer written in NodeJS, maintained by BitPay
+
+Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas and so on.
+
+=== Suggested Next Projects
+
+If at this point, you're still wondering what projects would be beneficial for you, here are some suggestions.
+
+==== Testnet Wallet
+
+It's hard to understate the importance of security in Bitcoin. Writing a wallet even on testnet will help you understand all of the various considerations that go into creating a wallet. UI, backups, address books and transaction histories are just some of the things that you have to deal with when creating a wallet. As this is the most popular application of Bitcoin, creating a wallet that does this will give you a lot of insight into the needs of users.
+
+==== Block Explorer
+
+A more ambitious project would be to write your own block explorer. The key to making your own block explorer is to store all the blockchain data in an easy-accesible form. Using a traditional database like Postgres or MySQL will be very useful here. As bitcoin core does not have address indexes, adding one will make it possible for you to not have to trust another node's data.
+
+==== Web Shop
+
+A bitcoin-based shop of some kind is another project that helps you learn. This is particularly appropriate for web developers as they typically know how to create a web application and marrying that with a Bitcoin backend can be very useful. Once again, it's advised that you start on testnet and use the various libraries that are available to hook up the plumbing on payments.
+
+==== Utility Library
+
+A utility library like the one that's been built during the course of this book is another great way to learn more about Bitcoin. Writing the BIP0143 serialization of Segwit, for example, can be instructive in getting used to protocol programming. Porting the code from this book to another programming language would also be a great learning tool.
+
+=== Finding a Job
+
+If you are interested in getting more in-depth in this industry, there are lots of interesting opportunities for developers. The key to proving that you know something is to have a nice portfolio of projects that you've done on your own. Contributing to an existing open source project or making your own project will help you get noticed by companies. In addition, programming against the API of any particular company is a great way to get an interview at said company.
+
+Generally, local work is going to be a lot easier to get as companies don't like the risk profile of remote workers. Go to local meetups, network with people that you meet there and the local jobs will be a lot easier to come by.
+
+Similarly, remote work requires that you put yourself out there to be noticed. Besides open source contributions, going to conferences, networking and putting out technical content (youtube videos, blog posts, etc) that's useful to people help quite a bit towards getting a remote job.
+
+==== Conclusion
+
+I am excited that you've made it to the end. If you are so inclined, please send me notes about your progress as I would love to hear from you! I can be reached at jimmy@programmingblockchain.com.

@@ -4,6 +4,7 @@
 [[chapter_elliptic_curve cryptography]]
 == Elliptic Curve Cryptography
 
+[.lead]
 The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts to get Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
 === Elliptic Curves over Reals
@@ -272,7 +273,7 @@ For the curve y^2^=x^3^+7 over F~223~, find:
 
 === Scalar Multiplication Redux
 
-The key insight to set up Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse. Note the previous exercise. Most likely, you calculated the point s⋅(47,71) in F~223~ for s from 1 until 21. Here are the results:
+Scalar Multiplication is adding the same point to itself some number of times. The key insight to set up Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse. Note the previous exercise. Most likely, you calculated the point s⋅(47,71) in F~223~ for s from 1 until 21. Here are the results:
 
 [source,python]
 ----
@@ -317,6 +318,8 @@ s⋅(47,71)=(194,172)
 Would you be able to solve for `s`? We can look up the table above, but that's because we have a small field. We'll see later that when we have numbers that are a lot larger, this becomes problematic.
 
 === Mathematical Groups
+
+The preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point. What we really want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can then generate this Finite Cyclic Group.
 
 Unlike fields, groups have only a single operation. In our case, Point Addition is our operation. We also have a few other properties like closure, invertibility, commutativity and associativity. Lastly, we need the identity.
 
@@ -381,9 +384,7 @@ This is the hardest to prove but can be seen visually from the last chapter:
 image::associativity1.png[Case 1]
 image::associativity2.png[Case 2]
 
-Mathematically, this is a bit more involved, but the math can be proven given the definition that we have.
-
-TODO: write out the proof for associativity.
+Mathematically, this is a bit more involved, but the math can be proven given the definition that we have. There are proofs of this, but the polynomials involved take several pages and are thus outside the scope of this book.
 
 ==== Exercise {counter:exercise}
 
@@ -650,6 +651,8 @@ If, for example, you shot an arrow into a target of your choosing, then the peop
 Here's a very clever thing you can do. Forge the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow. Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit. The tip clearly had to be forged before the arrow was shot, so this can prove you are indeed a good archer.
 
 This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number. We want to prove possession of the secret without revealing the secret itself. We do this by putting the target into our calculation and hitting that target.
+
+Ultimately this is going to be used in Transactions which will prove that the rightful owners of the secrets are spending the Bitcoins and not someone who doesn't know the secret.
 
 ==== Forging the Target
 
@@ -947,7 +950,54 @@ from random import randint
 
 The `s` here has to be a low value
 
-MAYBE: sidebar - importance of k being really random
+.Importance of k being random
+****
 
-MAYBE: sidebar - deterministic k values
+There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
+
+Our secret is e and our z is the same.
+
+k~1~G=(r~1~,y), k~2~G=(r~2~,y)
+s~1~ = (z+r~1~e), s~2~ = (z+r~2~e)
+
+s~1~-s~2~ = (r~1~-r~2~)e
+e = (s~1~-s~2~) / (r~1~-r~2~)
+
+If anyone sees both signatures, they can run this formula and find our secret!
+
+To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique k every time. The specification is laid out in RFC6979 and the code looks like this:
+
+[source,python]
+----
+class PrivateKey:
+...
+    def deterministic_k(self, z):
+        k = b'\x00' * 32
+        v = b'\x01' * 32
+        if z > N:
+            z -= N
+        z_bytes = z.to_bytes(32, 'big')
+        secret_bytes = self.secret.to_bytes(32, 'big')
+        s256 = hashlib.sha256
+        k = hmac.new(k, v + b'\x00' + secret_bytes + z_bytes, s256).digest()
+        v = hmac.new(k, v, s256).digest()
+        k = hmac.new(k, v + b'\x01' + secret_bytes + z_bytes, s256).digest()
+        v = hmac.new(k, v, s256).digest()
+        while 1:
+            v = hmac.new(k, v, s256).digest()
+            candidate = int.from_bytes(v, 'big')
+            if candidate >= 1 and candidate < N:
+                return candidate  # <1>
+            k = hmac.new(k, v + b'\x00', s256).digest()
+            v = hmac.new(k, v, s256).digest()
+----
+<1> This algorithm'returns a candidate that's suitable.
+
+The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
+
+****
+
+### Conclusion
+
+We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message. We now turn to serializing a lot of these structures so that we can store them on disk, send them over the network and so on.
 
