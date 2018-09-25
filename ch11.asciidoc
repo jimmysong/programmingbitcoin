@@ -207,27 +207,13 @@ The full node needs to send the information about the tree structure and which h
 
 To understand what's in a Merkle Block, we need to understand a bit about how a Merkle Tree can be traversed. If we look at the diagram above, the nodes can be traversed bredth-first or depth-first. Bredth-first traversal would go level by level like this:
 
-H~ABCDEFGHIJKLMNOP~
-
-H~ABCDEFGH~, H~IJKLMNOP~
-
-H~ABCD~, H~EFGH~, H~IJKL~, H~MNOP~
-
-H~AB~, H~CD~, H~EF~, H~GH~, H~IJ~, H~KL~, H~MN~, H~OP~
-
-H~A~, H~B~, H~C~, H~D~, H~E~, H~F~, H~G~, H~H~, H~I~, H~J~, H~K~, H~L~, H~M~, H~N~, H~O~, H~P~
+image::bredthfirst.png[Bredth First]
 
 The bredth-first ordering goes wider first and traverses each level before going to the one below.
 
 Depth-first ordering is a bit different and looks like this:
 
-H~ABCDEFGHIJKLMNOP~, H~ABCDEFGH~, H~ABCD~, H~AB~, H~A~, H~B~,
-
-H~CD~, H~C~, H~D~, H~EFGH~, H~EF~, H~E~, H~F~, H~GH~, H~G~, H~H~
-
-H~IJKLMNOP~, H~IJKL~, H~IJ~, H~I~, H~J~, H~KL~, H~K~, H~L~,
-
-H~MNOP~, H~MN~, H~M~, H~N~, H~OP~, H~O~, H~P~
+image::depthfirst.png[Depth First]
 
 The depth-first ordering goes deeper first and traverses the left side before the right side.
 

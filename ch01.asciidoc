@@ -138,7 +138,7 @@ The answer is 2 o'clock because:
 
 (3 + 47) % 12 = 2
 
-TODO: put clock image and wrapping arrow
+image::clock.jpg[Clock]
 
 We can also see this as "wrapping around" in the sense that you go back to zero every time we move ahead 12 hours.
 

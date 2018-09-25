@@ -220,7 +220,9 @@ We can actually do this as many times as we want. This is what we call Scalar Mu
 
 What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
 
-TODO: graph of where the point ends up when scalar is 2, 10, 17, etc
+image::scatterplot.png[Scalar Multiplication Results]
+
+Each point is labeled by how many times we've added the point. You can see that this is a complete scattershot.
 
 This is because point addition is non-linear. That is, not easy to calculate. In fact, doing the scalar multiplication is more or less straightforward, but doing the opposite, Point division, is not.
 
