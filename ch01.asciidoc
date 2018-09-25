@@ -82,6 +82,8 @@ class FieldElement:
         self.prime = prime
 
     def __eq__(self, other): # <3>
+    	if other == None:
+	    return False
         return self.num == other.num and self.prime == other.prime
 
     def __repr__(self):
