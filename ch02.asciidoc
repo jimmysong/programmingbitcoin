@@ -71,7 +71,7 @@ class Point:
         self.x = x
         self.y = y
         if self.y**2 != self.x**3+self.a*self.x + self.b: # <1>
-	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
+	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
 
     def __eq__(self, other): # <2>
         return self.a == other.a and self.b == other.b and self.x == other.x and self.y == other.y
@@ -202,10 +202,13 @@ class Point:
 	if self.x is None and self.y is None: <1>
 	    return
         if self.y**2 != self.x**3 + self.a*self.x + self.b:
-	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
+	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
     
 
     def __add__(self, other): # <2>
+        if self.a != other.a or self.b != other.b:
+            raise RuntimeError('Points {}, {} are not on the same curve'.format(self, other))
+
     	if self.x is None: # <3>
 	    return other
 	if other.x is None: # <4>
