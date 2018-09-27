@@ -54,9 +54,9 @@ class S256Point(Point):
 
 Find the uncompressed SEC format for the Public Key where the Private Key secrets are:
 
-1. 5000
-2. 2018^5^
-3. 0xdeadbeef12345
+* 5000
+* 2018^5^
+* 0xdeadbeef12345
 
 === Compressed SEC Format
 
@@ -267,9 +267,9 @@ This will take any bytes in Python 3 and convert it to base58 bytes
 
 Convert the following hex to binary and then to Base58:
 
-1. 7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
-2. eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
-3. c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+* 7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
+* eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
+* c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
 
 === Address Format
 
@@ -371,13 +371,9 @@ We can now create the wif method on the PrivateKey class.
 
 Find the wif for Private Key whose secrets are:
 
-1. 5003
-2. 2021^5^
-3. 0x54321deadbeef
-
-==== Exercise {counter:exercise}
-
-Create a testnet address for yourself using a secret that only you know. Go to a testnet faucet and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
+* 5003
+* 2021^5^
+* 0x54321deadbeef
 
 === Big and Little Endian Redux
 
@@ -390,6 +386,10 @@ Write a function `little_endian_to_int` which takes Python bytes, interprets tho
 ==== Exercise {counter:exercise}
 
 Write a function `int_to_little_endian` which does the reverse of the last exercise.
+
+==== Exercise {counter:exercise}
+
+Create a testnet address for yourself using a secret that only you know. Go to a testnet faucet and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
 
 === Conclusion
 
