@@ -59,11 +59,11 @@ As a way to combat malleabilty, however, most nodes on the Bitcoin network will 
 
 Bare multisig is a bit ugly, but it's very much functional. You can have m of n signatures required to release funds and there is plenty of utility in making outputs multisig, especially if you're a business. However, bare multisig suffers from a few problems:
 
-1. First problem is the obviously long length of the ScriptPubKey. A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long. Unlike p2pkh or even p2pk, these are not easily sent even over email and it's not at all obvious who has what control.
+1. First problem is the obviously long length of the ScriptPubKey. A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long. Unlike p2pkh or even p2pk, these are not easily sent even over email.
 
 2. Second problem is that because the output is so long, it's rather taxing on node software. Nodes have to keep track of the UTXO set, so keeping a particularly big ScriptPubKey ready is onerous. A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
-3. Third problem is that because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the original whitepaper is actually encoded in this transaction: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
+3. Third problem is that because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
 
 In order to combat these problems, pay-to-script-hash or p2sh was born.
 
@@ -77,7 +77,7 @@ Essentially, pay-to-script-hash executes a very special rule only when the scrip
 
 image::p2sh1.png[p2sh Pattern]
 
-If this exact sequence ends up with a 1, then the RedeemScript is interpreted as script and then processed as if it's part of the Script. This is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence. The RedeemScript does not get interpreted as script elements unless this sequence is encountered.
+If this exact sequence ends up with a 1, then the RedeemScript is interpreted as script and then added to the Script processing as if it's part of the Script. This is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence. The RedeemScript does not add new script elements for processing unless this sequence is encountered.
 
 If this sounds hacky, it is. But before we get to that, let's look a little closer at exactly how this plays out.
 
@@ -85,7 +85,7 @@ Let's take a simple 1-of-2 multisig ScriptPubKey like this:
 
 image::p2sh2.png[p2sh RedeemScript]
 
-This is a ScriptPubKey for a Bare Multisig. What we need to do to convert this to p2sh is to take a hash of this and keep this script. We call this the RedeemScript, because the SCRIPT is only revealed during redemption. We put the hash of the RedeemScript as the ScriptPubKey like so:
+This is a ScriptPubKey for a Bare Multisig. What we need to do to convert this to p2sh is to take a hash of this and keep this script handy for when we want to redeem it. We call this the RedeemScript, because the SCRIPT is only revealed during redemption. We put the hash of the RedeemScript as the ScriptPubKey like so:
 
 image::p2sh3.png[p2sh ScriptPubKey]
 
@@ -143,7 +143,7 @@ OP_CHECKMULTISIG consumes m+n+3 elements, which is all of these, and we end the 
 
 images: p2sh13.png[p2sh Step 6]
 
-This is a bit hacky and there's a lot of special-cased code in Bitcoin to handle this. Why didn't the core devs do something a lot less hacky and more intuitive? Well, it turns out that there was indeed another proposal BIPXX which used something called OP_EVAL, which would have been a lot more elegant. A script like this would have sufficed:
+This is a bit hacky and there's a lot of special-cased code in Bitcoin to handle this. Why didn't the core devs do something a lot less hacky and more intuitive? Well, it turns out that there was indeed another proposal BIP0012 which used something called OP_EVAL, which would have been a lot more elegant. A script like this would have sufficed:
 
 image::op_eval.png[OP_EVAL]
 
@@ -167,7 +167,7 @@ Specifically, P2SH uses the `05` byte on mainnet which translates to addresses t
 ----
 >>> from helper import encode_base58_checksum
 >>> h160 = bytes.fromhex('74d691da1574e6b3c192ecfb52cc8984ee7b6c56')
->>> print(encode_base58_checksum(b'\x05' + h160)
+>>> print(encode_base58_checksum(b'\x05' + h160))
 3CLoMMyuoDQTPRD3XYZtCvgvkadrAdvdXh
 ----
 
@@ -215,6 +215,8 @@ The double_sha256 of this interpreted as a big-endian integer is our z. The code
 >>> blob = bytes.fromhex('01000000...01000000')
 >>> d256 = double_sha256(blob)
 >>> z = int.from_bytes(d256, 'big')
+>>> print(hex(z))
+0xe71bfa115715d6fd33796948126f40a8cdd39f187e4afb03896795189fe1423c
 ----
 
 Now that we have our z, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript:
@@ -224,11 +226,14 @@ image::p2sh-sigelements.png[DER and SEC]
 [source,python]
 ----
 >>> from ecc import S256Point, Signature
+>>> from helper import double_sha256
+>>> blob = bytes.fromhex('01000000...01000000')
+>>> d256 = double_sha256(blob)
+>>> z = int.from_bytes(d256, 'big')  # <1>
 >>> sec = bytes.fromhex('0226...70')
->>> der = bytes.fromhex('3045...37')
+>>> der = bytes.fromhex('3045....37')
 >>> point = S256Point.parse(sec)
->>> signature = Signature.parse(der)
->>> point.verify(z, signature)  # <1>
+>>> sig = Signature.parse(der)
 True
 ----
 <1> z is from the code above
