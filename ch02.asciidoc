@@ -168,6 +168,12 @@ image::associativity2.png[Case 2]
 
 You can see that in both cases, the final point is exactly the same. While this doesn't prove the associativity of Point addition, the visual should at least give you the intuition that this is true.
 
+To actually do the Point Addition, we're going to split it up into 3 steps:
+
+1. Where the points are in a vertical line or using the Identity.
+2. Where the points are not in a vertical line, but are different.
+3. Where the two points are the same.
+
 === Coding Point Addition
 
 We first handle the identity, or the point at infinity. Since we don't have the infinity numbers in Python, we'll use the `None` value instead. What we want is something like this:
