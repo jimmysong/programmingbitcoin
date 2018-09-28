@@ -62,6 +62,9 @@ We can test to see if this transaction is trying to print money by utilizing thi
 
 [source,python]
 ----
+>>> from tx import Tx
+>>> from io import BytesIO
+>>> stream = BytesIO(bytes.fromhex('010000...0600'))
 >>> transaction = Tx.parse(stream)
 >>> print(transaction.fee() >= 0)
 True
@@ -71,13 +74,18 @@ If the fee is negative, we know that the `output_sum` is greater than the `input
 
 === Checking the Signature
 
-Perhaps the trickiest part of validating a transaction is the process of checking its signatures. A transaction typically has at least one signature per input. If there are multisig outputs being spent, there may be more. As we learned in Chapter 4, the ECDSA signature algorithm requires that for each input, we need the public key (P), the signature hash (z), and the Signature (r,s). Once these are determined, the process of verifying the signature is pretty simple as we already coded in Chapter 4:
+Perhaps the trickiest part of validating a transaction is the process of checking its signatures. A transaction typically has at least one signature per input. If there are multisig outputs being spent, there may be more. As we learned in Chapter 3, the ECDSA signature algorithm requires that for each input, we need the public key (P), the signature hash (z), and the Signature (r,s). Once these are determined, the process of verifying the signature is pretty simple as we already coded in Chapter 3:
 
 [source,python]
 ----
->>> point = Point.parse(sec)
+>>> from ecc import S256Point, Signature
+>>> sec = bytes.fromhex('0349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278a')
+>>> der = bytes.fromhex('3045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed')
+>>> z = 0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6
+>>> point = S256Point.parse(sec)
 >>> signature = Signature.parse(der)
->>> point.verify(z, signature)  # True
+>>> print(point.verify(z, signature))
+True
 ----
 
 The sec and der formats make getting the P, r and s pretty simple. The hard part is getting the actual signature hash (z). You would think that this would be easy since you can just hash the transaction. But you can't do that since the signature itself is part of the ScriptSig and a signature can't sign itself.
@@ -114,6 +122,7 @@ The double_sha256 of this interpreted as a big-endian integer is our z. The code
 >>> blob = bytes.fromhex('01000000...01000000')
 >>> d256 = double_sha256(blob)
 >>> z = int.from_bytes(d256, 'big')
+0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6
 ----
 
 Now that we have our z, we can take the public key in SEC format and the signature in DER format from the script sig to verify the signature.
@@ -123,9 +132,10 @@ Now that we have our z, we can take the public key in SEC format and the signatu
 >>> from ecc import S256Point, Signature
 >>> sec = bytes.fromhex('0349...8a')
 >>> der = bytes.fromhex('3045...ed')
+>>> z = 0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6  # <1>
 >>> point = S256Point.parse(sec)
 >>> signature = Signature.parse(der)
->>> point.verify(z, signature)  # <1>
+>>> point.verify(z, signature)
 True
 ----
 <1> z is from the code above
@@ -142,7 +152,7 @@ Write the `verify_input` method for the `Tx` class. You will want to utilize the
 
 === Creating transactions
 
-Once validation of transactions is understood, the creation of transactions is more or less straightforward. The key to making the creation of transactions work is to make sure that all the validations that are performed act as expected. For example, you will not want to create a transaction where the input amounts are less than the output amounts, creating extra bitcoins. Such transactions won't be valid and trying to propagate them on the network may get you banned.
+Once validation of transactions is understood, the creation of transactions is more or less straightforward. The key to making the creation of transactions work is to make sure that all the validations that will be performed act as expected. For example, you will not want to create a transaction where the input amounts are less than the output amounts, creating extra bitcoins. Such transactions won't be valid and trying to propagate them on the network may get you banned by peers.
 
 To create a transaction, you must first have some outputs that have been sent to you. That is, outputs whose ScriptPubKey you can unlock. The vast majority of the time, you will need one or more private keys corresponding to the public keys that are hashed in the ScriptPubKey.
 
@@ -158,7 +168,7 @@ The construction of a transaction is most easily done by answering some basic qu
 
 We'll be using testnet for this example, though this can easily be applied to mainnet.
 
-The first question is about how much we want to pay whom. We can pay one or more addresses. For the sake of this example, say we want to pay mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf address 0.1 tBTC.
+The first question is about how much we want to pay whom. We can pay one or more addresses. For the sake of this example, say we want to pay testnet coins to mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf 0.1 tBTC.
 
 The second question is about what's in our wallet. What do we have available to spend? For the sake of this example, we have an output at this transaction: 0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299:13. Looking at a testnet block explorer, our output is worth 0.33 tBTC.
 
@@ -179,7 +189,7 @@ The other reason to not reuse addresses is for privacy. Having a single address 
 Privacy leaks tend to become security holes over time as bad guys get to know more about you and can thus target you. This is another reason reusing addresses is a bad idea.
 ****
 
-The third question is really about fees. If we want to get the transaction in faster, we'll want to pay more fees and if we don't mind waiting, we'll want to pay less. In our case, we'll use 0.01 BTC as our fee.
+The third question is really about fees. If we want to get the transaction in faster, we'll want to pay more fees and if we don't mind waiting, we'll want to pay less. In our case, we'll use 0.01 tBTC as our fee.
 
 .Fee Estimation
 ****
@@ -198,7 +208,7 @@ Many wallets utilize different strategies and this is an active area of research
 
 Our plan now laid out. We will have one input and two outputs. But first, let's look at some other tools we'll need.
 
-We first need a way to take an address and get the 20-byte hash out of it. This is the opposite of encoding and address, so we call the function `decode_base58`
+We first need a way to take an address and get the 20-byte hash out of it. This is the opposite of encoding an address, so we call the function `decode_base58`
 
 [source,python]
 ----
@@ -233,7 +243,6 @@ We can now proceed to create the transaction.
 
 [source,python]
 ----
->>> from ecc import PrivateKey
 >>> from helper import decode_base58, p2pkh_script, SIGHASH_ALL
 >>> from script import Script
 >>> from tx import TxIn, TxOut, Tx
@@ -249,8 +258,18 @@ We can now proceed to create the transaction.
 >>> target_amount = int(0.1*100000000)  # <1>
 >>> target_h160 = decode_base58('mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf')
 >>> target_script = p2pkh_script(target_h160)
->>> tx_outs.append(TxOut(amount=target_amount, script_pubkey=target_script))  # <1>
+>>> tx_outs.append(TxOut(amount=target_amount, script_pubkey=target_script))
 >>> transaction = Tx(1, tx_ins, tx_outs, 0, testnet=True)  # <2>
+>>> print(transaction)
+version: 1
+tx_ins:
+0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299:13
+
+tx_outs:
+33000000:OP_DUP OP_HASH160 d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f OP_EQUALVERIFY OP_CHECKSIG 
+10000000:OP_DUP OP_HASH160 507b27411ccf7f16f10297de6cef3f291623eddf OP_EQUALVERIFY OP_CHECKSIG 
+
+locktime: 0
 ----
 <1> The amount must be in satoshis and given there are 100,000,000 satoshis per BTC, we have to multiply and cast to an integer.
 <2> Note we have to designate which network to look up using the `testnet=True` argument.
@@ -263,15 +282,17 @@ The actual signing of the transaction is the trickiest part. Thankfully, we know
 
 [source,python]
 ----
+>>> from ecc import PrivateKey
+>>> from helper import SIGHASH_ALL
 >>> hash_type = SIGHASH_ALL
->>> z = tx.sig_hash(0, hash_type)  # <1>
+>>> z = transaction.sig_hash(0, hash_type)  # <1>
 >>> private_key = PrivateKey(secret=8675309)
 >>> der = private_key.sign(z).der()
 >>> sig = der + hash_type.to_bytes(1, 'big')  # <2>
 >>> sec = private_key.point.sec()
 >>> script_sig = Script([sig, sec])  # <3>
->>> transaction.tx_ins[0].script_sig = script_sig  # <4>
->>> print(tx.serialize().hex())
+>>> transaction.tx_ins[0].script_sig = script_sig   # <4>
+>>> print(transaction.serialize().hex())
 01000000...00000000
 ----
 <1> We only need to sign the first input as there's only one. Multiple inputs would require us to sign each input with the right private key.
@@ -290,13 +311,13 @@ The first step to creating your own transactions is to get some coins for yourse
 [source,python]
 ----
 >>> from ecc import PrivateKey
->>> private_key = PrivateKey(secret=90210)  # <1>
->>> print(private_key.point.address(testnet=True)
+>>> private_key = PrivateKey(secret=90210)
+>>> print(private_key.point.address(testnet=True))
 mqNK1JUujDXeufN9bDVKtzzvriqjnZLxHU
 ----
 <1> Please use some secret other than this number
 
-Now that you have an address, you can get some coins at a myriad of testnet faucets. Faucets are where you can get testnet coins for free. You can Google "testnet bitcoin faucet" to find them or use this website: https://en.bitcoin.it/wiki/Testnet#Faucets. You will want to enter your address as generated above.
+Now that you have an address, you can get some coins at a myriad of testnet faucets. Faucets are where you can get testnet coins for free. You can Google "testnet bitcoin faucet" to find them or use one from this list: https://en.bitcoin.it/wiki/Testnet#Faucets. At the time of this writing, https://testnet.coinfaucet.eu/en/ works. You will want to enter your address as generated above.
 
 After you get some coins, see if you can spend them using the library you've been writing. This is usually a big accomplishment for a budding Bitcoin developer, so please take some time to see if you can complete this exercise.
 
