@@ -31,7 +31,7 @@ A finite set of numbers and two operations *+* (addition) and *⋅* (multiplicat
 * If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
 * If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
 
-Let's unpack each of the following.
+Let's unpack each of the above.
 
 We have a set of numbers that's finite. Because the set is finite, we can designate a number *p* which is how big the set is. This is what we call the _order_ of the set.
 
@@ -87,7 +87,7 @@ class FieldElement:
     def __repr__(self):
         return 'FieldElement_{}({})'.format(self.prime, self.num)
 ----
-<1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
+<1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method simply assigns the initialization values.
 <3> The $$__eq__$$ method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal.
 
