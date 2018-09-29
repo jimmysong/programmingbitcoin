@@ -1,4 +1,23 @@
 [appendix]
-== Appendix Title
+== Solutions
 
-An appendix is generally used for extra material that supplements your main book content.
+
+[source,python]
+----
+>>> from ecc import FieldElement, Point
+>>> prime = 223
+>>> a = FieldElement(0, prime)
+>>> b = FieldElement(7, prime)
+>>> x = FieldElement(15, prime)
+>>> y = FieldElement(86, prime)
+>>> p = Point(x, y, a, b)
+>>> inf = Point(None, None, a, b)
+>>> product = p
+>>> counter = 1
+>>> while product != inf:
+>>>     product += p
+>>>     counter += 1
+>>> print(counter)
+7
+----
+

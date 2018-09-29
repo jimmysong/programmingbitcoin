@@ -1,0 +1,141 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_segwit]]
+
+== Segwit
+
+[.lead]
+Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the actual activation was controversial, the actual features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what Segwit enables.
+
+As a brief overview, Segwit did a multitude of things:
+
+* Block size increase
+* Transaction Malleability Fix
+* Network transmission reduction
+* Clear upgrade path
+
+We'll go through all of these in detail
+
+=== Pay to Witness Pubkey Hash
+
+Pay to witness pubkey hash (p2wpkh) is the new type of script that coins can be sent to. Essentially, this is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the data elsewhere. The rearrangement is largely for two reasons: transaction malleability fix and reduced network transmission.
+
+==== Transaction Malleability
+
+Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was insolvent back in 2013. This turned out not to be the case, but the term has since stuck.
+
+Malleability of the ID turns out to be an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network. A malleable transaction ID makes creating the Lightning Network much more difficult, so fixing malleability was a priority.
+
+The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction cannot be changed without altering the transaction's meaning, so from a malleability standpoint, these fields are not a problem.
+
+The one field that does allow for some manipulation without changing its meaning is the ScriptSig field on each input. The ScriptSig typically has the signature, which as we learned in Chapter 3 contains a random component. This means that two different ScriptSigs can essentially mean the same thing. Further, Script can be manipulated further without changing the meaning of the transaction. Remember, the unlocking script is valid as long as it actually unlocks the ScriptPubKey.
+
+The fact that ScriptSig is _malleable_, that is, able to be changed without changing the meaning of the transaction, means that the entire Transaction ID can be changed. This means, among other things, that any _dependent_ transactions (that is, a transaction spending one of the malleable transaction's outputs), cannot be constructed with certainty. The previous transaction hash is uncertain, so the dependent transaction cannot be constructed.
+
+=== Fixing malleability
+
+The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the transaction ID stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
+
+If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork and not a hard fork.
+
+=== Segwit Mechanics
+
+To understand Segwit, it helps to look at what the transaction looks like when sent to an old node versus a new node:
+
+image::p2wpkh1.png[p2wpkh to old nodes]
+
+image::p2wpkh2.png[p2wpkh to new nodes]
+
+The difference between these two serializations is that the latter transactions have a couple of markers plus the witness program field. Otherwise, the two transactions look more or less the same. The key to making the transaction ID not malleable is that the first serialization is utilized for calculating the transaction ID.
+
+Note here that the Witness Program has the Signature and Pubkey as its two elements. These will be utilized for validation below.
+
+The actual ScriptPubKey for a p2wpkh ScriptPubKey is OP_0 <20-byte hash>. The ScriptSig, as seen in both serializations above is actually empty. Thus, the actual spending of a p2wpkh output creates a Script like this:
+
+image::p2wpkh3.png[p2wpkh Script]
+
+The processing of this Script starts like this:
+
+image::p2wpkh4.png[p2wpkh Start]
+
+OP_0 puts a 0 on the stack, which produces this:
+
+image::p2wpkh5.png[p2wpkh Step 1]
+
+The 20-byte hash is simply an element, so it goes straight to the stack:
+
+image::p2wpkh6.png[p2wpkh Step 2]
+
+At this point, older nodes will stop as there are no more Script items to be processed. Since the top element is non-zero, this will be counted as a valid script. This is very similar to p2sh (Chapter 8) in that older nodes cannot validate further. Newer nodes, however, have a special rule much like p2sh. Recall that with p2sh, the exact Script sequence of <redeem script> OP_HASH160 <hash> OP_EQUAL triggered a special rule.
+
+In the case of p2wpkh, the Script sequence is <20-byte hash> 0. When that Script sequence is encountered, the pubkey and signature from the witness program and the 20-byte hash are combined to be processed exactly as would p2pkh. Namely: <signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG. This then is the state that is encountered next:
+
+image::p2wpkh7.png[p2wpkh Step 3]
+
+The rest of the processing of p2wpkh is exactly the same as the processing of p2pkh as seen in Chapter 6. The end state is a single 1 on the stack if and only if the 20-byte hash is the HASH160 of the pubkey and the signature is valid:
+
+image::p2wpkh13.png[p2wpkh Step 4]
+
+The interesting thing here is that for an older node, processing stops at <20-byte hash> 0, as older nodes don't know the special Segwit rule. Only upgraded nodes do the rest of the validation, much like p2sh. Note that this means less data is sent over the network as older nodes simply have no need the pubkey and signature that they can't verify anyway. Also, we give nodes the option of not having to verify transactions that are X blocks old if they don't want to. In a sense, the signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating itself if it so chooses.
+
+Furthermore, this is a special rule for Segwit Version 0. Segwit Version 1 can have a completely different processing path. <20-byte hash> 1 would be the special Script sequence that triggers a different rule. Newer versions of Segwit can utilize Schnorr Signatures, Graftroot or even a different scripting system altogether like Simplicity. The key is that Segwit now gives us a clear upgrade path where the software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.
+
+## P2SH-P2WPKH
+
+P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of the p2wpkh ScriptPubKey. Simply put, p2wpkh uses bech32 addresses which older wallets won't understand.
+
+The segwit authors found an ingenious way to make Segwit backwards compatibly by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh. This is called "nested" Segwit as the Segwit stuff is embedded inside a p2sh.
+
+The way this works is that the address is a normal p2sh address, but the redeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
+
+image::p2sh-p2wpkh1.png[p2sh-p2wpkh to Old Nodes]
+
+image::p2sh-p2wpkh2.png[p2sh-p2wpkh to New Nodes]
+
+The difference with p2wpkh is that the scriptSig is the fixed RedeemScript that would normally be the ScriptPubkey.  The ScriptSig is no longer empty, but it is still much shorter than the typical ScriptSig. As this is a p2sh, the ScriptPubKey is exactly the same as any other p2sh. The resulting Script looks like this:
+
+image::p2sh-p2wpkh3.png[p2sh-p2wpkh Script]
+
+We thus start the Script processing like this:
+
+image::p2sh-p2wpkh4.png[p2sh-p2wpkh Start]
+
+Notice right off the bat that the items to be processed are exactly what triggers the p2sh Special rule. The RedeemScript goes on the stack:
+image::p2sh-p2wpkh5.png[p2sh-p2wpkh Step 1]
+
+The OP_HASH160 will turn the RedeemScript's hash:
+
+image::p2sh-p2wpkh6.png[p2sh-p2wpkh Step 2]
+
+The hash will go on the stack and we then get to OP_EQUAL
+
+image::p2sh-p2wpkh7.png[p2sh-p2wpkh Step 3]
+
+At this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid as they are unaware of the p2sh validation rules. However, post-BIP0016 nodes will now have encountered the special Script sequence for p2sh, so the RedeemScript will now be processed as Script. The actual RedeemScript turns out to be OP_0 <20-byte hash>, which is exactly the ScriptPubKey for p2wpkh. This makes the Script state look like this:
+
+image::p2sh-p2wpkh8.png[p2sh-p2wpkh Step 4]
+
+This should look familar as this is exactly the state that p2wpkh starts with. After OP_0 and the 20-byte hash we are left with this:
+
+image::p2sh-p2wpkh9.png[p2sh-p2wpkh Step 5]
+
+At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules. However, post-Segwit nodes will now have encountered the special Script sequence for p2wpkh, so the Witness Program will now be looked up for the signature and pubkey and along with the 20-byte hash, will produce the same Script state as p2pkh:
+
+image::p2sh-p2wpkh10.png[p2sh-p2wpkh Step 6]
+
+The rest of the processing is exactly the same as p2pkh (Chapter 6). Assuming the signature and pubkey are valid, we are left with:
+
+image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
+
+As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would stop at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do further validation of the actual signature and pubkey.
+
+=== Other improvements
+
+Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new double_sha256 hash for each input. The details of the z calculation is detailed in BIP0143.
+
+In addition, to allow newer nodes to get the Segwit serialization, there is now a service bit in the version message that indicates whether the Segwit versions of the transaction serializations will be understood or not. Various network commands have extensions to allow for requesting Segwit-specific serializations. The specifications are detailed in BIP0144.
+
+==== Conclusion
+
+We've now covered what's so interesting about Segwit as a taste of what's now possible. The next chapter will cover next steps that you can take on your developer journey.

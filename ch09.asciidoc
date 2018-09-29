@@ -1,0 +1,378 @@
+= Programming Bitcoin
+:imagesdir: images
+
+[[chapter_blocks]]
+== Blocks
+
+[.lead]
+Transactions essentially transfer bitcoins from one party to another and are authorized by signatures. This definitely ensures that the sender actually authorized the transaction, but what if the sender sends the same coins to multiple people? This is called the double-spending problem and is so called because the owner of a lockbox may try to spend the same output twice. How is the receiver to be assured that they actually received the amount?
+
+This is where a major innovation of Bitcoin comes in with Blocks. Think of Blocks as a way to order transactions. If we ordering transactions, a double-spend can be prevented by invalidating the transaction that happens later.
+
+Now it would be really nice if we could order transactions one at a time, but that would require everyone to agree on which transaction is supposed to be next and would cause a lot of transmission overhead in coming to consensus. We can also order large batches of transactions, maybe once per day, but that wouldn't be very practical as the transactions would settle only once per day.
+
+Bitcoin finds a middle ground between these extremes by settling every 10 minutes in batches of transactions. These batches of transactions are what we call blocks. In this chapter we'll go through how to parse them and how to check what's called the proof of work. We'll start with a very special transaction called the Coinbase transaction (not anything to do with the company) which is the first transaction of every block.
+
+=== Coinbase Transactions
+
+We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US and is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by the miner and include all the transaction fees of the other transactions in the block.
+
+Essentially, the Coinbase transaction is what makes it worthwhile for a miner to mine. Here's what a Coinbase transaction looks like:
+
+image::coinbase1.png[Coinbase Transaction]
+
+The transaction structure is exactly the same as any other transaction on the Bitcoin network with a few exceptions.
+
+First, by rule, Coinbase Transactions must have exactly one input. Second, that input must have a previous transaction of 32 bytes of `00`. Third, the input must have a previous index of `ffffffff`.
+
+These three determine whether a transaction is a Coinbase transaction or not.
+
+==== Exercise {counter:exercise}
+
+Write the `is_coinbase` method of the `Tx` class.
+
+==== ScriptSig
+
+One of the intriguing things about the Coinbase Transaction is that there's nothing that the transaction is unlocking as the previous transaction does not exist. So what's in there? What information is in there?
+
+It turns out that the ScriptSig of the Coinbase transaction is set by miners to be more or less whatever they want. Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
+
+04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63
+656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f
+722062616e6b73 
+
+This ScriptSig was composed by Satoshi and contains a now-famous message that we can take a look at:
+
+[source,python]
+----
+>>> from script import Script
+>>> s = Script.parse(bytes.fromhex('04ffff...6b73'))
+>>> print(s.elements[2])
+b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
+----
+
+This was, of course, the headline from The Times newspaper on January 3, 2009.
+
+image::genesis.jpg[Genesis Block Coinbase ScriptSig]
+
+This proves that the Genesis Block was created some time *at or after* that date, and not before. This may also have been commentary about why Satoshi Nakamoto created Bitcoin. Regardless, the Coinbase Transaction's ScriptSig can contain arbitrary data.
+
+==== BIP0034
+
+One of the rules for a Coinbase Transaction was added in BIP0034. This was due to a network problem where miners were using the *same* Coinbase Transaction for different blocks. This was possible in the early days as the 32-bit nonce space was enough to mine blocks. The Coinbase being the same means that the transaction id is also the same as the double_sha256 of the transaction is deterministic. To combat this, the Core developers soft-forked in a rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
+
+The height must be interpreted as a little-endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block). Here's how we can parse the height from the Coinbase Transaction above:
+
+[source,python]
+----
+>>> from script import Script
+>>> from helper import little_endian_to_int
+>>> bin_script_sig = bytes.fromhex('03d71b0725...e00')
+>>> script_sig = Script.parse(bin_script_sig)
+>>> print(little_endian_to_int(script_sig.elements[0]))
+465879
+----
+
+We now know which block the transaction was in! This forces Coinbase Transactions to have a different ScriptSig and thus different Transaction IDs.
+
+==== Exercise {counter:exercise}
+
+Write the `coinbase_height` method for the `Tx` class.
+
+=== Headers vs Full Blocks
+
+Blocks are batches of transactions and the block header is metadata about the transactions included in the block. The block header consists of:
+
+* Version
+* Previous Block
+* Merkle Root
+* Timestamp
+* Bits
+* Nonce
+
+image::block1.png[Block Parsing]
+
+This is the metadata for every block. Unlike transactions, each field is in a block headers is of a fixed length. Version is 4 bytes, Previous Block is 32 bytes, Merkle Root is 32 bytes, Timestamp is 4 bytes, Bits is 4 bytes and Nonce is 4 bytes. The headers therefore, take up exactly 80 bytes for each block. As of this writing there are roughly 550,000 blocks so that ends up being roughly 45 megabytes in block headers. The entire blockchain, on the other hand, is roughly 150 GB, so the headers are roughly .027% of the size. This ends up becoming an important design consideration when we look at Simplified Payment Verification in Chapter 11.
+
+The id of the block is once again the double_sha256 of its contents. When you find the double_sha256 of this block, you'll start to notice something interesting:
+
+[source,python]
+----
+>>> from helper import double_sha256
+>>> block_id = double_sha256(bytes.fromhex('02000020...a4ffd71d'))
+>>> print(block_id.hex())
+2375044d646ad73594dd0b37b113becdb03964584c9e7e000000000000000000
+----
+
+This id is what gets put into prev_block for a block building on top of this one. For now, notice that the id has a lot of 0's at the end. We'll come back to this in the proof-of-work section below.
+
+We can start coding a `Block` class based on what we already know:
+
+[source,python]
+----
+class Block:
+
+    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce):
+        self.version = version
+        self.prev_block = prev_block
+        self.merkle_root = merkle_root
+        self.timestamp = timestamp
+        self.bits = bits
+        self.nonce = nonce
+----
+
+==== Exercise {counter:exercise}
+
+Write the parse, serialize and hash methods for block.
+
+=== Version
+
+Version in normal software refers to a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for. In the past this was used as a way to indicate a single feature that was ready. Version 2 meant that the software was ready for BIP0034, the coinbase height feature described above. Version 3 meant that the software was ready for BIP0066, the enforcement of strict DER encoding. Version 4 meant that the software was ready for BIP0065, which specified OP_CHECKLOCKTIMEVERIFY.
+
+Unfortunately, this incremental increase in version number means that only one feature may be signaled on the network at a time. To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time.
+
+==== BIP9
+
+The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be 001 to indicate that the miner is utilizing BIP9. This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
+
+BIP9 requires that 95% of miners signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. As of this writing far, the only soft forks to utilize BIP9 have been BIP141 (segwit) and BIP91 (reducing threshold for segwit). They were assigned bits 1 and 4 respectively.
+
+Checking for these features is relatively straightforward:
+
+[source,python]
+----
+>>> from io import BytesIO
+>>> from block import Block
+>>> b = Block.parse(BytesIO(bytes.fromhex('0200...')))
+>>> print('BIP9: {}'.format(b.version << 29 == 0b001))  # <1>
+True
+>>> print('BIP91: {}'.format(b.version << 4 & 1 == 1))  # <2>
+False
+>>> print('BIP141: {}'.format(b.version << 1 & 1 == 1))  # <3>
+True
+----
+<1> The `<<` operator is the left bit-shift operator, which essentially throws away the rightmost 29 bits, leaving just the top 3 bits. The `0b001` is a way of writing a number in binary format in Python.
+<2> The `&` operator is the "bitwise and" operator. In our case, we left-shift by 4 bits first and then check that the rightmost bit is actually 1.
+<3> We shift 1 to the left because BIP141 was assigned to bit 1.
+
+==== Exercise {counter:exercise}
+
+Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
+
+=== Previous Block
+
+All blocks have to point to a previous block. This is why the data structure is called a *blockchain*. Blocks link back all the way to what we call the Genesis Block. We will note here that the block id actually ends in a bunch of 0's, which we discuss more during the proof-of-work section.
+
+=== Merkle Root
+
+The Merkle Root encodes all the ordered transactions in a nice 32 byte hash. We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the merkle root along with data from the server to get a proof-of-inclusion in Chapter 11.
+
+=== Timestamp
+
+The timestamp is a unix-style timestamp taking up 4 bytes. Unix timestamps simply encode the number of seconds since January 1, 1970. This timestamp is used in two places. The first for validating timestamp-based locktimes on transactions included in the block and in calculating a new difficulty every 2016 blocks.
+
+.Is Bitcoin going to overflow on the timestamp?
+****
+Bitcoin's timestamp field in the block header is 32 bits. This means that once the unix timestamp exceeds 2^32^-1, we will go back to 0. 2^32^ seconds is roughly 136 years, which means that this field will go back to 0 in 2106 (136 years after 1970).
+
+Many people mistakenly believe that we only have until 68 years after 1970, or 2038, but that's only when the field is a signed integer (2^31^ seconds is 68 years), so we get the benefit of that extra bit, giving us until 2106.
+****
+
+=== Bits
+
+Bits is a field that encodes the amount of work necessary in this block. This will be discussed more in the proof-of-work section below.
+
+=== Nonce
+
+Nonce stands for "number used only once" or n-once. This number is what is changed by miners when looking for proof-of-work.
+
+=== Proof of Work
+
+Proof of work is what secures Bitcoin and at a deep level, makes Bitcoin decentralized. Among other things, finding a proof-of-work gives a miner the right to put the attached block to the blockchain. As proof-of-work is very rare, this is not an easy task. But because proof-of-work is objective and easy to verify anyone can be a miner if they so choose.
+
+Proof-of-work is called "mining" for a very good reason. Like physical mining, there is something that miners are searching for. A typical gold mining operation processes something like 2 to 90 tons of dirt and rock before accumulating 1 oz of gold. This is because gold is very rare. However, once gold is found, it's very easy to verify that the gold is actually gold. There are chemical tests, touchstones and many other ways to tell relatively cheaply whether the thing found is gold.
+
+Similarly, proof-of-work is actually a very rare number. To find a proof-of-work, the miners on the Bitcoin network have to churn through the numerical equivalent of dirt and rock to find that proof-of-work. Like gold, verifying proof-of-work is much cheaper than actually finding it.
+
+So what is the actual proof-of-work? To it's easiest to look at the double_sha256 of the block we looked at above:
+
+`020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd000000000000000000
+5b0750fce0a889502d40508d39576821155e9c9e3f5c3157f961db38fd8b25be1e77a759
+e93c0118a4ffd71d`
+
+[source,python]
+----
+>>> from helper import double_sha256
+>>> block_id = double_sha256(bytes.fromhex('02000020...a4ffd71d'))[::-1]
+>>> print('{}'.format(block_id.hex()).zfill(64))  # <1>
+0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523
+----
+<1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
+
+We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits being 00, 0.25. The first three bits being 000, 0.125 and so on. Note that each 0 in the hexadecimal above represents 4 0-bits. In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^. This is a really tiny probability. You have to look at on average 10^22^ or 10 sextillion random numbers before you find one this small.
+
+Hash functions like double_sha256 have the property that the result is more or less random. Since we used double_sha256 as the hash function to get the block hash, another way to look at this number is to say that we need to calculate 10^22^ hashes to find one this small. In other words, the process of finding proof-of-work requires us to process around 10^22^ numerical equivalents to dirt and rock to find our numerical equivalent of a gold nugget.
+
+==== How a miner can generate new hashes
+
+So where does the miner get new numerical dirt to process to see if it satisfies proof-of-work? This is where the nonce field comes in. The miners can change the nonce field at will.
+
+Unfortunately, the 4 bytes or 32-bits, or 2^32^ possible nonces that a miner can try is insufficient space. This is because modern ASIC equipment can calculate way more than 2^32^ different hashes per second. The AntMiner S9, for example, calculates 12 Th/s, or 12,000,000,000,000 hashes per second. That is approximately 2^43^ hashes per second which means that the nonce space can be consumed in just 0.0003 seconds.
+
+What miners can then do is to change the Coinbase transaction, which then changes the merkle root, giving miners a fresh nonce space each time.
+
+==== Target
+
+Proof-of-work is the requirement that every block in Bitcoin must be below a certain *target*. Target is a small 256-bit number that is computed directly from the bits field.
+
+`e93c0118`
+
+The bits field is actually two different numbers. The first is the exponent, which is the last byte. The second is the other three bytes, which is the coefficient in little-endian. The formula for calculating the target from these two numbers is:
+
+target = coefficient * 256^exponent-3^
+
+We can now calculate this given a bits field in Python:
+
+[source,python]
+----
+>>> from helper import little_endian_to_int
+>>> bits = bytes.fromhex('e93c0118')
+>>> exponent = bits[-1]
+>>> coefficient = little_endian_to_int(bits[:-1])
+>>> target = coefficient * 256 **(exponent-3)
+>>> print('{:x}'.format(target).zfill(64))  # <1>
+0000000000000000013ce9000000000000000000000000000000000000000000
+----
+<1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
+
+A valid proof of work is a hash of the block which, when interpreted as a little-endian integer is below the target number. Proof of work hashes are exceedingly rare and the process of mining is essentially the process of finding one of these hashes. To find a single proof-of-work with the above target, the network as a whole must calculate 3.8 * 10^21^ hashes. To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof of work with this target.
+
+We can check that this block's hash is indeed below the target:
+
+[source,python]
+----
+>>> from helper import little_endian_to_int
+>>> proof = little_endian_to_int(double_sha256(bytes.fromhex('02000020...a4ffd71d')))
+>>> print(proof < target)  # <1>
+True
+----
+<1> `target` is calculated above.
+
+We can actually see that the proof of work is lower by lining up the numbers in 64 hex characters:
+
+`0000000000000000013ce9000000000000000000000000000000000000000000`   # target
+
+`0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523`   # proof of work
+
+==== Exercise {counter:exercise}
+
+Write the target method for the Block class.
+
+==== Difficulty
+
+Target is difficult to work with for human beings. We know that this is the number that the hash must be below, but as humans, it's hard to fathom the difference between a 180-bit number and a 190-bit number. The first is a thousand times smaller, but from looking at targets, such large numbers are not easy to contextualize.
+
+To make different targets easier to compare, the concept of difficulty was born. Essentialy, difficulty is inversely proportional to target to make comparisons easier. The specific formula is:
+
+difficulty = 0xffff * 256^0x1d-3^ / target
+
+We can code this in python like so:
+
+[source,python]
+----
+>>> from helper import little_endian_to_int
+>>> bits = bytes.fromhex('e93c0118')
+>>> exponent = bits[-1]
+>>> coefficient = little_endian_to_int(bits[:-1])
+>>> target = coefficient*256**(exponent-3)
+>>> difficulty = 0xffff * 256**(0x1d-3) / target
+>>> print(difficulty)
+888171856257.3206
+----
+
+The difficulty on testnet when there haven't been any blocks found in 20 minutes resets to 1. This gives us context for how difficult mainnet is. The difficulty number can be thought of as how much more difficult mainnet is than testnet's easiest difficulty. This difficulty is roughly 888 billion times more difficult than testnet at its easiest setting.
+
+This is the number that gets shown in block explorers and bitcoin price charting services as difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
+
+==== Exercise {counter:exercise}
+
+Write the difficulty method for the Block class
+
+==== Checking that the Proof-of-Work is sufficient
+
+We already learned that proof-of-work can be calculated by computing the double-sha256 of the block header and interpreting this as a little-endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
+
+==== Exercise {counter:exercise}
+
+Write the check_pow method for the Block class.
+
+=== Difficulty Adjustment
+
+In Bitcoin, each group of 2016 blocks is called a _difficulty adjustment period_. At the end of every difficulty adjustment period, the target is adjusted according to this formula:
+
+time_differential = block timestamp of last block in difficulty adjustment period - block timestamp of first block in difficulty adjustment period
+
+new_target = previous_target * time_differential / (2 weeks)
+
+The time_differential number is calculated so that if it's greater than 8 weeks, 8 weeks is used and if it's less than 3.5 days, 3.5 days is used. This way, the new target cannot change more than 4x in either direction. That is, the target will be reduced or increased by 4x at the most.
+
+If each block took on average 10 minutes, 2016 blocks should take 20160 minutes. There are 1440 minutes per day, which means that 2016 blocks take 20160 / 1440 = 14 days. We should be calculating how long the last 2016 blocks took by using the timestamp field of the block at the very end of each of the current and previous difficulty adjustment periods. Satoshi unfortunately had another off-by-one error here, as the timestamp differential calculation looks at the very first and very last blocks of the 2016 block difficulty adjustment period instead. This means that the time_differential ends up being the difference of blocks that are 2015 blocks apart instead of 2016 blocks apart.
+
+We can code this formula like so:
+
+[source,python]
+----
+>>> from block import Block
+>>> last_block = Block.parse(BytesIO(bytes.fromhex('00...f5')))
+>>> first_block = Block.parse(BytesIO(bytes.fromhex('00...2e')))
+>>> time_differential = last_block.timestamp - first_block.timestamp
+>>> if time_differential > 60 * 60 * 24 * 14 * 4:  # <1>
+...     time_differential = 60 * 60 * 24 * 14 * 4
+>>> if time_differential < 60 * 60 * 24 * 14 // 4:  # <2>
+...     time_differential = 60 * 60 * 24 * 14 // 4
+>>> new_target = last_block.target() * time_differential // (60 * 60 * 24 * 14)
+>>> print('{:x}'.format(new_target).zfill(64))
+----
+<1> Note that `60*60*24*14` is the number of seconds in 2 weeks. 60 seconds times 60 minutes times 24 hours times 14 days. This makes sure that if it took more than 8 weeks to find the last 2015 blocks, we don't decrease the difficulty too much.
+<2> This part makes sure that if it took less than 3.5 days to find the last 2015 blocks, we don't increase the difficulty too much.
+
+The nice thing about this formula is that you only need the headers to calculate what the next block target should be. Once we have the target, we then convert this to bits. The inverse operation looks like this:
+
+[source,python]
+----
+def target_to_bits(target):
+    raw_bytes = target.to_bytes(32, 'big')
+    raw_bytes = raw_bytes.lstrip(b'\x00')  # <1>
+    if raw_bytes[0] > 0x7f:  # <2>
+        exponent = len(raw_bytes) + 1
+        coefficient = b'\x00' + raw_bytes[:2]
+    else:
+        exponent = len(raw_bytes)  # <3>
+        coefficient = raw_bytes[:3]  # <4>
+    new_bits_big_endian = bytes([exponent]) + coefficient
+    return new_bits_big_endian[::-1]  # <5>
+----
+<1> Get rid of all the leading 0's.
+<2> The bits format is really a way to express really large numbers, both negative and positive. If the first bit in the coefficient is a 1, this is supposed to be interpreted as a negative number. Since target is always positive for us, we shift everything over by 1 byte if the first bit is 1.
+<3> The exponent is really just how long the number is in base-256.
+<4> The coefficient is the first 3 digits of the base-256 number.
+<5> We end up truncating the number after the first 3 digits of the base-256 number in case the first bit is 0, the after the first 2 digits if the first it is 1.
+
+If the block doesn't have the correct bits, then we can safely reject that block.
+
+==== Exercise {counter:exercise}
+
+Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
+
+Block 471744: 000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800000000000000000010c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb845597e8b0118e43a81d3
+
+Block 473759: 02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e1264258597e8b0118e5f00474
+
+==== Exercise {counter:exercise}
+
+Write the calculate_new_bits function.
+
+=== Conclusion
+
+We've learned how to calculate proof of work, how to calculate the difficulty adjustment for a block in addition to learning about Coinbase Transactions. We'll now move onto the one field we haven't really covered, which is the merkle root in the next chapter.
+
