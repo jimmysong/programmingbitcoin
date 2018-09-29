@@ -214,7 +214,7 @@ For example:
 
 and so on.
 
-This should be somewhat intuitive. We take any two numbers in the set, add and "wrap around" the end to get the sum. We are creating our own addition operator here and it's a bit unintuitive. After all $$11+~f~17=9$$ just doesn't look right for most people because they're not used to Finite Field addition.
+This should be somewhat intuitive. We take any two numbers in the set, add and "wrap around" the end to get the sum. We are creating our own addition operator here and it's a bit unintuitive. After all, $$11+~f~17=9$$ just doesn't look right for most people because they're not used to Finite Field addition.
 
 More generally, we can define field addition this way:
 
@@ -376,7 +376,7 @@ Write the corresponding $$__mul__$$ method which defines the multiplication of t
 
 ==== Coding Exponentiation in Python
 
-We can do the same for exponentiation, which in Python can be defined with the $$__pow__$$ method. The difference here is that the exponent is *not* a field element, so has to be treated a bit differently. We want something like this to work:
+We can do the same for exponentiation, which in Python can be defined with the $$__pow__$$ method. The difference here is that the exponent is *not* a field element, so it has to be treated a bit differently. We want something like this to work:
 
 [source,python]
 ----
@@ -504,7 +504,7 @@ Write the corresponding $$__truediv__$$ method which defines the division of two
 
 === Redefining Exponentiation
 
-One last thing that we need to take care of before we leave this chapter is the $$__pow__$$ method, which will need to take care of negative exponents. For example a^-3^ needs to be a finite field, but the current code does not take care of this case. We want, for example something like this to work:
+One last thing that we need to take care of before we leave this chapter is the $$__pow__$$ method, which will need to take care of negative exponents. For example a^-3^ needs to be a finite field, but the current code does not take care of this case. We want, for example, something like this to work:
 
 [source,python]
 ----
@@ -552,4 +552,4 @@ Thankfully, we can do even better. We already know how to force a number into th
 
 === Conclusion
 
-In thes chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing these in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.
