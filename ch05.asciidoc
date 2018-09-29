@@ -172,7 +172,7 @@ def encode_varint(i):
 
 Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
 
-* Previous transaction id
+* Previous Transaction ID
 * Previous transaction index
 * ScriptSig
 * Sequence
