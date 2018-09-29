@@ -279,7 +279,7 @@ In Python we can define what addition means for our class with the $$__add__$$ m
 ----
     def __add__(self, other):
         if self.prime != other.prime: # <1>
-            raise RuntimeError('cannot add two numbers in different Fields')
+            raise RuntimeError('Cannot add two numbers in different Fields')
         num = (self.num + other.num) % self.prime # <2>
         return self.__class__(num, self.prime) # <3>
 ----
@@ -491,16 +491,13 @@ Note that in Python3, division is separated into $$__truediv__$$ and $$__floordi
 
 Solve the following equations in F~31~:
 
-3 / 24
-
-17^-3^
-
-4^-4^⋅11
+* 3 / 24
+* 17^-3^
+* 4^-4^⋅11
 
 ==== Exercise {counter:exercise}
 
 Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
-
 
 === Redefining Exponentiation
 

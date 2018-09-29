@@ -1,6 +1,173 @@
 [appendix]
 == Solutions
 
+=== Chapter 1
+
+==== Exercise {counter:ch1exercise}
+
+Write the $$__ne__$$ method for +FieldElement+.
+
+[source,python]
+----
+class FieldElement:
+...
+    def __ne__(self, other):
+        # this should be the inverse of the == operator
+	return not (self == other)
+----
+
+==== Exercise {counter:ch1exercise}
+
+Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
+
+. 44+33
+. 9-29
+. 17+42+49
+. 52-30-38
+
+[source,python]
+----
+>>> prime = 57
+>>> print((44+33)%prime)
+20
+>>> print((9-29)%prime)
+37
+>>> print((17+42+49)%prime)
+51
+>>> print((52-30-38)%prime)
+41
+----
+
+==== Exercise {counter:ch1exercise}
+
+Write the corresponding $$__sub__$$ method which defines the subtraction of two field elements.
+
+[source,python]
+----
+class FieldElement:
+...
+    def __sub__(self, other):
+        if self.prime != other.prime:
+            raise RuntimeError('Primes must be the same')
+	num = (self.num - other.num) % self.prime
+	return self.__class__(num, self.prime)
+----
+
+==== Exercise {counter:ch1exercise}
+
+Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are field versions):
+
+. 95⋅45⋅31
+. 17⋅13⋅19⋅44
+. 12^7^⋅77^49^
+
+[source,python]
+----
+>>> prime = 97
+>>> print(95*45*31 % prime)
+23
+>>> print(17*13*19*44 % prime)
+68
+>>> print(12**7*77**49 % prime)
+63
+----
+
+==== Exercise {counter:ch1exercise}
+
+For k = 1, 3, 7, 13, 18, what is this set in F~19~?
+
+{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
+
+Do you notice anything about these sets?
+
+[source,python]
+----
+>>> prime = 19
+>>> for k in (1,3,7,13,18):
+...     print(sorted([k*i % prime for i in range(prime)]))
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+----
+
+They are always the same set as before.
+
+==== Exercise {counter:ch1exercise}
+
+Write the corresponding $$__mul__$$ method which defines the multiplication of two field elements.
+
+[source,python]
+----
+class FieldElement:
+...
+    def __mul__(self, other):
+        if self.prime != other.prime:
+            raise RuntimeError('Primes must be the same')
+	num = self.num * other.num % self.prime
+	return self.__class__(num, self.prime)
+----
+
+==== Exercise {counter:ch1exercise}
+
+For p = 7, 11, 17, 31, 43, what is this set in F~p~?
+
+{1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
+
+[source,python]
+----
+>>> for prime in (7, 11, 17, 31, 43):
+...     print([pow(i, prime-1, prime) for i in range(1, prime)])
+[1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+----
+
+==== Exercise {counter:ch1exercise}
+
+Solve the following equations in F~31~:
+
+* 3 / 24
+* 17^-3^
+* 4^-4^⋅11
+
+[source,python]
+----
+>>> prime = 31
+>>> print(3*pow(24, prime-2, prime) % prime)
+4
+>>> print(pow(17, prime-4, prime))
+29
+>>> print(pow(4, prime-5, prime)*11 % prime)
+13
+----
+
+==== Exercise {counter:ch1exercise}
+
+Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
+
+[source,python]
+----
+class FieldElement:
+...
+    def __pow__(self, exponent):
+        mod_exponent = exponent % (self.prime-1)
+	num = pow(self.num, mod_exponent, self.prime)
+	return self.__class__(num, self.prime)
+
+    def __truediv__(self, other):
+        if self.prime != other.prime:
+            raise RuntimeError('Primes must be the same')
+	num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
+	return self.__class__(num, self.prime)
+----
+
+
+=== Chapter 2
+
 
 [source,python]
 ----
