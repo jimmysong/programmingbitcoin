@@ -490,7 +490,7 @@ Second, p is really, really close to 2^256^. This means that most numbers under 
 
 Third, 2^256^ is a really big number (See the sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
 
-Lastly, the curve itself is one that was published by Centcom, and is *not* a NIST curve. NIST stands for xxx and is published by the NSA and Satoshi apparently didn't trust any curves chosen by the NSA.
+Lastly, the curve itself is one that was published by Certicom, and is *not* a NIST curve. NIST stands for xxx and is published by the NSA and Satoshi apparently didn't trust any curves chosen by the NSA.
 
 .How Big is 2^256^?
 ****
