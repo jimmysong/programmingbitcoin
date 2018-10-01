@@ -100,7 +100,7 @@ We want the $$__init__$$ method to throw an error when the point is actually not
 
 Determine which of these points are on the curve y^2^=x^3^+5x+7:
 
-(2,4), (1,-1), (18,77), (5,7)
+(2,4), (-1,-1), (18,77), (5,7)
 
 
 ==== Exercise {counter:exercise}

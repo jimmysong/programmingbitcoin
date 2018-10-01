@@ -1,7 +1,7 @@
 [appendix]
 == Solutions
 
-=== Chapter 1
+=== Chapter 1: Finite Fields
 
 ==== Exercise {counter:ch1exercise}
 
@@ -166,12 +166,240 @@ class FieldElement:
 ----
 
 
-=== Chapter 2
+=== Chapter 2: Elliptic Curves
 
+==== Exercise {counter:ch2exercise}
+
+Determine which of these points are on the curve y^2^=x^3^+5x+7:
+
+(2,4), (-1,-1), (18,77), (5,7)
+
+[source,python]
+----
+>>> def on_curve(x, y):
+...     return y**2 == x**3 + 5*x + 7
+>>> print(on_curve(2,4))
+False
+>>> print(on_curve(-1,-1))
+True
+>>> print(on_curve(18,77))
+True
+>>> print(on_curve(5,7))
+False
+----
+
+==== Exercise {counter:ch2exercise}
+
+Write the $$__ne__$$ method for `Point`.
+
+[source,python]
+----
+class Point:
+...
+    def __ne__(self, other):
+        # this should be the inverse of the == operator
+	return not (self == other)
+----
+
+==== Exercise {counter:ch2exercise}
+
+Handle the case where the two points are negatives of each other. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
+
+[source,python]
+----
+    def __add__(self, other):
+        ...
+	if self.x == other.x and self.y != other.y:
+	    return self.__class__(None, None, self.a, self.b)
+----
+
+==== Exercise {counter:ch2exercise}
+
+For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+
+[source,python]
+----
+>>> s = (-1 - 5)/(-1 - 2)
+>>> x3 = s**2 - 2 - (-1)
+>>> y3 = s*(x3 - 2) - 5
+>>> print(x3,y3)
+3.0 -7.0
+----
+
+==== Exercise {counter:ch2exercise}
+
+Write the $$__add__$$ method where x~1~≠x~2~
+
+[source,python]
+----
+    def __add__(self, other):
+        ...
+	if self.x != other.x:
+	    s = (other.y - self.y) / (other.x - self.x)
+	    x3 = s**2 - self.x - other.x
+	    y3 = s*(self.x - x3) - self.y
+	    return self.__class__(x3, y3, self.a, self.b)
+----
+
+==== Exercise {counter:ch2exercise}
+
+For the curve y^2^=x^3^+5x+7, what is (-1,1) + (-1,1)?
+
+[source,python]
+----
+>>> a, x1, y1 = 5, -1, 1
+>>> s = (3*x1**2 + a)/(2*y1)
+>>> x3 = s**2 - 2*x1
+>>> y3 = s*(x1-x3)-y1
+>>> print(x3,y3)
+18.0 -77.0
+----
+
+==== Exercise {counter:ch2exercise}
+
+Write the $$__add__$$ method where x~1~=x~2~ and y~1~=y~2~
+
+[source,python]
+----
+    def __add__(self, other):
+        ...
+	if self == other:
+	    s = (3*self.x**2+self.a)/(2*self.y)
+	    x3 = s**2 - 2*self.x
+	    y3 = s*(self.x - x3) - self.y
+	    return self.__class__(x3, y3, self.a, self.b)
+----
+
+=== Chapter 3: Elliptic Curve Cryptography
+
+==== Exercise {counter:ch3exercise}
+
+Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
+
+(192,105), (17,56), (200,119), (1,193), (42,99)
+
+[source,python]
+----
+>>> from ecc import FieldElement
+>>> prime = 223
+>>> a = FieldElement(0, prime)
+>>> b = FieldElement(7, prime)
+>>> def on_curve(x,y):
+...     return y**2 == x**3 + a*x + b
+>>> print(on_curve(FieldElement(192,prime), FieldElement(105,prime)))
+True
+>>> print(on_curve(FieldElement(17,prime), FieldElement(56,prime)))
+True
+>>> print(on_curve(FieldElement(200,prime), FieldElement(119,prime)))
+False
+>>> print(on_curve(FieldElement(1,prime), FieldElement(193,prime)))
+True
+>>> print(on_curve(FieldElement(42,prime), FieldElement(99,prime)))
+False
+----
+
+==== Exercise {counter:ch3exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find:
+
+* (170,142) + (60,139)
+* (47,71) + (17,56)
+* (143,98) + (76,66)
 
 [source,python]
 ----
 >>> from ecc import FieldElement, Point
+>>> prime = 223
+>>> a = FieldElement(0, prime)
+>>> b = FieldElement(7, prime)
+>>> p1 = Point(FieldElement(170,prime), FieldElement(142,prime), a, b)
+>>> p2 = Point(FieldElement(60,prime), FieldElement(139,prime), a, b)
+>>> print(p1+p2)
+Point(220,181)_223
+>>> p1 = Point(FieldElement(47,prime), FieldElement(71,prime), a, b)
+>>> p2 = Point(FieldElement(17,prime), FieldElement(56,prime), a, b)
+>>> print(p1+p2)
+Point(215,68)_223
+>>> p1 = Point(FieldElement(143,prime), FieldElement(98,prime), a, b)
+>>> p2 = Point(FieldElement(76,prime), FieldElement(66,prime), a, b)
+>>> print(p1+p2)
+Point(47,71)_223
+----
+
+==== Exercise {counter:ch3exercise}
+
+Extend `ECCTest` to test for the additions from the previous exercise call this `test_add`.
+
+[source,python]
+----
+    def test_add(self):
+        prime = 223
+        a = FieldElement(0, prime)
+        b = FieldElement(7, prime)
+        additions = (
+            (192, 105, 17, 56, 170, 142),
+            (47, 71, 117, 141, 60, 139),
+            (143, 98, 76, 66, 47, 71),
+        )
+        for x1_raw, y1_raw, x2_raw, y2_raw, x3_raw, y3_raw in additions:
+            x1 = FieldElement(x1_raw, prime)
+            y1 = FieldElement(y1_raw, prime)
+            p1 = Point(x1, y1, a, b)
+            x2 = FieldElement(x2_raw, prime)
+            y2 = FieldElement(y2_raw, prime)
+            p2 = Point(x2, y2, a, b)
+            x3 = FieldElement(x3_raw, prime)
+            y3 = FieldElement(y3_raw, prime)
+            p3 = Point(x3, y3, a, b)
+            self.assertEqual(p1+p2, p3)
+----
+
+==== Exercise {counter:ch3exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find:
+
+* 2⋅(192,105)
+* 2⋅(143,98)
+* 2⋅(47,71)
+* 4⋅(47,71)
+* 8⋅(47,71)
+* 21⋅(47,71)
+
+[source,python]
+----
+>>> from ecc import FieldElement, Point
+>>> prime = 223
+>>> a = FieldElement(0, prime)
+>>> b = FieldElement(7, prime)
+>>> x1 = FieldElement(num=192, prime=prime)
+>>> y1 = FieldElement(num=105, prime=prime)
+>>> p = Point(x1,y1,a,b)
+>>> print(p+p)
+Point(49,71)_223
+>>> x1 = FieldElement(num=143, prime=prime)
+>>> y1 = FieldElement(num=98, prime=prime)
+>>> p = Point(x1,y1,a,b)
+>>> print(p+p)
+Point(64,168)_223
+>>> x1 = FieldElement(num=47, prime=prime)
+>>> y1 = FieldElement(num=71, prime=prime)
+>>> p = Point(x1,y1,a,b)
+>>> print(p+p)
+Point(36,111)_223
+>>> print(p+p+p+p)
+Point(194,51)_223
+>>> print(p+p+p+p+p+p+p+p)
+Point(116,55)_223
+>>> print(p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p)
+Point(infinity)
+----
+
+==== Exercise {counter:ch3exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find the order of the group generated by (15,86)
+
+[source,python]
+----
 >>> prime = 223
 >>> a = FieldElement(0, prime)
 >>> b = FieldElement(7, prime)
@@ -180,11 +408,252 @@ class FieldElement:
 >>> p = Point(x, y, a, b)
 >>> inf = Point(None, None, a, b)
 >>> product = p
->>> counter = 1
+>>> count = 1
 >>> while product != inf:
->>>     product += p
->>>     counter += 1
->>> print(counter)
+...     product += p
+...     count += 1
+>>> print(count)
 7
 ----
 
+==== Exercise {counter:ch3exercise}
+
+Verify whether these signatures are valid:
+
+```
+P = (0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
+     0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
+
+# signature 1
+z, r, s = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60,
+          0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395,
+          0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
+
+# signature 2
+z, r, s = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d,
+          0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c,
+          0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+```
+
+[source,python]
+----
+>>> from ecc import S256Point, N, G
+>>> point = S256Point(
+...     0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
+...     0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
+>>> z = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60
+>>> r = 0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395
+>>> s = 0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
+>>> u = z * pow(s, N-2, N) % N
+>>> v = r * pow(s, N-2, N) % N
+>>> print((u*G + v*point).x.num == r)
+True
+>>> z = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
+>>> r = 0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
+>>> s = 0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+>>> u = z * pow(s, N-2, N) % N
+>>> v = r * pow(s, N-2, N) % N
+>>> print((u*G + v*point).x.num == r)
+True
+----
+
+==== Exercise {counter:ch3exercise}
+
+Sign the following message with the secret
+
+```
+e = 12345
+z = int.from_bytes(double_sha256('Programming Bitcoin!'), 'big')
+```
+
+[source,python]
+----
+>>> from ecc import S256Point, G, N
+>>> from random import randint
+>>> from helper import double_sha256
+>>> e = 12345
+>>> z = int.from_bytes(double_sha256(b'Programming Bitcoin!'), 'big')
+>>> k = randint(0, N)
+>>> r = (k*G).x.num
+>>> k_inv = pow(k, N-2, N)
+>>> s = (z+r*e) * k_inv % N
+>>> print(e*G)
+S256Point(f01d6b9018ab421dd410404cb869072065522bf85734008f105cf385a023a80f,0eba29d0f0c5408ed681984dc525982abefccd9f7ff01dd26da4999cf3f6a295)
+>>> print(hex(z))
+0x969f6056aa26f7d2795fd013fe88868d09c9f6aed96965016e1936ae47060d48
+>>> print(hex(r))
+0x731e365289e2db339d25505196c82334f5f4f4b82331d86c6a177cdbad134688
+>>> print(hex(s))
+0xef43fcd07f59fbae063529b2ab76717c2a796726e9aef99b687e8293e0e02137
+----
+
+=== Chapter 4: Serialization
+
+==== Exercise {counter:ch4exercise}
+
+Find the uncompressed SEC format for the Public Key where the Private Key secrets are:
+
+* 5000
+* 2018^5^
+* 0xdeadbeef12345
+
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> priv = PrivateKey(5000)
+>>> print(priv.point.sec(compressed=False).hex())
+04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10
+>>> priv = PrivateKey(2018**5)
+>>> print(priv.point.sec(compressed=False).hex())
+04027f3da1918455e03c46f659266a1bb5204e959db7364d2f473bdf8f0a13cc9dff87647fd023c13b4a4994f17691895806e1b40b57f4fd22581a4f46851f3b06
+>>> priv = PrivateKey(0xdeadbeef12345)
+>>> print(priv.point.sec(compressed=False).hex())
+04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa762fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121
+----
+
+==== Exercise {counter:ch4exercise}
+
+Find the compressed SEC format for the Public Key where the Private Key secrets are:
+
+* 5001
+* 2019^5^
+* 0xdeadbeef54321
+
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> priv = PrivateKey(5001)
+>>> print(priv.point.sec(compressed=True).hex())
+0357a4f368868a8a6d572991e484e664810ff14c05c0fa023275251151fe0e53d1
+>>> priv = PrivateKey(2019**5)
+>>> print(priv.point.sec(compressed=True).hex())
+02933ec2d2b111b92737ec12f1c5d20f3233a0ad21cd8b36d0bca7a0cfa5cb8701
+>>> priv = PrivateKey(0xdeadbeef54321)
+>>> print(priv.point.sec(compressed=True).hex())
+0296be5b1292f6c856b3c5654e886fc13511462059089cdf9c479623bfcbe77690
+----
+
+==== Exercise {counter:ch4exercise}
+
+Find the DER format for a signature whose r and s values are:
+
+r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
+s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+
+[source,python]
+----
+>>> from ecc import Signature
+>>> r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
+>>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+>>> sig = Signature(r,s)
+>>> print(sig.der().hex())
+3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c60221008ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+----
+
+==== Exercise {counter:ch4exercise}
+
+Convert the following hex to binary and then to Base58:
+
+* 7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
+* eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
+* c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+
+[source,python]
+----
+>>> from helper import encode_base58
+>>> h = '7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d'
+>>> print(encode_base58(bytes.fromhex(h)).decode('ascii'))
+9MA8fRQrT4u8Zj8ZRd6MAiiyaxb2Y1CMpvVkHQu5hVM6
+>>> h = 'eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c'
+>>> print(encode_base58(bytes.fromhex(h)).decode('ascii'))
+4fE3H2E6XMp4SsxtwinF7w9a34ooUrwWe4WsW1458Pd
+>>> h = 'c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6'
+>>> print(encode_base58(bytes.fromhex(h)).decode('ascii'))
+EQJsjkd6JaGwxrjEhfeqPenqHwrBmPQZjJGNSCHBkcF7
+----
+
+==== Exercise {counter:ch4exercise}
+
+Find the address corresponding to Public Keys whose Private Key secrets are:
+
+* 5002 (use uncompressed SEC, on testnet)
+* 2020^5^ (use compressed SEC, on testnet)
+* 0x12345deadbeef (use compressed SEC on mainnet)
+
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> priv = PrivateKey(5002)
+>>> print(priv.point.address(compressed=False, testnet=True))
+mmTPbXQFxboEtNRkwfh6K51jvdtHLxGeMA
+>>> priv = PrivateKey(2020**5)
+>>> print(priv.point.address(compressed=True, testnet=True))
+mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH
+>>> priv = PrivateKey(0x12345deadbeef)
+>>> print(priv.point.address(compressed=True, testnet=False))
+1F1Pn2y6pDb68E5nYJJeba4TLg2U7B6KF1
+----
+
+==== Exercise {counter:ch4exercise}
+
+
+Find the wif for Private Key whose secrets are:
+
+* 5003 (compressed, testnet)
+* 2021^5^ (uncompressed, testnet)
+* 0x54321deadbeef (compressed, mainnet)
+
+[source,python]
+----
+>>> priv = PrivateKey(5003)
+>>> print(priv.wif(compressed=True, testnet=True))
+cMahea7zqjxrtgAbB7LSGbcQUr1uX1ojuat9jZodMN8rFTv2sfUK
+>>> priv = PrivateKey(2021**5)
+>>> print(priv.wif(compressed=False, testnet=True))
+91avARGdfge8E4tZfYLoxeJ5sGBdNJQH4kvjpWAxgzczjbCwxic
+>>> priv = PrivateKey(0x54321deadbeef)
+>>> print(priv.wif(compressed=True, testnet=False))
+KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgiuQJv1h8Ytr2S53a
+----
+
+==== Exercise {counter:ch4exercise}
+
+Write a function `little_endian_to_int` which takes Python bytes, interprets those bytes in Little Endian and returns the number.
+
+[source,python]
+----
+def little_endian_to_int(b):
+    '''little_endian_to_int takes byte sequence as a little-endian number.
+    Returns an integer'''
+    # use the from_bytes method of int
+    return int.from_bytes(b, 'little')
+----
+
+==== Exercise {counter:ch4exercise}
+
+Write a function `int_to_little_endian` which does the reverse of the last exercise.
+
+[source,python]
+----
+def int_to_little_endian(n, length):
+    '''endian_to_little_endian takes an integer and returns the little-endian
+    byte sequence of length'''
+    # use the to_bytes method of n
+    return n.to_bytes(length, 'little')
+----
+
+==== Exercise {counter:ch4exercise}
+
+Create a testnet address for yourself using a secret that only you know. Go to a testnet faucet and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
+
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> from helper import double_sha256, little_endian_to_int
+>>> passphrase = b'jimmy@programmingblockchain.com my secret'
+>>> secret = little_endian_to_int(double_sha256(passphrase))
+>>> priv = PrivateKey(secret)
+mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
+----
+
+=== Chapter 5: Transactions

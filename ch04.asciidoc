@@ -157,9 +157,9 @@ class S256Field(FieldElement):
 
 Find the compressed SEC format for the Public Key where the Private Key secrets are:
 
-1. 5001
-2. 2019^5^
-3. 0xdeadbeef54321
+* 5001
+* 2019^5^
+ 0xdeadbeef54321
 
 === DER Signatures
 
@@ -327,9 +327,9 @@ class S256Point:
 
 Find the address corresponding to Public Keys whose Private Key secrets are:
 
-1. 5002 (use uncompressed SEC, on testnet)
-2. 2020^5^ (use compressed SEC, on testnet)
-3. 0x12345deadbeef (use compressed SEC on mainnet)
+* 5002 (use uncompressed SEC, on testnet)
+* 2020^5^ (use compressed SEC, on testnet)
+* 0x12345deadbeef (use compressed SEC on mainnet)
 
 === WIF Format
 
@@ -371,9 +371,9 @@ We can now create the wif method on the PrivateKey class.
 
 Find the wif for Private Key whose secrets are:
 
-* 5003
-* 2021^5^
-* 0x54321deadbeef
+* 5003 (compressed, testnet)
+* 2021^5^ (uncompressed, testnet)
+* 0x54321deadbeef (compressed, mainnet)
 
 === Big and Little Endian Redux
 

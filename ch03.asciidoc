@@ -178,11 +178,9 @@ All of the equations for Elliptic Curves work over Finite Fields and that sets u
 
 For the curve y^2^=x^3^+7 over F~223~, find:
 
-(170,142) + (60,139)
-
-(47,71) + (17,56)
-
-(143,98) + (76,66)
+* (170,142) + (60,139)
+* (47,71) + (17,56)
+* (143,98) + (76,66)
 
 === Coding Point Addition over Finite Fields
 
@@ -263,17 +261,12 @@ The log equation on the left is not analytically calculatable. That is, there is
 
 For the curve y^2^=x^3^+7 over F~223~, find:
 
-2⋅(192,105)
-
-2⋅(143,98)
-
-2⋅(47,71)
-
-4⋅(47,71)
-
-8⋅(47,71)
-
-21⋅(47,71)
+* 2⋅(192,105)
+* 2⋅(143,98)
+* 2⋅(47,71)
+* 4⋅(47,71)
+* 8⋅(47,71)
+* 21⋅(47,71)
 
 === Scalar Multiplication Redux
 
@@ -895,8 +888,14 @@ We can now create a signature using some of the primitives that we have.
 >>> k_inv = pow(k, N-2, N)
 >>> s = (z+r*e) * k_inv % N # <4>
 >>> point = e*G # <5>
->>> print(point, z, r, s)
-
+>>> print(point)
+S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
+>>> print(hex(z))
+0x231c6f3d980a6b0fb7152f85cee7eb52bf92433d9919b9c5218cb08e79cce78
+>>> print(hex(r))
+0x3b5847f623a77be3be544c00b8abb83540ad44c691a1e0df7f60fcedd912d311
+>>> print(hex(s))
+0x40dbad2b4e539ffe797a6f41d414de5e38c5bd09aafe54b87a6dffe68c60f224
 ----
 <1> This would be something like a "brain wallet". Please don't use this for a real secret.
 <2> This is the message that we're signing.
