@@ -657,3 +657,131 @@ mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
 ----
 
 === Chapter 5: Transactions
+
+
+=== Chapter 10: Networking
+
+Determine what this network message is:
+
+`f9beb4d976657261636b000000000000000000005df6e0e2`
+
+==== Exercise {counter:ch10exercise}
+[source,python]
+----
+>>> from network import NetworkEnvelope
+>>> from io import BytesIO
+>>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
+>>> stream = BytesIO(bytes.fromhex(message_hex))
+>>> envelope = NetworkEnvelope.parse(stream)
+>>> print(envelope.command)
+b'verack'
+>>> print(envelope.payload)
+b''
+----
+
+==== Exercise {counter:ch10exercise}
+
+Write the `parse` and `serialize` methods for `NetworkEnvelope`.
+
+[source,python]
+----
+class NetworkEnvelope:
+...
+    @classmethod
+    def parse(cls, s, testnet=False):
+        '''Takes a stream and creates a NetworkEnvelope'''
+        magic = s.read(4)
+        if magic == b'':
+            raise RuntimeError('Connection reset!')
+        if testnet:
+            expected_magic = TESTNET_NETWORK_MAGIC
+        else:
+            expected_magic = NETWORK_MAGIC
+        if magic != expected_magic:
+            raise RuntimeError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
+        command = s.read(12)
+        command = command.strip(b'\x00')
+        payload_length = little_endian_to_int(s.read(4))
+        checksum = s.read(4)
+        payload = s.read(payload_length)
+        calculated_checksum = double_sha256(payload)[:4]
+        if calculated_checksum != checksum:
+            raise RuntimeError('checksum does not match')
+        return cls(command, payload, testnet=testnet)
+
+    def serialize(self):
+        '''Returns the byte serialization of the entire network message'''
+        result = self.magic
+        result += self.command + b'\x00' * (12 - len(self.command))
+        result += int_to_little_endian(len(self.payload), 4)
+        result += double_sha256(self.payload)[:4]
+        result += self.payload
+        return result
+----
+
+==== Exercise {counter:ch10exercise}
+
+Write the `serialize` method for `VersionMessage`.
+
+[source,python]
+----
+class VersionMessage:
+...
+    def serialize(self):
+        '''Serialize this message to send over the network'''
+        result = int_to_little_endian(self.version, 4)
+        result += int_to_little_endian(self.services, 8)
+        result += int_to_little_endian(self.timestamp, 8)
+        result += int_to_little_endian(self.receiver_services, 8)
+        result += b'\x00' * 10 + b'\xff\xff' + self.receiver_ip
+        result += int_to_little_endian(self.receiver_port, 2)
+        result += int_to_little_endian(self.sender_services, 8)
+        result += b'\x00' * 10 + b'\xff\xff' + self.sender_ip
+        result += int_to_little_endian(self.sender_port, 2)
+        result += self.nonce
+        result += encode_varint(len(self.user_agent))
+        result += self.user_agent
+        result += int_to_little_endian(self.latest_block, 4)
+        if self.relay:
+            result += b'\x01'
+        else:
+            result += b'\x00'
+        return result
+----
+
+==== Exercise {counter:ch10exercise}
+
+Write the `handshake` method for `SimpleNode`
+
+[source,python]
+----
+class SimpleNode:
+...
+    def handshake(self):
+        '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
+        # create a version message
+        version = VersionMessage()
+        # send the command
+        self.send(version.command, version.serialize())
+        # wait for a verack message
+        self.wait_for_commands({b'verack'})
+----
+
+==== Exercise {counter:ch10exercise}
+
+Write the `serialize` method for `GetHeadersMessage`.
+
+[source,python]
+----
+class GetHeadersMessage:
+...
+    def serialize(self):
+        '''Serialize this message to send over the network'''
+        result = int_to_little_endian(self.version, 4)
+        result += encode_varint(self.num_hashes)
+        result += self.start_block[::-1]
+        result += self.end_block[::-1]
+        return result
+----
+
+=== Chapter 11: SPV

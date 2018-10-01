@@ -55,7 +55,7 @@ class NetworkEnvelope:
 
 Determine what this network message is:
 
-f9beb4d976657261636b000000000000000000005df6e0e2
+`f9beb4d976657261636b000000000000000000005df6e0e2`
 
 ==== Exercise {counter:exercise}
 
@@ -253,7 +253,6 @@ Now that we have a node, we can now handshake with another node.
 <4> We only finish when we've received both verack and version.
 <5> We expect to receive a verack for our version and the other node's version. We don't know which order, though
 
-
 ==== Exercise {counter:exercise}
 
 Write the `handshake` method for `SimpleNode`
@@ -351,6 +350,7 @@ We can now do something useful with the network connection that we've set up. We
 
 [source,python]
 ----
+>>> from network import SimpleNode, GetHeadersMessage, HeadersMessage
 >>> from block import GENESIS_BLOCK_HASH
 >>> from helper import calculate_new_bits
 >>> node = SimpleNode('btc.programmingblockchain.com', testnet=False)
@@ -372,7 +372,8 @@ We can now do something useful with the network connection that we've set up. We
 ...         if expected_bits and block.bits != expected_bits:  # <3>
 ...             raise RuntimeError('bad bits at block {} {} vs {}'.format(count, block.bits.hex(), expected_bits.hex()))
 ...         if first_epoch_block and count % 2016 == 2015:  # <4>
-...             expected_bits = calculate_new_bits(first_epoch_block, block)
+...             expected_bits = calculate_new_bits(
+...                 expected_bits, block.timestamp - first_epoch_block.timestamp)
 ...             print(expected_bits.hex())
 ...         elif first_epoch_block is None:  # <5>
 ...             expected_bits = block.bits
