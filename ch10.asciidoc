@@ -304,9 +304,9 @@ At this point, we can now create a node, handshake, and then ask for some header
 ----
 >>> from network import SimpleNode, GetHeadersMessage
 >>> from block import GENESIS_BLOCK_HASH
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True)
+>>> node = SimpleNode('btc.programmingblockchain.com', testnet=True)
 >>> node.handshake()
->>> getheaders = GetHeadersMessage(start_block=GENESIS_BLOCK)
+>>> getheaders = GetHeadersMessage(start_block=GENESIS_BLOCK_HASH)
 >>> node.send(getheaders.command, getheaders.serialize())
 ----
 

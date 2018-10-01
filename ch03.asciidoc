@@ -1,7 +1,7 @@
 = Programming Bitcoin
 :imagesdir: images
 
-[[chapter_elliptic_curve cryptography]]
+[[chapter_elliptic_curve_cryptography]]
 == Elliptic Curve Cryptography
 
 [.lead]
@@ -62,6 +62,7 @@ Because we defined an Ellptic curve point and utilize the +,-,* and / operators 
 >>> x = FieldElement(num=192, prime=223)
 >>> y = FieldElement(num=105, prime=223)
 >>> p1 = Point(x, y, a, b)
+>>> print(p1)
 Point(192, 105)_223
 ----
 
@@ -79,7 +80,7 @@ class Point:
 	if self.x is None and self.y is None:
 	    return
         if self.y**2 != self.x**3 + self.a*self.x + self.b:
-	    raise ValueError('Point ({},{}) is not on the curve where a,b={},{}'.format(x,y,a,b))
+	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
 ----
 
 The addition (+), multiplication (*), exponentiation (**) and equality (!=) here will end up utilizing the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
@@ -190,12 +191,13 @@ Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$
 [source,python]
 ----
 >>> from ecc import FieldElement, Point
->>> a = FieldElement(num=0, prime=223)
->>> b = FieldElement(num=7, prime=223)
->>> x1 = FieldElement(num=192, prime=223)
->>> y1 = FieldElement(num=105, prime=223)
->>> x1 = FieldElement(num=17, prime=223)
->>> y1 = FieldElement(num=56, prime=223)
+>>> prime = 223
+>>> a = FieldElement(num=0, prime=prime)
+>>> b = FieldElement(num=7, prime=prime)
+>>> x1 = FieldElement(num=192, prime=prime)
+>>> y1 = FieldElement(num=105, prime=prime)
+>>> x1 = FieldElement(num=17, prime=prime)
+>>> y1 = FieldElement(num=56, prime=prime)
 >>> p1 = Point(x1, y1, a, b)
 >>> p2 = Point(x2, y2, a, b)
 >>> print(p1+p2)
@@ -204,7 +206,7 @@ Point(170,142)_223
 
 ==== Exercise {counter:exercise}
 
-Extend `ECCTest` to test for the additions from the previous exercise.
+Extend `ECCTest` to test for the additions from the previous exercise call this `test_add`.
 
 === Scalar multiplication for Elliptic Curves
 
@@ -220,7 +222,9 @@ We can actually do this as many times as we want. This is what we call Scalar Mu
 
 What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
 
-TODO: graph of where the point ends up when scalar is 2, 10, 17, etc
+image::scatterplot.png[Scalar Multiplication Results]
+
+Each point is labeled by how many times we've added the point. You can see that this is a complete scattershot.
 
 This is because point addition is non-linear. That is, not easy to calculate. In fact, doing the scalar multiplication is more or less straightforward, but doing the opposite, Point division, is not.
 
@@ -494,10 +498,10 @@ Lastly, the curve itself is one that was published by Centcom, and is *not* a NI
 
 2^256^ ~ 10^77^
 
-Number of atoms in and on earth ~ 10^50^
-Number of atoms in the solar system ~ 10^57^
-Number of atoms in the Milky Way ~ 10^68^
-Number of atoms in the universe ~ 10^80^
+ * Number of atoms in and on earth ~ 10^50^
+ * Number of atoms in the solar system ~ 10^57^
+ * Number of atoms in the Milky Way ~ 10^68^
+ * Number of atoms in the universe ~ 10^80^
 
 A trillion (10^9^) computers doing a trillion computations every trillionth (10^-9^) of a second for a trillion years is still only 10^56^ computations. It's simply infeasible to brute force a private key.
 
@@ -589,22 +593,20 @@ We can also define $$__rmul__$$ a bit more efficiently since we know the order o
 ----
 class S256Point(Point):
 
-    bits = 256 # <1>
     ...
 
     def __rmul__(self, coefficient):
         coef = coefficient % N # <1>
         current = self
         result = S256Point(None, None)
-        for i in range(self.bits):
+        while coef:
             if coef & 1:
                 result += current
             current += current
             coef >>= 1
         return result
 ----
-<1> We know N has 256 bits so any coefficient will be below N after being modded by N.
-<2> We can mod by N because `N*G==Point(infinity)`. That is, every N times we add G to itself or any member of this group, we effectively go back to zero (Point at infinity).
+<1> We can mod by N because `N*G==Point(infinity)`. That is, every N times we add G to itself or any member of this group, we effectively go back to zero (Point at infinity).
 
 We can also define G directly and keep it around since we'll be using it a lot going forward. We'll also define N since that's very useful.
 
@@ -773,7 +775,7 @@ To whit, here are the steps:
 
 .Why Double-sha256?
 ****
-The calculation of z requires two rounds of double-sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
+The calculation of z requires two rounds of sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
 
 There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017. Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
 
@@ -885,9 +887,9 @@ We can now create a signature using some of the primitives that we have.
 ----
 >>> from ecc import S256Point, G, N
 >>> from random import randint
->>> from helper import little_endian_to_int, double_sha256
->>> e = int.from_bytes(double_sha256('my secret'), 'big') # <1>
->>> z = int.from_bytes(double_sha256('my message'), 'big') # <2>
+>>> from helper import double_sha256
+>>> e = int.from_bytes(double_sha256(b'my secret'), 'big') # <1>
+>>> z = int.from_bytes(double_sha256(b'my message'), 'big') # <2>
 >>> k = randint(0, N)
 >>> r = (k*G).x.num # <3>
 >>> k_inv = pow(k, N-2, N)
