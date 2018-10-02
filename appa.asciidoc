@@ -901,6 +901,7 @@ class MerkleBlock:
                    total, hashes, flags)
 
 ----
+
 ==== Exercise {counter:ch11exercise}
 
 Write the `is_valid` method for `MerkleBlock`
@@ -919,3 +920,240 @@ class MerkleBlock:
 ----
 
 === Chapter 12: Bloom Filters
+
+==== Exercise {counter:ch12exercise}
+
+Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
+
+[source,python]
+----
+>>> from helper import hash160
+>>> bit_field_size = 10
+>>> bit_field = [0] * bit_field_size
+>>> for item in (b'hello world', b'goodbye'):
+...     h = hash160(item)
+...     bit = int.from_bytes(h, 'big') % bit_field_size
+...     bit_field[bit] = 1
+>>> print(bit_field)
+[1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+----
+
+==== Exercise {counter:ch12exercise}
+
+Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items?
+
+b'Hello World'
+b'Goodbye!'
+
+[source,python]
+----
+>>> from bloomfilter import BloomFilter, BIP37_CONSTANT
+>>> from helper import bit_field_to_bytes, murmur3
+>>> field_size = 10
+>>> function_count = 5
+>>> tweak = 99
+>>> items = (b'Hello World',  b'Goodbye!')
+>>> bit_field_size = field_size * 8
+>>> bit_field = [0] * bit_field_size
+>>> for item in items:
+...     for i in range(function_count):
+...         seed = i * BIP37_CONSTANT + tweak
+...         h = murmur3(item, seed=seed)
+...         bit = h % bit_field_size
+...         bit_field[bit] = 1
+>>> print(bit_field_to_bytes(bit_field).hex())
+4000600a080000010940
+----
+
+==== Exercise {counter:ch12exercise}
+
+Write the `add` method for `BloomFilter`
+
+[source,python]
+----
+class BloomFilter:
+...
+    def add(self, item):
+        '''Add an item to the filter'''
+        for i in range(self.function_count):
+            seed = i * BIP37_CONSTANT + self.tweak
+            h = murmur3(item, seed=seed)
+            bit = h % (self.size * 8)
+            self.bit_field[bit] = 1
+----
+
+==== Exercise {counter:ch12exercise}
+
+Write the  `filterload` payload from the `BloomFilter` class.
+
+[source,python]
+----
+    def filterload(self, flag=1):
+        '''Return the payload that goes in a filterload message'''
+        payload = encode_varint(self.size)
+        payload += self.filter_bytes()
+        payload += int_to_little_endian(self.function_count, 4)
+        payload += int_to_little_endian(self.tweak, 4)
+        payload += int_to_little_endian(flag, 1)
+        return payload
+----
+
+==== Exercise {counter:ch12exercise}
+
+Write the `serialize` method for the `GetDataMessage` class.
+
+[source,python]
+----
+class GetDataMessage:
+...
+    def serialize(self):
+        result = encode_varint(len(self.data))
+        for data_type, identifier in self.data:
+            result += int_to_little_endian(data_type, 4)
+            result += identifier[::-1]
+        return result
+----
+
+==== Exercise {counter:ch12exercise}
+
+Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
+
+[source,python]
+----
+import time
+from block import Block
+from bloomfilter import BloomFilter
+from ecc import PrivateKey
+from helper import double_sha256, little_endian_to_int, encode_varint, read_varint, decode_base58, p2pkh_script, SIGHASH_ALL
+from merkleblock import MerkleBlock
+from network import (
+    GetDataMessage,
+    GetHeadersMessage,
+    HeadersMessage,
+    NetworkEnvelope,
+    SimpleNode,
+    TX_DATA_TYPE,
+    FILTERED_BLOCK_DATA_TYPE,
+)
+from tx import Tx, TxIn, TxOut
+
+last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
+
+secret = little_endian_to_int(double_sha256(b''))
+private_key = PrivateKey(secret=secret)
+addr = private_key.point.address(testnet=True)
+print(addr)
+h160 = decode_base58(addr)
+
+target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
+target_h160 = decode_base58(target_address)
+target_script = p2pkh_script(target_h160)
+fee = 5000  # fee in satoshis
+
+# connect to tbtc.programmingblockchain.com in testnet mode
+node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
+
+# create a bloom filter of size 30 and 5 functions. Add a tweak that you like
+bf = BloomFilter(30, 5, 90210)
+# add the h160 to the bloom filter
+bf.add(h160)
+
+# complete the handshake
+node.handshake()
+# load the bloom filter with the filterload command
+node.send(b'filterload', bf.filterload())
+
+# set start block to last_block from above
+start_block = bytes.fromhex(last_block_hex)
+# send a getheaders message with the starting block
+getheaders_message = GetHeadersMessage(start_block=start_block)
+node.send(getheaders_message.command, getheaders_message.serialize())
+
+# wait for the headers message
+headers_envelope = node.wait_for_commands({HeadersMessage.command})
+
+# get the stream from the headers
+stream = headers_envelope.stream()
+# parse the headers message
+headers = HeadersMessage.parse(stream)
+# store the last block as None
+last_block = None
+# initialize the GetDataMessage
+get_data_message = GetDataMessage()
+# loop through the blocks in the headers
+for b in headers.blocks:
+    # check that the proof of work on the block is valid
+    if not b.check_pow():
+        raise RuntimeError('proof of work is invalid')
+    # check that this block's prev_block is the last block
+    if last_block is not None and b.prev_block != last_block:
+        raise RuntimeErrer('chain broken')
+    # add a new item to the get_data_message
+    # should be FILTERED_BLOCK_DATA_TYPE and block hash
+    get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
+    # set the last block to the current hash
+    last_block = b.hash()
+# send the getdata message
+node.send(get_data_message.command, get_data_message.serialize())
+
+# initialize prev_tx, prev_index and pt to None
+prev_tx, prev_index, prev_tx_obj = None, None, None
+# loop while prev_tx is None 
+while prev_tx is None:
+    # wait for the merkleblock or tx commands
+    envelope = node.wait_for_commands({b'merkleblock', b'tx'})
+    # initialize the stream from the envelope
+    stream = envelope.stream()
+    # if we have the merkleblock command
+    if envelope.command == b'merkleblock':
+        # parse the MerkleBlock
+        mb = MerkleBlock.parse(stream)
+        # check that the MerkleBlock is valid
+        if not mb.is_valid():
+            raise RuntimeError('invalid merkle proof')
+    # else we have the tx command
+    else:
+        # parse the tx
+        prev_tx_obj = Tx.parse(stream, testnet=True)
+        # loop through the tx outs
+        for i, tx_out in enumerate(prev_tx_obj.tx_outs):
+            # if our output has the same address as our address we found it
+            if tx_out.script_pubkey.address(testnet=True) == addr:
+                # we found our utxo. set prev_tx, prev_index, and transaction
+                prev_tx = prev_tx_obj.hash()
+                prev_index = i
+                print('found: {}:{}'.format(prev_tx.hex(), prev_index))
+# create tx_in
+tx_in = TxIn(prev_tx, prev_index, b'', 0xffffff)
+# set the cache of the previous tx to prev_tx_obj so we don't talk to a block explorer
+tx_in.cache[prev_tx] = prev_tx_obj
+# create the tx_ins array
+tx_ins = [tx_in]
+# calculate how much is in this UTXO
+total = prev_tx_obj.tx_outs[prev_index].amount
+# create a new transaction out to the right address with the right amount (subtract fee)
+tx_outs = [TxOut(total-fee, target_script)]
+# create a new transaction
+tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
+# sign the transaction
+tx_obj.sign_input(0, private_key, SIGHASH_ALL)
+# serialize and hex to see what it looks like
+print(tx_obj.serialize().hex())
+# send this signed transaction on the network
+node.send(b'tx', tx_obj.serialize())
+# wait a sec so this message goes through to the other node time.sleep(1) 
+time.sleep(1)
+# now ask for this transaction from the other node
+# create a GetDataMessage
+get_data_message = GetDataMessage()
+# ask for our transaction by adding it to the message
+get_data_message.add_data(TX_DATA_TYPE, tx_obj.hash())
+# send the message
+node.send(get_data_message.command, get_data_message.serialize())
+# now wait for a response
+envelope = node.wait_for_commands({b'tx', b'reject'})
+if envelope.command == b'tx':
+    print(envelope.payload.hex())
+else:
+    print(envelope.payload)
+----

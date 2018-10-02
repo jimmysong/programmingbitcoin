@@ -220,7 +220,12 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 (For the sake of brevity, the imports are omitted)
 [source,python]
 ----
->>> last_block_hex = '0000000000000085227e02d47d754bb64825bfd4522551f46ce19850993095d8'
+>>> from bloomfilter import BloomFilter
+>>> from helper import decode_base58
+>>> from merkleblock import MerkleBlock
+>>> from network import FILTERED_BLOCK_DATA_TYPE, GetHeadersMessage, GetDataMessage, HeadersMessage, SimpleNode
+>>> from tx import Tx
+>>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
 >>> h160 = decode_base58(address)
 >>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
@@ -228,8 +233,8 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 >>> bf.add(h160)  # <2>
 >>> node.handshake()
 >>> node.send(b'filterload', bf.filterload())  # <3>
->>> starting_block = bytes.fromhex(last_block_hex)
->>> getheaders_message = GetHeadersMessage(starting_block=starting_block)
+>>> start_block = bytes.fromhex(last_block_hex)
+>>> getheaders_message = GetHeadersMessage(start_block=start_block)
 >>> node.send(b'getheaders', getheaders_message.serialize())  # <4>
 >>> headers_envelope = node.wait_for_commands({b'headers'})
 >>> stream = headers_envelope.stream()
@@ -239,19 +244,19 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 ...     if not b.check_pow():
 ...         raise RuntimeError('proof of work is invalid')
 ...     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
->>> node.send(b'getdata', get_data_message.serialize())  # <7>
+... node.send(b'getdata', get_data_message.serialize())  # <7>
 >>> while True:
->>>     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  # <8>
->>>     stream = envelope.stream()
->>>     if envelope.command == b'merkleblock':
->>>         mb = MerkleBlock.parse(stream)
->>>         if not mb.is_valid():  # <9>
->>>             raise RuntimeError('invalid merkle proof')
->>>     else:  # <10>
->>>         prev_tx_obj = Tx.parse(stream, testnet=True)
->>>         for i, tx_out in enumerate(prev_tx_obj.tx_outs):
->>>             if tx_out.script_pubkey.address(testnet=True) == addr:  # <11>
->>>                 print('found: {}:{}'.format(prev_tx_obj.hash().hex(), i))
+...     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  # <8>
+...     stream = envelope.stream()
+...     if envelope.command == b'merkleblock':
+...         mb = MerkleBlock.parse(stream)
+...         if not mb.is_valid():  # <9>
+...             raise RuntimeError('invalid merkle proof')
+...     else:  # <10>
+...         prev_tx_obj = Tx.parse(stream, testnet=True)
+...         for i, tx_out in enumerate(prev_tx_obj.tx_outs):
+...             if tx_out.script_pubkey.address(testnet=True) == address:  # <11>
+...                 print('found: {}:{}'.format(prev_tx_obj.hash().hex(), i))
 ----
 <1> We are creating a Bloom Filter that's 30 bytes, 5 hash functions using a particularly popular 90's tweak.
 <2> The only thing we'll filter for is the address above.
