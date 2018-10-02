@@ -55,8 +55,11 @@ The actual calculation in Python is relatively straightforward:
 [source,python]
 ----
 >>> from helper import double_sha256
->>> hash1, hash2 = ...
+>>> hash1 = bytes.fromhex('c117...')
+>>> hash2 = bytes.fromhex('c131...')
 >>> parent = double_sha256(hash1 + hash2)
+>>> print(parent.hex())
+8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd
 ----
 
 At this point, it's important to note that we can show that L is included in the parent, P, by revealing R. That is, if someone wanted to prove to us that L was used to produce P, they would show us R and let us know that L is the left child of P. We can then combine L and R to produce P and have proof that L was used to produce P. This is the most basic proof-of-inclusion.
@@ -86,7 +89,11 @@ Note that since the Merkle Parent always consists of two hashes, we end up with 
 >>> for i in range(0, len(hashes), 2):  # <2>
 ...     parent = merkle_parent(hashes[i], hashes[i+1])
 ...     parent_level.append(parent)
-...
+>>> for item in parent_level:
+...     print(item.hex())
+8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd
+7f4e6f9e224e20fda0ae4c44114237f97cd35aca38d83081c9bfd41feb907800
+3ecf6115380c77e8aae56660f5634982ee897351ba906a6837d15ebc3a225df0
 ----
 <1> This will add the last hash on the list (hashes[-1]) to the end of `hashes`. This makes the length of `hashes` even.
 <2> This is how we skip by two in Python. `i` will be 0 the first time through the loop, 2 the second, 4 the third and so on.
@@ -121,7 +128,8 @@ The final hash is called the Merkle Root. As each level will halve the number of
 >>> while len(current_hashes) > 1:  # <1>
 ...     current_hashes = merkle_parent_level(current_hashes)
 ...
->>> root = current_hashes[0]  # <2>
+>>> print(current_hashes[0].hex())  # <2>
+acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
 ----
 <1> We loop until there's 1 hash left.
 <2> We've exited the loop so there should only be 1 item
@@ -141,7 +149,8 @@ In practice, this simply means reversing the hash before we start and reversing 
 >>> from helper import merkle_root
 >>> tx_hashes = [...]
 >>> hashes = [h[::-1] for h in tx_hashes]  # <1>
->>> root = merkle_root(hashes)[::-1]  # <2>
+>>> print(merkle_root(current_level)[::-1].hex())  # <2>
+654d6181e18e4ac4368383fdc5eead11bf138f9b7ac1e15334e4411b3c4797d9
 ----
 <1> This reverses each hash before we begin using a *list comprehension*
 <2> This reverses the root at the end
@@ -178,17 +187,12 @@ image::merkleproof.png[Merkle Proof]
 
 Say that we have two transactions that we are interested in, which would be the hashes marked by green boxes, H~K~ and H~N~ above. A full node can to prove to us that these transactions were a part of the block by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~. We would then perform these calculations:
 
-H~KL~ = merkle_parent(H~K~, H~L~)
-
-H~MN~ = merkle_parent(H~M~, H~N~)
-
-H~IJKL~ = merkle_parent(H~IJ~, H~KL~)
-
-H~MNOP~ = merkle_parent(H~MN~, H~OP~)
-
-H~IJKLMNOP~ = merkle_parent(H~IJKL~, H~MNOP~)
-
-H~ABCDEFGHIJKLMNOP~ = merkle_parent(H~ABCDEFGH~, H~IJKLMNOP~)
+* H~KL~ = merkle_parent(H~K~, H~L~)
+* H~MN~ = merkle_parent(H~M~, H~N~)
+* H~IJKL~ = merkle_parent(H~IJ~, H~KL~)
+* H~MNOP~ = merkle_parent(H~MN~, H~OP~)
+* H~IJKLMNOP~ = merkle_parent(H~IJKL~, H~MNOP~)
+* H~ABCDEFGHIJKLMNOP~ = merkle_parent(H~ABCDEFGH~, H~IJKLMNOP~)
 
 The merkle root is H~ABCDEFGHIJKLMNOP~, which we can check against the block header whose proof-of-work we've already validated.
 
@@ -235,6 +239,13 @@ The first thing we need to do is create the general structure of the Merkle Tree
 ...     num_items = math.ceil(total / 2**(max_depth - depth))  # <4>
 ...     level_hashes = [None] * num_items  # <5>
 ...     merkle_tree.append(level_hashes)  # <6>
+>>> for level in merkle_tree:
+...     print(level)
+[None]
+[None, None]
+[None, None, None, None]
+[None, None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
 ----
 <1> Since we halve at every level, log~2~ tells us how many levels there will be to the Merkle Tree. Note we have to round up using `math.ceil` as we round up for halving at each level. We could also be clever and use `len(bin(total))-2`.
 <2> The merkle tree will hold the root at index 0, the level below at index 1 and so on. In other words, the index is the "depth" from the top.
@@ -293,6 +304,12 @@ Given the leaves, we can use this structure to fill in the rest of the tree. We 
 >>> tree.nodes[2] = merkle_parent_level(tree.nodes[3])
 >>> tree.nodes[1] = merkle_parent_level(tree.nodes[2])
 >>> tree.nodes[0] = merkle_parent_level(tree.nodes[1])
+>>> print(tree)
+*597c4baf.*, 
+6382df3f..., 87cf8fa3..., 
+3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 
+272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., 
+9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc...,
 ----
 
 Indeed, this would fill the tree and allow us to get the root. However, the message from the network may not be giving us all of the leaves. The message might contain some internal nodes as well. We need a more clever way to fill up the tree.
@@ -347,7 +364,7 @@ We can now traverse the tree using the `left`, `right` and `up` methods. Let's t
 [source,python]
 ----
 >>> from merkleblock import MerkleTree
->>> from helper import merkle_parent_level
+>>> from helper import merkle_parent
 >>> hex_hashes = [...]
 >>> tree = MerkleTree(len(hex_hashes))
 >>> tree.nodes[4] = [bytes.fromhex(h) for h in hex_hashes]
@@ -364,6 +381,12 @@ We can now traverse the tree using the `left`, `right` and `up` methods. Let's t
 ...         else:  # <5>
 ...             tree.set_current_node(merkle_parent(left_hash, right_hash))
 ...             tree.up()
+>>> print(tree)
+597c4baf..., 
+6382df3f..., 87cf8fa3..., 
+3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 
+272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., 
+9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc..., 
 ----
 <1> We are looking to calculate the merkle root. As long as we don't have the root, we continue to loop until we do.
 <2> If we are in a leaf node, we already have that hash, so we don't need to do anything but go back up.
@@ -381,7 +404,7 @@ To do something a little more robust and allow for the possibility that the pare
 >>> from helper import merkle_parent_level
 >>> hex_hashes = [...]
 >>> tree = MerkleTree(len(hex_hashes))
->>> tree.nodes[4] = [bytes.fromhex(h) for h in hex_hashes]
+>>> tree.nodes[5] = [bytes.fromhex(h) for h in hex_hashes]
 >>> while tree.root() is None:
 ...     if tree.is_leaf():
 ...         tree.up()
@@ -389,16 +412,23 @@ To do something a little more robust and allow for the possibility that the pare
 ...         left_hash = tree.get_left_node()
 ...         if left_hash is None:  # <1>
 ...             tree.left()
-...             if tree.right_exists():  # <2>
-...                 right_hash = tree.get_right_node()
-...                 if right_hash is None:  # <3>
-...                     tree.right()
-...                 else:  # <4>
-...                     tree.set_current_node(merkle_parent(left_hash, right_hash))
-...                     tree.up()
-...             else:  # <5>
-...                 tree.set_current_node(merkle_parent(left_hash, left_hash))
+...         elif tree.right_exists():  # <2>
+...             right_hash = tree.get_right_node()
+...             if right_hash is None:  # <3>
+...                 tree.right()
+...             else:  # <4>
+...                 tree.set_current_node(merkle_parent(left_hash, right_hash))
 ...                 tree.up()
+...         else:  # <5>
+...             tree.set_current_node(merkle_parent(left_hash, left_hash))
+...             tree.up()
+>>> print(tree)
+0a313864..., 
+597c4baf..., 6f8a8190..., 
+6382df3f..., 87cf8fa3..., 5647f416..., 
+3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 28e93b98..., 
+272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., ce26d40b..., 
+9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc..., 38faf8c8...,
 ----
 <1> We start by checking to see if the left hash is defined. If not, we go to the left node since all internal nodes are guaranteed a left child.
 <2> We check here if this node has a right child. This is true unless this node happens to be the right-most node of the level and the child level has an odd number of nodes.

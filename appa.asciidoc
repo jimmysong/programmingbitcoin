@@ -785,3 +785,137 @@ class GetHeadersMessage:
 ----
 
 === Chapter 11: SPV
+
+==== Exercise {counter:ch11exercise}
+
+Write the merkle_parent function.
+
+[source,python]
+----
+def merkle_parent(hash1, hash2):
+    '''Takes the binary hashes and calculates the double-sha256'''
+    return double_sha256(hash1 + hash2)
+----
+
+==== Exercise {counter:ch11exercise}
+
+Write the `merkle_parent_level` function.
+
+[source,python]
+----
+def merkle_parent_level(hashes):
+    '''Takes a list of binary hashes and returns a list that's half
+    the length'''
+    if len(hashes) == 1:
+        raise RuntimeError('Cannot take a parent level with only 1 item')
+    if len(hashes) % 2 == 1:
+        hashes.append(hashes[-1])
+    parent_level = []
+    for i in range(0, len(hashes), 2):
+        parent = merkle_parent(hashes[i], hashes[i+1])
+        parent_level.append(parent)
+    return parent_level
+----
+
+==== Exercise {counter:ch11exercise}
+
+Write the `merkle_root` function.
+
+[source,python]
+----
+def merkle_root(hashes):
+    '''Takes a list of binary hashes and returns the merkle root
+    '''
+    current_level = hashes
+    while len(current_level) > 1:
+        current_level = merkle_parent_level(current_level)        
+    return current_level[0]
+----
+
+==== Exercise {counter:ch11exercise}
+
+Write the `validate_merkle_root` method for `Block`.
+
+[source,python]
+----
+class Block:
+...
+    def validate_merkle_root(self):
+        '''Gets the merkle root of the tx_hashes and checks that it's
+        the same as the merkle root of this block.
+        '''
+        hashes = [h[::-1] for h in self.tx_hashes]
+        root = merkle_root(hashes)
+        return root[::-1] == self.merkle_root
+----
+
+==== Exercise {counter:ch11exercise}
+
+Create an empty Merkle Tree with 27 items and print each level.
+
+[source,python]
+----
+>>> import math
+>>> total = 27
+>>> max_depth = math.ceil(math.log(total, 2))
+>>> merkle_tree = []
+>>> for depth in range(max_depth + 1): 
+...     num_items = math.ceil(total / 2**(max_depth - depth))
+...     level_hashes = [None] * num_items
+...     merkle_tree.append(level_hashes)
+>>> for level in merkle_tree:
+...     print(level)
+[None]
+[None, None]
+[None, None, None, None]
+[None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----
+
+==== Exercise {counter:ch11exercise}
+
+Write the parse method for `MerkleBlock`.
+
+[source,python]
+----
+class MerkleBlock:
+...
+    @classmethod
+    def parse(cls, s):
+        '''Takes a byte stream and parses a merkle block. Returns a Merkle Block object'''
+        version = little_endian_to_int(s.read(4))
+        prev_block = s.read(32)[::-1]
+        merkle_root = s.read(32)[::-1]
+        timestamp = little_endian_to_int(s.read(4))
+        bits = s.read(4)
+        nonce = s.read(4)
+        total = little_endian_to_int(s.read(4))
+        num_txs = read_varint(s)
+        hashes = []
+        for _ in range(num_txs):
+            hashes.append(s.read(32)[::-1])
+        flags_length = read_varint(s)
+        flags = s.read(flags_length)
+        return cls(version, prev_block, merkle_root, timestamp, bits, nonce,
+                   total, hashes, flags)
+
+----
+==== Exercise {counter:ch11exercise}
+
+Write the `is_valid` method for `MerkleBlock`
+
+[source,python]
+----
+class MerkleBlock:
+...
+    def is_valid(self):
+        '''Verifies whether the merkle tree information validates to the merkle root'''
+        flag_bits = bytes_to_bit_field(self.flags)
+        hashes = [h[::-1] for h in self.hashes]
+        merkle_tree = MerkleTree(self.total)
+        merkle_tree.populate_tree(flag_bits, hashes)
+        return merkle_tree.root()[::-1] == self.merkle_root
+----
+
+=== Chapter 12: Bloom Filters
