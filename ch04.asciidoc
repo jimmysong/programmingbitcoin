@@ -304,7 +304,7 @@ include::code-ch04/answers.py[tag=exercise4]
 
 === Address Format
 
-The 260 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see <<chapter_script>>). To both shorten and increase security, we can use the ripemd160 hash to compress the public key to a 20-byte hash.
+The 264 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see <<chapter_script>>). To both shorten and increase security, we can use the ripemd160 hash to compress the public key to a 20-byte hash.
 
 By not using the SEC format directly, we can go from 33 bytes to 20 bytes, we shortening the address significantly. Here is how a Bitcoin address is created:
 
