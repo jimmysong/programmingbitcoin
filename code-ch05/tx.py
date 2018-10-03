@@ -34,9 +34,7 @@ class Tx:
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
-        # s.read(n) will return n bytes
-        # version, inputs, outputs, locktime
-        return cls(None, None, None, None)
+        raise NotImplementedError
     
     def serialize(self):
         '''Returns the byte serialization of the transaction'''
@@ -83,9 +81,7 @@ class TxIn:
         '''Takes a byte stream and parses the tx_input at the start
         return a TxIn object
         '''
-        # prev_tx, prev_index, script_sig, sequence
-        return cls(None, None, None, None)
-
+        raise NotImplementedError
 
     def serialize(self):
         '''Returns the byte serialization of the transaction input'''
@@ -164,13 +160,13 @@ class TxOut:
     def __repr__(self):
         return '{}:{}'.format(self.amount, self.script_pubkey)
 
+
     @classmethod
     def parse(cls, s):
         '''Takes a byte stream and parses the tx_output at the start
         return a TxOut object
         '''
-        # amount, script_pubkey
-        return cls(None, None)
+        raise NotImplementedError
 
 
 class TxTest(TestCase):
