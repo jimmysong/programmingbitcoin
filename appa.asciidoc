@@ -814,10 +814,190 @@ class Tx:
         return input_sum - output_sum
 ----
 
-=== Chapter 6: Transactions
-
+=== Chapter 6: Script
 
 ==== Exercise {counter:ch6exercise}
+
+Create a ScriptSig that can unlock this ScriptPubKey
+
+image::exercise1.png[Exercise 1]
+
+[source,python]
+----
+>>> from script import Script
+>>> hex_script = '767695935687'
+>>> print(Script.parse(bytes.fromhex(hex_script)))
+OP_DUP OP_DUP OP_MUL OP_ADD OP_6 OP_EQUAL
+----
+
+OP_2 or `52` will satisfy the equation x^2^+x-6=0.
+
+==== Exercise {counter:ch6exercise}
+
+Figure out what this script is doing:
+
+image::exercise2.png[Exercise 2]
+
+[source,python]
+----
+>>> from script import Script
+>>> hex_script = '6e879169a77ca787'
+>>> print(Script.parse(bytes.fromhex(hex_script)))
+OP_2DUP OP_EQUAL OP_NOT OP_VERIFY OP_SHA1 OP_SWAP OP_SHA1 OP_EQUAL
+----
+
+This is looking for a SHA1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
+
+=== Chapter 7: Transaction Creation and Validation
+
+==== Exercise {counter:ch7exercise}
+
+Write the `sig_hash` method for the `Tx` class.
+
+[source,python]
+----
+class Tx:
+...
+    def sig_hash(self, input_index, hash_type):
+        '''Returns the integer representation of the hash that needs to get
+        signed for index input_index'''
+        alt_tx_ins = []
+        for tx_in in self.tx_ins:
+            alt_tx_ins.append(TxIn(
+                prev_tx=tx_in.prev_tx,
+                prev_index=tx_in.prev_index,
+                script_sig=b'',
+                sequence=tx_in.sequence,
+            ))
+        signing_input = alt_tx_ins[input_index]
+        signing_input.script_sig = signing_input.script_pubkey(self.testnet)
+        alt_tx = self.__class__(
+            version=self.version,
+            tx_ins=alt_tx_ins,
+            tx_outs=self.tx_outs,
+            locktime=self.locktime)
+        result = alt_tx.serialize() + int_to_little_endian(hash_type, 4)
+        s256 = double_sha256(result)
+        return int.from_bytes(s256, 'big')
+----
+
+==== Exercise {counter:ch7exercise}
+
+Write the `verify_input` method for the `Tx` class. You will want to utilize the TxIn.der_signature(), TxIn.sec_pubkey() and TxIn.hash_type() methods to make this work.
+
+[source,python]
+----
+class Tx:
+...
+    def verify_input(self, input_index):
+        '''Returns whether the input has a valid signature'''
+        tx_in = self.tx_ins[input_index]
+        point = S256Point.parse(tx_in.sec_pubkey())
+        signature = Signature.parse(tx_in.der_signature())
+        hash_type = tx_in.hash_type()
+        z = self.sig_hash(input_index, hash_type)
+        return point.verify(z, signature)
+----
+
+==== Exercise {counter:ch7exercise}
+
+Write the `sign_input` method for the `Tx` class, which does the above.
+
+[source,python]
+----
+class Tx:
+...
+    def sign_input(self, input_index, private_key, hash_type):
+        '''Signs the input using the private key'''
+        z = self.sig_hash(input_index, hash_type)
+        der = private_key.sign(z).der()
+        sig = der + hash_type.to_bytes(1, 'big')
+        sec = private_key.point.sec()
+        self.tx_ins[input_index].script_sig = Script([sig, sec])
+        return self.verify_input(input_index)
+----
+
+==== Exercise {counter:ch7exercise}
+
+Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
+
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> from helper import decode_base58, p2pkh_script, SIGHASH_ALL
+>>> from script import Script
+>>> from tx import TxIn, TxOut, Tx
+>>> prev_tx = bytes.fromhex('75a1c4bc671f55f626dda1074c7725991e6f68b8fcefcfca7b64405ca3b45f1c')
+>>> prev_index = 1
+>>> target_address = 'miKegze5FQNCnGw6PKyqUbYUeBa4x2hFeM'
+>>> target_amount = 0.01
+>>> change_address = 'mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2'
+>>> change_amount = 0.009
+>>> secret = 8675309
+>>> priv = PrivateKey(secret=secret)
+>>> tx_ins = []
+>>> tx_ins.append(TxIn(prev_tx, prev_index, b'', 0xffffffff))
+>>> tx_outs = []
+>>> h160 = decode_base58(target_address)
+>>> script_pubkey = p2pkh_script(h160)
+>>> target_satoshis = int(target_amount*100000000)
+>>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
+>>> h160 = decode_base58(change_address)
+>>> script_pubkey = p2pkh_script(h160)
+>>> change_satoshis = int(change_amount*100000000)
+>>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
+>>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
+>>> tx_obj.sign_input(0, priv, SIGHASH_ALL)
+>>> if priv.point.address(testnet=True) != change_address:
+...     raise RuntimeError('Private Key does not correspond to Change Address, check priv_key and change_address')
+>>> if tx_ins[0].script_pubkey(testnet=True).elements[2] != decode_base58(change_address):
+...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
+>>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
+...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
+>>> print(tx_obj.serialize().hex())
+01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175010000006b483045022100b610b6df76364e1fcad579a862152623cb364d6409fe59e1922da69f32a8520b022059007da287d10088b39f487764f9d04160ece1ae551d5c7b4b2cb5f03cd44f55012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff0240420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d00000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000
+----
+
+==== Exercise {counter:ch7exercise}
+
+Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
+
+[source,python]
+----
+>>> from ecc import PrivateKey
+>>> from helper import decode_base58, p2pkh_script, SIGHASH_ALL
+>>> from script import Script
+>>> from tx import TxIn, TxOut, Tx
+>>> prev_tx_1 = bytes.fromhex('11d05ce707c1120248370d1cbf5561d22c4f83aeba0436792c82e0bd57fe2a2f')
+>>> prev_index_1 = 1
+>>> prev_tx_2 = bytes.fromhex('51f61f77bd061b9a0da60d4bedaaf1b1fad0c11e65fdc744797ee22d20b03d15')
+>>> prev_index_2 = 1
+>>> target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
+>>> target_amount = 0.0429
+>>> secret = 8675309
+>>> priv = PrivateKey(secret=secret)
+>>> tx_ins = []
+>>> tx_ins.append(TxIn(prev_tx_1, prev_index_1, b'', 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx_2, prev_index_2, b'', 0xffffffff))
+>>> tx_outs = []
+>>> h160 = decode_base58(target_address)
+>>> script_pubkey = p2pkh_script(h160)
+>>> target_satoshis = int(target_amount*100000000)
+>>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
+>>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
+>>> tx_obj.sign_input(0, priv, SIGHASH_ALL)
+>>> tx_obj.sign_input(1, priv, SIGHASH_ALL)
+>>> if tx_ins[0].script_pubkey(testnet=True).elements[2] != decode_base58(priv.point.address(testnet=True)):
+...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
+>>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
+...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
+>>> print(tx_obj.serialize().hex())
+01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011010000006b483045022100dddbb9f2ae014631a80265b133369ff2aa9e429cf2188e66f4256cab60062caa02200889b7494b5343dadcdfdab335c585f0ebd600a0ac8792ea06c8a3c00420eea1012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153db0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b483045022100bb3ad8379b0729fe23b867b7ad49e72ddf5d040bafcf6479463c9b4ea0e7f07b02202ba53fa490602b41b0f37ac0aaf20dfe909d761868e5721739ce392f9c6dd268012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d0754100000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+----
+
+=== Chapter 8: Pay To Script Hash
+
+==== Exercise {counter:ch8exercise}
 
 [source,python]
 ----

@@ -353,7 +353,7 @@ Figure out what this script is doing:
 
 image::exercise2.png[Exercise 2]
 
-==== SHA1 story
+==== SHA1 Piñata
 
 In 2013, Peter Todd created a script very similar to the exercise above and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached 2.49153717 BTC and when Google actually found a hash collision for SHA1 in February of 2017, this script was promptly redeemed. The transaction output was 2.48 coins which was $2848.88 USD at the time.
 
