@@ -8,7 +8,7 @@ SIGHASH_ALL = 1
 SIGHASH_NONE = 2
 SIGHASH_SINGLE = 3
 BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-
+TWO_WEEKS = 60 * 60 * 24 * 14
 
 def run_test(test):
     suite = TestSuite()

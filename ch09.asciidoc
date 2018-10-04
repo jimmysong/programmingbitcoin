@@ -37,9 +37,9 @@ One of the intriguing things about the Coinbase Transaction is that there's noth
 
 It turns out that the ScriptSig of the Coinbase transaction is set by miners to be more or less whatever they want. Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
 
-04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63
-656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f
-722062616e6b73 
+```
+04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73
+```
 
 This ScriptSig was composed by Satoshi and contains a now-famous message that we can take a look at:
 
@@ -266,7 +266,7 @@ We can actually see that the proof of work is lower by lining up the numbers in 
 
 ==== Exercise {counter:exercise}
 
-Write the target method for the Block class.
+Write the bits_to_target function in helper.py.
 
 ==== Difficulty
 
@@ -322,19 +322,20 @@ We can code this formula like so:
 
 [source,python]
 ----
->>> from block import Block
+>>> from block import Block, TWO_WEEKS  # <1>
 >>> last_block = Block.parse(BytesIO(bytes.fromhex('00...f5')))
 >>> first_block = Block.parse(BytesIO(bytes.fromhex('00...2e')))
 >>> time_differential = last_block.timestamp - first_block.timestamp
->>> if time_differential > 60 * 60 * 24 * 14 * 4:  # <1>
-...     time_differential = 60 * 60 * 24 * 14 * 4
->>> if time_differential < 60 * 60 * 24 * 14 // 4:  # <2>
-...     time_differential = 60 * 60 * 24 * 14 // 4
->>> new_target = last_block.target() * time_differential // (60 * 60 * 24 * 14)
+>>> if time_differential > TWO_WEEKS * 4:  # <2>
+...     time_differential = TWO_WEEKS * 4
+>>> if time_differential < TWO_WEEKS // 4:  # <3>
+...     time_differential = TWO_WEEKS // 4
+>>> new_target = last_block.target() * time_differential // TWO_WEEKS
 >>> print('{:x}'.format(new_target).zfill(64))
 ----
-<1> Note that `60*60*24*14` is the number of seconds in 2 weeks. 60 seconds times 60 minutes times 24 hours times 14 days. This makes sure that if it took more than 8 weeks to find the last 2015 blocks, we don't decrease the difficulty too much.
-<2> This part makes sure that if it took less than 3.5 days to find the last 2015 blocks, we don't increase the difficulty too much.
+<1> Note that `TWO_WEEKS = 60*60*24*14` is the number of seconds in 2 weeks. 60 seconds times 60 minutes times 24 hours times 14 days.
+<2> This makes sure that if it took more than 8 weeks to find the last 2015 blocks, we don't decrease the difficulty too much.
+<#> This part makes sure that if it took less than 3.5 days to find the last 2015 blocks, we don't increase the difficulty too much.
 
 The nice thing about this formula is that you only need the headers to calculate what the next block target should be. Once we have the target, we then convert this to bits. The inverse operation looks like this:
 

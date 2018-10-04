@@ -999,8 +999,240 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 
 ==== Exercise {counter:ch8exercise}
 
+Write two functions in `h160_to_p2pkh_address` and `h160_to_p2sh_address` that convert a 20-byte hash160 into a p2pkh and p2sh address respectively.
+
 [source,python]
 ----
+
+def h160_to_p2pkh_address(h160, testnet=False):
+    '''Takes a byte sequence hash160 and returns a p2pkh address string'''
+    if testnet:
+        prefix = b'\x6f'
+    else:
+        prefix = b'\x00'
+    return encode_base58_checksum(prefix + h160)
+
+
+def h160_to_p2sh_address(h160, testnet=False):
+    '''Takes a byte sequence hash160 and returns a p2sh address string'''
+    if testnet:
+        prefix = b'\xc4'
+    else:
+        prefix = b'\x05'
+    return encode_base58_checksum(prefix + h160)
+----
+
+==== Exercise {counter:ch8exercise}
+
+Validate the second signature from the transaction above.
+
+[source,python]
+----
+>>> from io import BytesIO
+>>> from ecc import S256Point, Signature
+>>> from helper import double_sha256, int_to_little_endian
+>>> from script import Script
+>>> from tx import Tx, SIGHASH_ALL
+>>> hex_tx = '0100...0000'
+>>> hex_sec = '03b2...71'
+>>> hex_der = '3045...22'
+>>> hex_redeem_script = '5221...ae'
+>>> sec = bytes.fromhex(hex_sec)
+>>> der = bytes.fromhex(hex_der)
+>>> redeem_script = bytes.fromhex(hex_redeem_script)
+>>> stream = BytesIO(bytes.fromhex(hex_tx))
+>>> tx_obj = Tx.parse(stream)
+>>> tx_obj.tx_ins[0].script_sig = Script.parse(redeem_script)
+>>> s = tx_obj.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
+>>> z = int.from_bytes(double_sha256(s), 'big')
+>>> point = S256Point.parse(sec)
+>>> sig = Signature.parse(der)
+>>> print(point.verify(z, sig))
+True
+----
+
+=== Chapter 9: Blocks
+
+==== Exercise {counter:ch9exercise}
+
+Write the `is_coinbase` method of the `Tx` class.
+
+[source,python]
+----
+class Tx:
+...
+    def is_coinbase(self):
+        '''Returns whether this transaction is a coinbase transaction or not'''
+        if len(self.tx_ins) != 1:
+            return False
+        first_input = self.tx_ins[0]
+        if first_input.prev_tx != b'\x00' * 32:
+            return False
+        if first_input.prev_index != 0xffffffff:
+            return False
+        return True
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the `coinbase_height` method for the `Tx` class.
+
+[source,python]
+----
+class Tx:
+...
+    def coinbase_height(self):
+        '''Returns the height of the block this coinbase transaction is in
+        Returns None if this transaction is not a coinbase transaction
+        '''
+        if not self.is_coinbase():
+            return None
+        first_input = self.tx_ins[0]
+        first_element = first_input.script_sig.elements[0]
+        return little_endian_to_int(first_element)
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the parse, serialize and hash methods for block.
+
+[source,python]
+----
+class Block:
+...
+    @classmethod
+    def parse(cls, s):
+        '''Takes a byte stream and parses a block. Returns a Block object'''
+        version = little_endian_to_int(s.read(4))
+        prev_block = s.read(32)[::-1]
+        merkle_root = s.read(32)[::-1]
+        timestamp = little_endian_to_int(s.read(4))
+        bits = s.read(4)
+        nonce = s.read(4)
+        return cls(version, prev_block, merkle_root, timestamp, bits, nonce)
+
+    def serialize(self):
+        '''Returns the 80 byte block header'''
+        result = int_to_little_endian(self.version, 4)
+        result += self.prev_block[::-1]
+        result += self.merkle_root[::-1]
+        result += int_to_little_endian(self.timestamp, 4)
+        result += self.bits
+        result += self.nonce
+        return result
+
+    def hash(self):
+        '''Returns the double-sha256 interpreted little endian of the block'''
+        s = self.serialize()
+        sha = double_sha256(s)
+        return sha[::-1]
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
+
+[source,python]
+----
+class Block:
+...
+    def bip9(self):
+        '''Returns whether this block is signaling readiness for BIP9'''
+        return self.version >> 29 == 0b001
+
+    def bip91(self):
+        '''Returns whether this block is signaling readiness for BIP91'''
+        return self.version >> 4 & 1 == 1
+
+    def bip141(self):
+        '''Returns whether this block is signaling readiness for BIP141'''
+        return self.version >> 1 & 1 == 1
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the bits_to_target function in helper.py.
+
+[source,python]
+----
+def bits_to_target(bits):
+    '''Turns bits into a target (large 256-bit integer)'''
+    exponent = bits[-1]
+    coefficient = little_endian_to_int(bits[:-1])
+    return coefficient * 256**(exponent-3)
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the difficulty method for the Block class
+
+[source,python]
+----
+class Block:
+...
+    def difficulty(self):
+        '''Returns the block difficulty based on the bits'''
+        lowest = 0xffff * 2**(8*(0x1d-3))
+        return lowest / self.target()
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the check_pow method for the Block class.
+
+[source,python]
+----
+class Block:
+...
+    def check_pow(self):
+        '''Returns whether this block satisfies proof of work'''
+        sha = double_sha256(self.serialize())
+        proof = little_endian_to_int(sha)
+        return proof < self.target()
+----
+
+==== Exercise {counter:ch9exercise}
+
+Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
+
+Block 471744: 000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800000000000000000010c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb845597e8b0118e43a81d3
+
+Block 473759: 02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e1264258597e8b0118e5f00474
+
+[source,python]
+----
+>>> from block import Block, TWO_WEEKS
+>>> from helper import target_to_bits
+>>> block1_hex = '0000...d3'
+>>> block2_hex = '0200...74'
+>>> last_block = Block.parse(BytesIO(bytes.fromhex(block1_hex)))
+>>> first_block = Block.parse(BytesIO(bytes.fromhex(block2_hex)))
+>>> time_differential = last_block.timestamp - first_block.timestamp
+>>> if time_differential > TWO_WEEKS * 4:
+...     time_differential = TWO_WEEKS * 4
+>>> if time_differential < TWO_WEEKS // 4:
+...     time_differential = TWO_WEEKS // 4
+>>> new_target = last_block.target() * time_differential // TWO_WEEKS
+>>> new_bits = target_to_bits(new_target)
+>>> print(new_bits.hex())
+80df6217
+----
+
+==== Exercise {counter:ch9exercise}
+
+Write the calculate_new_bits function.
+
+[source,python]
+----
+def calculate_new_bits(previous_bits, time_differential):
+    '''calculates the new bits given the bits of a difficulty
+    adjustment period and the time differential between the start and end blocks'''
+    if time_differential > TWO_WEEKS * 4:
+        time_differential = TWO_WEEKS * 4
+    if time_differential < TWO_WEEKS // 4:
+        time_differential = TWO_WEEKS // 4
+    new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
+    return target_to_bits(new_target)
 ----
 
 === Chapter 10: Networking

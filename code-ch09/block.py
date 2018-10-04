@@ -19,7 +19,6 @@ class Block:
         self.bits = bits
         self.nonce = nonce
 
-
     @classmethod
     def parse(cls, s):
         '''Takes a byte stream and parses a block. Returns a Block object'''
