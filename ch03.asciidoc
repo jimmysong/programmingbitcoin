@@ -431,10 +431,9 @@ import math
 
 class Point:
     ...
-
     def __rmul__(self, coefficient):
         current = self  # <1>
-        result = Point(None, None, self.a, self.b)  # <2>
+        result = self.__class__(None, None, self.a, self.b)  # <2>
         while coef:
             if coef & 1:  # <3>
                 result += current
@@ -582,19 +581,10 @@ We can also define $$__rmul__$$ a bit more efficiently since we know the order o
 [source,python]
 ----
 class S256Point(Point):
-
     ...
-
     def __rmul__(self, coefficient):
         coef = coefficient % N # <1>
-        current = self
-        result = S256Point(None, None)
-        while coef:
-            if coef & 1:
-                result += current
-            current += current
-            coef >>= 1
-        return result
+	return super().__rmul__(self, coef)
 ----
 <1> We can mod by N because `N*G==Point(infinity)`. That is, every N times we add G to itself or any member of this group, we effectively go back to zero (Point at infinity).
 
@@ -972,12 +962,21 @@ e = (s~1~-s~2~) / (r~1~-r~2~)
 
 If anyone sees both signatures, they can run this formula and find our secret!
 
-To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique k every time. The specification is laid out in RFC6979 and the code looks like this:
+To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique k every time. The specification is laid out in RFC6979 and the code changes to look like this:
 
 [source,python]
 ----
 class PrivateKey:
 ...
+    def sign(self, z):
+        k = self.deterministic_k(z)  # <1>
+        r = (k*G).x.num
+        k_inv = pow(k, N-2, N)
+        s = (z + r*self.secret) * k_inv % N
+        if s > N/2:
+            s = N - s
+        return Signature(r, s)
+
     def deterministic_k(self, z):
         k = b'\x00' * 32
         v = b'\x01' * 32
@@ -994,11 +993,12 @@ class PrivateKey:
             v = hmac.new(k, v, s256).digest()
             candidate = int.from_bytes(v, 'big')
             if candidate >= 1 and candidate < N:
-                return candidate  # <1>
+                return candidate  # <2>
             k = hmac.new(k, v + b'\x00', s256).digest()
             v = hmac.new(k, v, s256).digest()
 ----
-<1> This algorithm'returns a candidate that's suitable.
+<1> We are using the deterministic k instead of a random one. Everything else remains the same.
+<2> This algorithm'returns a candidate that's suitable.
 
 The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
 

@@ -219,7 +219,7 @@ class Point:
     def __rmul__(self, coefficient):
         coef = coefficient
         current = self
-        result = Point(None, None, self.a, self.b)
+        result = self.__class__(None, None, self.a, self.b)
         while coef:
             if coef & 1:
                 result += current
@@ -391,14 +391,7 @@ class S256Point(Point):
 
     def __rmul__(self, coefficient):
         coef = coefficient % N
-        current = self
-        result = S256Point(None, None, self.a, self.b)
-        for i in range(self.bits):
-            if coef & 1:
-                result += current
-            current += current
-            coef >>= 1
-        return result
+        return super().__rmul__(coef)
 
     def verify(self, z, sig):
         s_inv = pow(sig.s, N-2, N)
