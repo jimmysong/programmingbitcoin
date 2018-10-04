@@ -287,11 +287,6 @@ Step 4 of this process is called the checksum. We can do steps 4 and 5 in one go
 
 [source,python]
 ----
-import hashlib
-
-def double_sha256(s):
-    return hashlib.sha256(hashlib.sha256(s).digest()).digest()
-    
 def encode_base58_checksum(s):
     return encode_base58(s + double_sha256(s)[:4]).decode('ascii')  # <1>
 ----
@@ -301,8 +296,6 @@ The process of doing a SHA256 operation followed by a RIPEMD160 operation is cal
 
 [source,python]
 ----
-import hashlib
-
 def hash160(s):
     return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
 ----
@@ -316,11 +309,14 @@ class S256Point:
     def h160(self, compressed=True):
         return hash160(self.sec(compressed))
 
-    def address(self, compressed=True, prefix=b'\x00'):
+    def address(self, compressed=True, testnet=False):
         '''Returns the address string'''
         h160 = self.h160(compressed)
+        if testnet:
+            prefix = b'\x6f'
+        else:
+            prefix = b'\x00'
         return encode_base58_checksum(prefix + h160)
-
 ----
 
 ==== Exercise {counter:exercise}
@@ -350,20 +346,18 @@ We can now create the wif method on the PrivateKey class.
 
 [source,python]
 ----
-    def wif(self, testnet=False):
+class PrivateKey
+...
+    def wif(self, compressed=True, testnet=False):
+        secret_bytes = self.secret.to_bytes(32, 'big')
         if testnet:
             prefix = b'\xef'
         else:
             prefix = b'\x80'
-        # convert the secret from integer to a 32-bytes in big endian using
-        # num.to_bytes(32, 'big')
-        secret_bytes = self.secret.to_bytes(32, 'big')
-        # append b'\x01' if compressed
-        if self.compressed:
+        if compressed:
             suffix = b'\x01'
         else:
             suffix = b''
-        # encode_base58_checksum the whole thing
         return encode_base58_checksum(prefix + secret_bytes + suffix)
 ----
 

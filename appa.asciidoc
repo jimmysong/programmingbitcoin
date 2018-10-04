@@ -621,7 +621,6 @@ Write a function `little_endian_to_int` which takes Python bytes, interprets tho
 def little_endian_to_int(b):
     '''little_endian_to_int takes byte sequence as a little-endian number.
     Returns an integer'''
-    # use the from_bytes method of int
     return int.from_bytes(b, 'little')
 ----
 
@@ -634,7 +633,6 @@ Write a function `int_to_little_endian` which does the reverse of the last exerc
 def int_to_little_endian(n, length):
     '''endian_to_little_endian takes an integer and returns the little-endian
     byte sequence of length'''
-    # use the to_bytes method of n
     return n.to_bytes(length, 'little')
 ----
 
