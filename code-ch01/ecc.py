@@ -4,12 +4,12 @@ from unittest import TestCase
 class FieldElement:
 
     def __init__(self, num, prime):
-        self.num = num
-        self.prime = prime
         if self.num >= self.prime or self.num < 0:
             error = 'Num {} not in field range 0 to {}'.format(
                 self.num, self.prime-1)
-            raise RuntimeError(error)
+            raise ValueError(error)
+        self.num = num
+        self.prime = prime
 
     def __eq__(self, other):
         if other is None:
@@ -25,26 +25,28 @@ class FieldElement:
 
     def __add__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Cannot add two numbers in different Fields')
-        num = (self.num + other.num) % self.prime # <2>
-        return self.__class__(num, self.prime) # <3>
+            raise TypeError('Cannot add two numbers in different Fields')
+        num = (self.num + other.num) % self.prime
+        return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot add two numbers in different Fields')
         raise NotImplementedError
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot add two numbers in different Fields')
         raise NotImplementedError
 
-    def __pow__(self, n):
-        raise NotImplementedError
+    def __pow__(self, exponent):
+	n = exponent % (self.prime - 1)
+        num = pow(self.num, n, self.prime)
+        return self.__class__(num, self.prime)
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot add two numbers in different Fields')
         raise NotImplementedError
 
 

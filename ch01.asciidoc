@@ -77,11 +77,14 @@ class FieldElement:
 
     def __init__(self, num, prime):
         if num < 0 or num >= prime: # <1>
-	    raise ValueError('num should be between 0 and {}-1'.format(prime))
+	    error = 'Num {} not in field range 0 to {}'.format(num, prime-1)
+	    raise ValueError(error)
         self.num = num # <2>
         self.prime = prime
 
     def __eq__(self, other): # <3>
+        if other is None:
+            return False
         return self.num == other.num and self.prime == other.prime
 
     def __repr__(self):
@@ -279,7 +282,7 @@ In Python we can define what addition means for our class with the $$__add__$$ m
 ----
     def __add__(self, other):
         if self.prime != other.prime: # <1>
-            raise RuntimeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot add two numbers in different Fields')
         num = (self.num + other.num) % self.prime # <2>
         return self.__class__(num, self.prime) # <3>
 ----
