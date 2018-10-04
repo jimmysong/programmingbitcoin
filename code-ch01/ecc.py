@@ -4,9 +4,9 @@ from unittest import TestCase
 class FieldElement:
 
     def __init__(self, num, prime):
-        if self.num >= self.prime or self.num < 0:
+        if num >= prime or num < 0:
             error = 'Num {} not in field range 0 to {}'.format(
-                self.num, self.prime-1)
+                num, prime-1)
             raise ValueError(error)
         self.num = num
         self.prime = prime
@@ -40,7 +40,7 @@ class FieldElement:
         raise NotImplementedError
 
     def __pow__(self, exponent):
-	n = exponent % (self.prime - 1)
+        n = exponent % (self.prime - 1)
         num = pow(self.num, n, self.prime)
         return self.__class__(num, self.prime)
 

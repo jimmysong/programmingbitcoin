@@ -4,9 +4,9 @@ from unittest import TestCase
 class FieldElement:
 
     def __init__(self, num, prime):
-        if self.num >= self.prime or self.num < 0:
+        if num >= prime or num < 0:
             error = 'Num {} not in field range 0 to {}'.format(
-                self.num, self.prime-1)
+                num, prime-1)
             raise ValueError(error)
         self.num = num
         self.prime = prime
@@ -18,7 +18,7 @@ class FieldElement:
 
     def __ne__(self, other):
         # this should be the inverse of the == operator
-	return not (self == other)
+        return not (self == other)
 
     def __repr__(self):
         return 'FieldElement_{}({})'.format(self.prime, self.num)
@@ -54,9 +54,8 @@ class FieldElement:
         # use: self.__class__(num, prime)
         return self.__class__(num, self.prime)
 
-
     def __pow__(self, exponent):
-	n = exponent % (self.prime - 1)
+        n = exponent % (self.prime - 1)
         num = pow(self.num, n, self.prime)
         return self.__class__(num, self.prime)
 
@@ -134,6 +133,8 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
+        if self.x is None and self.y is None:
+            return
         if self.y**2 != self.x**3 + a*x + b:
             raise ValueError('({}, {}) is not on the curve'.format(x, y))
 
@@ -154,6 +155,13 @@ class Point:
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
             raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
+        
+        if self.x is None:
+            return other
+        if other.x is None:
+            return self
+
+        raise NotImplementedError
 
 
 class PointTest(TestCase):

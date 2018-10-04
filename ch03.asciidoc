@@ -433,23 +433,20 @@ class Point:
     ...
 
     def __rmul__(self, coefficient):
-        bits = math.ceil(math.log(coefficient, 2))
-        current = self # <2>
-        result = Point(None, None, self.a, self.b) # <3>
-        for _ in range(self.bits): # <4>
-            if coefficient & 1: # <5>
+        current = self  # <1>
+        result = Point(None, None, self.a, self.b)  # <2>
+        while coef:
+            if coef & 1:  # <3>
                 result += current
-            current += current # <6>
-            coefficient >>= 1 # <7>
-        return result
+            current += current  # <4>
+            coef >>= 1
+        return result  # <5>
 ----
-<1> We can calculate how many bits a number takes up by doing a log and then taking the ceiling of that number.
-<2> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
-<3> We start the result at "zero", or in Point Addition, the point at infinity.
+<1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
+<2> We start the result at "zero", or in Point Addition, the point at infinity.
+<3> We are looking at whether the right-most bit is a 1. If it is, then we add the current
 <4> We need to double the point until we're past how big the coefficient can be.
-<5> This is a bitwise and, which tells us if the last binary digit is a 1. If so, we add the point corresponding to that bit (1*self, 2*self, 4*self, etc)
-<6> This is how we double the point.
-<7> We need to bit shift the coefficient to the right.
+<5> We bit shift the coefficient to the right.
 
 This is an advanced technique and if you don't understand bitwise operators, think of representing the coefficient in binary and only adding the point where there are 1's.
 
@@ -835,15 +832,13 @@ We can create an actual verify method on S256Point based on the above.
 [source,python]
 ----
 class S256Point(Point):
-
     ...
-    
     def verify(self, z, sig):
-        s_inv = pow(sig.s, N-2, N) # <1>
-        u = z * s_inv % N # <2>
-        v = sig.r * s_inv % N # <3>
-        total = u*G + v*self # <4>
-        return total.x.num == sig.r <5>
+        s_inv = pow(sig.s, N-2, N)  # <1>
+        u = z * s_inv % N  # <2>
+        v = sig.r * s_inv % N  # <3>
+        total = u*G + v*self  # <4>
+        return total.x.num == sig.r  # <5>
 
 ----
 <1> s_inv (1/s) is calculated using Fermat's Little Theorem on the order of the group `N` which is prime.
@@ -914,10 +909,20 @@ z = int.from_bytes(double_sha256('Programming Bitcoin!'), 'big')
 
 ==== Programming Message Signing
 
-In order to program message signing, we first need to create a PrivateKey class which will house our secret/scalar/private key.
+In order to program message signing, we first need to create a Signature class which will house the `r` and `s` and a PrivateKey class which will house our secret/scalar/private key.
 
 [source,python]
 ----
+class Signature:
+
+    def __init__(self, r, s):
+        self.r = r
+        self.s = s
+
+    def __repr__(self):
+        return 'Signature({:x},{:x})'.format(self.r, self.s)
+
+
 class PrivateKey:
 
     def __init__(self, secret):
@@ -932,7 +937,8 @@ We keep around the public key (self.point) for convenience. We can now create th
 ----
 from random import randint
 ...
-# class PrivateKey
+class PrivateKey:
+...
     def sign(self, z):
         k = randint(0, N)  # <1>
         r = (k*G).x.num  # <2>
@@ -984,7 +990,7 @@ class PrivateKey:
         v = hmac.new(k, v, s256).digest()
         k = hmac.new(k, v + b'\x01' + secret_bytes + z_bytes, s256).digest()
         v = hmac.new(k, v, s256).digest()
-        while 1:
+        while True:
             v = hmac.new(k, v, s256).digest()
             candidate = int.from_bytes(v, 'big')
             if candidate >= 1 and candidate < N:

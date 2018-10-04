@@ -184,12 +184,12 @@ We first handle the identity, or the point at infinity. Since we don't have the 
 >>> p1 = Point(-1, -1, 5, 7)
 >>> p2 = Point(-1, 1, 5, 7)
 >>> inf = Point(None, None, 5, 7)
->>> p1 + p2
-Point(infinity)
 >>> p1 + inf
 Point(-1, -1)
 >>> inf + p2
 Point(-1, 1)
+>>> p1 + p2
+Point(infinity)
 ----
 
 In order to make this work, we have to do two things:
@@ -205,7 +205,7 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-	if self.x is None and self.y is None: <1>
+	if self.x is None and self.y is None:  # <1>
 	    return
         if self.y**2 != self.x**3 + self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))

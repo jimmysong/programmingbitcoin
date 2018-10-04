@@ -1,19 +1,18 @@
-from io import BytesIO
 from random import randint
 from unittest import TestCase
 
-from helper import double_sha256, encode_base58, hash160
+import hashlib
 
 
 class FieldElement:
 
     def __init__(self, num, prime):
+        if num >= prime or num < 0:
+            error = 'Num {} not in field range 0 to {}'.format(
+                num, prime-1)
+            raise ValueError(error)
         self.num = num
         self.prime = prime
-        if self.num >= self.prime or self.num < 0:
-            error = 'Num {} not in field range 0 to {}'.format(
-                self.num, self.prime-1)
-            raise RuntimeError(error)
 
     def __eq__(self, other):
         if other is None:
@@ -21,76 +20,76 @@ class FieldElement:
         return self.num == other.num and self.prime == other.prime
 
     def __ne__(self, other):
-        if other is None:
-            return True
-        return self.num != other.num or self.prime != other.prime
+        # this should be the inverse of the == operator
+        return not (self == other)
 
     def __repr__(self):
         return 'FieldElement_{}({})'.format(self.prime, self.num)
 
+
     def __add__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Primes must be the same')
+            raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
         num = (self.num + other.num) % self.prime
         # self.prime is what you'll need to mod against
-        prime = self.prime
         # You need to return an element of the same class
         # use: self.__class__(num, prime)
-        return self.__class__(num, prime)
+        return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Primes must be the same')
+            raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
         num = (self.num - other.num) % self.prime
         # self.prime is what you'll need to mod against
-        prime = self.prime
         # You need to return an element of the same class
         # use: self.__class__(num, prime)
-        return self.__class__(num, prime)
+        return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Primes must be the same')
+            raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
         num = (self.num * other.num) % self.prime
         # self.prime is what you'll need to mod against
-        prime = self.prime
         # You need to return an element of the same class
         # use: self.__class__(num, prime)
-        return self.__class__(num, prime)
+        return self.__class__(num, self.prime)
 
-    def __rmul__(self, coefficient):
-        num = (self.num * coefficient) % self.prime
-        return self.__class__(num=num, prime=self.prime)
-
-    def __pow__(self, n):
-        # remember fermat's little theorem:
-        # self.num**(p-1) % p == 1
-        # you might want to use % operator on n
-        prime = self.prime
-        num = pow(self.num, n % (prime-1), prime)
-        return self.__class__(num, prime)
+    def __pow__(self, exponent):
+        n = exponent % (self.prime - 1)
+        num = pow(self.num, n, self.prime)
+        return self.__class__(num, self.prime)
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise RuntimeError('Primes must be the same')
+            raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
         num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
         # self.prime is what you'll need to mod against
-        prime = self.prime
         # use fermat's little theorem:
         # self.num**(p-1) % p == 1
         # this means:
         # 1/n == pow(n, p-2, p)
         # You need to return an element of the same class
         # use: self.__class__(num, prime)
-        return self.__class__(num, prime)
+        return self.__class__(num, self.prime)
 
+    def __rmul__(self, coefficient):
+        num = (self.num * coefficient) % self.prime
+        return self.__class__(num=num, prime=self.prime)
 
 
 class FieldElementTest(TestCase):
+
+    def test_ne(self):
+        a = FieldElement(2, 31)
+        b = FieldElement(2, 31)        
+        c = FieldElement(15, 31)
+        self.assertEqual(a, b)
+        self.assertTrue(a != c)
+        self.assertFalse(a != b)
 
     def test_add(self):
         a = FieldElement(2, 31)
@@ -154,15 +153,15 @@ class Point:
         # y**2 == x**3 + a*x + b
         if self.y**2 != self.x**3 + a*x + b:
         # if not, throw a ValueError
-            raise ValueError('({}, {}) is not on the curve'.format(self.x, self.y))
+            raise ValueError('({}, {}) is not on the curve'.format(x, y))
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y \
             and self.a == other.a and self.b == other.b
 
     def __ne__(self, other):
-        return self.x != other.x or self.y != other.y \
-            or self.a != other.a or self.b != other.b
+        # this should be the inverse of the == operator
+        return not (self == other)
 
     def __repr__(self):
         if self.x is None:
@@ -172,7 +171,7 @@ class Point:
 
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
-            raise RuntimeError('Points {}, {} are not on the same curve'.format(self, other))
+            raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
         # Case 0.0: self is the point at infinity, return other
         if self.x is None:
             return other
@@ -213,23 +212,32 @@ class Point:
         # self.__class__(x, y, a, b)
             return self.__class__(x, y, self.a, self.b)
 
+        # Case 4: if we are tangent to the vertical line
+        if self == other and self.y == self.zero:
+            return self.__class__(None, None, self.a, self.b)
+
     def __rmul__(self, coefficient):
         coef = coefficient
         current = self
-        result = S256Point(None, None)
+        result = Point(None, None, self.a, self.b)
         while coef:
             if coef & 1:
                 result += current
             current += current
-            # we shift the coefficient to the right
             coef >>= 1
         return result
 
 
 class PointTest(TestCase):
 
+    def test_ne(self):
+        a = Point(x=3, y=-7, a=5, b=7)
+        b = Point(x=18, y=77, a=5, b=7)
+        self.assertTrue(a != b)
+        self.assertFalse(a != a)
+
     def test_on_curve(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             Point(x=-2, y=4, a=5, b=7)
         # these should not raise an error
         Point(x=3, y=-7, a=5, b=7)
@@ -363,7 +371,8 @@ class S256Field(FieldElement):
 
 
 class S256Point(Point):
-    bits = 256
+
+    zero = S256Field(0)
 
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)
@@ -381,54 +390,22 @@ class S256Point(Point):
             return 'S256Point({},{})'.format(self.x, self.y)
 
     def __rmul__(self, coefficient):
-        # we want to mod by N to make this simple
         coef = coefficient % N
-        # current will undergo binary expansion
         current = self
-        # result is what we return, starts at 0
-        result = S256Point(None, None)
-        # we double 256 times and add where there is a 1 in the binary
-        # representation of coefficient
+        result = S256Point(None, None, self.a, self.b)
         for i in range(self.bits):
             if coef & 1:
                 result += current
             current += current
-            # we shift the coefficient to the right
             coef >>= 1
         return result
 
-    def sec(self, compressed=True):
-        # returns the binary version of the sec format, NOT hex
-        # if compressed, starts with b'\x02' if self.y.num is even, b'\x03' if self.y is odd
-        # then self.x.num
-        # remember, you have to convert self.x.num/self.y.num to binary (some_integer.to_bytes(32, 'big'))
-        if compressed:
-            if self.y.num % 2 == 0:
-                return b'\x02' + self.x.num.to_bytes(32, 'big')
-            else:
-                return b'\x03' + self.x.num.to_bytes(32, 'big')
-        else:
-        # if non-compressed, starts with b'\x04' followod by self.x and then self.y
-            return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
-
-    def address(self, compressed=True, testnet=False):
-        '''Returns the address string'''
-        # get the sec
-        sec = self.sec(compressed)
-        # hash160 the sec
-        h160 = hash160(sec)
-        # raw is hash 160 prepended w/ b'\x00' for mainnet, b'\x6f' for testnet
-        if testnet:
-            prefix = b'\x6f'
-        else:
-            prefix = b'\x00'
-        raw = prefix + h160
-        # checksum is first 4 bytes of double_sha256 of raw
-        checksum = double_sha256(raw)[:4]
-        # encode_base58 the raw + checksum
-        address = encode_base58(raw+checksum)
-        # return as a string, you can use .decode('ascii') to do this.
-        return address.decode('ascii')
+    def verify(self, z, sig):
+        s_inv = pow(sig.s, N-2, N)
+        u = z * s_inv % N
+        v = sig.r * s_inv % N
+        total = u*G + v*self
+        return total.x.num == sig.r
 
 
 G = S256Point(
@@ -459,49 +436,60 @@ class S256Test(TestCase):
             # check that the secret*G is the same as the point
             self.assertEqual(secret*G, point)
 
-    def test_sec(self):
-        coefficient = 999**3
-        uncompressed = '049d5ca49670cbe4c3bfa84c96a8c87df086c6ea6a24ba6b809c9de234496808d56fa15cc7f3d38cda98dee2419f415b7513dde1301f8643cd9245aea7f3f911f9'
-        compressed = '039d5ca49670cbe4c3bfa84c96a8c87df086c6ea6a24ba6b809c9de234496808d5'
-        point = coefficient*G
-        self.assertEqual(point.sec(compressed=False), bytes.fromhex(uncompressed))
-        self.assertEqual(point.sec(compressed=True), bytes.fromhex(compressed))
-        coefficient = 123
-        uncompressed = '04a598a8030da6d86c6bc7f2f5144ea549d28211ea58faa70ebf4c1e665c1fe9b5204b5d6f84822c307e4b4a7140737aec23fc63b65b35f86a10026dbd2d864e6b'
-        compressed = '03a598a8030da6d86c6bc7f2f5144ea549d28211ea58faa70ebf4c1e665c1fe9b5'
-        point = coefficient*G
-        self.assertEqual(point.sec(compressed=False), bytes.fromhex(uncompressed))
-        self.assertEqual(point.sec(compressed=True), bytes.fromhex(compressed))
-        coefficient = 42424242
-        uncompressed = '04aee2e7d843f7430097859e2bc603abcc3274ff8169c1a469fee0f20614066f8e21ec53f40efac47ac1c5211b2123527e0e9b57ede790c4da1e72c91fb7da54a3'
-        compressed = '03aee2e7d843f7430097859e2bc603abcc3274ff8169c1a469fee0f20614066f8e'
-        point = coefficient*G
-        self.assertEqual(point.sec(compressed=False), bytes.fromhex(uncompressed))
-        self.assertEqual(point.sec(compressed=True), bytes.fromhex(compressed))
 
-    def test_address(self):
-        secret = 888**3
-        mainnet_address = '148dY81A9BmdpMhvYEVznrM45kWN32vSCN'
-        testnet_address = 'mieaqB68xDCtbUBYFoUNcmZNwk74xcBfTP'
-        point = secret*G
-        self.assertEqual(
-            point.address(compressed=True, testnet=False), mainnet_address)
-        self.assertEqual(
-            point.address(compressed=True, testnet=True), testnet_address)
-        secret = 321
-        mainnet_address = '1S6g2xBJSED7Qr9CYZib5f4PYVhHZiVfj'
-        testnet_address = 'mfx3y63A7TfTtXKkv7Y6QzsPFY6QCBCXiP'
-        point = secret*G
-        self.assertEqual(
-            point.address(compressed=False, testnet=False), mainnet_address)
-        self.assertEqual(
-            point.address(compressed=False, testnet=True), testnet_address)
-        secret = 4242424242
-        mainnet_address = '1226JSptcStqn4Yq9aAmNXdwdc2ixuH9nb'
-        testnet_address = 'mgY3bVusRUL6ZB2Ss999CSrGVbdRwVpM8s'
-        point = secret*G
-        self.assertEqual(
-            point.address(compressed=False, testnet=False), mainnet_address)
-        self.assertEqual(
-            point.address(compressed=False, testnet=True), testnet_address)
+class Signature:
 
+    def __init__(self, r, s):
+        self.r = r
+        self.s = s
+
+    def __repr__(self):
+        return 'Signature({:x},{:x})'.format(self.r, self.s)
+
+
+class PrivateKey:
+
+    def __init__(self, secret):
+        self.secret = secret
+        self.point = secret*G
+
+    def hex(self):
+        return '{:x}'.format(self.secret).zfill(64)
+
+    def sign(self, z):
+        k = randint(0, N)
+        r = (k*G).x.num
+        k_inv = pow(k, N-2, N)
+        s = (z + r*self.secret) * k_inv % N
+        if s > N/2:
+            s = N - s
+        return Signature(r, s)
+
+    def deterministic_k(self, z):
+        k = b'\x00' * 32
+        v = b'\x01' * 32
+        if z > N:
+            z -= N
+        z_bytes = z.to_bytes(32, 'big')
+        secret_bytes = self.secret.to_bytes(32, 'big')
+        s256 = hashlib.sha256
+        k = hmac.new(k, v + b'\x00' + secret_bytes + z_bytes, s256).digest()
+        v = hmac.new(k, v, s256).digest()
+        k = hmac.new(k, v + b'\x01' + secret_bytes + z_bytes, s256).digest()
+        v = hmac.new(k, v, s256).digest()
+        while True:
+            v = hmac.new(k, v, s256).digest()
+            candidate = int.from_bytes(v, 'big')
+            if candidate >= 1 and candidate < N:
+                return candidate
+            k = hmac.new(k, v + b'\x00', s256).digest()
+            v = hmac.new(k, v, s256).digest()
+
+
+class PrivateKeyTest(TestCase):
+
+    def test_sign(self):
+        pk = PrivateKey(randint(0, 2**256))
+        z = randint(0, 2**256)
+        sig = pk.sign(z)
+        self.assertTrue(pk.point.verify(z, sig))
