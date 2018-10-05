@@ -70,12 +70,6 @@ def decode_base58(s):
 
 class HelperTest(TestCase):
 
-    def test_bytes(self):
-        b = b'hello world'
-        s = 'hello world'
-        self.assertEqual(b, str_to_bytes(s))
-        self.assertEqual(s, bytes_to_str(b))
-
     def test_little_endian_to_int(self):
         h = bytes.fromhex('99c3980000000000')
         want = 10011545

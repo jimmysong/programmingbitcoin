@@ -343,6 +343,7 @@ class SimpleNode:
         # return the last envelope we got
         return envelope
 
+
 class SimpleNodeTest(TestCase):
 
     def test_handshake(self):

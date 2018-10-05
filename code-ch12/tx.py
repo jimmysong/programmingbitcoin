@@ -33,14 +33,13 @@ class Tx:
         tx_outs = ''
         for tx_out in self.tx_outs:
             tx_outs += tx_out.__repr__() + '\n'
-        return 'tx:{}\nversion: {}\ntx_ins:\n{}\ntx_outs:\n{}\nlocktime: {}\n'.format(
-            self.hash().hex(),
+        return 'version: {}\ntx_ins:\n{}\ntx_outs:\n{}\nlocktime: {}\n'.format(
             self.version,
             tx_ins,
             tx_outs,
             self.locktime,
         )
-    
+
     def hash(self):
         return double_sha256(self.serialize())[::-1]
 

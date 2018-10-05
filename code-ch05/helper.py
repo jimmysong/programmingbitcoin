@@ -12,34 +12,6 @@ def run_test(test):
     TextTestRunner().run(suite)
 
 
-def bytes_to_str(b, encoding='ascii'):
-    '''Returns a string version of the bytes'''
-    return b.decode(encoding)
-
-
-def str_to_bytes(s, encoding='ascii'):
-    '''Returns a bytes version of the string'''
-    return s.encode(encoding)
-
-
-def little_endian_to_int(b):
-    '''little_endian_to_int takes byte sequence as a little-endian number.
-    Returns an integer'''
-    # use the from_bytes method of int
-    return int.from_bytes(b, 'little')
-
-
-def int_to_little_endian(n, length):
-    '''endian_to_little_endian takes an integer and returns the little-endian
-    byte sequence of length'''
-    # use the to_bytes method of n
-    return n.to_bytes(length, 'little')
-
-
-def hash160(s):
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
-
-
 def double_sha256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
@@ -59,12 +31,27 @@ def encode_base58(s):
     while num > 0:
         num, mod = divmod(num, 58)
         result.insert(0, BASE58_ALPHABET[mod])
-
     return prefix + bytes(result)
 
 
 def encode_base58_checksum(s):
     return encode_base58(s + double_sha256(s)[:4]).decode('ascii')
+
+
+def hash160(s):
+    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
+
+
+def little_endian_to_int(b):
+    '''little_endian_to_int takes byte sequence as a little-endian number.
+    Returns an integer'''
+    return int.from_bytes(b, 'little')
+
+
+def int_to_little_endian(n, length):
+    '''endian_to_little_endian takes an integer and returns the little-endian
+    byte sequence of length'''
+    return n.to_bytes(length, 'little')
 
 
 def decode_base58(s):
@@ -111,12 +98,6 @@ def encode_varint(i):
 
 
 class HelperTest(TestCase):
-
-    def test_bytes(self):
-        b = b'hello world'
-        s = 'hello world'
-        self.assertEqual(b, str_to_bytes(s))
-        self.assertEqual(s, bytes_to_str(b))
 
     def test_little_endian_to_int(self):
         h = bytes.fromhex('99c3980000000000')

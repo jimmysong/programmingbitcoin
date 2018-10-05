@@ -246,24 +246,32 @@ class TxIn:
         result += int_to_little_endian(self.sequence, 4)
         return result
 
+
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'https://testnet.blockexplorer.com/api'
+            return 'http://client:pleasedonthackme@tbtc.programmingblockchain.com:18332'
         else:
-            return 'https://blockexplorer.com/api'
+            return 'http://pbclient:ecdsaisawesome@btc.programmingblockchain.com:8332'
 
     def fetch_tx(self, testnet=False):
         if self.prev_tx not in self.cache:
-            url = self.get_url(testnet) + '/rawtx/{}'.format(self.prev_tx.hex())
-            response = requests.get(url)
+            url = self.get_url(testnet)
+            data = {
+                'jsonrpc': '2.0',
+                'method': 'getrawtransaction',
+                'params': [self.prev_tx.hex(),],
+                'id': '0',
+            }
+            headers = {
+                'content-type': 'application/json',
+            }
+            response = requests.post(url, headers=headers, json=data)
             try:
-                js_response = response.json()
-                if 'rawtx' not in js_response:
-                    raise RuntimeError('got from server: {}'.format(js_response))
+                payload = response.json()
             except:
-                raise RuntimeError('got from server: {}'.format(response.text))
-            raw = bytes.fromhex(js_response['rawtx'])
+                raise RuntimeError('Got from server: {}'.format(response))
+            raw = bytes.fromhex(payload['result'])
             stream = BytesIO(raw)
             tx = Tx.parse(stream)
             self.cache[self.prev_tx] = tx

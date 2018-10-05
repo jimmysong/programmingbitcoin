@@ -7,7 +7,6 @@ from helper import (
     little_endian_to_int,
     merkle_parent,
     merkle_parent_level,
-    merkle_path,
     merkle_root,
 )
 

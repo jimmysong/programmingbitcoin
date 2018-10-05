@@ -168,6 +168,22 @@ class TxOut:
         '''
         raise NotImplementedError
 
+    def serialize(self):
+        '''Returns the byte serialization of the transaction input'''
+        # serialize prev_tx, little endian
+        result = self.prev_tx[::-1]
+        # serialize prev_index, 4 bytes, little endian
+        result += int_to_little_endian(self.prev_index, 4)
+        # get the scriptSig ready (use self.script_sig.serialize())
+        raw_script_sig = self.script_sig.serialize()
+        # encode_varint on the length of the scriptSig
+        result += encode_varint(len(raw_script_sig))
+        # add the scriptSig
+        result += raw_script_sig
+        # serialize sequence, 4 bytes, little endian
+        result += int_to_little_endian(self.sequence, 4)
+        return result
+
 
 class TxTest(TestCase):
 

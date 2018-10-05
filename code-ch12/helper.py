@@ -1,48 +1,21 @@
-from subprocess import check_output
 from unittest import TestCase, TestSuite, TextTestRunner
 
 import hashlib
-import math
 
 
 SIGHASH_ALL = 1
 SIGHASH_NONE = 2
 SIGHASH_SINGLE = 3
 BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+TWO_WEEKS = 60 * 60 * 24 * 14
+MAX_TARGET = 0xffff*256**(0x1d-3)
+
 
 
 def run_test(test):
     suite = TestSuite()
     suite.addTest(test)
     TextTestRunner().run(suite)
-
-
-def bytes_to_str(b, encoding='ascii'):
-    '''Returns a string version of the bytes'''
-    return b.decode(encoding)
-
-
-def str_to_bytes(s, encoding='ascii'):
-    '''Returns a bytes version of the string'''
-    return s.encode(encoding)
-
-
-def little_endian_to_int(b):
-    '''little_endian_to_int takes byte sequence as a little-endian number.
-    Returns an integer'''
-    # use the from_bytes method of int
-    return int.from_bytes(b, 'little')
-
-
-def int_to_little_endian(n, length):
-    '''endian_to_little_endian takes an integer and returns the little-endian
-    byte sequence of length'''
-    # use the to_bytes method of n
-    return n.to_bytes(length, 'little')
-
-
-def hash160(s):
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
 
 
 def double_sha256(s):
@@ -64,7 +37,6 @@ def encode_base58(s):
     while num > 0:
         num, mod = divmod(num, 58)
         result.insert(0, BASE58_ALPHABET[mod])
-
     return prefix + bytes(result)
 
 
@@ -72,9 +44,20 @@ def encode_base58_checksum(s):
     return encode_base58(s + double_sha256(s)[:4]).decode('ascii')
 
 
-def p2pkh_script(h160):
-    '''Takes a hash160 and returns the scriptPubKey'''
-    return b'\x76\xa9\x14' + h160 + b'\x88\xac'
+def hash160(s):
+    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
+
+
+def little_endian_to_int(b):
+    '''little_endian_to_int takes byte sequence as a little-endian number.
+    Returns an integer'''
+    return int.from_bytes(b, 'little')
+
+
+def int_to_little_endian(n, length):
+    '''endian_to_little_endian takes an integer and returns the little-endian
+    byte sequence of length'''
+    return n.to_bytes(length, 'little')
 
 
 def decode_base58(s):
@@ -120,6 +103,11 @@ def encode_varint(i):
         raise RuntimeError('integer too large: {}'.format(i))
 
 
+def p2pkh_script(h160):
+    '''Takes a hash160 and returns the scriptPubKey'''
+    return b'\x76\xa9\x14' + h160 + b'\x88\xac'
+
+
 def h160_to_p2pkh_address(h160, testnet=False):
     '''Takes a byte sequence hash160 and returns a p2pkh address string'''
     # p2pkh has a prefix of b'\x00' for mainnet, b'\x6f' for testnet
@@ -138,6 +126,50 @@ def h160_to_p2sh_address(h160, testnet=False):
     else:
         prefix = b'\x05'
     return encode_base58_checksum(prefix + h160)
+
+
+def bits_to_target(bits):
+    '''Turns bits into a target (large 256-bit integer)'''
+    # last byte is exponent
+    exponent = bits[-1]
+    # the first three bytes are the coefficient in little endian
+    coefficient = little_endian_to_int(bits[:-1])
+    # the formula is:
+    # coefficient * 256**(exponent-3)
+    return coefficient * 256**(exponent-3)
+
+
+def target_to_bits(target):
+    '''Turns a target integer back into bits, which is 4 bytes'''
+    raw_bytes = target.to_bytes(32, 'big')
+    # get rid of leading 0's
+    raw_bytes = raw_bytes.lstrip(b'\x00')
+    if raw_bytes[0] > 0x7f:
+        # if the first bit is 1, we have to start with 00
+        exponent = len(raw_bytes) + 1
+        coefficient = b'\x00' + raw_bytes[:2]
+    else:
+        # otherwise, we can show the first 3 bytes
+        # exponent is the number of digits in base-256
+        exponent = len(raw_bytes)
+        # coefficient is the first 3 digits of the base-256 number
+        coefficient = raw_bytes[:3]
+    new_bits_big_endian = bytes([exponent]) + coefficient
+    # we've truncated the number after the first 3 digits of base-256
+    return new_bits_big_endian[::-1]
+
+
+def calculate_new_bits(previous_bits, time_differential):
+    '''Calculates the new bits given
+    a 2016-block time differential and the previous bits'''
+    if time_differential > TWO_WEEKS * 4:
+        time_differential = TWO_WEEKS * 4
+    if time_differential < TWO_WEEKS // 4:
+        time_differential = TWO_WEEKS // 4
+    new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
+    if new_target > MAX_TARGET:
+        new_target = MAX_TARGET
+    return target_to_bits(new_target)
 
 
 def merkle_parent(hash1, hash2):
@@ -250,12 +282,6 @@ def murmur3(data, seed=0):
 
 class HelperTest(TestCase):
 
-    def test_bytes(self):
-        b = b'hello world'
-        s = 'hello world'
-        self.assertEqual(b, str_to_bytes(s))
-        self.assertEqual(s, bytes_to_str(b))
-
     def test_little_endian_to_int(self):
         h = bytes.fromhex('99c3980000000000')
         want = 10011545
@@ -293,6 +319,12 @@ class HelperTest(TestCase):
         self.assertEqual(h160_to_p2sh_address(h160, testnet=False), want)
         want = '2N3u1R6uwQfuobCqbCgBkpsgBxvr1tZpe7B'
         self.assertEqual(h160_to_p2sh_address(h160, testnet=True), want)
+
+    def test_calculate_new_bits(self):
+        prev_bits = bytes.fromhex('54d80118')
+        time_differential = 302400
+        want = bytes.fromhex('00157617')
+        self.assertEqual(calculate_new_bits(prev_bits, time_differential), want)
 
     def test_merkle_parent(self):
         tx_hash0 = bytes.fromhex('c117ea8ec828342f4dfb0ad6bd140e03a50720ece40169ee38bdc15d9eb64cf5')

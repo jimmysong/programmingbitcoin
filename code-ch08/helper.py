@@ -1,4 +1,3 @@
-from subprocess import check_output
 from unittest import TestCase, TestSuite, TextTestRunner
 
 import hashlib
@@ -14,34 +13,6 @@ def run_test(test):
     suite = TestSuite()
     suite.addTest(test)
     TextTestRunner().run(suite)
-
-
-def bytes_to_str(b, encoding='ascii'):
-    '''Returns a string version of the bytes'''
-    return b.decode(encoding)
-
-
-def str_to_bytes(s, encoding='ascii'):
-    '''Returns a bytes version of the string'''
-    return s.encode(encoding)
-
-
-def little_endian_to_int(b):
-    '''little_endian_to_int takes byte sequence as a little-endian number.
-    Returns an integer'''
-    # use the from_bytes method of int
-    return int.from_bytes(b, 'little')
-
-
-def int_to_little_endian(n, length):
-    '''endian_to_little_endian takes an integer and returns the little-endian
-    byte sequence of length'''
-    # use the to_bytes method of n
-    return n.to_bytes(length, 'little')
-
-
-def hash160(s):
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
 
 
 def double_sha256(s):
@@ -63,7 +34,6 @@ def encode_base58(s):
     while num > 0:
         num, mod = divmod(num, 58)
         result.insert(0, BASE58_ALPHABET[mod])
-
     return prefix + bytes(result)
 
 
@@ -71,9 +41,20 @@ def encode_base58_checksum(s):
     return encode_base58(s + double_sha256(s)[:4]).decode('ascii')
 
 
-def p2pkh_script(h160):
-    '''Takes a hash160 and returns the scriptPubKey'''
-    return b'\x76\xa9\x14' + h160 + b'\x88\xac'
+def hash160(s):
+    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
+
+
+def little_endian_to_int(b):
+    '''little_endian_to_int takes byte sequence as a little-endian number.
+    Returns an integer'''
+    return int.from_bytes(b, 'little')
+
+
+def int_to_little_endian(n, length):
+    '''endian_to_little_endian takes an integer and returns the little-endian
+    byte sequence of length'''
+    return n.to_bytes(length, 'little')
 
 
 def decode_base58(s):
@@ -119,6 +100,11 @@ def encode_varint(i):
         raise RuntimeError('integer too large: {}'.format(i))
 
 
+def p2pkh_script(h160):
+    '''Takes a hash160 and returns the scriptPubKey'''
+    return b'\x76\xa9\x14' + h160 + b'\x88\xac'
+
+
 def h160_to_p2pkh_address(h160, testnet=False):
     '''Takes a byte sequence hash160 and returns a p2pkh address string'''
     raise NotImplementedError
@@ -130,12 +116,6 @@ def h160_to_p2sh_address(h160, testnet=False):
 
 
 class HelperTest(TestCase):
-
-    def test_bytes(self):
-        b = b'hello world'
-        s = 'hello world'
-        self.assertEqual(b, str_to_bytes(s))
-        self.assertEqual(s, bytes_to_str(b))
 
     def test_little_endian_to_int(self):
         h = bytes.fromhex('99c3980000000000')
