@@ -40,11 +40,8 @@ class Tx:
             self.locktime,
         )
 
-    def hash(self):
-        return double_sha256(self.serialize())[::-1]
-
     @classmethod
-    def parse(cls, s, testnet=False):
+    def parse(cls, s):
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
@@ -66,7 +63,7 @@ class Tx:
         # locktime is 4 bytes, little-endian
         locktime = little_endian_to_int(s.read(4))
         # return an instance of the class (cls(...))
-        return cls(version, inputs, outputs, locktime, testnet=testnet)
+        return cls(version, inputs, outputs, locktime)
 
     def serialize(self):
         '''Returns the byte serialization of the transaction'''
@@ -78,7 +75,7 @@ class Tx:
         for tx_in in self.tx_ins:
             # serialize each input
             result += tx_in.serialize()
-        # encode_varint on the number of inputs
+        # encode_varint on the number of outputs
         result += encode_varint(len(self.tx_outs))
         # iterate outputs
         for tx_out in self.tx_outs:
@@ -88,14 +85,14 @@ class Tx:
         result += int_to_little_endian(self.locktime, 4)
         return result
 
-    def fee(self):
+    def fee(self, testnet=False):
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
         input_sum, output_sum = 0, 0
         # iterate through inputs
         for tx_in in self.tx_ins:
             # for each input get the value and add to input sum
-            input_sum += tx_in.value()
+            input_sum += tx_in.value(testnet=testnet)
         # iterate through outputs
         for tx_out in self.tx_outs:
             # for each output get the amount and add to output sum
@@ -153,7 +150,7 @@ class Tx:
 
     def sign_input(self, input_index, private_key, hash_type):
         '''Signs the input using the private key'''
-        # get the hash to sign
+        # get the sig_hash (z)
         z = self.sig_hash(input_index, hash_type)
         # get der signature of z from private key
         der = private_key.sign(z).der()
@@ -205,7 +202,7 @@ class TxIn:
     def __init__(self, prev_tx, prev_index, script_sig, sequence):
         self.prev_tx = prev_tx
         self.prev_index = prev_index
-        self.script_sig = Script.parse(script_sig)
+        self.script_sig = script_sig
         self.sequence = sequence
 
     def __repr__(self):
@@ -227,14 +224,14 @@ class TxIn:
         # script_sig is a variable field (length followed by the data)
         # get the length by using read_varint(s)
         script_sig_length = read_varint(s)
-        script_sig = s.read(script_sig_length)
+        script_sig = Script.parse(s.read(script_sig_length))
         # sequence is 4 bytes, little-endian, interpret as int
         sequence = little_endian_to_int(s.read(4))
         # return an instance of the class (cls(...))
         return cls(prev_tx, prev_index, script_sig, sequence)
 
     def serialize(self):
-        '''Returns the byte serialization of the transaction input'''
+        '''Returns the byte serialization of the transaction output'''
         # serialize prev_tx, little endian
         result = self.prev_tx[::-1]
         # serialize prev_index, 4 bytes, little endian
@@ -283,7 +280,7 @@ class TxIn:
         # use self.fetch_tx to get the transaction
         tx = self.fetch_tx(testnet=testnet)
         # get the output at self.prev_index
-        # return the script_pubkey property and serialize
+        # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
 
     def der_signature(self, index=0):
@@ -313,7 +310,7 @@ class TxOut:
 
     def __init__(self, amount, script_pubkey):
         self.amount = amount
-        self.script_pubkey = Script.parse(script_pubkey)
+        self.script_pubkey = script_pubkey
 
     def __repr__(self):
         return '{}:{}'.format(self.amount, self.script_pubkey.address())
@@ -329,7 +326,7 @@ class TxOut:
         # script_pubkey is a variable field (length followed by the data)
         # get the length by using read_varint(s)
         script_pubkey_length = read_varint(s)
-        script_pubkey = s.read(script_pubkey_length)
+        script_pubkey = Script.parse(s.read(script_pubkey_length))
         # return an instance of the class (cls(...))
         return cls(amount, script_pubkey)
 

@@ -75,7 +75,7 @@ class Tx:
         for tx_in in self.tx_ins:
             # serialize each input
             result += tx_in.serialize()
-        # encode_varint on the number of inputs
+        # encode_varint on the number of outputs
         result += encode_varint(len(self.tx_outs))
         # iterate outputs
         for tx_out in self.tx_outs:
@@ -120,7 +120,7 @@ class TxIn:
     def __init__(self, prev_tx, prev_index, script_sig, sequence):
         self.prev_tx = prev_tx
         self.prev_index = prev_index
-        self.script_sig = Script.parse(script_sig)
+        self.script_sig = script_sig
         self.sequence = sequence
 
     def __repr__(self):
@@ -142,7 +142,7 @@ class TxIn:
         # script_sig is a variable field (length followed by the data)
         # get the length by using read_varint(s)
         script_sig_length = read_varint(s)
-        script_sig = s.read(script_sig_length)
+        script_sig = Script.parse(s.read(script_sig_length))
         # sequence is 4 bytes, little-endian, interpret as int
         sequence = little_endian_to_int(s.read(4))
         # return an instance of the class (cls(...))
@@ -198,7 +198,7 @@ class TxIn:
         # use self.fetch_tx to get the transaction
         tx = self.fetch_tx(testnet=testnet)
         # get the output at self.prev_index
-        # return the script_pubkey property and serialize
+        # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
 
     def der_signature(self, index=0):
@@ -228,7 +228,7 @@ class TxOut:
 
     def __init__(self, amount, script_pubkey):
         self.amount = amount
-        self.script_pubkey = Script.parse(script_pubkey)
+        self.script_pubkey = script_pubkey
 
     def __repr__(self):
         return '{}:{}'.format(self.amount, self.script_pubkey)
@@ -244,7 +244,7 @@ class TxOut:
         # script_pubkey is a variable field (length followed by the data)
         # get the length by using read_varint(s)
         script_pubkey_length = read_varint(s)
-        script_pubkey = s.read(script_pubkey_length)
+        script_pubkey = Script.parse(s.read(script_pubkey_length))
         # return an instance of the class (cls(...))
         return cls(amount, script_pubkey)
 

@@ -36,7 +36,10 @@ class MerkleTree:
         result = ''
         for depth, level in enumerate(self.nodes):
             for index, h in enumerate(level):
-                short = '{}...'.format(h.hex()[:8])
+                if h is None:
+                    short = 'None'
+                else:
+                    short = '{}...'.format(h.hex()[:8])
                 if depth == self.current_depth and index == self.current_index:
                     result += '*{}*, '.format(short[:-2])
                 else:

@@ -61,7 +61,7 @@ class Tx:
         result += int_to_little_endian(self.locktime, 4)
         return result
 
-    def fee(self):
+    def fee(self, testnet=False):
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
         raise NotImplementedError
@@ -158,19 +158,15 @@ class TxOut:
         raise NotImplementedError
 
     def serialize(self):
-        '''Returns the byte serialization of the transaction input'''
-        # serialize prev_tx, little endian
-        result = self.prev_tx[::-1]
-        # serialize prev_index, 4 bytes, little endian
-        result += int_to_little_endian(self.prev_index, 4)
-        # get the scriptSig ready (use self.script_sig.serialize())
-        raw_script_sig = self.script_sig.serialize()
-        # encode_varint on the length of the scriptSig
-        result += encode_varint(len(raw_script_sig))
-        # add the scriptSig
-        result += raw_script_sig
-        # serialize sequence, 4 bytes, little endian
-        result += int_to_little_endian(self.sequence, 4)
+        '''Returns the byte serialization of the transaction output'''
+        # serialize amount, 8 bytes, little endian
+        result = int_to_little_endian(self.amount, 8)
+        # get the scriptPubkey ready (use self.script_pubkey.serialize())
+        raw_script_pubkey = self.script_pubkey.serialize()
+        # encode_varint on the length of the scriptPubkey
+        result += encode_varint(len(raw_script_pubkey))
+        # add the scriptPubKey
+        result += raw_script_pubkey
         return result
 
 

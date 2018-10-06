@@ -6,7 +6,12 @@ from helper import (
     double_sha256,
     int_to_little_endian,
     little_endian_to_int,
+    merkle_root,
 )
+
+
+GENESIS_BLOCK_HASH = bytes.fromhex('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f')
+TESTNET_GENESIS_BLOCK_HASH = bytes.fromhex('000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943')
 
 
 class Block:
@@ -19,7 +24,6 @@ class Block:
         self.bits = bits
         self.nonce = nonce
         self.tx_hashes = tx_hashes
-        self.merkle_tree = None
 
     @classmethod
     def parse(cls, s):
@@ -173,6 +177,12 @@ class BlockTest(TestCase):
         stream = BytesIO(block_raw)
         block = Block.parse(stream)
         self.assertEqual(block.target(), 0x13ce9000000000000000000000000000000000000000000)
+        self.assertEqual(int(block.difficulty()), 888171856257)
+
+    def test_difficulty(self):
+        block_raw = bytes.fromhex('020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd0000000000000000005b0750fce0a889502d40508d39576821155e9c9e3f5c3157f961db38fd8b25be1e77a759e93c0118a4ffd71d')
+        stream = BytesIO(block_raw)
+        block = Block.parse(stream)
         self.assertEqual(int(block.difficulty()), 888171856257)
 
     def test_check_pow(self):
