@@ -152,10 +152,10 @@ def target_to_bits(target):
 
 
 def calculate_new_bits(previous_bits, time_differential):
-    '''calculates the new bits given the bits of a difficulty 
+    '''calculates the new bits given the bits of a difficulty
     adjustment period and the time differential between the start and end blocks'''
     raise NotImplementedError
-    
+
 
 class HelperTest(TestCase):
 

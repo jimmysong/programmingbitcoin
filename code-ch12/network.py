@@ -181,7 +181,7 @@ class VersionMessage:
 class VersionMessageTest(TestCase):
 
     def test_serialize(self):
-        v = VersionMessage(timestamp=0, nonce=b'\x00'*8)
+        v = VersionMessage(timestamp=0, nonce=b'\x00' * 8)
         self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d2000000000000000001b2f70726f6772616d6d696e67626c6f636b636861696e3a302e312f0000000001')
 
 
@@ -273,7 +273,6 @@ class GetDataMessageTest(TestCase):
 
     def test_serialize(self):
         hex_msg = '020300000030eb2540c41025690160a1014c577061596e32e426b712c7ca00000000000000030000001049847939585b0652fba793661c361223446b6fc41089b8be00000000000000'
-        stream = BytesIO(bytes.fromhex(hex_msg))
         get_data = GetDataMessage()
         block1 = bytes.fromhex('00000000000000cac712b726e4326e596170574c01a16001692510c44025eb30')
         get_data.add_data(FILTERED_BLOCK_DATA_TYPE, block1)
@@ -290,7 +289,7 @@ class SimpleNode:
                 port = 18333
             else:
                 port = 8333
-        self.testnet= testnet
+        self.testnet = testnet
         self.logging = logging
         # connect to socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

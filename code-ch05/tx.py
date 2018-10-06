@@ -1,11 +1,16 @@
 from io import BytesIO
 from unittest import TestCase
 
+import requests
+
 from helper import (
+    encode_varint,
+    int_to_little_endian,
     little_endian_to_int,
     read_varint,
 )
 from script import Script
+
 
 class Tx:
 
@@ -35,7 +40,7 @@ class Tx:
         return a Tx object
         '''
         raise NotImplementedError
-    
+
     def serialize(self):
         '''Returns the byte serialization of the transaction'''
         # serialize version (4 bytes, little endian)
@@ -60,7 +65,6 @@ class Tx:
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
         raise NotImplementedError
-    
 
 
 class TxIn:
@@ -99,33 +103,19 @@ class TxIn:
         result += int_to_little_endian(self.sequence, 4)
         return result
 
-
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://client:pleasedonthackme@tbtc.programmingblockchain.com:18332'
+            return 'http://tbtc.programmingblockchain.com:18332'
         else:
-            return 'http://pbclient:ecdsaisawesome@btc.programmingblockchain.com:8332'
+            return 'http://btc.programmingblockchain.com:8332'
 
     def fetch_tx(self, testnet=False):
         if self.prev_tx not in self.cache:
-            url = self.get_url(testnet)
-            data = {
-                'jsonrpc': '2.0',
-                'method': 'getrawtransaction',
-                'params': [self.prev_tx.hex(),],
-                'id': '0',
-            }
-            headers = {
-                'content-type': 'application/json',
-            }
-            response = requests.post(url, headers=headers, json=data)
-            try:
-                payload = response.json()
-            except:
-                raise RuntimeError('Got from server: {}'.format(response))
-            raw = bytes.fromhex(payload['result'])
-            stream = BytesIO(raw)
+            url = '{}/rest/tx/{}.hex'.format(
+                self.get_url(testnet), self.prev_tx.hex())
+            response = requests.get(url)
+            stream = BytesIO(bytes.fromhex(response.text.strip()))
             tx = Tx.parse(stream)
             self.cache[self.prev_tx] = tx
         return self.cache[self.prev_tx]
@@ -149,7 +139,7 @@ class TxIn:
         # get the output at self.prev_index
         # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
-    
+
 
 class TxOut:
 
@@ -159,7 +149,6 @@ class TxOut:
 
     def __repr__(self):
         return '{}:{}'.format(self.amount, self.script_pubkey)
-
 
     @classmethod
     def parse(cls, s):

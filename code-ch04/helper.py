@@ -54,7 +54,6 @@ def int_to_little_endian(n, length):
     raise NotImplementedError
 
 
-
 def decode_base58(s):
     num = 0
     for c in s.encode('ascii'):
@@ -65,7 +64,6 @@ def decode_base58(s):
     if double_sha256(combined[:-4])[:4] != checksum:
         raise RuntimeError('bad address: {} {}'.format(checksum, double_sha256(combined)[:4]))
     return combined[1:-4]
-
 
 
 class HelperTest(TestCase):

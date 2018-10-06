@@ -112,7 +112,7 @@ class VersionMessage:
 class VersionMessageTest(TestCase):
 
     def test_serialize(self):
-        v = VersionMessage(timestamp=0, nonce=b'\x00'*8)
+        v = VersionMessage(timestamp=0, nonce=b'\x00' * 8)
         self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d2000000000000000001b2f70726f6772616d6d696e67626c6f636b636861696e3a302e312f0000000001')
 
 
@@ -141,6 +141,7 @@ class GetHeadersMessageTest(TestCase):
         block_hex = '0000000000000000001237f46acddf58578a37e213d2a6edc4884a2fcad05ba3'
         gh = GetHeadersMessage(start_block=bytes.fromhex(block_hex))
         self.assertEqual(gh.serialize().hex(), '7f11010001a35bd0ca2f4a88c4eda6d213e2378a5758dfcd6af437120000000000000000000000000000000000000000000000000000000000000000000000000000000000')
+
 
 class HeadersMessage:
     command = b'headers'
@@ -186,7 +187,7 @@ class SimpleNode:
                 port = 18333
             else:
                 port = 8333
-        self.testnet= testnet
+        self.testnet = testnet
         self.logging = logging
         # connect to socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -8,8 +8,7 @@ SIGHASH_NONE = 2
 SIGHASH_SINGLE = 3
 BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 TWO_WEEKS = 60 * 60 * 24 * 14
-MAX_TARGET = 0xffff*256**(0x1d-3)
-
+MAX_TARGET = 0xffff * 256**(0x1d - 3)
 
 
 def run_test(test):
@@ -136,7 +135,7 @@ def bits_to_target(bits):
     coefficient = little_endian_to_int(bits[:-1])
     # the formula is:
     # coefficient * 256**(exponent-3)
-    return coefficient * 256**(exponent-3)
+    return coefficient * 256**(exponent - 3)
 
 
 def target_to_bits(target):
@@ -193,7 +192,7 @@ def merkle_parent_level(hashes):
     # Exercise 2.2: loop over every pair (use: for i in range(0, len(hashes), 2))
     for i in range(0, len(hashes), 2):
         # Exercise 2.2: get the merkle parent of i and i+1 hashes
-        parent = merkle_parent(hashes[i], hashes[i+1])
+        parent = merkle_parent(hashes[i], hashes[i + 1])
         # Exercise 2.2: append parent to parent level
         parent_level.append(parent)
     # Exercise 2.2: return parent level
@@ -208,7 +207,7 @@ def merkle_root(hashes):
     # loop until there's exactly 1 element
     while len(current_level) > 1:
         # current level becomes the merkle parent level
-        current_level = merkle_parent_level(current_level)        
+        current_level = merkle_parent_level(current_level)
     # return the 1st item of current_level
     return current_level[0]
 

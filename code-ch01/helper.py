@@ -1,4 +1,4 @@
-from unittest import TestCase, TestSuite, TextTestRunner
+from unittest import TestSuite, TextTestRunner
 
 
 def run_test(test):

@@ -3,8 +3,9 @@ from random import randint
 from unittest import TestCase
 
 import hashlib
+import hmac
 
-from helper import double_sha256, encode_base58, encode_base58_checksum, hash160
+from helper import encode_base58_checksum, hash160
 
 
 class FieldElement:
@@ -12,7 +13,7 @@ class FieldElement:
     def __init__(self, num, prime):
         if num >= prime or num < 0:
             error = 'Num {} not in field range 0 to {}'.format(
-                num, prime-1)
+                num, prime - 1)
             raise ValueError(error)
         self.num = num
         self.prime = prime
@@ -28,7 +29,6 @@ class FieldElement:
 
     def __repr__(self):
         return 'FieldElement_{}({})'.format(self.prime, self.num)
-
 
     def __add__(self, other):
         if self.prime != other.prime:
@@ -97,28 +97,28 @@ class FieldElementTest(TestCase):
     def test_add(self):
         a = FieldElement(2, 31)
         b = FieldElement(15, 31)
-        self.assertEqual(a+b, FieldElement(17, 31))
+        self.assertEqual(a + b, FieldElement(17, 31))
         a = FieldElement(17, 31)
         b = FieldElement(21, 31)
-        self.assertEqual(a+b, FieldElement(7, 31))
+        self.assertEqual(a + b, FieldElement(7, 31))
 
     def test_sub(self):
         a = FieldElement(29, 31)
         b = FieldElement(4, 31)
-        self.assertEqual(a-b, FieldElement(25, 31))
+        self.assertEqual(a - b, FieldElement(25, 31))
         a = FieldElement(15, 31)
         b = FieldElement(30, 31)
-        self.assertEqual(a-b, FieldElement(16, 31))
+        self.assertEqual(a - b, FieldElement(16, 31))
 
     def test_mul(self):
         a = FieldElement(24, 31)
         b = FieldElement(19, 31)
-        self.assertEqual(a*b, FieldElement(22, 31))
+        self.assertEqual(a * b, FieldElement(22, 31))
 
     def test_rmul(self):
         a = FieldElement(24, 31)
         b = 2
-        self.assertEqual(b*a, a+a)
+        self.assertEqual(b * a, a + a)
 
     def test_pow(self):
         a = FieldElement(17, 31)
@@ -130,12 +130,12 @@ class FieldElementTest(TestCase):
     def test_div(self):
         a = FieldElement(3, 31)
         b = FieldElement(24, 31)
-        self.assertEqual(a/b, FieldElement(4, 31))
+        self.assertEqual(a / b, FieldElement(4, 31))
         a = FieldElement(17, 31)
         self.assertEqual(a**-3, FieldElement(29, 31))
         a = FieldElement(4, 31)
         b = FieldElement(11, 31)
-        self.assertEqual(a**-4*b, FieldElement(13, 31))
+        self.assertEqual(a**-4 * b, FieldElement(13, 31))
 
 
 class Point:
@@ -153,8 +153,8 @@ class Point:
             return
         # make sure that the elliptic curve equation is satisfied
         # y**2 == x**3 + a*x + b
-        if self.y**2 != self.x**3 + a*x + b:
-        # if not, throw a ValueError
+        if self.y**2 != self.x**3 + a * x + b:
+            # if not, throw a ValueError
             raise ValueError('({}, {}) is not on the curve'.format(x, y))
 
     def __eq__(self, other):
@@ -184,34 +184,28 @@ class Point:
         # Case 1: self.x == other.x, self.y != other.y
         # Result is point at infinity
         if self.x == other.x and self.y != other.y:
-        # Remember to return an instance of this class:
-        # self.__class__(x, y, a, b)
             return self.__class__(None, None, self.a, self.b)
 
         # Case 2: self.x != other.x
         if self.x != other.x:
-        # Formula (x3,y3)==(x1,y1)+(x2,y2)
-        # s=(y2-y1)/(x2-x1)
+            # Formula (x3,y3)==(x1,y1)+(x2,y2)
+            # s=(y2-y1)/(x2-x1)
             s = (other.y - self.y) / (other.x - self.x)
-        # x3=s**2-x1-x2
+            # x3=s**2-x1-x2
             x = s**2 - self.x - other.x
-        # y3=s*(x1-x3)-y1
-            y = s*(self.x-x) - self.y
-        # Remember to return an instance of this class:
-        # self.__class__(x, y, a, b)
+            # y3=s*(x1-x3)-y1
+            y = s * (self.x - x) - self.y
             return self.__class__(x, y, self.a, self.b)
 
         # Case 3: self.x == other.x, self.y == other.y
         else:
-        # Formula (x3,y3)=(x1,y1)+(x1,y1)
-        # s=(3*x1**2+a)/(2*y1)
-            s = (3*self.x**2 + self.a) / (2*self.y)
-        # x3=s**2-2*x1
-            x = s**2 - 2*self.x
-        # y3=s*(x1-x3)-y1
-            y = s*(self.x-x) - self.y
-        # Remember to return an instance of this class:
-        # self.__class__(x, y, a, b)
+            # Formula (x3,y3)=(x1,y1)+(x1,y1)
+            # s=(3*x1**2+a)/(2*y1)
+            s = (3 * self.x**2 + self.a) / (2 * self.y)
+            # x3=s**2-2*x1
+            x = s**2 - 2 * self.x
+            # y3=s*(x1-x3)-y1
+            y = s * (self.x - x) - self.y
             return self.__class__(x, y, self.a, self.b)
 
         # Case 4: if we are tangent to the vertical line
@@ -249,18 +243,18 @@ class PointTest(TestCase):
         a = Point(x=None, y=None, a=5, b=7)
         b = Point(x=2, y=5, a=5, b=7)
         c = Point(x=2, y=-5, a=5, b=7)
-        self.assertEqual(a+b, b)
-        self.assertEqual(b+a, b)
-        self.assertEqual(b+c, a)
+        self.assertEqual(a + b, b)
+        self.assertEqual(b + a, b)
+        self.assertEqual(b + c, a)
 
     def test_add1(self):
         a = Point(x=3, y=7, a=5, b=7)
         b = Point(x=-1, y=-1, a=5, b=7)
-        self.assertEqual(a+b, Point(x=2, y=-5, a=5, b=7))
+        self.assertEqual(a + b, Point(x=2, y=-5, a=5, b=7))
 
     def test_add2(self):
         a = Point(x=-1, y=1, a=5, b=7)
-        self.assertEqual(a+a, Point(x=18, y=-77, a=5, b=7))
+        self.assertEqual(a + a, Point(x=18, y=-77, a=5, b=7))
 
 
 class ECCTest(TestCase):
@@ -274,8 +268,8 @@ class ECCTest(TestCase):
         a = FieldElement(0, prime)
         b = FieldElement(7, prime)
 
-        valid_points = ((192,105), (17,56), (1,193))
-        invalid_points = ((200,119), (42,99))
+        valid_points = ((192, 105), (17, 56), (1, 193))
+        invalid_points = ((200, 119), (42, 99))
 
         # iterate over valid points
         for x_raw, y_raw in valid_points:
@@ -318,8 +312,7 @@ class ECCTest(TestCase):
             y3 = FieldElement(y3_raw, prime)
             p3 = Point(x3, y3, a, b)
             # check that p1 + p2 == p3
-            self.assertEqual(p1+p2, p3)
-
+            self.assertEqual(p1 + p2, p3)
 
     def test_rmul(self):
         # tests the following scalar multiplications
@@ -357,7 +350,7 @@ class ECCTest(TestCase):
                 p2 = Point(x2, y2, a, b)
 
             # check that the product is equal to the expected point
-            self.assertEqual(s*p1, p2)
+            self.assertEqual(s * p1, p2)
 
 
 A = 0
@@ -378,7 +371,7 @@ class S256Field(FieldElement):
         return self.hex()
 
     def sqrt(self):
-        return self**((P+1)//4)
+        return self**((P + 1) // 4)
 
 
 class S256Point(Point):
@@ -405,10 +398,10 @@ class S256Point(Point):
         return super().__rmul__(coef)
 
     def verify(self, z, sig):
-        s_inv = pow(sig.s, N-2, N)
+        s_inv = pow(sig.s, N - 2, N)
         u = z * s_inv % N
         v = sig.r * s_inv % N
-        total = u*G + v*self
+        total = u * G + v * self
         return total.x.num == sig.r
 
     def sec(self, compressed=True):
@@ -422,7 +415,7 @@ class S256Point(Point):
             else:
                 return b'\x03' + self.x.num.to_bytes(32, 'big')
         else:
-        # if non-compressed, starts with b'\x04' followod by self.x and then self.y
+            # if non-compressed, starts with b'\x04' followod by self.x and then self.y
             return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
 
     def h160(self, compressed=True):
@@ -471,7 +464,7 @@ G = S256Point(
 class S256Test(TestCase):
 
     def test_order(self):
-        point = N*G
+        point = N * G
         self.assertIsNone(point.x)
 
     def test_pubpoint(self):
@@ -481,7 +474,7 @@ class S256Test(TestCase):
             (7, 0x5cbdf0646e5db4eaa398f365f2ea7a0e3d419b7e0330e39ce92bddedcac4f9bc, 0x6aebca40ba255960a3178d6d861a54dba813d0b813fde7b5a5082628087264da),
             (1485, 0xc982196a7466fbbbb0e27a940b6af926c1a74d5ad07128c82824a11b5398afda, 0x7a91f9eae64438afb9ce6448a1c133db2d8fb9254e4546b6f001637d50901f55),
             (2**128, 0x8f68b9d2f63b5f339239c1ad981f162ee88c5678723ea3351b7b444c9ec4c0da, 0x662a9f2dba063986de1d90c2b6be215dbbea2cfe95510bfdf23cbf79501fff82),
-            (2**240+2**31, 0x9577ff57c8234558f293df502ca4f09cbc65a6572c842b39b366f21717945116, 0x10b49c67fa9365ad7b90dab070be339a1daf9052373ec30ffae4f72d5e66d053),
+            (2**240 + 2**31, 0x9577ff57c8234558f293df502ca4f09cbc65a6572c842b39b366f21717945116, 0x10b49c67fa9365ad7b90dab070be339a1daf9052373ec30ffae4f72d5e66d053),
         )
 
         # iterate over points
@@ -489,7 +482,7 @@ class S256Test(TestCase):
             # initialize the secp256k1 point (S256Point)
             point = S256Point(x, y)
             # check that the secret*G is the same as the point
-            self.assertEqual(secret*G, point)
+            self.assertEqual(secret * G, point)
 
     def test_verify(self):
         point = S256Point(
@@ -508,19 +501,19 @@ class S256Test(TestCase):
         coefficient = 999**3
         uncompressed = '049d5ca49670cbe4c3bfa84c96a8c87df086c6ea6a24ba6b809c9de234496808d56fa15cc7f3d38cda98dee2419f415b7513dde1301f8643cd9245aea7f3f911f9'
         compressed = '039d5ca49670cbe4c3bfa84c96a8c87df086c6ea6a24ba6b809c9de234496808d5'
-        point = coefficient*G
+        point = coefficient * G
         self.assertEqual(point.sec(compressed=False), bytes.fromhex(uncompressed))
         self.assertEqual(point.sec(compressed=True), bytes.fromhex(compressed))
         coefficient = 123
         uncompressed = '04a598a8030da6d86c6bc7f2f5144ea549d28211ea58faa70ebf4c1e665c1fe9b5204b5d6f84822c307e4b4a7140737aec23fc63b65b35f86a10026dbd2d864e6b'
         compressed = '03a598a8030da6d86c6bc7f2f5144ea549d28211ea58faa70ebf4c1e665c1fe9b5'
-        point = coefficient*G
+        point = coefficient * G
         self.assertEqual(point.sec(compressed=False), bytes.fromhex(uncompressed))
         self.assertEqual(point.sec(compressed=True), bytes.fromhex(compressed))
         coefficient = 42424242
         uncompressed = '04aee2e7d843f7430097859e2bc603abcc3274ff8169c1a469fee0f20614066f8e21ec53f40efac47ac1c5211b2123527e0e9b57ede790c4da1e72c91fb7da54a3'
         compressed = '03aee2e7d843f7430097859e2bc603abcc3274ff8169c1a469fee0f20614066f8e'
-        point = coefficient*G
+        point = coefficient * G
         self.assertEqual(point.sec(compressed=False), bytes.fromhex(uncompressed))
         self.assertEqual(point.sec(compressed=True), bytes.fromhex(compressed))
 
@@ -528,7 +521,7 @@ class S256Test(TestCase):
         secret = 888**3
         mainnet_address = '148dY81A9BmdpMhvYEVznrM45kWN32vSCN'
         testnet_address = 'mieaqB68xDCtbUBYFoUNcmZNwk74xcBfTP'
-        point = secret*G
+        point = secret * G
         self.assertEqual(
             point.address(compressed=True, testnet=False), mainnet_address)
         self.assertEqual(
@@ -536,7 +529,7 @@ class S256Test(TestCase):
         secret = 321
         mainnet_address = '1S6g2xBJSED7Qr9CYZib5f4PYVhHZiVfj'
         testnet_address = 'mfx3y63A7TfTtXKkv7Y6QzsPFY6QCBCXiP'
-        point = secret*G
+        point = secret * G
         self.assertEqual(
             point.address(compressed=False, testnet=False), mainnet_address)
         self.assertEqual(
@@ -544,7 +537,7 @@ class S256Test(TestCase):
         secret = 4242424242
         mainnet_address = '1226JSptcStqn4Yq9aAmNXdwdc2ixuH9nb'
         testnet_address = 'mgY3bVusRUL6ZB2Ss999CSrGVbdRwVpM8s'
-        point = secret*G
+        point = secret * G
         self.assertEqual(
             point.address(compressed=False, testnet=False), mainnet_address)
         self.assertEqual(
@@ -618,7 +611,7 @@ class PrivateKey:
 
     def __init__(self, secret):
         self.secret = secret
-        self.point = secret*G
+        self.point = secret * G
 
     def hex(self):
         return '{:x}'.format(self.secret).zfill(64)
@@ -626,12 +619,12 @@ class PrivateKey:
     def sign(self, z):
         k = self.deterministic_k(z)
         # r is the x coordinate of the resulting point k*G
-        r = (k*G).x.num
+        r = (k * G).x.num
         # remember 1/k = pow(k, N-2, N)
-        k_inv = pow(k, N-2, N)
+        k_inv = pow(k, N - 2, N)
         # s = (z+r*secret) / k
-        s = (z + r*self.secret) * k_inv % N
-        if s > N/2:
+        s = (z + r * self.secret) * k_inv % N
+        if s > N / 2:
             s = N - s
         # return an instance of Signature:
         # Signature(r, s)
@@ -683,10 +676,10 @@ class PrivateKeyTest(TestCase):
         self.assertTrue(pk.point.verify(z, sig))
 
     def test_wif(self):
-        pk = PrivateKey(2**256-2**199)
+        pk = PrivateKey(2**256 - 2**199)
         expected = 'L5oLkpV3aqBJ4BgssVAsax1iRa77G5CVYnv9adQ6Z87te7TyUdSC'
         self.assertEqual(pk.wif(compressed=True, testnet=False), expected)
-        pk = PrivateKey(2**256-2**201)
+        pk = PrivateKey(2**256 - 2**201)
         expected = '93XfLeifX7Jx7n7ELGMAf1SUR6f9kgQs8Xke8WStMwUtrDucMzn'
         self.assertEqual(pk.wif(compressed=False, testnet=True), expected)
         pk = PrivateKey(0x0dba685b4511dbd3d368e5c4358a1277de9486447af7b3604a69b8d9d8b7889d)

@@ -4,14 +4,10 @@ from io import BytesIO
 from unittest import TestCase
 
 from helper import (
-    double_sha256,
-    int_to_little_endian,
+    bytes_to_bit_field,
     little_endian_to_int,
     merkle_parent,
-    merkle_parent_level,
-    merkle_root,
     read_varint,
-    encode_varint,
 )
 
 
@@ -24,7 +20,7 @@ class MerkleTree:
         # initialize the nodes property to hold the actual tree
         self.nodes = []
         # loop over the number of levels (max_depth+1)
-        for depth in range(self.max_depth+1):
+        for depth in range(self.max_depth + 1):
             # the number of items at this depth is
             # math.ceil(self.total / 2**(self.max_depth - depth))
             num_items = math.ceil(self.total / 2**(self.max_depth - depth))
@@ -35,7 +31,7 @@ class MerkleTree:
         # set the pointer to the root (depth=0, index=0)
         self.current_depth = 0
         self.current_index = 0
-        
+
     def __repr__(self):
         result = ''
         for depth, level in enumerate(self.nodes):
@@ -52,12 +48,12 @@ class MerkleTree:
         # reduce depth by 1 and halve the index
         self.current_depth -= 1
         self.current_index //= 2
-        
+
     def left(self):
         # increase depth by 1 and double the index
         self.current_depth += 1
         self.current_index *= 2
-        
+
     def right(self):
         # increase depth by 1 and double the index + 1
         self.current_depth += 1
@@ -71,19 +67,19 @@ class MerkleTree:
 
     def get_current_node(self):
         return self.nodes[self.current_depth][self.current_index]
-    
+
     def get_left_node(self):
-        return self.nodes[self.current_depth+1][self.current_index*2]        
+        return self.nodes[self.current_depth + 1][self.current_index * 2]
 
     def get_right_node(self):
-        return self.nodes[self.current_depth+1][self.current_index*2+1]
-    
+        return self.nodes[self.current_depth + 1][self.current_index * 2 + 1]
+
     def is_leaf(self):
         return self.current_depth == self.max_depth
 
     def right_exists(self):
         return len(self.nodes[self.current_depth + 1]) > self.current_index * 2 + 1
-    
+
     def populate_tree(self, flag_bits, hashes):
         # populate until we have the root
         while self.root() is None:
@@ -142,10 +138,10 @@ class MerkleTree:
         for flag_bit in flag_bits:
             if flag_bit != 0:
                 raise RuntimeError('flag bits not all consumed')
-                
+
 
 class MerkleTreeTest(TestCase):
-    
+
     def test_init(self):
         tree = MerkleTree(9)
         self.assertEqual(len(tree.nodes[0]), 1)
@@ -153,7 +149,7 @@ class MerkleTreeTest(TestCase):
         self.assertEqual(len(tree.nodes[2]), 3)
         self.assertEqual(len(tree.nodes[3]), 5)
         self.assertEqual(len(tree.nodes[4]), 9)
-        
+
     def test_populate_tree_1(self):
         hex_hashes = [
             "9745f7173ef14ee4155722d1cbf13304339fd00d900b759c6f9d58579b5765fb",

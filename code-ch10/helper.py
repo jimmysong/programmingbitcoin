@@ -8,8 +8,7 @@ SIGHASH_NONE = 2
 SIGHASH_SINGLE = 3
 BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 TWO_WEEKS = 60 * 60 * 24 * 14
-MAX_TARGET = 0xffff*256**(0x1d-3)
-
+MAX_TARGET = 0xffff * 256**(0x1d - 3)
 
 
 def run_test(test):
@@ -136,7 +135,7 @@ def bits_to_target(bits):
     coefficient = little_endian_to_int(bits[:-1])
     # the formula is:
     # coefficient * 256**(exponent-3)
-    return coefficient * 256**(exponent-3)
+    return coefficient * 256**(exponent - 3)
 
 
 def target_to_bits(target):

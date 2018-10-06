@@ -1,7 +1,6 @@
 from io import BytesIO
 from unittest import TestCase
 
-import random
 import requests
 
 from ecc import PrivateKey, S256Point, Signature
@@ -16,6 +15,7 @@ from helper import (
     SIGHASH_ALL,
 )
 from script import Script
+
 
 class Tx:
 
@@ -220,29 +220,16 @@ class TxIn:
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://client:pleasedonthackme@tbtc.programmingblockchain.com:18332'
+            return 'http://tbtc.programmingblockchain.com:18332'
         else:
-            return 'http://pbclient:ecdsaisawesome@btc.programmingblockchain.com:8332'
+            return 'http://btc.programmingblockchain.com:8332'
 
     def fetch_tx(self, testnet=False):
         if self.prev_tx not in self.cache:
-            url = self.get_url(testnet)
-            data = {
-                'jsonrpc': '2.0',
-                'method': 'getrawtransaction',
-                'params': [self.prev_tx.hex(),],
-                'id': '0',
-            }
-            headers = {
-                'content-type': 'application/json',
-            }
-            response = requests.post(url, headers=headers, json=data)
-            try:
-                payload = response.json()
-            except:
-                raise RuntimeError('Got from server: {}'.format(response))
-            raw = bytes.fromhex(payload['result'])
-            stream = BytesIO(raw)
+            url = '{}/rest/tx/{}.hex'.format(
+                self.get_url(testnet), self.prev_tx.hex())
+            response = requests.get(url)
+            stream = BytesIO(bytes.fromhex(response.text.strip()))
             tx = Tx.parse(stream)
             self.cache[self.prev_tx] = tx
         return self.cache[self.prev_tx]
@@ -445,14 +432,14 @@ class TxTest(TestCase):
         tx_ins.append(TxIn(
             prev_tx=prev_tx,
             prev_index=0,
-            script_sig = b'',
-            sequence = 0xffffffff,
+            script_sig=b'',
+            sequence=0xffffffff,
         ))
         tx_outs = []
         h160 = decode_base58('mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2')
-        tx_outs.append(TxOut(amount=int(0.99*100000000), script_pubkey=p2pkh_script(h160)))
+        tx_outs.append(TxOut(amount=int(0.99 * 100000000), script_pubkey=p2pkh_script(h160)))
         h160 = decode_base58('mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf')
-        tx_outs.append(TxOut(amount=int(0.1*100000000), script_pubkey=p2pkh_script(h160)))
+        tx_outs.append(TxOut(amount=int(0.1 * 100000000), script_pubkey=p2pkh_script(h160)))
 
         tx = Tx(
             version=1,
