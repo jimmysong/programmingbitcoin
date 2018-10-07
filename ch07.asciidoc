@@ -44,17 +44,11 @@ class Tx:
     ...
     def fee(self, testnet=False):
         '''Returns the fee of this transaction in satoshi'''
-        # initialize input sum and output sum
         input_sum, output_sum = 0, 0
-        # iterate through inputs
         for tx_in in self.tx_ins:
-            # for each input get the value and add to input sum
             input_sum += tx_in.amount(testnet=testnet)
-        # iterate through outputs
         for tx_out in self.tx_outs:
-            # for each output get the amount and add to output sum
             output_sum += tx_out.amount
-        # return input sum - output sum
         return input_sum - output_sum
 ----
 

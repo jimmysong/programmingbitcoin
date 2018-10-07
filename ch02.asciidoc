@@ -209,7 +209,7 @@ class Point:
 	    return
         if self.y**2 != self.x**3 + self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
-    
+    ...
 
     def __add__(self, other): # <2>
         if self.a != other.a or self.b != other.b:
@@ -404,11 +404,8 @@ We can handle this using a special case:
 [source,python]
 ----
 class Point:
-
     zero = 0 # <1>
-
     ...
-
     def __add__(self, other):
     	...
 	if self == other and self.y == self.zero: # <2>

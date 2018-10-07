@@ -199,6 +199,7 @@ We can now create this message.
 [source,python]
 ----
 class GetDataMessage:
+    command = b'getdata'
     
     def __init__(self):
         self.data = []  # <1>

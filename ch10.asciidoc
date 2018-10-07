@@ -145,21 +145,19 @@ Network communication is tricky due to its asynchronous nature. To experiment, w
 
 [source,python]
 ----
-import socket
-
-from network import NetworkEnvelope, VersionMessage
-
-host = 'tbtc.programmingblockchain.com'
-port = 18333
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-socket.connect((host, port))
-stream = socket.makefile('rb', None)  # <1>
-version_message = VersionMessage()  # <2>
-envelope = NetworkEnvelope(b'version', version_message.serialize(), testnet=True)
-socket.sendall(envelope.serialize())  # <3>
-while True:
-    new_message = NetworkEnvelope.parse(stream)  # <4>
-    print(new_message)
+>>> import socket
+>>> from network import NetworkEnvelope, VersionMessage
+>>> host = 'tbtc.programmingblockchain.com'
+>>> port = 18333
+>>> socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+>>> socket.connect((host, port))
+>>> stream = socket.makefile('rb', None)  # <1>
+>>> version_message = VersionMessage()  # <2>
+>>> envelope = NetworkEnvelope(b'version', version_message.serialize(), testnet=True)
+>>> socket.sendall(envelope.serialize())  # <3>
+>>> while True:
+...     new_message = NetworkEnvelope.parse(stream)  # <4>
+...     print(new_message)
 ----
 <1> We create a stream to be able to read from the socket in the usual way. A stream made this way can be passed to all the parse methods.
 <2> The first step of the handshake is to send a version message.
@@ -326,20 +324,13 @@ class HeadersMessage:
         
     @classmethod
     def parse(cls, stream):
-        # number of headers is in a varint
         num_headers = read_varint(stream)
-        # initialize the blocks array
         blocks = []
-        # loop through number of headers times
         for _ in range(num_headers):
-            # add a block to the blocks array by parsing the stream
             blocks.append(Block.parse(stream))  # <1>
-            # read the next varint (num_txs)
             num_txs = read_varint(stream)  # <2>
-            # num_txs should be 0 or raise a RuntimeError
             if num_txs != 0:  # <3>
                 raise RuntimeError('number of txs not 0')
-        # return a class instance
         return cls(blocks)
 ----
 <1> Each block gets parsed using the `Block` class's `parse` method using the same stream that we have.

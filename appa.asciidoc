@@ -48,9 +48,9 @@ class FieldElement:
 ...
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Primes must be the same')
-	num = (self.num - other.num) % self.prime
-	return self.__class__(num, self.prime)
+            raise TypeError('Cannot add two numbers in different Fields')
+        num = (self.num - other.num) % self.prime
+        return self.__class__(num, self.prime)
 ----
 
 ==== Exercise {counter:ch1exercise}
@@ -104,7 +104,7 @@ class FieldElement:
 ...
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Primes must be the same')
+            raise TypeError('Cannot add two numbers in different Fields')
 	num = self.num * other.num % self.prime
 	return self.__class__(num, self.prime)
 ----
@@ -156,7 +156,7 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Primes must be the same')
+            raise TypeError('Cannot add two numbers in different Fields')
 	num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
 	return self.__class__(num, self.prime)
 ----
@@ -592,7 +592,6 @@ mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH
 
 ==== Exercise {counter:ch4exercise}
 
-
 Find the wif for Private Key whose secrets are:
 
 * 5003 (compressed, testnet)
@@ -798,11 +797,11 @@ Write the fee method for the `Tx` class.
 ----
 class Tx:
 ...
-    def fee(self):
+    def fee(self, testnet=False):
         '''Returns the fee of this transaction in satoshi'''
         input_sum, output_sum = 0, 0
         for tx_in in self.tx_ins:
-            input_sum += tx_in.value()
+            input_sum += tx_in.value(testnet=testnet)
         for tx_out in self.tx_outs:
             output_sum += tx_out.amount
         return input_sum - output_sum
@@ -1166,7 +1165,7 @@ class Block:
 ...
     def difficulty(self):
         '''Returns the block difficulty based on the bits'''
-        lowest = 0xffff * 2**(8*(0x1d-3))
+        lowest = 0xffff * 256**(0x1d - 3)
         return lowest / self.target()
 ----
 
@@ -1337,11 +1336,8 @@ class SimpleNode:
 ...
     def handshake(self):
         '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
-        # create a version message
         version = VersionMessage()
-        # send the command
         self.send(version.command, version.serialize())
-        # wait for a verack message
         self.wait_for_commands({b'verack'})
 ----
 
@@ -1390,7 +1386,7 @@ def merkle_parent_level(hashes):
         hashes.append(hashes[-1])
     parent_level = []
     for i in range(0, len(hashes), 2):
-        parent = merkle_parent(hashes[i], hashes[i+1])
+        parent = merkle_parent(hashes[i], hashes[i + 1])
         parent_level.append(parent)
     return parent_level
 ----
@@ -1595,6 +1591,8 @@ class GetDataMessage:
 ==== Exercise {counter:ch12exercise}
 
 Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
+
+*As this is a very difficult problem, it's suggested that you run this as a separate file. Comments are included in the code below to help aid you in understanding the steps.*
 
 [source,python]
 ----

@@ -43,8 +43,6 @@ class S256Point(Point):
 ...
     def sec(self):
         '''returns the binary version of the sec format'''
-        # remember, you have to convert self.x.num/self.y.num to binary
-        # (some_integer.to_bytes(32, 'big'))
 	return b'\x04' + self.x.num.to_bytes(32, 'big') \
             + self.y.num.to_bytes(32, 'big')  # <1>
 ----
@@ -87,16 +85,12 @@ class S256Point(Point):
 ...
     def sec(self, compressed=True):
         '''returns the binary version of the sec format'''
-        # remember, you have to convert self.x.num/self.y.num to binary
-        # (some_integer.to_bytes(32, 'big'))
         if compressed:
             if self.y.num % 2 == 0:
                 return b'\x02' + self.x.num.to_bytes(32, 'big')
             else:
                 return b'\x03' + self.x.num.to_bytes(32, 'big')
         else:
-            # if non-compressed, starts with b'\x04' followod by self.x
-            # and then self.y
             return b'\x04' + self.x.num.to_bytes(32, 'big') \
                 + self.y.num.to_bytes(32, 'big')
 ----
@@ -150,7 +144,7 @@ We can actually add this as a general method in the S256Field
 class S256Field(FieldElement):
 ...
     def sqrt(self):
-        return self**((P+1)//4)
+        return self**((P + 1) // 4)
 ----
 
 ==== Exercise {counter:exercise}
@@ -240,7 +234,6 @@ All numbers, upper case letters and lower case letters are utilized except for t
 [source, python]
 ----
 def encode_base58(s):
-    # determine how many 0 bytes (b'\x00') s starts with
     count = 0
     for c in s:  # <1>
         if c == 0:
@@ -248,7 +241,6 @@ def encode_base58(s):
         else:
             break
     prefix = b'1' * count
-    # convert from binary format to integer
     num = int.from_bytes(s, 'big')
     result = bytearray()
     while num > 0:  # <2>

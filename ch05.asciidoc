@@ -138,16 +138,12 @@ def read_varint(s):
     '''read_varint reads a variable integer from a stream'''
     i = s.read(1)[0]
     if i == 0xfd:
-        # 0xfd means the next two bytes are the number
         return little_endian_to_int(s.read(2))
     elif i == 0xfe:
-        # 0xfe means the next four bytes are the number
         return little_endian_to_int(s.read(4))
     elif i == 0xff:
-        # 0xff means the next eight bytes are the number
         return little_endian_to_int(s.read(8))
     else:
-        # anything else is just the integer
         return i
 
 
@@ -313,13 +309,9 @@ class TxOut:
 
     def serialize(self):  # <1>
         '''Returns the byte serialization of the transaction output'''
-        # serialize amount, 8 bytes, little endian
         result = int_to_little_endian(self.amount, 8)
-        # get the scriptPubkey ready (use self.script_pubkey.serialize())
         raw_script_pubkey = self.script_pubkey.serialize()
-        # encode_varint on the length of the scriptPubkey
         result += encode_varint(len(raw_script_pubkey))
-        # add the scriptPubKey
         result += raw_script_pubkey
         return result
 
@@ -335,20 +327,13 @@ class TxIn:
 
     def serialize(self):
         '''Returns the byte serialization of the transaction input'''
-        # serialize prev_tx, little endian
         result = self.prev_tx[::-1]
-        # serialize prev_index, 4 bytes, little endian
         result += int_to_little_endian(self.prev_index, 4)
-        # get the scriptSig ready (use self.script_sig.serialize())
         raw_script_sig = self.script_sig.serialize()
-        # encode_varint on the length of the scriptSig
         result += encode_varint(len(raw_script_sig))
-        # add the scriptSig
         result += raw_script_sig
-        # serialize sequence, 4 bytes, little endian
         result += int_to_little_endian(self.sequence, 4)
         return result
-
 ----
 
 Lastly, we can put together the transaction object this way:
@@ -360,24 +345,15 @@ class Tx:
 
     def serialize(self):
         '''Returns the byte serialization of the transaction'''
-        # serialize version (4 bytes, little endian)
         result = int_to_little_endian(self.version, 4)
-        # encode_varint on the number of inputs
         result += encode_varint(len(self.tx_ins))
-        # iterate inputs
         for tx_in in self.tx_ins:
-            # serialize each input
             result += tx_in.serialize()
-        # encode_varint on the number of inputs
         result += encode_varint(len(self.tx_outs))
-        # iterate outputs
         for tx_out in self.tx_outs:
-            # serialize each output
             result += tx_out.serialize()
-        # serialize locktime (4 bytes, little endian)
         result += int_to_little_endian(self.locktime, 4)
         return result
-
 ----
 
 We end up utilizing the serialize methods of both TxIn and TxOut to make everything work.
@@ -397,22 +373,16 @@ class TxIn:
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'https://testnet.blockexplorer.com/api'
+            return 'http://tbtc.programmingblockchain.com:18332'
         else:
-            return 'https://blockexplorer.com/api'
+            return 'http://btc.programmingblockchain.com:8332'
 
     def fetch_tx(self, testnet=False):
         if self.prev_tx not in self.cache:
-            url = '{}/rawtx/{}'.format(self.get_url(testnet), self.prev_tx.hex())
+            url = '{}/rest/tx/{}.hex'.format(
+                self.get_url(testnet), self.prev_tx.hex())
             response = requests.get(url)
-            try:
-                js_response = response.json()
-                if 'rawtx' not in js_response:
-                    raise RuntimeError('got from server: {}'.format(js_response))
-            except:
-                raise RuntimeError('got from server: {}'.format(response.text))
-            raw = bytes.fromhex(js_response['rawtx'])
-            stream = BytesIO(raw)
+            stream = BytesIO(bytes.fromhex(response.text.strip()))
             tx = Tx.parse(stream)
             self.cache[self.prev_tx] = tx
         return self.cache[self.prev_tx]
@@ -425,24 +395,18 @@ We can now write methods to get the previous transaction output's amount and scr
 [source,python]
 ----
 
-    def amount(self, testnet=False):
+    def value(self, testnet=False):
         '''Get the outpoint value by looking up the tx hash on libbitcoin server
         Returns the amount in satoshi
         '''
-        # use self.fetch_tx to get the transaction
         tx = self.fetch_tx(testnet=testnet)
-        # get the output at self.prev_index
-        # return the amount property
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
         '''Get the scriptPubKey by looking up the tx hash on libbitcoin server
         Returns the binary scriptpubkey
         '''
-        # use self.fetch_tx to get the transaction
         tx = self.fetch_tx(testnet=testnet)
-        # get the output at self.prev_index
-        # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
 ----
 

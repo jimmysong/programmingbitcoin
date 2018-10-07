@@ -364,11 +364,8 @@ class S256Field(FieldElement):
     def __init__(self, num, prime=None):
         super().__init__(num=num, prime=P)
 
-    def hex(self):
-        return '{:x}'.format(self.num).zfill(64)
-
     def __repr__(self):
-        return self.hex()
+        return '{:x}'.format(self.num).zfill(64)
 
     def sqrt(self):
         return self**((P + 1) // 4)
@@ -380,9 +377,7 @@ class S256Point(Point):
 
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)
-        if x is None:
-            super().__init__(x=None, y=None, a=a, b=b)
-        elif type(x) == int:
+        if type(x) == int:
             super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
         else:
             super().__init__(x=x, y=y, a=a, b=b)
@@ -554,15 +549,18 @@ class Signature:
         return 'Signature({:x},{:x})'.format(self.r, self.s)
 
     def der(self):
-        # convert the r part to bytes
         rbin = self.r.to_bytes(32, byteorder='big')
-        # if rbin has a high bit, add a 00
-        if rbin[0] >= 128:
+        # remove all null bytes at the beginning
+        rbin = rbin.lstrip(b'\x00')
+        # if rbin has a high bit, add a \x00
+        if rbin[0] & 0x80:
             rbin = b'\x00' + rbin
-        result = bytes([2, len(rbin)]) + rbin
+        result = bytes([2, len(rbin)]) + rbin  # <1>
         sbin = self.s.to_bytes(32, byteorder='big')
-        # if sbin has a high bit, add a 00
-        if sbin[0] >= 128:
+        # remove all null bytes at the beginning
+        sbin = sbin.lstrip(b'\x00')
+        # if sbin has a high bit, add a \x00
+        if sbin[0] & 0x80:
             sbin = b'\x00' + sbin
         result += bytes([2, len(sbin)]) + sbin
         return bytes([0x30, len(result)]) + result

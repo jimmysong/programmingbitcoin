@@ -76,13 +76,13 @@ The class represents an actual element in a field F~prime~. The bare bones of th
 class FieldElement:
 
     def __init__(self, num, prime):
-        if num < 0 or num >= prime: # <1>
+        if num >= prime or num < 0:  # <1>
 	    error = 'Num {} not in field range 0 to {}'.format(num, prime-1)
 	    raise ValueError(error)
-        self.num = num # <2>
+        self.num = num  # <2>
         self.prime = prime
 
-    def __eq__(self, other): # <3>
+    def __eq__(self, other):  # <3>
         if other is None:
             return False
         return self.num == other.num and self.prime == other.prime

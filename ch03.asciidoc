@@ -71,6 +71,7 @@ When initializing `Point`, we will run through this part of the code:
 [source,python]
 ----
 class Point:
+    zero = 0
 
     def __init__(self, x, y, a, b):
         self.a = a
@@ -409,9 +410,7 @@ We want to be able to scalar multiply the point with some number. Thankfully, th
 [source,python]
 ----
 class Point:
-
     ...
-
     def __rmul__(self, coefficient):
         product = self.__class__(None, None, self.a, self.b) # <1>
         for _ in range(coefficient): # <2>
@@ -427,8 +426,6 @@ It turns out there's a really fun technique called binary expansion. If bits is 
 
 [source,python]
 ----
-import math
-
 class Point:
     ...
     def __rmul__(self, coefficient):
@@ -532,7 +529,6 @@ Since we know the curve we will work in, this might be a good time to create a s
 
 [source,python]
 ----
-
 P = 2**256 - 2**32 - 977
 
 class S256Field(FieldElement):
@@ -584,7 +580,7 @@ class S256Point(Point):
     ...
     def __rmul__(self, coefficient):
         coef = coefficient % N # <1>
-	return super().__rmul__(self, coef)
+	return super().__rmul__(coef)
 ----
 <1> We can mod by N because `N*G==Point(infinity)`. That is, every N times we add G to itself or any member of this group, we effectively go back to zero (Point at infinity).
 
@@ -807,7 +803,6 @@ We already have a class S256Point which is the publc point for the private key. 
 
 [source,python]
 ----
-
 class Signature:
 
     def __init__(self, r, s):
@@ -917,8 +912,7 @@ class PrivateKey:
 
     def __init__(self, secret):
         self.secret = secret
-        self.point = secret*G
-
+        self.point = secret * G
 ----
 
 We keep around the public key (self.point) for convenience. We can now create the sign method.

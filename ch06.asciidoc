@@ -85,9 +85,6 @@ Given this rule, we can write a very basic parser. We assume that we have some l
 
 [source,python]
 ----
-
-OP_CODES = {...}
-
 class Script:
 
     def __init__(self, elements):
@@ -110,7 +107,6 @@ class Script:
         while current != b'':
             op_code = current[0]
             if op_code >= 1 and op_code <= 75:  # <2>
-                # we have an element
                 elements.append(s.read(op_code))
             else:
                 elements.append(op_code)
@@ -129,6 +125,8 @@ class Script:
                 result += bytes([len(element)]) + element
         return result
 
+
+OP_CODES = {...}
 ----
 <1> The elements attribute is a list of items in this script. p2pkh (later in this chapter), would be OP_DUP, OP_HASH160, 20-byte hash, OP_EQUALVERIFY, OP_CHECKSIG, or 5 items.
 <2> We have an element, not an operation if it's between 1 and 75 (`4b`), so op_code is a bit of a misnomer here.
