@@ -429,6 +429,7 @@ It turns out there's a really fun technique called binary expansion. If bits is 
 class Point:
     ...
     def __rmul__(self, coefficient):
+        coef = coefficient
         current = self  # <1>
         result = self.__class__(None, None, self.a, self.b)  # <2>
         while coef:
