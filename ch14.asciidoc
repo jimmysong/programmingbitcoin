@@ -10,11 +10,11 @@ If you've made it this far, congratulations! You've learned quite a bit about Bi
 
 Creating a wallet is a difficult task as securing private keys turns out to be very difficult. That said, there are a bunch of standards for creating wallets that can help in this regard.
 
-==== Heirarchical Deterministic Wallets
+==== Hierarchical Deterministic Wallets
 
 For privacy purposes, reusing addresses is very bad. That means we need to create lots of addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
 
-To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical Deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path. The specifications and test vectors are defined in the standard, so implementing your own HD wallet on testnet would be a great way to learn what Bitcoin development would be like.
+To combat this problem, Armory originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Hierarchical Deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path. The specifications and test vectors are defined in the standard, so implementing your own HD wallet on testnet would be a great way to learn what Bitcoin development would be like.
 
 Additionally, BIP0044 defines exactly what each layer means and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies. Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better. Note that while many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and utilize their own standard (Electrum and Airbitz being two).
 
@@ -24,7 +24,7 @@ Writing down and transcribing a 256-bit seed turns out to be a pain and fraught 
 
 === Payment Channels and Lightning Network
 
-Payment Channels are the atomic unit of the Lightning Network and learning how they work is a good next step. There are many ways to implement Payment Channels, The BOLT standard is the specification that lightning nodes are supposed to use and has all the details. They are in progress and are available at:
+Payment Channels are the atomic unit of the Lightning Network and learning how they work is a good next step. There are many ways to implement Payment Channels, the BOLT standard is the specification that lightning nodes are supposed to use and has all the details. They are in progress and are available at:
 
 https://github.com/lightningnetwork/lightning-rfc/
 
@@ -55,7 +55,7 @@ It's hard to understate the importance of security in Bitcoin. Writing a wallet 
 
 ==== Block Explorer
 
-A more ambitious project would be to write your own block explorer. The key to making your own block explorer is to store all the blockchain data in an easy-accesible form. Using a traditional database like Postgres or MySQL will be very useful here. As bitcoin core does not have address indexes, adding one will make it possible for you to not have to trust another node's data.
+A more ambitious project would be to write your own block explorer. The key to making your own block explorer is to store all the blockchain data in an easily-accessible form. Using a traditional database like Postgres or MySQL will be very useful here. As bitcoin core does not have address indexes, adding one will make it possible for you to not have to trust another node's data.
 
 ==== Web Shop
 
