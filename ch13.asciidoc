@@ -35,7 +35,7 @@ The fact that ScriptSig is _malleable_, that is, able to be changed without chan
 
 === Fixing malleability
 
-The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the transaction ID stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
+The authors of Segwit fixed malleability by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the transaction ID stays stable as the malleability vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
 
 If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork and not a hard fork.
 
@@ -87,7 +87,7 @@ P2WPKH is great, but unfortunately, this is a new type of script and older walle
 
 The segwit authors found an ingenious way to make Segwit backwards compatibly by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh. This is called "nested" Segwit as the Segwit stuff is embedded inside a p2sh.
 
-The way this works is that the address is a normal p2sh address, but the redeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
+The way this works is that the address is a normal p2sh address, but the RedeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
 
 image::p2sh-p2wpkh1.png[p2sh-p2wpkh to Old Nodes]
 
@@ -116,7 +116,7 @@ At this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the i
 
 image::p2sh-p2wpkh8.png[p2sh-p2wpkh Step 4]
 
-This should look familar as this is exactly the state that p2wpkh starts with. After OP_0 and the 20-byte hash we are left with this:
+This should look familiar as this is exactly the state that p2wpkh starts with. After OP_0 and the 20-byte hash we are left with this:
 
 image::p2sh-p2wpkh9.png[p2sh-p2wpkh Step 5]
 
@@ -128,11 +128,11 @@ The rest of the processing is exactly the same as p2pkh (Chapter 6). Assuming th
 
 image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
 
-As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would stop at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do further validation of the actual signature and pubkey.
+As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the RedeemScripts were equal and a post-BIP0016, pre-Segwit node would stop at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do further validation of the actual signature and pubkey.
 
 === Other improvements
 
-Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new double_sha256 hash for each input. The details of the z calculation is detailed in BIP0143.
+Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new double_sha256 hash for each input. The details of the z calculation are in BIP0143.
 
 In addition, to allow newer nodes to get the Segwit serialization, there is now a service bit in the version message that indicates whether the Segwit versions of the transaction serializations will be understood or not. Various network commands have extensions to allow for requesting Segwit-specific serializations. The specifications are detailed in BIP0144.
 
