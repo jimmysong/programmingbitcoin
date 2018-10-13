@@ -6,7 +6,7 @@
 == Serialization
 
 [.lead]
-We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`. We now need to start thinking about how to transmit thes objects to other computers on the network, or even to disk as we'll need to store objects of these classes. This is where serialization comes into play. We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`. Ideally, we want to do this efficiently for reasons we'll see in Chapter 10 (Networking).
+We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`. We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk as we'll need to store objects of these classes. This is where serialization comes into play. We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`. Ideally, we want to do this efficiently for reasons we'll see in Chapter 10 (Networking).
 
 === Uncompressed SEC format
 
@@ -26,16 +26,16 @@ image::sec1.png[Uncompressed SEC format]
 
 .Big and Little Endian
 ****
-The motivation for Big and Little Endian encodings is storing a number on disk. Arabic numberals are read left-to-right. A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300. This is what we call Big-Endian because the Big End starts first.
+The motivation for Big and Little Endian encodings is storing a number on disk. Arabic numerals are read left-to-right. A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300. This is what we call Big-Endian because the Big End starts first.
 
 Computers can sometimes be more efficient using the opposite order or Little-Endian. That is, starting with the Little End first.
 
-Since Computers work in bytes, which have 8 bits, we have to think in base-256. This means that a number like 500 looks like this in Big-Endian `01f4`. That is, 500 = 1*256 + 246 (`f4` in hexadecimal). The same number looks like this in Little-Endian `f401`.
+Since computers work in bytes, which have 8 bits, we have to think in base-256. This means that a number like 500 looks like this in Big-Endian `01f4`. That is, 500 = 1*256 + 246 (`f4` in hexadecimal). The same number looks like this in Little-Endian `f401`.
 
 Unfortunately, some stuff in Bitcoin (like the SEC format x and y coordinates) are in Big-Endian. Other stuff in Bitcoin (like the transaction version number) are in Little-Endian. This book will let you know which ones are Big vs Little Endian.
 ****
 
-This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into a 32 bytes. Here's how this is done in code:
+This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into 32 bytes. Here's how this is done in code:
 
 [source,python]
 ----
@@ -363,7 +363,7 @@ Find the wif for Private Key whose secrets are:
 
 === Big and Little Endian Redux
 
-It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and wif. A lot of stuff coming up in Chapter 5 onward will utilze Little Endian encoding. For this reason, we turn to these two exercises.
+It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and wif. A lot of stuff coming up in Chapter 5 onward will utilize Little Endian encoding. For this reason, we turn to these two exercises.
 
 ==== Exercise {counter:exercise}
 
