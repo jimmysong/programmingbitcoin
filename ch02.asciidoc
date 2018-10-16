@@ -91,7 +91,7 @@ class Point:
 
 This allows us to do something like this:
 
-[source, python]
+[source,python]
 ----
 >>> from ecc import Point
 >>> p1 = Point(-1, -1, 5, 7)
@@ -195,7 +195,7 @@ To actually do the Point Addition, we're going to split it up into 3 steps:
 
 We first handle the identity, or the point at infinity. Since we don't have the infinity numbers in Python, we'll use the `None` value instead. What we want is something like this:
 
-[source, python]
+[source,python]
 ----
 >>> from ecc import Point
 >>> p1 = Point(-1, -1, 5, 7)

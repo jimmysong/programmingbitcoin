@@ -96,7 +96,7 @@ class FieldElement:
 
 What we've defined already allows us to do this:
 
-[source, python]
+[source,python]
 ----
 >>> from ecc import FieldElement
 >>> a = FieldElement(7, 13)
@@ -530,7 +530,7 @@ a^-3^=a^-3^⋅a^p-1^=a^p-4^
 
 This is a way we can do negative exponents. A naive implementation would do something like this:
 
-[source, python]
+[source,python]
 ----
     def __pow__(self, exponent):
 	n = exponent

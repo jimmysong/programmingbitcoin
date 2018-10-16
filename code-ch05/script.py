@@ -1,43 +1,91 @@
 from io import BytesIO
+from unittest import TestCase
+
+from helper import (
+    encode_varint,
+    int_to_little_endian,
+    read_varint,
+)
 
 
 class Script:
 
-    def __init__(self, elements):
-        self.elements = elements
+    def __init__(self, items):
+        self.items = items
 
     def __repr__(self):
         result = ''
-        for element in self.elements:
-            if type(element) == int:
-                result += '{} '.format(OP_CODES[element])
+        for item in self.items:
+            if type(item) == int:
+                result += '{} '.format(OP_CODES[item])
             else:
-                result += '{} '.format(element.hex())
+                result += '{} '.format(item.hex())
         return result
 
     @classmethod
-    def parse(cls, binary):
-        s = BytesIO(binary)
-        elements = []
-        current = s.read(1)
-        while current != b'':
-            op_code = current[0]
-            if op_code > 0 and op_code <= 75:
-                # we have an element
-                elements.append(s.read(op_code))
-            else:
-                elements.append(op_code)
+    def parse(cls, s):
+        length = read_varint(s)
+        items = []
+        count = 0
+        while count < length:
             current = s.read(1)
-        return cls(elements)
+            count += 1
+            current_byte = current[0]
+            if current_byte >= 1 and current_byte <= 75:
+                n = current_byte
+                items.append(s.read(n))
+                count += n
+            else:
+                op_code = current_byte
+                items.append(op_code)
+        return cls(items)
 
     def serialize(self):
         result = b''
-        for element in self.elements:
-            if type(element) == int:
-                result += bytes([element])
+        for item in self.items:
+            if type(item) == int:
+                result += int_to_little_endian(item, 1)
             else:
-                result += bytes([len(element)]) + element
-        return result
+                length = len(item)
+                prefix = int_to_little_endian(length, 1)
+                result += prefix + item
+        total = len(result)
+        return encode_varint(total) + result
+
+
+class ScriptTest(TestCase):
+
+    def test_parse(self):
+        script_pubkey = BytesIO(bytes.fromhex('6a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937'))
+        script = Script.parse(script_pubkey)
+        want = bytes.fromhex('304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601')
+        self.assertEqual(script.items[0].hex(), want.hex())
+        want = bytes.fromhex('035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937')
+        self.assertEqual(script.items[1], want)
+
+    def test_serialize(self):
+        want = '6a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937'
+        script_pubkey = BytesIO(bytes.fromhex(want))
+        script = Script.parse(script_pubkey)
+        self.assertEqual(script.serialize().hex(), want)
+
+    def test_p2pkh(self):
+        script_pubkey_raw = bytes.fromhex('1976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac')
+        script_pubkey = Script.parse(BytesIO(script_pubkey_raw))
+        self.assertEqual(script_pubkey.serialize(), script_pubkey_raw)
+
+        script_sig_raw = bytes.fromhex('6b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278a')
+        script_sig = Script.parse(BytesIO(script_sig_raw))
+        self.assertEqual(script_sig.serialize(), script_sig_raw)
+
+    def test_p2sh(self):
+        script_pubkey_raw = bytes.fromhex('17a91474d691da1574e6b3c192ecfb52cc8984ee7b6c5687')
+        script_pubkey = Script.parse(BytesIO(script_pubkey_raw))
+        self.assertEqual(script_pubkey.serialize(), script_pubkey_raw)
+
+        script_sig_raw = bytes.fromhex('db00483045022100dc92655fe37036f47756db8102e0d7d5e28b3beb83a8fef4f5dc0559bddfb94e02205a36d4e4e6c7fcd16658c50783e00c341609977aed3ad00937bf4ee942a8993701483045022100da6bee3c93766232079a01639d07fa869598749729ae323eab8eef53577d611b02207bef15429dcadce2121ea07f233115c6f09034c0be68db99980b9a6c5e75402201475221022626e955ea6ea6d98850c994f9107b036b1334f18ca8830bfff1295d21cfdb702103b287eaf122eea69030a0e9feed096bed8045c8b98bec453e1ffac7fbdbd4bb7152ae')
+        script_sig = Script.parse(BytesIO(script_sig_raw))
+        self.assertEqual(script_sig.serialize(), script_sig_raw)
 
 
 OP_CODES = {

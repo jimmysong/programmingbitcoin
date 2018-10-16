@@ -100,11 +100,6 @@ def encode_varint(i):
         raise RuntimeError('integer too large: {}'.format(i))
 
 
-def p2pkh_script(h160):
-    '''Takes a hash160 and returns the scriptPubKey'''
-    return b'\x76\xa9\x14' + h160 + b'\x88\xac'
-
-
 class HelperTest(TestCase):
 
     def test_little_endian_to_int(self):

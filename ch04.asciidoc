@@ -235,7 +235,7 @@ The actual mechanics of doing the base58 encoding are as follows.
 
 All numbers, upper case letters and lower case letters are utilized except for the aforementioned 0/O and l/I. That leaves us with 10 + 26 + 26 - 4 = 58. Each of these characters represents a digit in base 58. We can encode with a function that does exactly this:
 
-[source, python]
+[source,python]
 ----
 def encode_base58(s):
     count = 0

@@ -102,11 +102,6 @@ def encode_varint(i):
         raise RuntimeError('integer too large: {}'.format(i))
 
 
-def p2pkh_script(h160):
-    '''Takes a hash160 and returns the scriptPubKey'''
-    return b'\x76\xa9\x14' + h160 + b'\x88\xac'
-
-
 def h160_to_p2pkh_address(h160, testnet=False):
     '''Takes a byte sequence hash160 and returns a p2pkh address string'''
     # p2pkh has a prefix of b'\x00' for mainnet, b'\x6f' for testnet

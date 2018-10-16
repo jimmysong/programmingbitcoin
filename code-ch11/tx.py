@@ -10,11 +10,10 @@ from helper import (
     encode_varint,
     int_to_little_endian,
     little_endian_to_int,
-    p2pkh_script,
     read_varint,
     SIGHASH_ALL,
 )
-from script import Script
+from script import p2pkh_script, Script
 
 
 class Tx:
@@ -158,7 +157,7 @@ class Tx:
         sig = der + hash_type.to_bytes(1, 'big')
         # calculate the sec
         sec = private_key.point.sec()
-        # initialize a new script with [sig, sec] as the elements
+        # initialize a new script with [sig, sec] as the items
         script_sig = Script([sig, sec])
         # change input's script_sig to new script
         self.tx_ins[input_index].script_sig = script_sig
@@ -189,10 +188,10 @@ class Tx:
             return None
         # grab the first input
         first_input = self.tx_ins[0]
-        # grab the first element of the script_sig (.script_sig.elements[0])
-        first_element = first_input.script_sig.elements[0]
-        # convert the first element from little endian to int
-        return little_endian_to_int(first_element)
+        # grab the first item of the script_sig (.script_sig.items[0])
+        first_item = first_input.script_sig.items[0]
+        # convert the first item from little endian to int
+        return little_endian_to_int(first_item)
 
 
 class TxIn:
@@ -222,26 +221,21 @@ class TxIn:
         # prev_index is 4 bytes, little endian, interpret as int
         prev_index = little_endian_to_int(s.read(4))
         # script_sig is a variable field (length followed by the data)
-        # get the length by using read_varint(s)
-        script_sig_length = read_varint(s)
-        script_sig = Script.parse(s.read(script_sig_length))
+        # you can use Script.parse to get the actual script
+        script_sig = Script.parse(s)
         # sequence is 4 bytes, little-endian, interpret as int
         sequence = little_endian_to_int(s.read(4))
         # return an instance of the class (cls(...))
         return cls(prev_tx, prev_index, script_sig, sequence)
 
     def serialize(self):
-        '''Returns the byte serialization of the transaction output'''
+        '''Returns the byte serialization of the transaction input'''
         # serialize prev_tx, little endian
         result = self.prev_tx[::-1]
         # serialize prev_index, 4 bytes, little endian
         result += int_to_little_endian(self.prev_index, 4)
-        # get the scriptSig ready (use self.script_sig.serialize())
-        raw_script_sig = self.script_sig.serialize()
-        # encode_varint on the length of the scriptSig
-        result += encode_varint(len(raw_script_sig))
-        # add the scriptSig
-        result += raw_script_sig
+        # add the ScriptSig (use self.script_sig.serialize())
+        result += self.script_sig.serialize()
         # serialize sequence, 4 bytes, little endian
         result += int_to_little_endian(self.sequence, 4)
         return result
@@ -283,23 +277,23 @@ class TxIn:
         # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
 
-    def der_signature(self, index=0):
+    def der_signature(self):
         '''returns a DER format signature and hash_type if the script_sig
         has a signature'''
-        signature = self.script_sig.signature(index=index)
+        signature = self.script_sig.signature()
         # last byte is the hash_type, rest is the signature
         return signature[:-1]
 
-    def hash_type(self, index=0):
+    def hash_type(self):
         '''returns a DER format signature and hash_type if the script_sig
         has a signature'''
-        signature = self.script_sig.signature(index=index)
+        signature = self.script_sig.signature()
         # last byte is the hash_type, rest is the signature
         return signature[-1]
 
-    def sec_pubkey(self, index=0):
+    def sec_pubkey(self):
         '''returns the SEC format public if the script_sig has one'''
-        return self.script_sig.sec_pubkey(index=index)
+        return self.script_sig.sec_pubkey()
 
     def redeem_script(self):
         '''return the Redeem Script if there is one'''
@@ -313,7 +307,7 @@ class TxOut:
         self.script_pubkey = script_pubkey
 
     def __repr__(self):
-        return '{}:{}'.format(self.amount, self.script_pubkey.address())
+        return '{}:{}'.format(self.amount, self.script_pubkey)
 
     @classmethod
     def parse(cls, s):
@@ -324,9 +318,8 @@ class TxOut:
         # amount is 8 bytes, little endian, interpret as int
         amount = little_endian_to_int(s.read(8))
         # script_pubkey is a variable field (length followed by the data)
-        # get the length by using read_varint(s)
-        script_pubkey_length = read_varint(s)
-        script_pubkey = Script.parse(s.read(script_pubkey_length))
+        # you can use Script.parse to get the actual script
+        script_pubkey = Script.parse(s)
         # return an instance of the class (cls(...))
         return cls(amount, script_pubkey)
 
@@ -334,12 +327,8 @@ class TxOut:
         '''Returns the byte serialization of the transaction output'''
         # serialize amount, 8 bytes, little endian
         result = int_to_little_endian(self.amount, 8)
-        # get the scriptPubkey ready (use self.script_pubkey.serialize())
-        raw_script_pubkey = self.script_pubkey.serialize()
-        # encode_varint on the length of the scriptPubkey
-        result += encode_varint(len(raw_script_pubkey))
-        # add the scriptPubKey
-        result += raw_script_pubkey
+        # add the ScriptPubkey (use self.script_pubkey.serialize())
+        result += self.script_pubkey.serialize()
         return result
 
 
@@ -359,7 +348,7 @@ class TxTest(TestCase):
         want = bytes.fromhex('d1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81')
         self.assertEqual(tx.tx_ins[0].prev_tx, want)
         self.assertEqual(tx.tx_ins[0].prev_index, 0)
-        want = bytes.fromhex('483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278a')
+        want = bytes.fromhex('6b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278a')
         self.assertEqual(tx.tx_ins[0].script_sig.serialize(), want)
         self.assertEqual(tx.tx_ins[0].sequence, 0xfffffffe)
 
@@ -370,11 +359,11 @@ class TxTest(TestCase):
         self.assertEqual(len(tx.tx_outs), 2)
         want = 32454049
         self.assertEqual(tx.tx_outs[0].amount, want)
-        want = bytes.fromhex('76a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac')
+        want = bytes.fromhex('1976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac')
         self.assertEqual(tx.tx_outs[0].script_pubkey.serialize(), want)
         want = 10011545
         self.assertEqual(tx.tx_outs[1].amount, want)
-        want = bytes.fromhex('76a9141c4bc762dd5423e332166702cb75f40df79fea1288ac')
+        want = bytes.fromhex('1976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac')
         self.assertEqual(tx.tx_outs[1].script_pubkey.serialize(), want)
 
     def test_parse_locktime(self):
@@ -427,7 +416,7 @@ class TxTest(TestCase):
             script_sig=b'',
             sequence=0,
         )
-        want = bytes.fromhex('76a914a802fc56c704ce87c42d7c92eb75e7896bdc41ae88ac')
+        want = bytes.fromhex('1976a914a802fc56c704ce87c42d7c92eb75e7896bdc41ae88ac')
         self.assertEqual(tx_in.script_pubkey().serialize(), want)
 
     def test_fee(self):

@@ -86,49 +86,53 @@ Given this rule, we can write a very basic parser. We assume that we have some l
 ----
 class Script:
 
-    def __init__(self, elements):
-        self.elements = elements  # <1>
+    def __init__(self, items):
+        self.items = items  # <1>
 
     def __repr__(self):
         result = ''
-        for element in self.elements:
-            if type(element) == int:
-                result += '{} '.format(OP_CODES[element])
+        for item in self.items:
+            if type(item) == int:
+                result += '{} '.format(OP_CODES[item])
             else:
-                result += '{} '.format(element.hex())
+                result += '{} '.format(item.hex())
         return result
 
     @classmethod
-    def parse(cls, binary):
-        s = BytesIO(binary)
-        elements = []
-        current = s.read(1)
-        while current != b'':
-            op_code = current[0]
-            if op_code >= 1 and op_code <= 75:  # <2>
-                elements.append(s.read(op_code))
-            else:
-                elements.append(op_code)
+    def parse(cls, s):
+        length = read_varint(s)
+        items = []
+        count = 0
+        while count < length:
             current = s.read(1)
-        return cls(elements)
-
+            count += 1
+            current_byte = current[0]
+            if current_byte >= 1 and current_byte <= 75:  # <2>
+                n = current_byte
+                items.append(s.read(n))
+                count += n
+            else:
+                op_code = current_byte
+                items.append(op_code)
+        return cls(items)
 
     def serialize(self):
         result = b''
-        for element in self.elements:
-            if type(element) == int:
-                result += bytes([element])
+        for item in self.items:
+            if type(item) == int:
+                result += int_to_little_endian(item, 1)
             else:
-	        if len(element) < 1 or len(element) > 75:
-		    raise RuntimeError('Element needs to be between 1 and 75 bytes inclusive')
-                result += bytes([len(element)]) + element
-        return result
+                length = len(item)
+                prefix = int_to_little_endian(length, 1)
+                result += prefix + item
+        total = len(result)
+        return encode_varint(total) + result
 
 
 OP_CODES = {...}
 ----
-<1> The elements attribute is a list of items in this script. p2pkh (later in this chapter), would be OP_DUP, OP_HASH160, 20-byte hash, OP_EQUALVERIFY, OP_CHECKSIG, or 5 items.
-<2> We have an element, not an operation if it's between 1 and 75 (`4b`), so op_code is a bit of a misnomer here.
+<1> The `items` attribute is a list of items in this script. p2pkh (later in this chapter), would be OP_DUP, OP_HASH160, 20-byte hash, OP_EQUALVERIFY, OP_CHECKSIG, or 5 items.
+<2> If the byte is between 1 and 75 inclusive, we have an element.
 
 === Combining the script fields
 

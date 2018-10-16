@@ -230,25 +230,24 @@ The other thing we will need is a way to convert the 20-byte hash to a ScriptPub
 
 [source,python]
 ----
-
 def p2pkh_script(h160):
     '''Takes a hash160 and returns the scriptPubKey'''
-    return Script.parse(b'\x76\xa9\x14' + h160 + b'\x88\xac')
+    return Script([0x76, 0xa9, h160, 0x88, 0xac])
 ----
 
-Note that `76` is OP_DUP, `a9` is OP_HASH160, `14` is the length of the hash160 (20 bytes in hex), `88` is OP_EQUALVERIFY and `ac` is OP_CHECKSIG. This is exactly the p2pkh ScriptPubKey from Chapter 6.
+Note that `0x76` is OP_DUP, `0xa9` is OP_HASH160, h160 is a 20-byte element, `0x88` is OP_EQUALVERIFY and `0xac` is OP_CHECKSIG. This is exactly the p2pkh ScriptPubKey from Chapter 6.
 
 We can now proceed to create the transaction.
 
 [source,python]
 ----
->>> from helper import decode_base58, p2pkh_script, SIGHASH_ALL
->>> from script import Script
+>>> from helper import decode_base58, SIGHASH_ALL
+>>> from script import p2pkh_script, Script
 >>> from tx import TxIn, TxOut, Tx
 >>> tx_ins = []
 >>> prev_tx = bytes.fromhex('0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299')
 >>> prev_index = 13
->>> tx_ins.append(TxIn(prev_tx, prev_index, b'', 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx, prev_index, Script([]), 0xffffffff))
 >>> tx_outs = []
 >>> change_amount = int(0.33*100000000)  # <1>
 >>> change_h160 = decode_base58('mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2')

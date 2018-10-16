@@ -39,16 +39,18 @@ One of the intriguing things about the Coinbase Transaction is that there's noth
 It turns out that the ScriptSig of the Coinbase transaction is set by miners to be more or less whatever they want. Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
 
 ```
-04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73
+4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73
 ```
 
 This ScriptSig was composed by Satoshi and contains a now-famous message that we can take a look at:
 
 [source,python]
 ----
+>>> from io import BytesIO
 >>> from script import Script
->>> s = Script.parse(bytes.fromhex('04ffff...6b73'))
->>> print(s.elements[2])
+>>> stream = BytesIO(bytes.fromhex('04ffff...6b73'))
+>>> s = Script.parse(stream)
+>>> print(s.items[2])
 b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
 ----
 
@@ -67,11 +69,12 @@ The height must be interpreted as a little-endian integer and must equal the hei
 
 [source,python]
 ----
+>>> from io import BytesIO
 >>> from script import Script
 >>> from helper import little_endian_to_int
->>> bin_script_sig = bytes.fromhex('03d71b0725...e00')
->>> script_sig = Script.parse(bin_script_sig)
->>> print(little_endian_to_int(script_sig.elements[0]))
+>>> stream = BytesIO(bytes.fromhex('5e03d71b0725...e00'))
+>>> script_sig = Script.parse(stream)
+>>> print(little_endian_to_int(script_sig.items[0]))
 465879
 ----
 

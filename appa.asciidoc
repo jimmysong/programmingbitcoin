@@ -698,8 +698,7 @@ class TxIn:
         '''
         prev_tx = s.read(32)[::-1]
         prev_index = little_endian_to_int(s.read(4))
-        script_sig_length = read_varint(s)
-        script_sig = Script.parse(s.read(script_sig_length))
+        script_sig = Script.parse(s)
         sequence = little_endian_to_int(s.read(4))
         return cls(prev_tx, prev_index, script_sig, sequence)
 ----
@@ -737,8 +736,7 @@ class TxOut:
         return a TxOut object
         '''
         amount = little_endian_to_int(s.read(8))
-        script_pubkey_length = read_varint(s)
-        script_pubkey = Script.parse(s.read(script_pubkey_length))
+        script_pubkey = Script.parse(s)
         return cls(amount, script_pubkey)
 ----
 

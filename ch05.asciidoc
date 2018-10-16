@@ -226,15 +226,16 @@ We'll delve more deeply into how Script is parsed in the next chapter, but for n
 
 [source,python]
 ----
+>>> from io import BytesIO
 >>> from script import Script
->>> script_hex = '483045..8a'
->>> script_bin = bytes.fromhex(script_hex)
->>> script_raw = Script.parse(script_bin)
+>>> script_hex = '6b483045..8a'
+>>> stream = BytesIO(bytes.fromhex(script_hex))
+>>> script_raw = Script.parse(stream)
 >>> print(script_raw)
 3045...01 0349...8a
 ----
 
-Note that Script is a variable length field, so is always prepended by a varint that tells us how long the field is going to be.
+The details of how script is parsed is covered in Chapter 6.
 
 ==== Exercise {counter:exercise}
 
@@ -322,9 +323,7 @@ class TxOut:
     def serialize(self):  # <1>
         '''Returns the byte serialization of the transaction output'''
         result = int_to_little_endian(self.amount, 8)
-        raw_script_pubkey = self.script_pubkey.serialize()
-        result += encode_varint(len(raw_script_pubkey))
-        result += raw_script_pubkey
+        result += self.script_pubkey.serialize()
         return result
 
 ----
@@ -341,9 +340,7 @@ class TxIn:
         '''Returns the byte serialization of the transaction input'''
         result = self.prev_tx[::-1]
         result += int_to_little_endian(self.prev_index, 4)
-        raw_script_sig = self.script_sig.serialize()
-        result += encode_varint(len(raw_script_sig))
-        result += raw_script_sig
+        result += self.script_sig.serialize()
         result += int_to_little_endian(self.sequence, 4)
         return result
 ----
