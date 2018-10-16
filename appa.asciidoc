@@ -857,7 +857,7 @@ class Tx:
             alt_tx_ins.append(TxIn(
                 prev_tx=tx_in.prev_tx,
                 prev_index=tx_in.prev_index,
-                script_sig=b'',
+                script_sig=Script([]),
                 sequence=tx_in.sequence,
             ))
         signing_input = alt_tx_ins[input_index]
@@ -915,8 +915,8 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 [source,python]
 ----
 >>> from ecc import PrivateKey
->>> from helper import decode_base58, p2pkh_script, SIGHASH_ALL
->>> from script import Script
+>>> from helper import decode_base58, SIGHASH_ALL
+>>> from script import p2pkh_script, Script
 >>> from tx import TxIn, TxOut, Tx
 >>> prev_tx = bytes.fromhex('75a1c4bc671f55f626dda1074c7725991e6f68b8fcefcfca7b64405ca3b45f1c')
 >>> prev_index = 1
@@ -927,7 +927,7 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 >>> secret = 8675309
 >>> priv = PrivateKey(secret=secret)
 >>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx, prev_index, b'', 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx, prev_index, Script([]), 0xffffffff))
 >>> tx_outs = []
 >>> h160 = decode_base58(target_address)
 >>> script_pubkey = p2pkh_script(h160)
@@ -941,7 +941,7 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 >>> tx_obj.sign_input(0, priv, SIGHASH_ALL)
 >>> if priv.point.address(testnet=True) != change_address:
 ...     raise RuntimeError('Private Key does not correspond to Change Address, check priv_key and change_address')
->>> if tx_ins[0].script_pubkey(testnet=True).elements[2] != decode_base58(change_address):
+>>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(change_address):
 ...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
 >>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
 ...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
@@ -956,8 +956,8 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 [source,python]
 ----
 >>> from ecc import PrivateKey
->>> from helper import decode_base58, p2pkh_script, SIGHASH_ALL
->>> from script import Script
+>>> from helper import decode_base58, SIGHASH_ALL
+>>> from script import p2pkh_script, Script
 >>> from tx import TxIn, TxOut, Tx
 >>> prev_tx_1 = bytes.fromhex('11d05ce707c1120248370d1cbf5561d22c4f83aeba0436792c82e0bd57fe2a2f')
 >>> prev_index_1 = 1
@@ -968,8 +968,8 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 >>> secret = 8675309
 >>> priv = PrivateKey(secret=secret)
 >>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx_1, prev_index_1, b'', 0xffffffff))
->>> tx_ins.append(TxIn(prev_tx_2, prev_index_2, b'', 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx_1, prev_index_1, Script([]), 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx_2, prev_index_2, Script([]), 0xffffffff))
 >>> tx_outs = []
 >>> h160 = decode_base58(target_address)
 >>> script_pubkey = p2pkh_script(h160)
@@ -978,7 +978,7 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
 >>> tx_obj.sign_input(0, priv, SIGHASH_ALL)
 >>> tx_obj.sign_input(1, priv, SIGHASH_ALL)
->>> if tx_ins[0].script_pubkey(testnet=True).elements[2] != decode_base58(priv.point.address(testnet=True)):
+>>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(priv.point.address(testnet=True)):
 ...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
 >>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
 ...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
@@ -1079,8 +1079,8 @@ class Tx:
         if not self.is_coinbase():
             return None
         first_input = self.tx_ins[0]
-        first_element = first_input.script_sig.elements[0]
-        return little_endian_to_int(first_element)
+        first_item = first_input.script_sig.items[0]
+        return little_endian_to_int(first_item)
 ----
 
 ==== Exercise {counter:ch9exercise}
@@ -1598,7 +1598,7 @@ import time
 from block import Block
 from bloomfilter import BloomFilter
 from ecc import PrivateKey
-from helper import double_sha256, little_endian_to_int, encode_varint, read_varint, decode_base58, p2pkh_script, SIGHASH_ALL
+from helper import double_sha256, little_endian_to_int, encode_varint, read_varint, decode_base58, SIGHASH_ALL
 from merkleblock import MerkleBlock
 from network import (
     GetDataMessage,
@@ -1609,6 +1609,7 @@ from network import (
     TX_DATA_TYPE,
     FILTERED_BLOCK_DATA_TYPE,
 )
+from script import p2pkh_script, Script
 from tx import Tx, TxIn, TxOut
 
 last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
@@ -1698,7 +1699,7 @@ while prev_tx is None:
                 prev_index = i
                 print('found: {}:{}'.format(prev_tx.hex(), prev_index))
 # create tx_in
-tx_in = TxIn(prev_tx, prev_index, b'', 0xffffff)
+tx_in = TxIn(prev_tx, prev_index, Script([]), 0xffffff)
 # set the cache of the previous tx to prev_tx_obj so we don't talk to a block explorer
 tx_in.cache[prev_tx] = prev_tx_obj
 # create the tx_ins array
