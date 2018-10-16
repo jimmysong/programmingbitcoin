@@ -119,6 +119,7 @@ One of the tools we can use in order to make a field closed under addition, subt
 
 We can define addition on the finite set using something called modulo arithmetic. Modulo arithmetic is something you probably did back in elementary school. Remember problems like this?
 
+.Long Division Example 1
 image::longdivision.png[Long Division Example 1]
 
 Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We can actually define modulo in the same way. We use the operator *%* for "modulo".
@@ -127,6 +128,7 @@ Whenever the division wasn't even, there was something called the "remainder" wh
 
 Because
 
+.Long Division Example 2
 image::longdivision-2.png[Long Division Example 2]
 
 We can do the same for larger numbers:
@@ -141,6 +143,7 @@ The answer is 2 o'clock because:
 
 (3 + 47) % 12 = 2
 
+.Clock
 image::clock.jpg[Clock]
 
 We can also see this as "wrapping around" in the sense that you go back to zero every time we move ahead 12 hours.
