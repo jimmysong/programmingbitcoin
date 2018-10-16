@@ -19,6 +19,7 @@ We start with special transactions called Coinbase transactions. This has nothin
 
 Essentially, the Coinbase transaction is what makes it worthwhile for a miner to mine. Here's what a Coinbase transaction looks like:
 
+.Coinbase Transaction
 image::coinbase1.png[Coinbase Transaction]
 
 The transaction structure is exactly the same as any other transaction on the Bitcoin network with a few exceptions.
@@ -53,6 +54,7 @@ b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
 
 This was, of course, the headline from The Times newspaper on January 3, 2009.
 
+.Genesis Block Coinbase ScriptSig
 image::genesis.jpg[Genesis Block Coinbase ScriptSig]
 
 This proves that the Genesis Block was created some time *at or after* that date, and not before. This may also have been commentary about why Satoshi Nakamoto created Bitcoin. Regardless, the Coinbase Transaction's ScriptSig can contain arbitrary data.
@@ -90,6 +92,7 @@ Blocks are batches of transactions and the block header is metadata about the tr
 * Bits
 * Nonce
 
+.Parsed Block
 image::block1.png[Block Parsing]
 
 This is the metadata for every block. Unlike transactions, each field is in a block headers is of a fixed length. Version is 4 bytes, Previous Block is 32 bytes, Merkle Root is 32 bytes, Timestamp is 4 bytes, Bits is 4 bytes and Nonce is 4 bytes. The headers therefore, take up exactly 80 bytes for each block. As of this writing there are roughly 550,000 blocks so that ends up being roughly 45 megabytes in block headers. The entire blockchain, on the other hand, is roughly 150 GB, so the headers are roughly .027% of the size. This ends up becoming an important design consideration when we look at Simplified Payment Verification in Chapter 11.

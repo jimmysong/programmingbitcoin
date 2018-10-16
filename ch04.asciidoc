@@ -22,7 +22,8 @@ Here is how the uncompressed SEC format for a given point P=(x,y) is generated:
 
 Here is what the uncompressed SEC format looks like:
 
-image::sec1.png[Uncompressed SEC format]
+.Uncompressed SEC Format
+image::sec1.png[Uncompressed SEC Format]
 
 .Big and Little Endian
 ****
@@ -60,6 +61,7 @@ Find the uncompressed SEC format for the Public Key where the Private Key secret
 
 Recall that for any x-coordinate, there are only two different possible y-coordinates due to the y^2^ term in the elliptic curve equation:
 
+.The two possible values for y are where this vertical line intersects the curve.
 image::intersect2-1.png[Elliptic Curve Vertical Line]
 
 It turns out that even over a Finite Field, we have the same symmetry.
@@ -75,7 +77,8 @@ Here is how the Compressed SEC format for a given point P=(x,y) is generated:
 
 The Compressed SEC format looks like this:
 
-image::sec2.png[Compressed SEC format]
+.Compressed SEC Format
+image::sec2.png[Compressed SEC Format]
 
 Again, the procedure is pretty straightforward. we can update the sec method to handle compressed SEC keys.
 
@@ -172,7 +175,8 @@ DER Signatures are created like this:
 
 Here's what it looks like:
 
-image:der.png[DER format]
+.DER Format
+image::der.png[DER format]
 
 Because we know r is a 256-bit integer, r will be at most 32-bytes expressed as big-endian. It's also possible the first byte could be >= 0x80, so part 4 can be at most 33-bytes. However, if r is a relatively small number, it could be less than 32 bytes. Same goes for s and part 6.
 

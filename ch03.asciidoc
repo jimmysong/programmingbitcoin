@@ -23,6 +23,7 @@ Clearly, all of these are true as normal addition and multiplication apply for t
 
 The nice thing about real numbers is that we can easily plot what's going on and see the whole thing visually as we did in the last chapter. For example, y^2^=x^3^+7 can be plotted like this:
 
+.secp256k1 over real numbers
 image::elliptic3.png[secp256k1 Curve]
 
 What's interesting is that we can use this equation over any field, including the Finite Fields we explored in Chapter 1. The only difference is that we have to use the addition/subtraction/multiplication/division as we defined them, not the "normal" versions that the real numbers use.
@@ -38,6 +39,7 @@ Indeed, that point is on the curve using the Finite Field math.
 
 Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different:
 
+.Elliptic Curve over a Finite Field
 image::elliptic3.png[Elliptic Curve over a Finite Field]
 
 As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete. About the only pattern is that the curve is symmetric right around the middle, which is due to the fact that the graph is symmetric, not over the x-axis as in the curve over reals, but about half-way up the y-axis.
@@ -142,7 +144,8 @@ y=mx+b
 
 It turns out that a "line" in a finite field is not quite what you'd expect, either:
 
-image::linefinitefield.png[Line over a finite field]
+.Line over a Finite Field
+image::linefinitefield.png[Line over a Finite Field]
 
 Still, the equation works and we can calculate what y should be for a given x.
 
@@ -221,6 +224,7 @@ We can actually do this as many times as we want. This is what we call Scalar Mu
 
 What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
 
+.Scalar Multiplication Results
 image::scatterplot.png[Scalar Multiplication Results]
 
 Each point is labeled by how many times we've added the point. You can see that this is a complete scattershot.
@@ -331,6 +335,7 @@ If you haven't guessed by now, the identity is defined as the point at infinity.
 
 We call 0 the point at infinity because visually, it's the point that exists to help the math work out:
 
+.Vertical Line "intersects" a third time at the point at infinity
 image::intersect2-1.png[Vertical Line]
 
 ==== Closure
@@ -353,6 +358,7 @@ So we know that this element is in the group, proving closure.
 
 Visually, invertibility is easy to see:
 
+.Each point is invertible by taking the reflection over the x-axis
 image::intersect2-1.png[Vertical Line]
 
 Mathematically, we know that if aG is in the group, (n-a)G is also in the group. You can add them together to get 0.
@@ -361,6 +367,7 @@ Mathematically, we know that if aG is in the group, (n-a)G is also in the group.
 
 Again, this is very easy to see visually:
 
+.The Line through the points doesn't change
 image::pointaddition.png[Point Addition]
 
 Clearly, P+Q=Q+P because they end up drawing the same line.
@@ -379,7 +386,9 @@ You can swap P~1~ and P~2~ to get the exact same equation.
 
 This is the hardest to prove but can be seen visually from the last chapter:
 
+.(P+Q)+R
 image::associativity1.png[Case 1]
+.P+(Q+R)
 image::associativity2.png[Case 2]
 
 Mathematically, this is a bit more involved, but the math can be proven given the definition that we have. There are proofs of this, but the polynomials involved take several pages and are thus outside the scope of this book.

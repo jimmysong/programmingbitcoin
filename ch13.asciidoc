@@ -43,8 +43,10 @@ If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8
 
 To understand Segwit, it helps to look at what the transaction looks like when sent to an old node versus a new node:
 
+.Pay-to-witness-pubkey-hash as seen by pre-BIP0141 software
 image::p2wpkh1.png[p2wpkh to old nodes]
 
+.Pay-to-witness-pubkey-hash as seen by post-BIP0141 software
 image::p2wpkh2.png[p2wpkh to new nodes]
 
 The difference between these two serializations is that the latter transactions have a couple of markers plus the witness program field. Otherwise, the two transactions look more or less the same. The key to making the transaction ID not malleable is that the first serialization is utilized for calculating the transaction ID.
@@ -53,28 +55,34 @@ Note here that the Witness Program has the Signature and Pubkey as its two eleme
 
 The actual ScriptPubKey for a p2wpkh ScriptPubKey is OP_0 <20-byte hash>. The ScriptSig, as seen in both serializations above is actually empty. Thus, the actual spending of a p2wpkh output creates a Script like this:
 
-image::p2wpkh3.png[p2wpkh Script]
+.Pay-to-witness-pubkey-hash (p2wpkh) ScriptPubKey
+image::p2wpkh3.png[p2wpkh ScriptPubKey]
 
 The processing of this Script starts like this:
 
+.p2wpkh Start
 image::p2wpkh4.png[p2wpkh Start]
 
 OP_0 puts a 0 on the stack, which produces this:
 
+.p2wpkh Step 1
 image::p2wpkh5.png[p2wpkh Step 1]
 
 The 20-byte hash is simply an element, so it goes straight to the stack:
 
+.p2wpkh Step 2
 image::p2wpkh6.png[p2wpkh Step 2]
 
 At this point, older nodes will stop as there are no more Script items to be processed. Since the top element is non-zero, this will be counted as a valid script. This is very similar to p2sh (Chapter 8) in that older nodes cannot validate further. Newer nodes, however, have a special rule much like p2sh. Recall that with p2sh, the exact Script sequence of <redeem script> OP_HASH160 <hash> OP_EQUAL triggered a special rule.
 
 In the case of p2wpkh, the Script sequence is <20-byte hash> 0. When that Script sequence is encountered, the pubkey and signature from the witness program and the 20-byte hash are combined to be processed exactly as would p2pkh. Namely: <signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG. This then is the state that is encountered next:
 
+.p2wpkh Step 3
 image::p2wpkh7.png[p2wpkh Step 3]
 
 The rest of the processing of p2wpkh is exactly the same as the processing of p2pkh as seen in Chapter 6. The end state is a single 1 on the stack if and only if the 20-byte hash is the HASH160 of the pubkey and the signature is valid:
 
+.p2wpkh Step 4
 image::p2wpkh13.png[p2wpkh Step 4]
 
 The interesting thing here is that for an older node, processing stops at <20-byte hash> 0, as older nodes don't know the special Segwit rule. Only upgraded nodes do the rest of the validation, much like p2sh. Note that this means less data is sent over the network as older nodes simply have no need the pubkey and signature that they can't verify anyway. Also, we give nodes the option of not having to verify transactions that are X blocks old if they don't want to. In a sense, the signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating itself if it so chooses.
@@ -89,43 +97,55 @@ The segwit authors found an ingenious way to make Segwit backwards compatibly by
 
 The way this works is that the address is a normal p2sh address, but the redeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
 
+.Pay-to-script-hash-pay-to-witness-pubkey-hash (p2sh-p2wpkh) to pre-BIP0141 software
 image::p2sh-p2wpkh1.png[p2sh-p2wpkh to Old Nodes]
 
+.p2sh-p2wpkh to post-BIP0141 software
 image::p2sh-p2wpkh2.png[p2sh-p2wpkh to New Nodes]
 
 The difference with p2wpkh is that the scriptSig is the fixed RedeemScript that would normally be the ScriptPubkey.  The ScriptSig is no longer empty, but it is still much shorter than the typical ScriptSig. As this is a p2sh, the ScriptPubKey is exactly the same as any other p2sh. The resulting Script looks like this:
 
-image::p2sh-p2wpkh3.png[p2sh-p2wpkh Script]
+.p2sh-p2wpkh ScriptPubKey is the same as a normal p2sh ScriptPubKey
+image::p2sh-p2wpkh3.png[p2sh-p2wpkh ScriptPubKey]
 
 We thus start the Script processing like this:
 
+.p2sh-p2wpkh Start
 image::p2sh-p2wpkh4.png[p2sh-p2wpkh Start]
 
 Notice right off the bat that the items to be processed are exactly what triggers the p2sh Special rule. The RedeemScript goes on the stack:
+
+.p2sh-p2wpkh Step 1
 image::p2sh-p2wpkh5.png[p2sh-p2wpkh Step 1]
 
 The OP_HASH160 will turn the RedeemScript's hash:
 
+.p2sh-p2wpkh Step 2
 image::p2sh-p2wpkh6.png[p2sh-p2wpkh Step 2]
 
 The hash will go on the stack and we then get to OP_EQUAL
 
+.p2sh-p2wpkh Step 3
 image::p2sh-p2wpkh7.png[p2sh-p2wpkh Step 3]
 
 At this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid as they are unaware of the p2sh validation rules. However, post-BIP0016 nodes will now have encountered the special Script sequence for p2sh, so the RedeemScript will now be processed as Script. The actual RedeemScript turns out to be OP_0 <20-byte hash>, which is exactly the ScriptPubKey for p2wpkh. This makes the Script state look like this:
 
+.p2sh-p2wpkh Step 4
 image::p2sh-p2wpkh8.png[p2sh-p2wpkh Step 4]
 
 This should look familar as this is exactly the state that p2wpkh starts with. After OP_0 and the 20-byte hash we are left with this:
 
+.p2sh-p2wpkh Step 5
 image::p2sh-p2wpkh9.png[p2sh-p2wpkh Step 5]
 
 At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules. However, post-Segwit nodes will now have encountered the special Script sequence for p2wpkh, so the Witness Program will now be looked up for the signature and pubkey and along with the 20-byte hash, will produce the same Script state as p2pkh:
 
+.p2sh-p2wpkh Step 6
 image::p2sh-p2wpkh10.png[p2sh-p2wpkh Step 6]
 
 The rest of the processing is exactly the same as p2pkh (Chapter 6). Assuming the signature and pubkey are valid, we are left with:
 
+.p2sh-p2wpkh End
 image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
 
 As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would stop at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do further validation of the actual signature and pubkey.

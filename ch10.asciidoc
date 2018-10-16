@@ -17,7 +17,8 @@ With that in mind, let's start with the very first message that one node sends t
 
 Network messages have a particular form that looks like this
 
-image:network1.png[Network Message]
+.Network Message or the Envelope that contains the actual payload
+image::network1.png[Network Message]
 
 The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted. Magic bytes are also useful to make sure the node is on the right network. You would not want a Bitcoin node to connect to a Litecoin node, for example. Thus, a Litecoin node has a differnt magic. Bitcoin testnet also has a different magic `0b110907` as opposed to the Bitcoin mainnet magic `f9beb4d9` above.
 
@@ -65,7 +66,8 @@ Write the `parse` and `serialize` methods for `NetworkEnvelope`.
 
 Each command has a separate payload specification. Here is the one for version:
 
-image:network2.png[Version Message]
+.Parsed `version`
+image::network2.png[Version Message]
 
 The fields for version are meant to give enough information for two nodes to be able to be able to communicate.
 
@@ -261,6 +263,7 @@ Now that we can connect to a node, what can we do? When any node first connects 
 
 Block headers, fortunately, are always available. It does not matter if the node we're connected to is a full node or not. Every node can give us the headers it has. The command to get the block headers is called `getheaders` and it looks something like this:
 
+.Parsed `getheaders`
 image::getheaders.png[GetHeaders payload]
 
 We have to specify the protocol version, the number of hashes in this list and then the starting to ending blocks that we want. If we specify the ending block to be `000...000`, we're indicating that we want as many as the other node will give us. The maximum number of headers that we'll get back is 2000, or almost a single difficulty adjustment period (2016 blocks).
@@ -309,6 +312,7 @@ At this point, we can now create a node, handshake, and then ask for some header
 
 Now we need a way to receive the actual headers from our connected node. The other node will send back the `headers` command. The nice thing about the headers command is that it's a bunch of block headers which we already learned how to parse from Chapter 9. The actual HeadersMessage class can take advantage. The message looks like this:
 
+.Parsed `headers`
 image::headers.png[headers payload]
 
 We start with the number of headers as a varint. We can have up to 2000 come back, so this is important. Each block header, we know, is 80 bytes. We have the number of transactions, or 0 in this case. The number of transactions is always 0. This may be a bit confusing at first since we only asked for the headers and not the transactions. The reason nodes bother sending the number of transactions at all is because this is meant to be compatible with the format for a full block, which is the block header, number of transactions and then the transactions themselves. By specifying that the number of transactions is 0, we can use the same parsing engine as when parsing a full block.

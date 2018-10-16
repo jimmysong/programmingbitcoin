@@ -21,6 +21,7 @@ At this point a general overview of these fields might be helpful. Version defin
 
 Here is a hexadecimal dump of a typical transaction that shows which parts are which.
 
+.Transaction Components
 image::tx1.png[Transaction Version, Inputs, Outputs and Locktime]
 
 The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
@@ -86,6 +87,7 @@ This is advantageous from an engineering perspective as the stream can be a sock
 
 === Version
 
+.Version
 image::tx2.png[Version]
 
 When you see a version number in something, it's meant to give the receiver information about what the versioned thing is supposed to represent. If, for example, you are running Windows 3.1, that's a version number that's very differnt than Windows 8 or Windows 10. You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
@@ -100,6 +102,7 @@ Write the version parsing part of the parse method that we've defined. To do thi
 
 === Inputs
 
+.Inputs
 image::tx3.png[Inputs]
 
 Each input is an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
@@ -115,6 +118,7 @@ The inputs field can contain more than one input. This is analogous to using a s
 
 The number of inputs is the next part of the transaction:
 
+.Number of Inputs
 image::tx4.png[Inputs]
 
 We can see that the byte is actually `01`, which means that this transaction has 1 input. It may be tempting here to assume that it's always a single byte, but it's not. A single byte has 8 bits, so this means that anything over 255 inputs would not be expressible in a single byte.
@@ -181,6 +185,7 @@ ScriptSig has to do with Bitcoin's smart contract language SCRIPT, and will be d
 
 Sequence was originally intended as a way to do payment channels (see sidebar), but is currently used with Replace-By-Fee and Check Sequence Verify. This field is also in little-endian and takes up 4 bytes. The resulting transaction looks something like this:
 
+.The Fields of an Input
 image::tx5.png[Input Fields]
 
 .Sequence and Locktime
@@ -242,6 +247,7 @@ As hinted in the previous section, outputs define where the bitcoins are actuall
 
 Like inputs, the transaction serialization starts with how many outputs there are as a varint.
 
+.Number of Outputs
 image::tx6.png[Outputs]
 
 Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin. This allows us to divide Bitcoin very finely, down to 1/100th of a penny in USD terms as of this writing. The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million bitcoins) in satoshis, which is 2,100,000,000,000,000 (2.1 quadrillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and thus be stored in more bytes. This is why amount takes up 8 bytes and is serialized in little-endian.
@@ -250,6 +256,7 @@ ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart co
 
 The actual output fields look like this
 
+.Fields of an Output
 image::tx7.png[Output Fields]
 
 .UTXO Set
@@ -281,6 +288,11 @@ Write the outputs parsing part of the parse method in `Tx` and the parse method 
 ==== Locktime
 
 Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater than 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
+
+The serialization is in Little-endian and 4-bytes like so:
+
+.Locktime
+image::tx8.png[Locktime]
 
 This turns out not to be that useful as the recipient of the transaction has no certainty that the transaction will be good when the locktime comes. The sender can spend the inputs prior to the locktime transaction getting into the blockchain invalidating the transaction at locktime.
 

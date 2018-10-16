@@ -37,14 +37,17 @@ SCRIPT, as a language, operates by processing one item at a time. There are two 
 
 Elements are just data. They are byte strings of length 1 to 75. A typical element might be a der signature or a sec pubkey.
 
+.Elements
 image::script1.png[Script Elements]
 
 Operations do something to the data. They consume zero or more elements from the processing stack and put zero or more elements back on the stack.
 
+.Operations
 image::script2.png[Script Operations]
 
 A typical operation might be something like OP_DUP, which will duplicate the top element (consuming 0) and putting a new element on top (putting 1).
 
+.OP_DUP duplicates the top element
 image::op_dup.png[OP_DUP]
 
 At the end of processing all the items in the stack, the top element of the stack must be non-zero for the script to execute successfully. Having no elements on the stack or having the top element be zero would result in a failed execution. Failed execution generally means that the transaction which includes the unlocking script is invalid and not accepted on the network.
@@ -53,29 +56,25 @@ At the end of processing all the items in the stack, the top element of the stac
 
 There are many other operations besides OP_DUP. OP_HASH160 does a sha256 followed by a ripemd160 to the top element of the stack (consuming 1) and putting a new element back (putting 1). Note in the diagram that y = ripemd160(sha256(x))
 
+.OP_HASH160 does a SHA256 followed by RIPEMD160 to the top element
 image::op_hash160.png[OP_HASH160]
 
 Another very important operation is OP_CHECKSIG. OP_CHECKSIG consumes 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey. If so, OP_CHECKSIG pushes a 1 onto the stack, otherwise puts a 0 on the stack.
 
+.OP_CHECKSIG checks if the signature for the pubkey is valid or not
 image::op_checksig.png[OP_CHECKSIG]
 
 === Parsing the script fields
 
 Both ScriptPubKey and ScriptSig are parsed the same way. If the byte is between 0x01 and 0x4B (which we call n), we read the next n bytes as an element. Otherwise, the byte represents an operation, which we have to look up. Here are some operations and their byte codes:
 
-0x00 - OP_0
-
-0x51 - OP_1
-
-0x5F - OP_15
-
-0x75 - OP_DUP
-
-0x93 - OP_ADD
-
-0xa9 - OP_HASH160
-
-0xac - OP_CHECKSIG
+* 0x00 - OP_0
+* 0x51 - OP_1
+* 0x5F - OP_15
+* 0x75 - OP_DUP
+* 0x93 - OP_ADD
+* 0xa9 - OP_HASH160
+* 0xac - OP_CHECKSIG
 
 There are many more and the full list can be found at http://wiki.bitcoin.it
 
@@ -135,17 +134,18 @@ OP_CODES = {...}
 
 It's important to realize at this point that the lock box (ScriptPubKey) and the unlocking (ScriptSig) are in *different* transactions. Specifically, the lock box is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction *points to the receiving transaction*. Essentially, we have a situation like this:
 
+.ScriptPubKey and ScriptSig
 image::script3.png[ScriptPubKey and ScriptSig]
 
 Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two scripts combine. What we do in Bitcoin is take the items from ScriptSig and ScriptPubKey and combine them as above. The items from the ScriptSig go on top of all the items from ScriptSig. Each item is processed one at a time until no items are left to be processed or if the script exits early.
 
 There are many types of standard scripts in Bitcoin including the following:
 
-p2pk - Pay-to-pubkey
-p2pkh - Pay-to-pubkey-hash
-p2sh - Pay-to-script-hash
-p2wpkh - Pay-to-witness-pubkey-hash
-p2wsh - Pay-to-witness-script-hash
+* p2pk - Pay-to-pubkey
+* p2pkh - Pay-to-pubkey-hash
+* p2sh - Pay-to-script-hash
+* p2wpkh - Pay-to-witness-pubkey-hash
+* p2wsh - Pay-to-witness-script-hash
 
 Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, bech32) and create the appropriate ScriptPubKey. All of the above have a particular type of address format so people can pay to them.
 
@@ -159,36 +159,44 @@ We learned back in chapter 3 how signing and verification work in ECDSA. Specifi
 
 Specifying where the bitcoins go is the job of the scriptPubKey. As stated above, this is the lock box that receive the bitcoins. The actual scriptPubKey looks like this:
 
+.Pay-to-pubkey (p2pk) ScriptPubKey
 image::p2pk1.png[P2PK ScriptPubKey]
 
 Note the OP_CHECKSIG, as that will be very important. The ScriptSig is the part that unlocks the received bitcoins. In the case of p2pk, the ScriptSig is just the signature.
 
+.Pay-to-pubkey (p2pk) ScriptSig
 image::p2pk2.png[P2PK ScriptSig]
 
 The scriptPubKey and ScriptSig combine to make a processing stack that looks like this:
 
+.p2pk Combined
 image::p2pk3.png[P2PK Combination]
 
 The two columns below are Items of Script and the actual stack. At the end of this processing, the top element in the stack must be non-zero to be considered a valid ScriptSig. The script items are processed one item at a time. We start with the items as combined above:
 
+.p2pk Start
 image::p2pk4.png[P2PK Start]
 
 The first item is the signature, which is an element. This is data that goes on our stack.
 
+.p2pk Step 1
 image::p2pk5.png[P2PK Step 1]
 
 The second item is the pubkey, which is also an element. This is again, data that goes on our stack.
 
+.p2pk Step 2
 image::p2pk6.png[P2PK Step 2]
 
 OP_CHECKSIG consumes 2 stack items (pubkey and signature) and determines if they are valid for this transaction. OP_CHECKSIG will put a 1 back if the signature is valid, 0 if not. Assuming that the signature is valid for this public key, we have this situation:
 
+.p2pk Step 3
 image::p2pk7.png[P2PK End 1]
 
 We're finished processing all the items of SCRIPT and we've ended with a single item on the stack which is non-zero (1 is definitely not 0). Therefore, this script is valid.
 
 If we were to get an invalid signature, the result from OP_CHECKSIG would be zero, ending our script processing like this:
 
+.p2pk End
 image::p2pk8.png[P2PK End 2]
 
 We end with a single item on the stack which is zero. This means the script is invalid and a transaction with this ScriptSig is invalid.
@@ -243,46 +251,56 @@ Pay-to-pubkey-hash (aka p2pkh) was used during early days of bitcoin, though not
 
 Once again, the lockbox where the bitcoins go is the job of the ScriptPubKey. The actual ScriptPubKey looks like this:
 
+.Pay-to-pubkey-hash (p2pkh) ScriptPubKey
 image::p2pkh1.png[P2PKH ScriptPubKey]
 
 Note that OP_CHECKSIG is still here and OP_HASH160 makes an appearance. Also note that the sec pubkey has disappeared and has been replaced by a 20 byte hash. There is also a new op code that you haven't seen before, OP_EQUALVERIFY.
 
 The ScriptSig, or the unlocking part of the script looks like this:
 
+.Pay-to-pubkey-hash (p2pkh) ScriptSig
 image::p2pkh2.png[P2PKH ScriptSig]
 
 As in p2pk, the ScriptSig has the DER signature. Unlike p2pk, however, the ScriptSig now also has the SEC pubkey. In essence, the pubkey has moved from ScriptPubKey to ScriptSig.
 
 The ScriptPubKey and ScriptSig combine to make a processing list of items that need processing that looks like this:
 
+.p2pkh Combined
 image::p2pkh3.png[P2PKH Combination]
 
 At this point, the script is processed one item at a time. We start with the items as above.
 
+.p2pkh Start
 image::p2pkh4.png[P2PKH Start]
 
 The first two items are elements, so they go straight on the stack.
 
+.p2pkh Step 1
 image::p2pkh5.png[P2PKH Step 1]
 
 OP_DUP duplicates the top element, so we end up with this:
 
+.p2pkh Step 2
 image::p2pkh6.png[P2PKH Step 2]
 
 OP_HASH160 will take the top element and perform the HASH160 operation on it (sha256 followed by ripemd160), creating a 20-byte hash like so:
 
+.p2pkh Step 3
 image::p2pkh7.png[P2PKH Step 3]
 
 The next item on the stack is an element, thus goes straight on the stack.
 
+.p2pkh Step 4
 image::p2pkh8.png[P2PKH Step 4]
 
 We are now at OP_EQUALVERIFY. What this op code does is it consumes the top two elements and sees if they're equal. If they are equal, then the script processing proceeds. If they are not equal, the script stops immediately and is considered invalid. We assume here that they're equal, leading to this:
 
+.p2pkh Step 5
 image::p2pkh9.png[P2PKH Step 5]
 
 We are now at exactly where we were in during the OP_CHECKSIG part of processing p2pk. Once again, we assume that the signature is valid:
 
+.p2pkh End
 image::p2pkh10.png[P2PKH End]
 
 There are two ways this script can fail. If you provide a public key that does not HASH160 to the 20-byte hash in the ScriptPubKey, the script will fail at OP_EQUALVERIFY. The other fail condition is if you do provide the right public key, but an invalid signature. That would end the script with a 0 at the end, failing the script.
@@ -295,38 +313,47 @@ The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a ha
 
 Note that scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the bitcoins can be unlocked in any manner that you wish. The one limitation is that you can't use loops (Turing Completeness, remember?) Here is an example ScriptPubKey:
 
+.Example ScriptPubKey
 image::ex1.png[Example 1 ScriptPubKey]
 
 Here's a ScriptSig that will unlock the above.
 
+.Example ScriptSig
 image::ex2.png[Example 1 ScriptSig]
 
 The combination will look like this:
 
+.Example Combined
 image::ex3.png[Example 1 Combination]
 
 This is how the script processing will start:
 
+.Example Start
 image::ex4.png[Example 1 Start]
 
 OP_4 will put a 4 on the stack
 
+.Example Step 1
 image::ex5.png[Example 1 Step 1]
 
 OP_5 will likewise put a 5 on the stack.
 
+.Example Step 2
 image::ex6.png[Example 1 Step 2]
 
 OP_ADD will consume the top two items of the stack, add them together and put back the sum.
 
+.Example Step 3
 image::ex7.png[Example 1 Step 3]
 
 OP_9 will put a 9 on the stack
 
+.Example Step 4
 image::ex8.png[Example 1 Step 4]
 
 OP_EQUAL will consume 2 items and put a 1 back if equal, 0 back if not.
 
+.Example End
 image::ex9.png[Example 1 End]
 
 Note that this isn't particularly hard to figure out and requires no signature. As a result, this sort of script is vulnerable to being taken by pretty much anyone. Think of this as a lock box with a very flimsy lock that anyone can break into. It turns out that most transactions have some signature component in them as a script without some signature component is very easily stolen.
@@ -335,6 +362,7 @@ Note that this isn't particularly hard to figure out and requires no signature. 
 
 Create a ScriptSig that can unlock this ScriptPubKey
 
+.Exercise 1
 image::exercise1.png[Exercise 1]
 
 ==== Utilty of Scripts
@@ -349,6 +377,7 @@ This is in stark contrast to other projects which try to expand their smart cont
 
 Figure out what this script is doing:
 
+.Exercise 2
 image::exercise2.png[Exercise 2]
 
 ==== SHA1 Piñata

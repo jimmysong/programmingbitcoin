@@ -40,6 +40,7 @@ A Bloom Filter is a computer science structure that can be used on any data in a
 
 Conceptually, what we just did looks like this:
 
+.10-bit Bloom Filter with 1 element
 image::bloomfilter1.png[Simple Bloom Filter]
 
 The actual filter consists of:
@@ -68,6 +69,7 @@ We can run a second item through the same exact filter and set that bit to 1 as 
 
 If the other node has 50 items, this filter will send back on average 10 items instead of the 5 from before because we're getting 2 buckets, not 1. Conceptually speaking, we are essentially doing this:
 
+.10-bit Bloom Filter with 2 elements
 image::bloomfilter2.png[Two Item Bloom Filter]
 
 ==== Exercise {counter:exercise}
@@ -99,6 +101,7 @@ Here's what that would look like. For simplicity, we stick to the same 10-bit fi
 
 Conceptually, this is what we just did:
 
+.10-bit Bloom Filter with 2 elements and 2 hash functions
 image::bloomfilter3.png[Multiple Hash Functions]
 
 This means that we can manipulate our Bloom Filter to have the optimum number of bits and hash functions given a particular amount of hiding that we desire.
@@ -176,6 +179,7 @@ It is not enough just to create a Bloom Filter, we must also let the other node 
 
 The actual command to set the Bloom Filter is called `filterload`. The payload looks like this:
 
+.Parsed `filterload`
 image::filterload.png[filterload Command]
 
 The bit field is the bit field to match against. We also send along how many hash functions and the value of the tweak. The matched item flag is a way of asking the node to add any matched transactions to the Bloom Filter.
@@ -190,7 +194,8 @@ There is one more command that we need and that is getting the filtered blocks f
 
 Here is what the payload looks like:
 
-image::getdata.png[getdat Command]
+.Parsed `getdata`
+image::getdata.png[getdata Command]
 
 We have the number of items as a varint to begin. The each item has a type. 1 is a Transaction (Chapter 5), 2 is a normal Block (Chapter 9), 3 is a Merkle Block (Chapter 11) and 4 is a Compact Block (not covered in this book).
 
