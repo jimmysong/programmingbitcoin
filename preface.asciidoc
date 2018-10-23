@@ -6,23 +6,23 @@ v1.0, 2018-06-21
 [preface]
 == Preface
 
-This book is all about Bitcoin. It doesn't cover everything about Bitcoin (not even close), but everything in this book is geared towards getting you to understand the technology of Bitcoin at a fundamental level. If you're reading this, you may be wondering who it's for and whether you should buy it.
+This book will teach you the technology of Bitcoin at a fundamental level. This book doesn't cover monetary, economic or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible. There's a tendency to hype Bitcoin and blockchain without really understanding what's going on and this book is meant to be an antidote to that tendency.
 
 After all, there are lots of books about Bitcoin, everything from the history of Bitcoin, the economic aspects to a technical description of Bitcoin. The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library. The library is not meant to be exhaustive or efficient. The aim of the library is for you to learn.
 
 === Who is this book for?
 
-This book is for people that want to learn the bare metal stuff, so to speak. This is not a reference book where you can look up the specification for a particular feature. This book is also not for the general audience to learn what Bitcoin is. This is a book for programmers who want to learn Bitcoin. In particular, this book is for those that want to learn all about Bitcoin by coding it themselves. As mentioned above, this book walks you through creating a Bitcoin library from scratch.
+This book is for programmers who want to learn how Bitcoin works by coding it themselves. You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch. This is not a reference book where you can look up the specification for a particular feature.
 
 The material from this book has been largely taken from my 2-day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
 
-By the time you're done with the book, you'll be able to not only create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered, including the math, the parsing, the network connectivity and block validation.
+By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered, including the math, the parsing, the network connectivity and block validation.
 
 === What do I need to know?
 
-The prerequisites for this book are that you know programming and that you know Python in particular. The library itself is written in Python and a lot of the exercises can be done in a controlled environment like Jupyter notebook. An intermediate knowledge of Python is preferred, but even a beginner knowledge of Python is probably sufficient to get a lot of the concepts.
+The prerequisites for this book are that you know programming and that you know Python in particular. The library itself is written in Python and a lot of the exercises can be done in a controlled environment like a Jupyter notebook. An intermediate knowledge of Python is preferred, but even a beginner knowledge of Python is probably sufficient to get a lot of the concepts.
 
-Some knowledge of math is required, especially for Chapters 1 and 2 as they introduce mathematical concepts probably not familiar to those that didn't major in mathematics. A high-school level knowledge of algebra should be sufficient to be able to understand the new concepts and code the material covered there.
+Some knowledge of math is required, especially for Chapters 1 and 2. These chapters introduce mathematical concepts probably not familiar to those that didn't major in mathematics. A high-school level knowledge of algebra should be sufficient to be able to understand the new concepts and code the material covered there.
 
 General CS knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
 
@@ -30,19 +30,19 @@ General CS knowledge like hash functions will come in handy, but are not strictl
 
 This book is split into 14 chapters and build one on top of the other. Each chapter is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
 
-Roughly speaking, Chapters 1-4 establish the mathematical tools that we need, Chapters 5-8 cover the Transaction, which is the fundamental unit of Bitcoin and Chapters 9-12 cover Blocks and Networking. The last two chapters cover some advanced topics but don't actually require you to write code.
+Roughly speaking, Chapters 1-4 establish the mathematical tools that we need, Chapters 5-8 cover Transactions, which are the fundamental unit of Bitcoin and Chapters 9-12 cover Blocks and Networking. The last two chapters cover some advanced topics but don't actually require you to write code.
 
 Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in Chapter 3. After we've established the Public Key Cryptography at the end of Chapter 3, we move towards actually implementing how they appear to a computer through parsing and serializing all the different classes that we established in Chapter 4.
 
-Chapter 5 covers the Transaction structure. Chapter 6 goes into the smart contract language behind Bitcoin called Script. Chapter 7 combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. Chapter 8 establishes how p2sh works, which is a way to make more complicated smart contracts than send Alice 5 Bitcoins to Bob.
+Chapter 5 covers the Transaction structure. Chapter 6 goes into the smart contract language behind Bitcoin called Script. Chapter 7 combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. Chapter 8 establishes how p2sh works, which is a way to make more powerful smart contracts.
 
-Chapter 9 covers Blocks, which are groups of transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light node, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
+Chapter 9 covers Blocks, which are groups of Transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light node, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
 
-Chapter 13 covers Segwit and Chapter 14 covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things that you can do.
+Chapter 13 covers Segwit and Chapter 14 covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things to learn.
 
 Chapters 1-12 have lots of exercises that require you to build up the library from scratch. You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
-The last exercise in Chapter 12 is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, we're working toward being able to do this exercise.
+The last exercise in Chapter 12 is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, the first 11 chapters are setting up toward being able to do this exercise.
 
 There will be a lot of unit tests that you will have to get to pass. The book has been designed this way so you can do the "fun" part of coding. We will be looking at a lot of code and diagrams throughout.
 

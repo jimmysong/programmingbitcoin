@@ -147,7 +147,7 @@ class Point:
         if self.x is None:
             return 'Point(infinity)'
         else:
-            return 'Point({},{})_{}'.format(self.x.num, self.y.num, self.x.prime)
+            return 'Point({}, {})'.format(self.x, self.y)
 
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:

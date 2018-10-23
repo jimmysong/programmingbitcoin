@@ -5,7 +5,7 @@
 == Finite Fields
 
 [.lead]
-One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else. This book is going to start with the basic math that you need. The math that you learn here will allow us to understand Elliptic Curve Cryptography which in turn gives us the signing and verification algorithms that are at the heart of how Transactions work.
+One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else. This book is going to start with the basic math that you need to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms that are at the heart of how Transactions work.
 
 Be aware that this chapter and the next chapter may feel a bit like you're eating some vegetables, especially if you haven't done formal math in a long time. I would encourage you to get through this as the concepts and code here will be utilized over and over again throughout the book.
 
@@ -17,7 +17,7 @@ Think of Finite Fields as something that you could have learned in High School i
 
 In any case, this is my way of telling you that Finite Fields are not that hard to learn and require no more background than what you knew by your second year in High School.
 
-This chapter is essential if you want to learn the ins and outs of Elliptic Curve Cryptography. That, in turn is essential for how signing and verification work, which is at the heart of Bitcoin itself. This chapter and the next may feel a little bit like eating vegetables, but I encourage you to endure; it will be worth it.
+This chapter is essential if you want to learn the ins and outs of Elliptic Curve Cryptography. That, in turn is essential for how signing and verification work, which is at the heart of Bitcoin itself. As mentioned before, this chapter and the next may feel like eating vegetables, but I encourage you to endure. The fundamentials you learn here will make it so much easier to read the papers about Schnorr Signatures, Confidential Transactions, etc.
 
 === Finite Field Definition
 
@@ -35,11 +35,13 @@ Let's unpack each of the following.
 
 We have a set of numbers that's finite. Because the set is finite, we can designate a number *p* which is how big the set is. This is what we call the _order_ of the set. 
 
-The first part says we are closed under addition and multiplication. This means that we have to define addition and multiplication in a way as to make sure that they stay in the set. For example, a set containing {0,1,2} is *not* closed under addition since 1+2=3 and 3 is not in the set, neither is 2+2=4. Of course we can define addition a little differently to make this work, but using "normal" addition, this set is not closed under addition. On the other hand, the set {-1,0,1} is closed under normal multiplication. Any two numbers we choose can be multiplied and the result is always in the set. Again, we can define multiplication in a particular way to make these sets closed.
+The first part says we are closed under addition and multiplication. This means that we have to define addition and multiplication in a way as to make sure that the results stay in the set. For example, a set containing {0,1,2} is *not* closed under addition since 1+2=3 and 3 is not in the set, neither is 2+2=4. Of course we can define addition a little differently to make this work, but using "normal" addition, this set is not closed under addition. On the other hand, the set {-1,0,1} is closed under normal multiplication. Any two numbers we choose can be multiplied and the result is always in the set. We can also define multiplication in a particular way to make these sets closed.
 
 We'll get to how exactly we define addition and multiplication later, but the key concept here to learn is that we can *define addition and subtraction differently than the traditional addition and subtraction*.
 
-The second and third parts mean that we have the additive and multiplicative identities. That means 0 and 1 are in the set. That is, if *a* is in the set, *-a* is in the set. Using this, we can define subtraction. Subtraction is the inverse of addition. Once again, we have to make sure subtraction is defined in a way as to not go under 0. We will define subtraction specifically to a finite field. Multiplication has the same property, so if *a* is in the set, *a^-1^* is in the set. That is *a⋅a^-1^=1*. Using this, we can define division, the inverse of multiplication. This will be the trickiest to define in a finite field, but we will do so.
+The second and third parts mean that we have the additive and multiplicative identities. That means 0 and 1 are in the set. That is, if *a* is in the set, *-a* is in the set. Using this, we can define subtraction. Subtraction is the inverse of addition. Once again, we have to make sure subtraction is defined in a way as to make sure that the result is still in the set, that is, not go under 0. We will define subtraction specifically to a finite field.
+
+Multiplication has the same property, so if *a* is in the set, *a^-1^* is in the set. That is *a⋅a^-1^=1*. Using this, we can define division, the inverse of multiplication. This will be the trickiest to define in a finite field, as we shall see.
 
 === Defining Finite Sets
 
@@ -71,6 +73,7 @@ We want to represent each finite field element and in Python, we'll be creating 
 
 The class represents an actual element in a field F~prime~. The bare bones of the class is pretty intuitive:
 
+.ecc.py
 [source,python]
 ----
 class FieldElement:
@@ -202,6 +205,8 @@ We can utilize what we just learned, modulo arithmetic, to make addition work. L
 
 F~19~={0,1,2,...18}, where a, b ∈ F~19~
 
+Note that the symbol '∈' means "is an element of". In our case, a and b are elements of F~19~.
+
 Addition being closed means:
 
 a+~f~b ∈ F~19~
@@ -220,11 +225,11 @@ For example:
 
 and so on.
 
-This should be somewhat intuitive. We take any two numbers in the set, add and "wrap around" the end to get the sum. We are creating our own addition operator here and it's a bit unintuitive. After all $$11+~f~17=9$$ just doesn't look right for most people because they're not used to Finite Field addition.
+This should be somewhat intuitive. We take any two numbers in the set, add and "wrap around" the end to get the sum. We are creating our own addition operator here and it's a bit unintuitive. After all 11+~f~17=9 just doesn't look right for most people because they're not used to Finite Field addition.
 
 More generally, we can define field addition this way:
 
-a, b ∈ F~p~, a+~f~b = (a+b)%p
+a+~f~b=(a+b)%p where a, b ∈ F~p~
 
 We can also define the additive inverse this way.
 
@@ -246,7 +251,7 @@ And that turns out to be true.
 
 Similarly, we can do field subtraction.
 
-a, b ∈ F~p~, a-~f~b = (a-b)%p
+a-~f~b = (a-b)%p where a, b ∈ F~p~
 
 In F~19~:
 
@@ -281,6 +286,7 @@ True
 
 In Python we can define what addition means for our class with the $$__add__$$ method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
 
+.ecc.py
 [source,python]
 ----
     def __add__(self, other):
@@ -406,6 +412,8 @@ Note that because the exponent is an integer, instead of another instance of `Fi
 
 Why don't we force the exponent to be a `FieldElement` object? It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out. In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
 
+Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
+
 ==== Exercise {counter:exercise}
 
 For p = 7, 11, 17, 31, 43, what is this set in F~p~?
@@ -434,7 +442,7 @@ This is very unintuitive as we generally think of 2/7 or 7/5 as fractions, not n
 
 The question you might be asking yourself is, how do I calculate 2/7 if I didn't know 3⋅7=2? This is indeed a very good question and in order to answer it, we'll have to use the result from the previous exercise.
 
-You probably noticed that n^(p-1)^ is always 1. This is a beautiful result from number theory called Fermat's Little Theorem and only works when p is prime. Essentially, the theorem says:
+In case you didn't get it, the answer is that n^(p-1)^ is always 1 for every p and every n > 0. This is a beautiful result from number theory called Fermat's Little Theorem and only works when p is prime. Essentially, the theorem says:
 
 n^(p-1)^%p=1 where p is prime
 
@@ -442,7 +450,7 @@ Since we are operating in prime fields, this will always be true.
 
 .Fermat's Little Theorem
 ****
-There are many proofs of this theorem, but perhaps the simplest is utilizing what we saw in the exercise above. Namely that the sets:
+There are many proofs of this theorem, but perhaps the simplest is utilizing what we saw in Exercise 5. Namely that the sets:
 
 {1, 2, 3, ... p-2, p-1} = {n%p, 2n%p, 3n%p, ... (p-2)n%p, (p-1)n%p}
 
