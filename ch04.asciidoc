@@ -124,7 +124,11 @@ y^4^ = v^2^ = v^2^ • 1 = v^2^ • v^(p-1)^ = v^(p+1)^ (mod p)
 
 If (p+1) does happen to be a multiple of 4, then we have our answer
 
-y = v^(p+1)/4^ = v^q^  (mod p)
+y = v^(p+1)/4^ = v^q^ (mod p)
+
+We can calculate y from v (calculated from x) and q (calculated from p), both of which we know!
+
+y = (x^3^ + ax + b)^(p+1)/4^ (mod p) provided p + 1 % 4 = 0
 
 That will be one of the two possible y's the other will be p-y.
 
