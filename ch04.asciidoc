@@ -126,7 +126,9 @@ If (p+1) does happen to be a multiple of 4, then we have our answer
 
 y = v^(p+1)/4^ = v^q^  (mod p)
 
-It turns out that for the prime in SEC256k1 (p=2^256^-2^32^-277) this is indeed the case
+That will be one of the two possible y's the other will be p-y.
+
+It turns out that the prime in SEC256k1 (p=2^256^-2^32^-277) does satisfy the condition
 
 p = 3 (mod 4)
 
