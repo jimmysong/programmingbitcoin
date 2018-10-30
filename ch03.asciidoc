@@ -679,7 +679,7 @@ One subtle thing that we haven't talked about is that we have to incorporate the
 
 In signature/verification parlance, this is called the _signature hash_. This generally is the hash of the message that both parties agree to that reveal the intent of the shooter. We denote this with the letter `z`. This is incorporated into our uG+vP calculation this way:
 
-u = r/s, v = z/s
+u = z/s, v = r/s
 
 Since r is used in the calculation of u, we now have the tip of the arrow forged. We also have the intent of the shooter incorporated into v, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
 
@@ -691,11 +691,11 @@ uG+veG=kG
 
 u+ve=k
 
-r/s+ze/s=k
+z/s+re/s=k
 
-(r+ze)/s=k
+(z+re)/s=k
 
-s=(r+ze)/k
+s=(z+re)/k
 
 This is indeed the basis of the signature algorithm and the two numbers actually communicated as part of the signature are r and s.
 
@@ -703,7 +703,7 @@ Verification is simple:
 
 uG+vP where u,v≠0
 
-uG+vP=(r/s)G+(ze/s)G=((r+ze)/s)G=((r+ze)/((r+ze)/k))G=kG=(r,y)
+uG+vP=(z/s)G+(re/s)G=((z+re)/s)G=((z+re)/((z+re)/k))G=kG=(r,y)
 
 .Why We Don't Reveal `k`
 ****

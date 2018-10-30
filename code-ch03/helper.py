@@ -1,8 +1,9 @@
-from unittest import TestSuite, TextTestRunner
+from unittest import SkipTest, TestSuite, TextTestRunner
 
 import hashlib
 
 
+@SkipTest
 def run_test(test):
     suite = TestSuite()
     suite.addTest(test)
