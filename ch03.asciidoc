@@ -949,8 +949,7 @@ class PrivateKey:
 <6> We return a Signature object from above.
 
 .Importance of k being random
-[NOTE]
-====
+****
 
 There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
 
@@ -1004,7 +1003,7 @@ class PrivateKey:
 
 The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
 
-====
+****
 
 ### Conclusion
 
