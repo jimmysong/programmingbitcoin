@@ -6,9 +6,9 @@
 == Script
 
 [.lead]
-The ability to lock and unlock coins is at the heart of what it means to transfer Bitcoin.
+The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin. Locking is leaving some Bitcoins to someone else. Unlocking is spending some Bitcoins that have been left for you.
 
-In this chapter we examine the mechanism by which Bitcoins are locked and unlocked, what you might call a smart contract. Script is what combines what you've learned in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how SCRIPT works and go from there.
+In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what combines what you've learned in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how SCRIPT works and go from there.
 
 === Mechanics of SCRIPT
 
@@ -19,13 +19,14 @@ Think of a personal check. In a sense, a personal check is a type of contract. A
 SCRIPT is a limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is therefore not Turing complete.
 
 .Why Bitcoin isn't Turing Complete
-****
+[NOTE]
+====
 Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why SCRIPT doesn't allow for loops.
 
-There are a lot of reasons for this, but let's start with program execution. Anyone can create a SCRIPT program that every full node on the network executes this program. If SCRIPT were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network. A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem with something called "gas" which doesn't let a smart contract continue executing if the gas has run out.
+There are a lot of reasons for this, but let's start with program execution. Anyone can create a SCRIPT program that every full node on the network executes this program. If SCRIPT were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network. A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
 
 There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to create behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money.
-****
+====
 
 What you are required to do as part of a transaction is to assign Bitcoins to a *locking* script. The locking script is what's specified in ScriptPubKey (see chapter 5). Think of this as the lock box where some money is deposited which only the person with the key to the box can open. The money inside, of course, can only be accessed by someone with the key.
 
@@ -211,7 +212,7 @@ Incidentally, we can see here why ScriptPubKey is called ScriptPubKey. The publi
 
 === Problems with p2pk
 
-Pay-to-pub-key is pretty intuitive in the sense that there is a public key that anyone can send some bitcoins to and a signature that can be produced by the owner of the private key to spend that amount. This works well, but there are some problems.
+Pay-to-pub-key is pretty intuitive in the sense that there is a public key that anyone can send some bitcoins and a signature that can be produced by the owner of the private key to spend that amount. This works well, but there are some problems.
 
 First, the public keys are long. We know from chapter 3 that SECP256K1 public points are 33 bytes in compressed and 65 bytes in uncompressed sec format. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain byte ranges as they are control characters or newlines or similar. The sec format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed formats 66 and 130 characters respectively, which is way bigger than most identifiers. To compound this, early Bitcoin transactions simply didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to communicate by email, much less by voice!
 

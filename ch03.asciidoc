@@ -5,7 +5,7 @@
 == Elliptic Curve Cryptography
 
 [.lead]
-The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts to get Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
+The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts into Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
 === Elliptic Curves over Reals
 
@@ -54,7 +54,7 @@ Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
 
 === Coding Elliptic Curves over Finite Fields
 
-Because we defined an Ellptic curve point and utilize the +,-,* and / operators for Finite Fields, we can actually just combine the two classes to evaluate Elliptic Curve Points over a Finite Field.
+Because we defined an Elliptic curve point and utilize the +,-,* and / operators for Finite Fields, we can actually just combine the two classes to evaluate Elliptic Curve Points over a Finite Field.
 
 [source,python]
 ----
@@ -631,7 +631,7 @@ To set up the motivation for why signing and verification exists, imagine this s
 
 Now if someone could observe you and interact with you, proving this would be easy. Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow. You, being a very good archer do this and prove that you are indeed, a very good archer. The target, if specified by the challenger, is easy for that challenger to verify.
 
-Unfortunately, this doesn't scale very well. If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges. What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer.
+Unfortunately, this doesn't scale very well. If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges. You could try to do something like have 10 people watch you shoot an arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of any target. What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer.
 
 If, for example, you shot an arrow into a target of your choosing, then the people observing afterwards won't necessarily be convinced. After all, you may be a sneaky person that paints the target around wherever your arrow happened to land. So what can you do?
 
@@ -948,10 +948,9 @@ class PrivateKey:
 <5> It turns out that we have to use a low-s value for malleability reasons
 <6> We return a Signature object from above.
 
-The `s` here has to be a low value
-
 .Importance of k being random
-****
+[NOTE]
+====
 
 There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
 
@@ -1005,7 +1004,7 @@ class PrivateKey:
 
 The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
 
-****
+====
 
 ### Conclusion
 

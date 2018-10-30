@@ -126,7 +126,8 @@ We can see that the byte is actually `01`, which means that this transaction has
 This is where varint comes in. Varint is shorthand for *variable integer* which is a way to encode an integer into bytes that range from 0 to 2^64^-1. We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be a relatively small number (say under 200). This is the case with the number of inputs in a normal transaction, so utilizing a varint helps to save space. You can see how they work in the sidebar.
 
 .Varint
-****
+[NOTE]
+====
 Variable integers work by these rules:
 
 * If the number is below 253, encode that number as a single byte (e.g. 100 -> `64`)
@@ -168,7 +169,7 @@ def encode_varint(i):
 
 `read_varint` will read from a stream and return the actual integer that was encoded. `encode_varint` will do the opposite, which is take an integer and return the varint representation.
 
-****
+====
 
 Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
 
@@ -398,6 +399,12 @@ class TxIn:
 ----
 
 We can get the previous transaction using the `fetch_tx` method. You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (double_sha256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
+
+.Why we minimize trusting third parties
+[WARNING]
+====
+As Nick Szabo so clearly wrote in his seminal essay "Trusted Third Parties are Security Holes" (https://nakamotoinstitute.org/trusted-third-parties/), trusting third parties to provide correct data is *not* a good security practice. The third party may be behaving well now, but you never know when they may get hacked, may have an employee go rogue or simply start implementing policies that are against your interests. Part of what makes Bitcoin secure is in *not* trusting, but actually verifying data that we're given.
+====
 
 We can now write methods to get the previous transaction output's amount and script_pubkey (the latter to be used in the next chapter):
 

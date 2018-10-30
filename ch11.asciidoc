@@ -5,11 +5,11 @@
 == Simplified Payment Verification
 
 [.lead]
-The one field that we didn't investigate much in the Chapter 9 is the Merkle Root field. The reason is that in order to understand why it's useful, we have to learn a few things about what Merkle Trees are and what properties they have. In this chapter, we're going to learn exactly what a Merkle Root is. This will be motivated by something called a Proof of Inclusion.
+The one field that we didn't investigate much in the Chapter 9 is the Merkle Root field. In order to understand why it's useful, we have to learn a few things about what Merkle Trees are and what properties they have. In this chapter, we're going to learn exactly what a Merkle Root is. This will be motivated by something called a Proof of Inclusion.
 
 === Motivation
 
-For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 170GB, which is a lot more than many phones can handle. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
+For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 170GB, which is a lot more than many phones can store. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
 
 For any wallet, there are two scenarios that we're concerned with:
 
@@ -20,7 +20,7 @@ If you are paying someone with your Bitcoin wallet, it is up to the person recei
 
 When getting paid Bitcoins, however, we have a dilemma. If we are connected and have the full blockchain, we don't need to worry as we can observe that the transaction paying us is in a sufficiently buried block at which point we'd give them our goods or services. If we don't have the full blockchain, as with a phone, what can we do?
 
-It turns out that the answer lies in the Merkle Root field. As we saw in the last chapter, we can download the block headers and verify that they meet the consensus rules. In this chapter we're going to work towards getting proof that a particular transaction is in a block that we know about. Since the block header is secured by proof-of-work, we know that a proof of inclusion in that block means at a minimum, the person creating the block had to expend a good deal of energy to produce it. The rest of this chapter goes into what the proof of inclusion looks like and how to verify it.
+It turns out that the answer lies in the Merkle Root field from the block header that we saw in Chapter 9. As we saw in the last chapter, we can download the block headers and verify that they meet the consensus rules. In this chapter we're going to work towards getting proof that a particular transaction is in a block that we know about. Since the block header is secured by proof-of-work, we know that a proof of inclusion in that block means at a minimum, the person creating the block had to expend a good deal of energy to produce it. The rest of this chapter goes into what the proof of inclusion looks like and how to verify it.
 
 === Merkle Tree
 

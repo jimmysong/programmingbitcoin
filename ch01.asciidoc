@@ -125,7 +125,7 @@ We can define addition on the finite set using something called modulo arithmeti
 .Long Division Example 1
 image::longdivision.png[Long Division Example 1]
 
-Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We can actually define modulo in the same way. We use the operator *%* for "modulo".
+Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We define modulo in the same way. We use the operator *%* for "modulo".
 
 7 % 3 = 1
 
@@ -134,7 +134,7 @@ Because
 .Long Division Example 2
 image::longdivision-2.png[Long Division Example 2]
 
-We can do the same for larger numbers:
+Formally speaking, the modulo operation is the remainder after division of one number by another. Let's look at another example with larger numbers:
 
 1747 % 241 = 60
 

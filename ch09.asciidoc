@@ -15,7 +15,7 @@ Bitcoin finds a middle ground between these extremes by settling every 10 minute
 
 === Coinbase Transactions
 
-We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US and is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by the miner and include all the transaction fees of the other transactions in the block.
+We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US. It is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by the miner and include all the transaction fees of the other transactions in the block.
 
 Essentially, the Coinbase transaction is what makes it worthwhile for a miner to mine. Here's what a Coinbase transaction looks like:
 
@@ -39,10 +39,11 @@ One of the intriguing things about the Coinbase Transaction is that there's noth
 It turns out that the ScriptSig of the Coinbase transaction is set by miners to be more or less whatever they want. Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
 
 ```
-4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73
+4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c
+6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73
 ```
 
-This ScriptSig was composed by Satoshi and contains a now-famous message that we can take a look at:
+This ScriptSig was composed by Satoshi and contains a message that we can take a look at:
 
 [source,python]
 ----
@@ -54,12 +55,7 @@ This ScriptSig was composed by Satoshi and contains a now-famous message that we
 b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
 ----
 
-This was, of course, the headline from The Times newspaper on January 3, 2009.
-
-.Genesis Block Coinbase ScriptSig
-image::genesis.jpg[Genesis Block Coinbase ScriptSig]
-
-This proves that the Genesis Block was created some time *at or after* that date, and not before. This may also have been commentary about why Satoshi Nakamoto created Bitcoin. Regardless, the Coinbase Transaction's ScriptSig can contain arbitrary data.
+This was the headline from The Times newspaper on January 3, 2009. This proves that the Genesis Block was created some time *at or after* that date, and not before. This may also have been commentary about why Satoshi Nakamoto created Bitcoin. Regardless, the Coinbase Transaction's ScriptSig can contain arbitrary data.
 
 ==== BIP0034
 
@@ -141,7 +137,7 @@ Unfortunately, this incremental increase in version number means that only one f
 
 The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be 001 to indicate that the miner is utilizing BIP9. This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
 
-BIP9 requires that 95% of miners signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. As of this writing far, the only soft forks to utilize BIP9 have been BIP141 (segwit) and BIP91 (reducing threshold for segwit). They were assigned bits 1 and 4 respectively.
+BIP9 requires that 95% of miners signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. The only soft forks to utilize BIP9 have been BIP141 (segwit) and BIP91 (reducing threshold for segwit). They were assigned bits 1 and 4 respectively.
 
 Checking for these features is relatively straightforward:
 
@@ -177,12 +173,15 @@ The Merkle Root encodes all the ordered transactions in a nice 32 byte hash. We 
 
 The timestamp is a unix-style timestamp taking up 4 bytes. Unix timestamps simply encode the number of seconds since January 1, 1970. This timestamp is used in two places. The first for validating timestamp-based locktimes on transactions included in the block and in calculating a new difficulty every 2016 blocks.
 
-.Is Bitcoin going to overflow on the timestamp?
-****
+.Will Bitcoin overflow on the timestamp?
+[NOTE]
+====
 Bitcoin's timestamp field in the block header is 32 bits. This means that once the unix timestamp exceeds 2^32^-1, we will go back to 0. 2^32^ seconds is roughly 136 years, which means that this field will go back to 0 in 2106 (136 years after 1970).
 
 Many people mistakenly believe that we only have until 68 years after 1970, or 2038, but that's only when the field is a signed integer (2^31^ seconds is 68 years), so we get the benefit of that extra bit, giving us until 2106.
-****
+
+In 2106, the block header will need to roll over or use some sort of soft-fork as the timestamp in the block header will no longer continuously increase (due to being reset to 0).
+====
 
 === Bits
 
@@ -215,7 +214,7 @@ e93c0118a4ffd71d`
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
 
-We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits being 00, 0.25. The first three bits being 000, 0.125 and so on. Note that each 0 in the hexadecimal above represents 4 0-bits. In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^. This is a really tiny probability. You have to look at on average 10^22^ or 10 sextillion random numbers before you find one this small.
+We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits being 00, 0.25. The first three bits being 000, 0.125 and so on. Note that each 0 in the hexadecimal above represents 4 0-bits. In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^. This is a really tiny probability. You have to look at on average 10^22^ or 10 trillion trillion random numbers before you find one this small.
 
 Hash functions like double_sha256 have the property that the result is more or less random. Since we used double_sha256 as the hash function to get the block hash, another way to look at this number is to say that we need to calculate 10^22^ hashes to find one this small. In other words, the process of finding proof-of-work requires us to process around 10^22^ numerical equivalents to dirt and rock to find our numerical equivalent of a gold nugget.
 
@@ -225,7 +224,7 @@ So where does the miner get new numerical dirt to process to see if it satisfies
 
 Unfortunately, the 4 bytes or 32-bits, or 2^32^ possible nonces that a miner can try is insufficient space. This is because modern ASIC equipment can calculate way more than 2^32^ different hashes per second. The AntMiner S9, for example, calculates 12 Th/s, or 12,000,000,000,000 hashes per second. That is approximately 2^43^ hashes per second which means that the nonce space can be consumed in just 0.0003 seconds.
 
-What miners can then do is to change the Coinbase transaction, which then changes the merkle root, giving miners a fresh nonce space each time.
+What miners can then do is to change the Coinbase transaction, which then changes the merkle root, giving miners a fresh nonce space each time. The mechanics of how the Merkle Root changes will be discussed in Chapter 11.
 
 ==== Target
 

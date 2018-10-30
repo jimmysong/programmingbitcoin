@@ -247,7 +247,7 @@ Now that we have a node, we can now handshake with another node.
 ...         node.send(b'verack', b''])
 ...
 ----
-<1> The server in this example is something the author has set up. You can find other IP addresses for both mainnet and testnet at https://bitnodes.earn.com/api/
+<1> The server in this example is something I have set up. You can find other IP addresses for both mainnet and testnet at https://bitnodes.earn.com/api/
 <2> It turns out most nodes don't really care about all the fields like ip address and port number all that much. We can connect with the defaults and everything will be just fine.
 <3> We start the handshake by sending the version message
 <4> We only finish when we've received both verack and version.

@@ -12,7 +12,7 @@ We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and
 
 We'll start with the `S256Point` class which is the public key class. Recall that the public key in Elliptic Curve Cryptography is really a coordinate in the form of (x,y). How can we serialize this data?
 
-It turns out there's already a standard for serializing ECDSA public keys called SEC. SEC stands for Standards for Efficient Cryptography and as the name suggests, it's got minimal overhead. There are two forms of SEC format that we need to be concerned with and the first is the uncompressed SEC format.
+It turns out there's already a standard for serializing ECDSA public keys called SEC. SEC stands for Standards for Efficient Cryptography and as the name suggests, it's got minimal overhead. There are two forms of SEC format that we need to be concerned with and the first is the uncompressed SEC format and the second compressed SEC format.
 
 Here is how the uncompressed SEC format for a given point P=(x,y) is generated:
 
@@ -26,7 +26,8 @@ Here is what the uncompressed SEC format looks like:
 image::sec1.png[Uncompressed SEC Format]
 
 .Big and Little Endian
-****
+[WARNING]
+====
 The motivation for Big and Little Endian encodings is storing a number on disk. Arabic numberals are read left-to-right. A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300. This is what we call Big-Endian because the Big End starts first.
 
 Computers can sometimes be more efficient using the opposite order or Little-Endian. That is, starting with the Little End first.
@@ -34,7 +35,7 @@ Computers can sometimes be more efficient using the opposite order or Little-End
 Since Computers work in bytes, which have 8 bits, we have to think in base-256. This means that a number like 500 looks like this in Big-Endian `01f4`. That is, 500 = 1*256 + 246 (`f4` in hexadecimal). The same number looks like this in Little-Endian `f401`.
 
 Unfortunately, some stuff in Bitcoin (like the SEC format x and y coordinates) are in Big-Endian. Other stuff in Bitcoin (like the transaction version number) are in Little-Endian. This book will let you know which ones are Big vs Little Endian.
-****
+====
 
 This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into a 32 bytes. Here's how this is done in code:
 
@@ -162,7 +163,7 @@ Find the compressed SEC format for the Public Key where the Private Key secrets 
 
 Another class that we need to learn to serialize are signatures. Much like the SEC format, it needs to encode two different numbers, r and s. Unfortunately, unlike S256Point, Signature cannot be compressed as s cannot be derived solely from r.
 
-The standard for serializing signatures is called DER format. DER stands for ... and was used by Satoshi to create Bitcoin. This was most likely because the standard was already defined in 2008 and it was easy enough to adopt, rather than creating a new standard.
+The standard for serializing signatures is called DER format. DER stands for Distinguished Encoding Rules and was used by Satoshi to create Bitcoin. This was most likely because the standard was already defined in 2008 and it was easy enough to adopt, rather than creating a new standard.
 
 DER Signatures are created like this:
 
@@ -367,7 +368,7 @@ Find the wif for Private Key whose secrets are:
 
 === Big and Little Endian Redux
 
-It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and wif. A lot of stuff coming up in Chapter 5 onward will utilze Little Endian encoding. For this reason, we turn to these two exercises.
+It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will utilize parsing and serializing numbers to and from Big/Little endian quite a bit. In particular, Satoshi used a lot of Little Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little Endian was used and where Big Endian was used. Recall that SEC format use Big Endian encoding as do addresses and WIF. A lot of stuff coming up in Chapter 5 onward will utilze Little Endian encoding. For this reason, we turn to these two exercises.
 
 ==== Exercise {counter:exercise}
 

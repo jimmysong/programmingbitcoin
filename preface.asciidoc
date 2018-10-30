@@ -14,7 +14,7 @@ After all, there are lots of books about Bitcoin, everything from the history of
 
 This book is for programmers who want to learn how Bitcoin works by coding it themselves. You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch. This is not a reference book where you can look up the specification for a particular feature.
 
-The material from this book has been largely taken from my 2-day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
+The material from this book has been largely taken from my two day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
 
 By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered, including the math, the parsing, the network connectivity and block validation.
 

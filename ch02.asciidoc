@@ -5,7 +5,7 @@
 == Elliptic Curves
 
 [.lead]
-In this chapter we're going to learn about Elliptic Curves. In the next chapter, we'll be combining Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
+In this chapter we're going to learn about Elliptic Curves. In the next chapter, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
 
 As in the previous chapter, elliptic curves can look intimidating if you haven't seen them before. Also as in the previous chapter, the actual math isn't very difficult. Most of Elliptic Curves could have been taught to you around the second year of High School. In this chapter, we'll get to what these curves are and what we can do with them.
 
@@ -118,9 +118,9 @@ Write the $$__ne__$$ method for `Point`.
 
 === Point Addition
 
-The main reason that Elliptic Curves are useful is because of something called Point Addition. 
+The main reason that Elliptic Curves are useful is because of something called Point Addition. Point Addition is where we can do an operation on two of the points on the curve and get a third point. It's called addition because it has a lot of the intuitions we associate with what we call "addition". For example, Point Addition is commutative. That is, adding point A to point B is the same as adding point B to point A.
 
-It turns out that for every elliptic curve, a line will intersect at either 1 or 3 points.
+The way we define Point Addition is as follows. It turns out that for every elliptic curve, a line will intersect at either 1 or 3 points.
 
 .Line intersects at only 1 point
 image::intersect1.png[Line intersecting at 1 point]
@@ -136,7 +136,9 @@ image::intersect2-2.png[Tangent Line]
 
 We will come back to these two cases later.
 
-What's interesting is that we can define something called *point addition* using this fact. Like with Field Addition, we define point addition ourselves. In our case, point addition is defined this way:
+What's interesting is that we can define *point addition* using the fact that lines intersect one or three times with the Elliptic Curve. Two points define a line, so since that line intersects must intersect one more time. That third point reflected over the x-axis is the resulting Point Addition.
+
+Like Field Addition, we are defining Point Addition. In our case, Point Addition is defined this way:
 
 For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
 
@@ -148,11 +150,13 @@ Visually, it looks something like this:
 .Point Addition
 image::pointaddition.png[Point Addition]
 
-As you can see, point addition is not easily predictable. We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve. That is, point addition is non-linear.
+We first draw a line through the two points we're adding (P and Q). The third intersection point is R. We then reflect that point over the x-axis, which puts us at the P+Q point in Figure 2-14.
+
+One of the properties that we are going to use is that point addition is not easily predictable. We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve. Going back to Figure 2-14, P+Q is to the right of both points, P+R would be somewhere between P and R on the x-axis, and Q+R would be to the left of both points. In mathematics parlance, point addition is *non-linear*.
 
 === Math of Point Addition
 
-The reason why we have "addition" in the Point Addition name is that Point Addition satisfies certain properties that we think of as addition. Specifically, addition has these properties:
+"Addition" in the name Point Addition satisfies certain properties that we think of as addition, such as:
 
 * Identity
 * Commutativity
@@ -249,7 +253,7 @@ Handle the case where the two points are negatives of each other. That is, they 
 
 === Point Addition for when x~1~≠x~2~
 
-When we have points where the x's differ, we can add using a fairly simple formula. To help with intuition, it helps first to find the slope created by the two points. You can figure this out using a formula you probably learned in middle school:
+Now that we've covered the vertical line, we're now proceeding to when the points are different. As the points are not vertical, the points must have different x-coordinates. When we have points where the x's differ, we can add using a fairly simple formula. To help with intuition, it helps first to find the slope created by the two points. You can figure this out using a formula from pre-algebra:
 
 P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
 

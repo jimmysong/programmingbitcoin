@@ -15,11 +15,11 @@ As a brief overview, Segwit did a multitude of things:
 * Network transmission reduction
 * Clear upgrade path
 
-We'll go through all of these in detail
+It's not entirely obvious what segwit is, without looking at how it's implemented. We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
 
 === Pay to Witness Pubkey Hash
 
-Pay to witness pubkey hash (p2wpkh) is the new type of script that coins can be sent to. Essentially, this is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the data elsewhere. The rearrangement is largely for two reasons: transaction malleability fix and reduced network transmission.
+Pay to witness pubkey hash (p2wpkh) is one of four new types of script that coins can be sent to. Essentially, this is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the data elsewhere. The rearrangement is largely for two reasons: transaction malleability fix and reduced network transmission.
 
 ==== Transaction Malleability
 
@@ -89,11 +89,11 @@ The interesting thing here is that for an older node, processing stops at <20-by
 
 Furthermore, this is a special rule for Segwit Version 0. Segwit Version 1 can have a completely different processing path. <20-byte hash> 1 would be the special Script sequence that triggers a different rule. Newer versions of Segwit can utilize Schnorr Signatures, Graftroot or even a different scripting system altogether like Simplicity. The key is that Segwit now gives us a clear upgrade path where the software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.
 
-## P2SH-P2WPKH
+=== P2SH-P2WPKH
 
 P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of the p2wpkh ScriptPubKey. Simply put, p2wpkh uses bech32 addresses which older wallets won't understand.
 
-The segwit authors found an ingenious way to make Segwit backwards compatibly by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh. This is called "nested" Segwit as the Segwit stuff is embedded inside a p2sh.
+The segwit authors found an ingenious way to make Segwit backwards compatible by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh. This is called "nested" Segwit as the Segwit stuff is embedded inside a p2sh.
 
 The way this works is that the address is a normal p2sh address, but the redeemScript is simply OP_0 <20-byte hash> of the p2wpkh. Once again different transactions are sent to older nodes vs. newer nodes:
 

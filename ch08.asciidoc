@@ -49,7 +49,7 @@ OP_m will place the number m on the stack, the public keys will go straight to t
 .Bare Multisig Step 3
 image::multisig7.png[Bare Multisig Step 3]
 
-At this point, OP_CHECKMULTISIG will consume m+n+3 elements (due to off-by-one bug, see sidebar) and return 1 if m of the signatures are valid for m distinct public keys from the list of n public keys. Assuming that the signatures are valid, we are left with:
+At this point, OP_CHECKMULTISIG will consume m+n+3 elements (due to off-by-one bug, see sidebar) and return 1 if m of the signatures are valid for m distinct public keys from the list of n public keys. Assuming that the signatures are valid, we are left with a single true item on the stack:
 
 .Bare Multisig End
 image::multisig8.png[Bare Multisig End]
@@ -67,17 +67,17 @@ As a way to combat malleabilty, however, most nodes on the Bitcoin network will 
 
 Bare multisig is a bit ugly, but it's very much functional. You can have m of n signatures required to release funds and there is plenty of utility in making outputs multisig, especially if you're a business. However, bare multisig suffers from a few problems:
 
-1. First problem is the obviously long length of the ScriptPubKey. A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long. Unlike p2pkh or even p2pk, these are not easily sent even over email.
+1. First problem: the long length of the ScriptPubKey. A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long. Unlike p2pkh or even p2pk, these are not easily sent even over email.
 
-2. Second problem is that because the output is so long, it's rather taxing on node software. Nodes have to keep track of the UTXO set, so keeping a particularly big ScriptPubKey ready is onerous. A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
+2. Second problem: because the output is so long, it's rather taxing on node software. Nodes have to keep track of the UTXO set, so keeping a particularly big ScriptPubKey ready is onerous. A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
-3. Third problem is that because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
+3. Third problem: because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
 
-In order to combat these problems, pay-to-script-hash or p2sh was born.
+In order to combat these problems, pay-to-script-hash (p2sh) was born.
 
 === Pay to Script Hash
 
-Pay to Script Hash is a very general solution to the long address/ScriptPubKey problem. It's possible to have a more complicated script than bare multisig and there's no real way to compress those into addresses, either. To make this work, we have to be able to take the hash of a bunch of script elements and then somehow reveal the pre-image script elements later. This is at the heart of the design around pay-to-script-hash.
+Pay to Script Hash is a general solution to the long address/ScriptPubKey problem. It's possible to have a more complicated script than bare multisig and there's no real way to compress those into addresses, either. To make this work, we have to be able to take the hash of a bunch of script elements and then somehow reveal the pre-image script elements later. This is at the heart of the design around pay-to-script-hash.
 
 Pay to script hash was introduced in 2011 to a lot of controversy. There were multiple proposals, but as we'll see, pay-to-script-hash (aka p2sh) is kludgy, but works.
 
@@ -86,7 +86,7 @@ Essentially, pay-to-script-hash executes a very special rule only when the scrip
 .Pay-to-script-hash Pattern the executes the special rule
 image::p2sh1.png[p2sh Pattern]
 
-If this exact sequence ends up with a 1, then the RedeemScript is interpreted as script and then added to the Script processing as if it's part of the Script. This is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence. The RedeemScript does not add new script elements for processing unless this sequence is encountered.
+If this exact sequence ends up with a 1, then the RedeemScript (top item in figure 8-9) is interpreted as script and then added to the Script processing as if it's part of the Script. This is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence. The RedeemScript does not add new script elements for processing unless this sequence is encountered.
 
 If this sounds hacky, it is. But before we get to that, let's look a little closer at exactly how this plays out.
 
@@ -103,6 +103,12 @@ image::p2sh3.png[p2sh ScriptPubKey]
 The hash here is the hash of the RedeemScript, or what was previously the ScriptPubKey. We've essentially compressed the ScriptPubKey by taking the Hash160 of the RedeemScript.
 
 Creating the ScriptSig for a p2sh script involves not only revealing the RedeemScript, but also unlocking the RedeemScript. At this point, you might wonder, where is the RedeemScript stored? The RedeemScript is not on the blockchain until actual redemption, so it must be stored by the creator of the pay-to-script-hash address. If the RedeemScript is lost and cannot be reconstructed, the funds are lost, so it's very important to keep track of it!
+
+.Importance of keeping the RedeemScript
+[WARNING]
+====
+If you are receiving to a p2sh address, be sure to store and backup the RedeemScript! Better yet, make it easy to reconstruct!
+====
 
 The ScriptSig for the 1-of-2 multisig looks like this:
 
@@ -144,7 +150,7 @@ image::p2sh9.png[p2sh Step 3]
 And finally, OP_EQUAL will compare the top two elements. If the software that's being run by the node checking is pre-BIP0016, we would end up with this:
 
 .p2sh End if evaluating with pre-BIP0016 software
-images: p2sh10.png[p2sh pre-BIP0016 End]
+image::p2sh10.png[p2sh pre-BIP0016 End]
 
 On the other hand, BIP0016 nodes (which is most nodes on the network since about 2013), will now take the RedeemScript and parse that as Script:
 
@@ -154,17 +160,17 @@ image::p2sh2.png[p2sh RedeemScript]
 These now go into the Script column instead of a 1 being put back like so:
 
 .p2sh Step 4
-images: p2sh11.png[p2sh Step 4]
+image::p2sh11.png[p2sh Step 4]
 
 OP_2 puts a 2 on top, the signatures are elements, so we continue this way
 
 .p2sh Step 5
-images: p2sh12.png[p2sh Step 5]
+image::p2sh12.png[p2sh Step 5]
 
 OP_CHECKMULTISIG consumes m+n+3 elements, which is all of these, and we end the same way we did Bare Multisig
 
 .p2sh End for post-BIP0016 software
-images: p2sh13.png[p2sh End]
+image::p2sh13.png[p2sh End]
 
 This is a bit hacky and there's a lot of special-cased code in Bitcoin to handle this. Why didn't the core devs do something a lot less hacky and more intuitive? Well, it turns out that there was indeed another proposal BIP0012 which used something called OP_EVAL, which would have been a lot more elegant. A script like this would have sufficed:
 
