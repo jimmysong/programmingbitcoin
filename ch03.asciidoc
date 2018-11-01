@@ -784,7 +784,7 @@ We can now verify a signature using some of the primitives that we have.
 True
 ----
 <1> u = z/s. Note that we use Fermat's Little Theorem for 1/s, since N is prime.
-<2> v = v/s. Note that we use Fermat's Little Theorem for 1/s, since N is prime.
+<2> v = r/s. Note that we use Fermat's Little Theorem for 1/s, since N is prime.
 <3> uG+vP = (r,y). We need to check that the x-coordinate is r)
 
 ==== Exercise {counter:exercise}
