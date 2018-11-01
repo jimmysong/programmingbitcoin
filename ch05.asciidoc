@@ -289,7 +289,7 @@ Write the outputs parsing part of the parse method in `Tx` and the parse method 
 
 ==== Locktime
 
-Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater than 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
+Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,001. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater than or equal to 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
 
 The serialization is in Little-endian and 4-bytes like so:
 
