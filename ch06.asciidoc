@@ -12,7 +12,7 @@ In this chapter we examine this locking/unlocking mechanism, which is often call
 
 === Mechanics of SCRIPT
 
-If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. SCRIPT is the smart contract langauge, or the programming language used to express the conditions under which bitcoins are spendable.
+If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. SCRIPT is the smart contract language, or the programming language used to express the conditions under which bitcoins are spendable.
 
 Think of a personal check. In a sense, a personal check is a type of contract. A personal check is an agreement to transfer some amount of money from one person to another. Bitcoin has the digital equivalent of a contract in SCRIPT.
 
@@ -23,7 +23,7 @@ SCRIPT is a limited programming language in the sense that it doesn't have certa
 ====
 Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why SCRIPT doesn't allow for loops.
 
-There are a lot of reasons for this, but let's start with program execution. Anyone can create a SCRIPT program that every full node on the network executes this program. If SCRIPT were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network. A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
+There are a lot of reasons for this, but let's start with program execution. Anyone can create a SCRIPT program that every full node on the network executes. If SCRIPT were Turing Complete, it would be possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network. A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
 
 There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to create behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money.
 ====
