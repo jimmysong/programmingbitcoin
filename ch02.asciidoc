@@ -68,7 +68,7 @@ image::elliptic3.png[secp256k1 Curve]
 
 === Coding Elliptic Curves in Python
 
-For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
+For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specific form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
 
 [source,python]
 ----
@@ -87,7 +87,7 @@ class Point:
 
 ----
 <1> We check here that the point is actually on the curve.
-<2> Points are equal iff they are on the same curve and have the same coordinates
+<2> Points are equal if they are on the same curve and have the same coordinates.
 
 This allows us to do something like this:
 
@@ -314,7 +314,7 @@ We can use this to derive the formula for x~3~:
 
 x~3~=s^2^-x~1~-x~2~
 
-We can plug this in to the formula for the line above:
+We can plug this into the formula for the line above:
 
 y=s(x-x~1~)+y~1~
 
