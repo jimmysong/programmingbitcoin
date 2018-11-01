@@ -23,19 +23,19 @@ Pay to witness pubkey hash (p2wpkh) is one of four new types of script that coin
 
 ==== Transaction Malleability
 
-Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was insolvent back in 2013. This turned out not to be the case, but the term has since stuck.
+Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was not allowing withdrawals back in 2013. This turned out not to be the case, but the term has since stuck.
 
 Malleability of the ID turns out to be an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network. A malleable transaction ID makes creating the Lightning Network much more difficult, so fixing malleability was a priority.
 
-The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction cannot be changed without altering the transaction's meaning, so from a malleability standpoint, these fields are not a problem.
+The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
 
-The one field that does allow for some manipulation without changing its meaning is the ScriptSig field on each input. The ScriptSig typically has the signature, which as we learned in Chapter 3 contains a random component. This means that two different ScriptSigs can essentially mean the same thing. Further, Script can be manipulated further without changing the meaning of the transaction. Remember, the unlocking script is valid as long as it actually unlocks the ScriptPubKey.
+The one field that does allow for some manipulation without invalidating the Signature is the ScriptSig field on each input. The ScriptSig is emptied before creating the signature hash (see Chapter 7), so changing the ScriptSig typically does not invalidate the signature. Also, as we learned in Chapter 3, signatures contain a random component. This means that two different ScriptSigs can essentially mean the same thing.
 
 The fact that ScriptSig is _malleable_, that is, able to be changed without changing the meaning of the transaction, means that the entire Transaction ID can be changed. This means, among other things, that any _dependent_ transactions (that is, a transaction spending one of the malleable transaction's outputs), cannot be constructed with certainty. The previous transaction hash is uncertain, so the dependent transaction cannot be constructed.
 
 === Fixing malleability
 
-The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the transaction ID stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Program, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Program and don't verify the pubkey and signature.
+The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting the signature and pubkey elsewhere. This way, the transaction ID stays stable as the malleabilty vector disappears. So where does the signature and pubkey go? The signature and pubkey are now put into something called the Witness Field, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness Field and don't verify the pubkey and signature.
 
 If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork and not a hard fork.
 
@@ -153,6 +153,8 @@ As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to
 === Other improvements
 
 Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new double_sha256 hash for each input. The details of the z calculation is detailed in BIP0143.
+
+Another improvement is that uncompressed SEC pubkeys are now forbidden and thus, only compressed SEC pubkeys are utilized for Segwit, saving space.
 
 In addition, to allow newer nodes to get the Segwit serialization, there is now a service bit in the version message that indicates whether the Segwit versions of the transaction serializations will be understood or not. Various network commands have extensions to allow for requesting Segwit-specific serializations. The specifications are detailed in BIP0144.
 

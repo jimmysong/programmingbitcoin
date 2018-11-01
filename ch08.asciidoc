@@ -26,7 +26,7 @@ image::multisig2.png[Bare Multisig ScriptSig]
 
 We only need 1 signature for this 1-of-2 multisig, so this is a lot shorter, though something like a 5-of-7 would require 5 DER signatures and would be a lot longer (360 bytes or so). Here's how the two would combine
 
-.Bare Multisig Combined
+.Bare Multisig Combined. Note m and are something between 1 and 16 inclusive.
 image::multisig3.png[Bare Multisig Combination]
 
 We've generalized here so we can see what a m-of-n multisig would look like. Note the OP_0 at the top. The script stack, then starts like this:
@@ -211,7 +211,9 @@ Write two functions in `h160_to_p2pkh_address` and `h160_to_p2sh_address` that c
 
 One of the trickier things about p2sh is verifying the signatures. You would think that the p2sh Signature verification would be the same as the p2pkh process covered in Chapter 7, but unfortunately, that's not the case.
 
-Unlike p2pkh where there's only 1 signature and 1 public key, we first have to try each signature (in der format in the ScriptSig) and public key (in sec format in the RedeemScript) combination and see if they're valid. In a 5-of-7, the 5th signature can be for any of the 7 public keys. The signatures do not have to be put in any particular order. That said, once we have the signature and public key, we still need the z to figure out whether the signature is valid.
+Unlike p2pkh where there's only 1 signature and 1 public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some smaller number of signatures (in DER format in the ScriptSig). Thankfully, signatures have to be in the same order as the pubkeys or the signatures are not considered valid.
+
+Once we have the signature and public key, we still need the z to figure out whether the signature is valid.
 
 .Validation of p2sh Inputs
 image::verifyp2sh1.png[Validation Start]

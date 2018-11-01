@@ -30,11 +30,11 @@ In order to prevent double-spending, each input has to be checked to see if it's
 
 In Bitcoin, we can determine whether an input is being double spent by keeping track of the unspent transaction outputs (aka UTXOs, see Chapter 5). If an input is in the UTXO set, the transaction is NOT double-spending. If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set. Light clients that do not have access to the blockchain have to trust other nodes for their information, including input spentness information.
 
-A full node can check the spentness of an input pretty easily, a light node has to get this information from someone else.
+A full node can check the spentness of an input pretty easily, a light client has to get this information from someone else.
 
 === Checking the sum of the inputs vs the sum of the outputs
 
-The second part of the validation is making sure that the input sum is greater than or equal to the output sum. This ensures that the transaction does not create new coins. The one exception is a Coinbase transaction which we'll talk more about in the Chapter 9. The inputs don't have an amount, so this must be looked up on the blockchain. Once again, full nodes will have access to the amounts associated with the unspent output, but light nodes will have to depend on full nodes to supply this information.
+The second part of the validation is making sure that the input sum is greater than or equal to the output sum. This ensures that the transaction does not create new coins. The one exception is a Coinbase transaction which we'll talk more about in the Chapter 9. The inputs don't have an amount, so this must be looked up on the blockchain. Once again, full nodes will have access to the amounts associated with the unspent output, but light clients will have to depend on full nodes to supply this information.
 
 We covered how to calculate fees in Chapter 5. This validation step is essentially the same as checking that the fee is not negative (that is, creating money). Recall the last exercise in Chapter 5. The answer should have looked something like this:
 
@@ -196,7 +196,7 @@ The third question is really about fees. If we want to get the transaction in fa
 ====
 Fee estimation is generally done on a per-byte basis. Roughly speaking, if your transaction is 200 bytes, you'll want to have double the fees as a transaction that's 100 bytes. This is because block space is limited and larger transactions take up more space. This calculation has changed a bit since Segregated Witness (See Chapter 13), but the general principle still applies. You want to pay on a per-byte basis enough so that a miner is motivated to include your transaction.
 
-When blocks aren't full, almost any amount is enough to get your transaction included. However, when blocks are full, this is not an easy thing to estimate. There are multiple ways to estimate fees including:
+When blocks aren't full, almost any amount above the default relay limit (1 satoshi/byte) is enough to get your transaction included. However, when blocks are full, this is not an easy thing to estimate. There are multiple ways to estimate fees including:
 
 * Looking at various fee levels and estimating the probability of inclusion based on past blocks.
 * Looking at the current mempool and adding a fee that roughly corresponds to enough economic incentivization.

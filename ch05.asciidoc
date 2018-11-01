@@ -17,7 +17,7 @@ At a high level, a transaction really only has 4 components. They are:
 3. Outputs
 4. Locktime
 
-At this point a general overview of these fields might be helpful. Version defines what the format of the transaction is supposed to be, Inputs define what bitcoins are being spent, Outputs define where the bitcoins are going and Locktime defines what time this transaction starts being valid. We'll go through each component in depth.
+At this point a general overview of these fields might be helpful. Version indicates what additional features the transaction utilizes, Inputs define what bitcoins are being spent, Outputs define where the bitcoins are going and Locktime defines when this transaction starts being valid. We'll go through each component in depth.
 
 Here is a hexadecimal dump of a typical transaction that shows which parts are which.
 
@@ -105,9 +105,9 @@ Write the version parsing part of the parse method that we've defined. To do thi
 .Inputs
 image::tx3.png[Inputs]
 
-Each input is an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
+Each input points to an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
 
-Bitcoin's inputs are outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend it. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that each input needs to have:
+Bitcoin's inputs are spending outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend it. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that each input needs to have:
 
 * A reference to the previous Bitcoins you own
 * Proof that these are yours to spend
@@ -182,7 +182,7 @@ As explained above, each input is actually a previous transaction's output. The 
 
 We will note here that the transaction id is 32 bytes and that the transaction index is 4 bytes. Both are in little-endian order
 
-ScriptSig has to do with Bitcoin's smart contract language SCRIPT, and will be discussed more thoroughly in chapter 6. For now, think of ScriptSig as opening a lock box. Something that can only be done by the owner of the transaction output. The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far. A variable-length field requires us to define exactly how long it will be which is why the field is preceded by a varint telling us how long the field is.
+ScriptSig has to do with Bitcoin's smart contract language Script, and will be discussed more thoroughly in chapter 6. For now, think of ScriptSig as opening a lock box. Something that can only be done by the owner of the transaction output. The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far. A variable-length field requires us to define exactly how long it will be which is why the field is preceded by a varint telling us how long the field is.
 
 Sequence was originally intended as a way to do payment channels (see sidebar), but is currently used with Replace-By-Fee and Check Sequence Verify. This field is also in little-endian and takes up 4 bytes. The resulting transaction looks something like this:
 
@@ -191,13 +191,15 @@ image::tx5.png[Input Fields]
 
 .Sequence and Locktime
 ****
-Originally, Satoshi wanted to sequence and locktime to be used for something called payment channels. A payment channel is a way to do payments back and forth with another party without making lots and lots of on-chain transactions. For example, if Alice pays Bob `x` Bitcoins for something and then Bob pays Alice `y` Bitcoin for something else (say `x > y`), then we can have Alice just pay Bob `x-y`, instead of two separte transactions on-chain. We could do the same thing if Alice and Bob had 100 transactions between them. We can essentially compress a bunch of transactions into a single transaction.
+Originally, Satoshi wanted sequence and locktime to be used for something called "high frequency trades". What Nakamoto envisioned was a way to do payments back and forth with another party without making lots and lots of on-chain transactions. For example, if Alice pays Bob `x` Bitcoins for something and then Bob pays Alice `y` Bitcoin for something else (say `x > y`), then Alice can just pay Bob `x-y`, instead of two separte transactions on-chain. We could do the same thing if Alice and Bob had 100 transactions between them. We can essentially compress a bunch of transactions into a single transaction.
 
-That's the idea of a payment channel. It's a continuously updating mini-ledger between the two parties involved that gets settled on-chain. Satoshi's idea was to utilize sequence and locktime to update the payment channel transaction every time there is a new payment between the two parties. The payment-channel transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob. The payment-channel transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now).valid in 500 blocks. This would be the base transaction where Alice and Bob get the same amounts as they put in.
+That's the idea that Satoshi had: a continuously updating mini-ledger between the two parties involved that gets settled on-chain. Satoshi's idea was to utilize sequence and locktime to update the "high frequency trade" transaction every time there is a new payment between the two parties. The trade transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob. The trade transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now), valid in 500 blocks. This would be the base transaction where Alice and Bob get the same amounts as they put in.
 
 After the first transaction where Alice pays Bob x Bitcoins, the sequence of each input would be 1 and the locktime earlier (say 499 blocks from now). After the second transaction where Bob pays Alice y Bitcoins, the sequence of each input would be 2 and the locktime even earlier (say 498 blocks from now). Using this method, we could have up to 500 payments compressed into a single on-chain transaction.
 
-Unfortunately, as clever as this is, it turns out that it's quite easy for a miner to cheat. In our example, Bob could be a miner and ignore the updated payment channel transaction with sequence number 2 and mine the payment channel transaction with sequence number 1 and cheat Alice out of `y` Bitcoins.
+Unfortunately, as clever as this is, it turns out that it's quite easy for a miner to cheat. In our example, Bob could be a miner and ignore the updated trade transaction with sequence number 2 and mine the trade transaction with sequence number 1 and cheat Alice out of `y` Bitcoins.
+
+A much better design was created later with something called "payment channels", which is the basis for the Lightning Network.
 ****
 
 Now that we know what the fields are, we can start creating a `TxIn` class in Python:
@@ -254,7 +256,7 @@ image::tx6.png[Outputs]
 
 Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin. This allows us to divide Bitcoin very finely, down to 1/100th of a penny in USD terms as of this writing. The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million bitcoins) in satoshis, which is 2,100,000,000,000,000 (2.1 quadrillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and thus be stored in more bytes. This is why amount takes up 8 bytes and is serialized in little-endian.
 
-ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart contract language SCRIPT. Think of ScriptPubKey as the lock box that can only be opened by the holder of the key. ScriptPubKey is essentially a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe. We'll explore what this is in more detail in chapter 6. Like ScriptSig, ScriptPubKey is a variable-length field and is thus preceded by the length of the field as a varint.
+ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart contract language Script. Think of ScriptPubKey as the lock box that can only be opened by the holder of the key. ScriptPubKey is essentially a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe. We'll explore what this is in more detail in chapter 6. Like ScriptSig, ScriptPubKey is a variable-length field and is thus preceded by the length of the field as a varint.
 
 The actual output fields look like this
 
@@ -296,9 +298,11 @@ The serialization is in Little-endian and 4-bytes like so:
 .Locktime
 image::tx8.png[Locktime]
 
-This turns out not to be that useful as the recipient of the transaction has no certainty that the transaction will be good when the locktime comes. The sender can spend the inputs prior to the locktime transaction getting into the blockchain invalidating the transaction at locktime.
+The main problem with the original usage (see sidebar on Sequence and Locktime) is that the recipient of the transaction has no certainty that the transaction will be good when the locktime comes. The sender can spend the inputs prior to the locktime transaction getting into the blockchain invalidating the transaction at locktime.
 
-That said, BIP0065 introduced something called OP_CHECKLOCKTIMEVERIFY which makes use of locktime in a more useful way by making an output unspendable until a certain locktime.
+The uses before BIP0065 came along was for anti-fee sniping and spending money to another address you control and then deleting the private key as a way to force yourself to hold the coins until that locktime.
+
+BIP0065 introduced something called OP_CHECKLOCKTIMEVERIFY which makes locktime more useful by making an output unspendable until a certain locktime.
 
 ==== Exercise {counter:exercise}
 
@@ -374,7 +378,7 @@ One thing that might be interesting to note is that the transaction fee is not s
 
 One of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on Coinbase transactions in Chapter 8), the amount in the inputs have to be greater than or equal to the amount in the outputs. You may be wondering why the inputs and outputs can't just be forced to be equal. This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks. Fees are a way to incentivize miners to include transactions in blocks. Transactions that are not in blocks are not part of the blockchain and cannot be counted on as being valid.
 
-The transaction fee is simply the input sum minus the output sum. The difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information. Here is how we can get th previous transaction and thus, the amount, for an input:
+The transaction fee is simply the input sum minus the output sum. The difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information. Here is how we can get the previous transaction and thus, the amount, for an input:
 
 [source,python]
 ----

@@ -286,5 +286,5 @@ Get the current testnet block id, send yourself some testnet coins, find the UTX
 
 In this chapter, we've managed to create everything necessary to connecting peer to peer as an SPV node, get the data necessary to construct a transaction and preserve privacy by using a Bloom Filter.
 
-We now turn to Segwit, which is a new type of Script that came into Bitcoin in 2017.
+We now turn to Segwit, which is a new type of transaction that came into Bitcoin in 2017.
 

@@ -8,22 +8,20 @@
 [.lead]
 The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin. Locking is leaving some Bitcoins to someone else. Unlocking is spending some Bitcoins that have been left for you.
 
-In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what combines what you've learned in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how SCRIPT works and go from there.
+In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what combines what you've learned in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
 
-=== Mechanics of SCRIPT
+=== Mechanics of Script
 
-If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. SCRIPT is the smart contract langauge, or the programming language used to express the conditions under which bitcoins are spendable.
+If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. Script is the smart contract langauge, or the programming language used to express the conditions under which bitcoins are spendable.
 
-Think of a personal check. In a sense, a personal check is a type of contract. A personal check is an agreement to transfer some amount of money from one person to another. Bitcoin has the digital equivalent of a contract in SCRIPT.
-
-SCRIPT is a limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is therefore not Turing complete.
+Bitcoin has the digital equivalent of a contract in Script. Script is a limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is therefore not Turing complete.
 
 .Why Bitcoin isn't Turing Complete
 [NOTE]
 ====
-Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why SCRIPT doesn't allow for loops.
+Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why Script doesn't allow for loops.
 
-There are a lot of reasons for this, but let's start with program execution. Anyone can create a SCRIPT program that every full node on the network executes this program. If SCRIPT were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network. A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
+There are a lot of reasons for this, but let's start with program execution. Anyone can create a Script program that every full node on the network executes this program. If Script were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network. A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
 
 There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to create behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money.
 ====
@@ -32,11 +30,11 @@ What you are required to do as part of a transaction is to assign Bitcoins to a 
 
 The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) and proves ownership of the locked box in order to spend the funds.
 
-=== How SCRIPT works
+=== How Script works
 
-SCRIPT, as a language, operates by processing one item at a time. There are two possible types of items: elements and operations.
+Script, as a language, operates by processing one item at a time. There are two possible types of items: elements and operations.
 
-Elements are just data. They are byte strings of length 1 to 75. A typical element might be a der signature or a sec pubkey.
+Elements are just data. They are byte strings of length 1 to 520. A typical element might be a der signature or a sec pubkey.
 
 .Elements
 image::script1.png[Script Elements]
@@ -142,7 +140,7 @@ It's important to realize at this point that the lock box (ScriptPubKey) and the
 .ScriptPubKey and ScriptSig
 image::script3.png[ScriptPubKey and ScriptSig]
 
-Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two scripts combine. What we do in Bitcoin is take the items from ScriptSig and ScriptPubKey and combine them as above. The items from the ScriptSig go on top of all the items from ScriptSig. Each item is processed one at a time until no items are left to be processed or if the script exits early.
+Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two scripts combine. What we do in Bitcoin is take the items from ScriptSig and ScriptPubKey and combine them as above. The items from the ScriptSig go on top of all the items from ScriptPubKey. Each item is processed one at a time until no items are left to be processed or if the script exits early.
 
 There are many types of standard scripts in Bitcoin including the following:
 
@@ -158,7 +156,7 @@ To show exactly how all this works, we'll next take a look at the original scrip
 
 === p2pk
 
-Pay-to-pubkey (aka p2pk) was used a lot during the early days of bitcoin. Most coins thought to belong to Satoshi are in p2pk outputs. There are some limitations that we'll discuss below, but let's first focus on how p2pk works.
+Pay-to-pubkey (aka p2pk) was used more during the early days of bitcoin. Most coins thought to belong to Satoshi are in p2pk outputs. There are some limitations that we'll discuss below, but let's first focus on how p2pk works.
 
 We learned back in chapter 3 how signing and verification work in ECDSA. Specifically, you need the message (z), the public key (P) and the signature (r,s). The mechanics of p2pk are simply that you send bitcoins to a public key and let the owner of the private key unlock through a signature and determine where the bitcoins should go. Effectively, the ScriptPubKey puts those bitcoins under the control of the private key owner.
 
@@ -197,7 +195,7 @@ OP_CHECKSIG consumes 2 stack items (pubkey and signature) and determines if they
 .p2pk Step 3
 image::p2pk7.png[P2PK End 1]
 
-We're finished processing all the items of SCRIPT and we've ended with a single item on the stack which is non-zero (1 is definitely not 0). Therefore, this script is valid.
+We're finished processing all the items of Script and we've ended with a single item on the stack which is non-zero (1 is definitely not 0). Therefore, this script is valid.
 
 If we were to get an invalid signature, the result from OP_CHECKSIG would be zero, ending our script processing like this:
 
@@ -218,16 +216,16 @@ First, the public keys are long. We know from chapter 3 that SECP256K1 public po
 
 .Why did Satoshi use the Uncompressed SEC format?
 ****
-It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was utilizing the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not support compressed public keys.
+It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was utilizing the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
 
-Later on, when the compressed SEC format was added to OpenSSL, Bitcoin started using them as well.
+Later on, Pieter Wuille discovered that the compressed SEC format was existed inOpenSSL, did their use in Bitcoin become more common.
 ****
 
 Second, because the public keys are long, this causes a more subtle problem. The UTXO set becomes bigger since this large public key has to be kept around and indexed to see if it's spendable. This may require more resources on the part of nodes.
 
 Third, because we're storing the public key in the ScriptPubKey field, it's known to everyone. That means should ECDSA someday be broken, these outputs could be stolen. This is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and would affect all of those things, too. For example, quantum computing has the potential to break RSA and ECDSA, so having something else in addition to protect these outputs would be more secure.
 
-For these reasons p2pk is considered obsolete.
+For these reasons p2pk is not really used currently on the network.
 
 === Solving the problems with p2pkh
 
@@ -312,11 +310,11 @@ There are two ways this script can fail. If you provide a public key that does n
 
 This is why we call this type of script pay-to-pubkey-*hash*. The ScriptPubKey has the 20-byte hash of the public key and not the public key itself. We are locking Bitcoins to a *hash* of the public key and are responsible for revealing the public key as part of spending the output in our ScriptSig.
 
-The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a hacker would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both RIPEMD160 and SHA256. The latter condition, incidentally, is not known to be quantum vulnerable. That is, there is no known quantum algorithm for creating a hash pre-image that's better than a conventional computer.
+The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a hacker would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both RIPEMD160 and SHA256.
 
 === Scripts can be arbitrarily constructed
 
-Note that scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the bitcoins can be unlocked in any manner that you wish. The one limitation is that you can't use loops (Turing Completeness, remember?) Here is an example ScriptPubKey:
+Note that scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the bitcoins can be unlocked in any manner that you wish. The one limitation is that there is nothing that lets you do anything like loops due to the lack of Turing Completeness. Here is an example ScriptPubKey:
 
 .Example ScriptPubKey
 image::ex1.png[Example 1 ScriptPubKey]
@@ -374,7 +372,7 @@ image::exercise1.png[Exercise 1]
 
 The previous exercise was a bit of a cheat as OP_MUL is no longer allowed on the Bitcoin network. Version 0.3.5 of Bitcoin disabled a lot of different OP codes as anything that had even a little bit of potential to create vulnerabilties on the network were disabled. The main culprits were a couple of severe bugs related to OP_LSHIFT and OP_RETURN.
 
-This is just as well since most of the functionality in SCRIPT is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. This is why Bitcoin is moving more towards simplifying the smart contract language and not expanding it. This is a way to make Bitcoin more secure.
+This is just as well since most of the functionality in Script is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. This is why Bitcoin is moving more towards simplifying the smart contract language and not expanding it. This is a way to make Bitcoin more secure.
 
 This is in stark contrast to other projects which try to expand their smart contract languages.
 
@@ -391,4 +389,4 @@ In 2013, Peter Todd created a script very similar to the exercise above and put 
 
 === Conclusion
 
-We've covered SCRIPT and how it works. We can now proceed to the actual creation and validation of transactions.
+We've covered Script and how it works. We can now proceed to the actual creation and validation of transactions.

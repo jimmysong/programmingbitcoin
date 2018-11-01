@@ -218,7 +218,7 @@ s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 
 === Base58
 
-At this point, you may think that communicating our public keys via SEC format and signing transactions to have other nodes on the network verifying these transactions with the public key would be enough. Indeed that's what happened in the early days of Bitcoin. Bitcoins were assigned to Public Keys specified in SEC format (uncompressed) and then were redeemed using DER signatures. For reasons we'll get to in Chapter 6 (Script), this turned out to be both wasteful and less secure than what we use now. In this chapter, we'll go through what addresses are and how they are encoded.
+At this point, you may think that communicating our public keys via SEC format and signing transactions to have other nodes on the network verifying these transactions with the public key would be enough. Indeed that's what happened in the early days of Bitcoin. Bitcoins were assigned to Public Keys specified in SEC format (uncompressed) and then were redeemed using DER signatures. For reasons we'll get to in Chapter 6 (Script), this turned out to be both wasteful (for storing UTXOs) and less secure than what we use now. In this chapter, we'll go through what addresses are and how they are encoded.
 
 === Transmitting your Public Key
 

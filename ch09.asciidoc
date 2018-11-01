@@ -36,7 +36,7 @@ Write the `is_coinbase` method of the `Tx` class.
 
 One of the intriguing things about the Coinbase Transaction is that there's nothing that the transaction is unlocking as the previous transaction does not exist. So what's in there? What information is in there?
 
-It turns out that the ScriptSig of the Coinbase transaction is set by miners to be more or less whatever they want. Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
+It turns out that the ScriptSig of the Coinbase transaction is set by miners. The main restriction is that it has to be at least 2 bytes and no longer than 100 bytes. Other than those restrictions and BIP0034 (see more below) this field can be whatever the miner wants. Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
 
 ```
 4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c
@@ -59,7 +59,9 @@ This was the headline from The Times newspaper on January 3, 2009. This proves t
 
 ==== BIP0034
 
-One of the rules for a Coinbase Transaction was added in BIP0034. This was due to a network problem where miners were using the *same* Coinbase Transaction for different blocks. This was possible in the early days as the 32-bit nonce space was enough to mine blocks. The Coinbase being the same means that the transaction id is also the same as the double_sha256 of the transaction is deterministic. To combat this, the Core developers soft-forked in a rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
+One of the rules for a Coinbase Transaction was added in BIP0034. This was due to a network problem where miners were using the *same* Coinbase Transaction for different blocks. This was possible in the early days as the 32-bit nonce space was enough to mine blocks. 
+
+The Coinbase Transaction being the same byte-wise means that the transaction id is also the same as the double_sha256 of the transaction is deterministic. To combat this, the Core developers soft-forked in a rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
 
 The height must be interpreted as a little-endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block). Here's how we can parse the height from the Coinbase Transaction above:
 
@@ -74,7 +76,7 @@ The height must be interpreted as a little-endian integer and must equal the hei
 465879
 ----
 
-We now know which block the transaction was in! This forces Coinbase Transactions to have a different ScriptSig and thus different Transaction IDs.
+We now know which block the transaction was in! This forces Coinbase Transactions to have a different ScriptSig and thus different Transaction IDs. This rule continues to be needed as optimizations like ASICBoost allow the possibility of the same Coinbase Transaction IDs if BIP0034 wasn't a rule.
 
 ==== Exercise {counter:exercise}
 
@@ -135,9 +137,11 @@ Unfortunately, this incremental increase in version number means that only one f
 
 ==== BIP9
 
-The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be 001 to indicate that the miner is utilizing BIP9. This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
+The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be 001 to indicate that the miner is utilizing BIP9. The first 3 bits have to be 001 as that forces older clients to interpret the version field as a number greater than 4, which was the last version number that was used pre-BIP9.
 
-BIP9 requires that 95% of miners signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. The only soft forks to utilize BIP9 have been BIP141 (segwit) and BIP91 (reducing threshold for segwit). They were assigned bits 1 and 4 respectively.
+This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
+
+BIP9 requires that 95% of miners signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. The only soft forks to utilize BIP9 as of this writing have been BIP68/BIP112/BIP113 (OP_CHECKSEQUENCEVERIFY and related changes), BIP141 (segwit) and BIP91 (reducing threshold for segwit). They were assigned bits 0, 1 and 4 respectively.
 
 Checking for these features is relatively straightforward:
 
@@ -216,7 +220,7 @@ e93c0118a4ffd71d`
 
 We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits being 00, 0.25. The first three bits being 000, 0.125 and so on. Note that each 0 in the hexadecimal above represents 4 0-bits. In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^. This is a really tiny probability. You have to look at on average 10^22^ or 10 trillion trillion random numbers before you find one this small.
 
-Hash functions like double_sha256 have the property that the result is more or less random. Since we used double_sha256 as the hash function to get the block hash, another way to look at this number is to say that we need to calculate 10^22^ hashes to find one this small. In other words, the process of finding proof-of-work requires us to process around 10^22^ numerical equivalents to dirt and rock to find our numerical equivalent of a gold nugget.
+Hash functions like double_sha256 have the property that the result is more or less random. Since we used double_sha256 as the hash function to get the block hash, another way to look at this number is to say that we need to calculate 10^22^ hashes on average to find one this small. In other words, the process of finding proof-of-work requires us to process around 10^22^ numerical dirt and rock to find our numerical gold nugget.
 
 ==== How a miner can generate new hashes
 
@@ -299,7 +303,7 @@ We can code this in python like so:
 888171856257.3206
 ----
 
-The difficulty on testnet when there haven't been any blocks found in 20 minutes resets to 1. This gives us context for how difficult mainnet is. The difficulty number can be thought of as how much more difficult mainnet is than testnet's easiest difficulty. This difficulty is roughly 888 billion times more difficult than testnet at its easiest setting.
+The difficulty on of Bitcoin at the very start was 1. This gives us context for how difficult mainnet currently is. The difficulty number can be thought of as how much more difficult than it was at the start. This difficulty is roughly 888 billion times more difficult than when Bitcoin started.
 
 This is the number that gets shown in block explorers and bitcoin price charting services as difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
 
@@ -325,7 +329,7 @@ new_target = previous_target * time_differential / (2 weeks)
 
 The time_differential number is calculated so that if it's greater than 8 weeks, 8 weeks is used and if it's less than 3.5 days, 3.5 days is used. This way, the new target cannot change more than 4x in either direction. That is, the target will be reduced or increased by 4x at the most.
 
-If each block took on average 10 minutes, 2016 blocks should take 20160 minutes. There are 1440 minutes per day, which means that 2016 blocks take 20160 / 1440 = 14 days. We should be calculating how long the last 2016 blocks took by using the timestamp field of the block at the very end of each of the current and previous difficulty adjustment periods. Satoshi unfortunately had another off-by-one error here, as the timestamp differential calculation looks at the very first and very last blocks of the 2016 block difficulty adjustment period instead. This means that the time_differential ends up being the difference of blocks that are 2015 blocks apart instead of 2016 blocks apart.
+If each block took on average 10 minutes, 2016 blocks should take 20160 minutes. There are 1440 minutes per day, which means that 2016 blocks take 20160 / 1440 = 14 days. We should be calculating how long the last 2016 blocks took by using the timestamp field of the last block of each of the current and previous difficulty adjustment periods. Satoshi unfortunately had another off-by-one error here, as the timestamp differential calculation looks at the first and last blocks of the 2016 block difficulty adjustment period instead. This means that the time_differential ends up being the difference of blocks that are 2015 blocks apart instead of 2016 blocks apart.
 
 We can code this formula like so:
 

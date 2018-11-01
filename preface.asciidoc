@@ -36,7 +36,7 @@ Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves
 
 Chapter 5 covers the Transaction structure. Chapter 6 goes into the smart contract language behind Bitcoin called Script. Chapter 7 combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. Chapter 8 establishes how p2sh works, which is a way to make more powerful smart contracts.
 
-Chapter 9 covers Blocks, which are groups of Transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light node, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
+Chapter 9 covers Blocks, which are groups of Transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light client, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
 
 Chapter 13 covers Segwit and Chapter 14 covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things to learn.
 
@@ -104,7 +104,7 @@ C:\programming-bitcoin> .venv\Scripts\activate.bat
 C:\programming-bitcoin> pip install -r requirements.txt
 ----
 
-# Run jupyter notebook
+Run jupyter notebook:
 
 [source,bash]
 ----

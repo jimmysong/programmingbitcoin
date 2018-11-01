@@ -485,7 +485,7 @@ Second, p is really, really close to 2^256^. This means that most numbers under 
 
 Third, 2^256^ is a really big number (See the sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
 
-Lastly, the curve itself is one that was published by Centcom, and is *not* a NIST curve. NIST stands for xxx and is published by the NSA and Satoshi apparently didn't trust any curves chosen by the NSA.
+Lastly, the curve itself is one that was published by Certicom, and is *not* a NIST curve. NIST stands for National Institute of Standards and Technology and they are affiliated with the NSA (National Security Administration). We don't really know why Satoshi chose the non-NIST curve as opposed to the NIST one, but some speculate this is because of the NSA affiliation.
 
 .How Big is 2^256^?
 ****
@@ -758,14 +758,15 @@ To whit, here are the steps:
 3. We calculate uG + vP = R
 4. If R's x coordinate equals r, the signature is valid.
 
+[NOTE]
 .Why Double-sha256?
-****
+====
 The calculation of z requires two rounds of sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
 
 There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017. Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
 
-There is no known SHA2 (of which SHA256 is a part) birthday attack, but is doubled in case one is found.
-****
+There is no known SHA256 weakness like a birthday attack, but is doing two rounds is a defense against possible potential weaknesses.
+====
 
 ==== Verifying a Signature
 

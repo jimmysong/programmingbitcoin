@@ -5,7 +5,9 @@
 == Finite Fields
 
 [.lead]
-One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else. This book is going to start with the basic math that you need to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms that are at the heart of how Transactions work.
+One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else before you can understand the original thing.
+
+This chapter is going to get you off to a start which is more manageable. It may seem strange, but we'll start with the basic math that you need to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms. These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin. By learning Finite Fields and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need in order to progress logically.
 
 Be aware that this chapter and the next chapter may feel a bit like you're eating some vegetables, especially if you haven't done formal math in a long time. I would encourage you to get through this as the concepts and code here will be utilized over and over again throughout the book.
 
@@ -65,7 +67,7 @@ A Finite Field of order 981
 
 F~981~= {0, 1, 2, ... 980}
 
-Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* have a  _prime_ order. This is because the properties of a finite field don't hold otherwise.
+Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* have an order that is a power of a prime. This is because the properties of a finite field don't hold otherwise.
 
 ==== Constructing a Finite Set in Python
 

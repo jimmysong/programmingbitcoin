@@ -41,6 +41,12 @@ The bottom row is what we call the leaves of the tree. All other nodes besides t
 
 We'll go through each part of this process below.
 
+[WARNING]
+.Be Careful With Merkle Trees!
+====
+There was a vulnerability that Bitcoin 0.4-0.6 was susecptible to. CVE-2012-2459 details the mechanics of the Denial of Service vector. The ultimate reason for this vulnerability was because of the duplication of the last item, which caused some nodes to invalidate blocks even if they were valid.
+====
+
 === Merkle Parent
 
 Given two hashes, we need some way to produce another hash that represents both of them. As they are ordered, we will call the two hashes the *left* hash and the *right* hash. Tho combination, we call the *parent* hash. The formula for getting the parent is pretty simple:
@@ -198,18 +204,19 @@ Say that we have two transactions that we are interested in, which would be the 
 
 The merkle root is H~ABCDEFGHIJKLMNOP~, which we can check against the block header whose proof-of-work we've already validated.
 
+[NOTE]
 .How secure is an SPV proof?
-****
-The full node can send us a limited amount of information about the block and the light node can recalculate the merkle root, which can then be verified against the block header. This does not guarantee that the transaction is in a block, but it does assure the light node that the full node would have had to spend a lot of hashing power and thus energy creating a valid proof-of-work. As long as the reward for creating such aproof-of-work is greater than the amounts in the transactions, the light node can at least know that the full node has no clear economic incentive to lie.
+====
+The full node can send us a limited amount of information about the block and the light client can recalculate the merkle root, which can then be verified against the block header. This does not guarantee that the transaction is in the blockchain, but it does assure the light client that the full node would have had to spend a lot of hashing power and thus energy creating a valid proof-of-work. As long as the reward for creating such a proof-of-work is greater than the amounts in the transactions, the light client can at least know that the full node has no clear economic incentive to lie.
 
-Indeed, since the block header can be requested from multiple nodes, light nodes have an easy way to verify if one node is trying to show them block headers that are not the longest. It only takes a single honest node to invalidate 100 dishonest ones since proof-of-work is objective. Therefore, it's not easy to isolate a light node enough to be able to deceive in this way. This, of course, assumes that there are lots of nodes on the network in the first place and that a good number of them are being honest.
+Indeed, since the block header can be requested from multiple nodes, light clients have an easy way to verify if one node is trying to show them block headers that are not the longest. It only takes a single honest node to invalidate 100 dishonest ones since proof-of-work is objective. Therefore, isolation of a light client (that is, control of who the light client is connected to) is required to deceive in this way. This, of course, assumes that there are lots of nodes on the network in the first place and that a good number of them are being honest.
 
-In other words, light client security is based on a robust network of nodes and a little bit of game theory based on econmic incentives. For a transaction up to the block reward, (12.5 BTC as of this writing), there's very little to worry about. For large transactions (say 1000 BTC or 80x the mining award), the full nodes, if they're controlled by your counterparty, may have economic incentive to deceive you. Transactions that large should generally be done using a full node.
-****
+In other words, light client security is based on a robust network of nodes and a little bit of game theory based on economic incentives. For small transactions relative to the block subsidy (currently 12.5 BTC), there's probably little to worry about. For large transactions (say 100 BTC), the full nodes, if they're controlled by your counterparty, may have economic incentive to deceive you. Transactions that large should generally be done using a full node.
+====
 
 === Merkle Block
 
-The full node needs to send the information about the tree structure and which hash is at which position in the Merkle Tree. A light node then needs to be able to reconstruct the partial Merkle Tree to actually validate the transaction. The format in which the full node communicates this to the light node is using something called a Merkle Block.
+The full node needs to send the information about the tree structure and which hash is at which position in the Merkle Tree. A light client then needs to be able to reconstruct the partial Merkle Tree to actually validate the transaction. The format in which the full node communicates this to the light client is using something called a Merkle Block.
 
 To understand what's in a Merkle Block, we need to understand a bit about how a Merkle Tree can be traversed. If we look at the diagram above, the nodes can be traversed bredth-first or depth-first. Bredth-first traversal would go level by level like this:
 
