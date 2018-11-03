@@ -40,7 +40,7 @@ Indeed, that point is on the curve using the Finite Field math.
 Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different:
 
 .Elliptic Curve over a Finite Field
-image::elliptic3.png[Elliptic Curve over a Finite Field]
+image::finitefieldellipticcurve.png[Elliptic Curve over a Finite Field]
 
 As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete. About the only pattern is that the curve is symmetric right around the middle, which is due to the fact that the graph is symmetric, not over the x-axis as in the curve over reals, but about half-way up the y-axis.
 
@@ -498,9 +498,9 @@ Lastly, the curve itself is one that was published by Certicom, and is *not* a N
  * Number of atoms in the Milky Way ~ 10^68^
  * Number of atoms in the universe ~ 10^80^
 
-A trillion (10^9^) computers doing a trillion computations every trillionth (10^-9^) of a second for a trillion years is still only 10^56^ computations. It's simply infeasible to brute force a private key.
+A trillion (10^12^) computers doing a trillion computations every trillionth (10^-12^) of a second for a trillion years is still less than 10^56^ computations.
 
-Think of finding a private key this way. It is a billion times easier to find a particular atom in the Milky Way than to find a private key in Bitcoin.
+Think of finding a private key this way. It is a billion times easier to pick a random atom in the Milky Way than to randomly pick the right private key in Bitcoin.
 ****
 
 ==== Working with secp256k1
@@ -635,7 +635,7 @@ Unfortunately, this doesn't scale very well. If, for example you wanted to prove
 
 If, for example, you shot an arrow into a target of your choosing, then the people observing afterwards won't necessarily be convinced. After all, you may be a sneaky person that paints the target around wherever your arrow happened to land. So what can you do?
 
-Here's a very clever thing you can do. Forge the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow. Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit. The tip clearly had to be forged before the arrow was shot, so this can prove you are indeed a good archer.
+Here's a very clever thing you can do. Inscribe the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow. Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit. The tip clearly had to be inscribed before the arrow was shot, so this can prove you are indeed a good archer.
 
 This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number. We want to prove possession of the secret without revealing the secret itself. We do this by putting the target into our calculation and hitting that target.
 
@@ -677,7 +677,7 @@ This means either we can break the Discrete Log problem or we knew e all along. 
 
 One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting. This is a contract that gets fulfilled as a result of the shooting at the target. William Tell, for example, was shooting so that he could save his son (shoot the target and you get to save your son). You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive. This has to be incorporated into our equations.
 
-In signature/verification parlance, this is called the _signature hash_. This generally is the hash of the message that both parties agree to that reveal the intent of the shooter. We denote this with the letter `z`. This is incorporated into our uG+vP calculation this way:
+In signature/verification parlance, this is called the _signature hash_. A hash is a deterministic function that takes arbitrary data into a data of fixed size.This is a fingerprint of the message containing the intent of the shooter that anyone verifying the message can figure out. We denote this with the letter `z`. This is incorporated into our uG+vP calculation this way:
 
 u = z/s, v = r/s
 
@@ -685,44 +685,34 @@ Since r is used in the calculation of u, we now have the tip of the arrow forged
 
 To make the equation work, we can calculate s:
 
-uG+vP=R=kG
-
-uG+veG=kG
-
-u+ve=k
-
-z/s+re/s=k
-
-(z+re)/s=k
-
-s=(z+re)/k
+* uG+vP=R=kG
+* uG+veG=kG
+* u+ve=k
+* z/s+re/s=k
+* (z+re)/s=k
+* s=(z+re)/k
 
 This is indeed the basis of the signature algorithm and the two numbers actually communicated as part of the signature are r and s.
 
 Verification is simple:
 
-uG+vP where u,v≠0
-
-uG+vP=(z/s)G+(re/s)G=((z+re)/s)G=((z+re)/((z+re)/k))G=kG=(r,y)
+* uG+vP where u,v≠0
+* uG+vP=(z/s)G+(re/s)G=((z+re)/s)G=((z+re)/((z+re)/k))G=kG=(r,y)
 
 .Why We Don't Reveal `k`
-****
+[WARNING]
+====
 At this point, you might be wondering why we don't reveal k and instead reveal the x-coordinate of R or `r`. If we were to reveal k, then:
 
-uG+vP=R
-
-uG+veG=kG
-
-kG-uG=veG
-
-(k-u)G = veG
-
-(k-u) = ve
-
-(k-u)*1/v = e
+* uG+vP=R
+* uG+veG=kG
+* kG-uG=veG
+* (k-u)G = veG
+* (k-u) = ve
+* (k-u)*1/v = e
 
 Means that we'll be revealing our secret, which would defeat the whole purpose of the signature. We can, however, reveal R.
-****
+====
 
 ==== Verification in-depth
 
@@ -866,6 +856,11 @@ Note that the pubkey P and z have to be transmitted to whoever wants to verify a
 
 We can now create a signature using some of the primitives that we have.
 
+[WARNING]
+====
+Note that using something like the `random` library from Python to do cryptography is generally not a good idea. This library is for teaching purposes only, so please don't use any of the code explained to you here for production purposes.
+====
+
 [source,python]
 ----
 >>> from ecc import S256Point, G, N
@@ -946,7 +941,7 @@ class PrivateKey:
 <2> r is the x-coordinate of kG
 <3> We use Fermat's Little Theorem again and N, which is prime
 <4> s = (z+re)/k
-<5> It turns out that we have to use a low-s value for malleability reasons
+<5> It turns out that using the low-s value will get nodes to relay our transactions easier. This is for malleability reasons
 <6> We return a Signature object from above.
 
 .Importance of k being random

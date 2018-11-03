@@ -92,7 +92,7 @@ image::tx2.png[Version]
 
 When you see a version number in something, it's meant to give the receiver information about what the versioned thing is supposed to represent. If, for example, you are running Windows 3.1, that's a version number that's very differnt than Windows 8 or Windows 10. You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
 
-In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions utilizing an OP code called OP_CHECKSEQUENCEVERIFY as defined in BIP0068)
+In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions utilizing an opcode called OP_CHECKSEQUENCEVERIFY as defined in BIP68/BIP112/BIP113)
 
 You may notice here that the actual value in hexadecimal is 01000000, which doesn't look like 1. It actually is when the interpreted as a little-endian integer (recall the discussion from chapter 4).
 
@@ -184,7 +184,7 @@ We will note here that the transaction id is 32 bytes and that the transaction i
 
 ScriptSig has to do with Bitcoin's smart contract language Script, and will be discussed more thoroughly in chapter 6. For now, think of ScriptSig as opening a lock box. Something that can only be done by the owner of the transaction output. The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far. A variable-length field requires us to define exactly how long it will be which is why the field is preceded by a varint telling us how long the field is.
 
-Sequence was originally intended as a way to do payment channels (see sidebar), but is currently used with Replace-By-Fee and Check Sequence Verify. This field is also in little-endian and takes up 4 bytes. The resulting transaction looks something like this:
+Sequence was originally intended as a way to do what Satoshi called "high frequency trades" with the locktime field (see sidebar), but is currently used with Replace-By-Fee and Check Sequence Verify. Sequence is also in little-endian and takes up 4 bytes. The resulting transaction looks something like this:
 
 .The Fields of an Input
 image::tx5.png[Input Fields]
@@ -193,9 +193,9 @@ image::tx5.png[Input Fields]
 ****
 Originally, Satoshi wanted sequence and locktime to be used for something called "high frequency trades". What Nakamoto envisioned was a way to do payments back and forth with another party without making lots and lots of on-chain transactions. For example, if Alice pays Bob `x` Bitcoins for something and then Bob pays Alice `y` Bitcoin for something else (say `x > y`), then Alice can just pay Bob `x-y`, instead of two separte transactions on-chain. We could do the same thing if Alice and Bob had 100 transactions between them. We can essentially compress a bunch of transactions into a single transaction.
 
-That's the idea that Satoshi had: a continuously updating mini-ledger between the two parties involved that gets settled on-chain. Satoshi's idea was to utilize sequence and locktime to update the "high frequency trade" transaction every time there is a new payment between the two parties. The trade transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob. The trade transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now), valid in 500 blocks. This would be the base transaction where Alice and Bob get the same amounts as they put in.
+That's the idea that Satoshi had: a continuously updating mini-ledger between the two parties involved that gets settled on-chain. Satoshi's idea was to utilize sequence and locktime to update the "high frequency trade" transaction every time a new payment between the two parties occurred. The trade transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob. The trade transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now), valid in 500 blocks. This would be the base transaction where Alice and Bob get the same amounts as they put in.
 
-After the first transaction where Alice pays Bob x Bitcoins, the sequence of each input would be 1 and the locktime earlier (say 499 blocks from now). After the second transaction where Bob pays Alice y Bitcoins, the sequence of each input would be 2 and the locktime even earlier (say 498 blocks from now). Using this method, we could have up to 500 payments compressed into a single on-chain transaction.
+After the first transaction where Alice pays Bob x Bitcoins, the sequence of each input would be 1. After the second transaction where Bob pays Alice y Bitcoins, the sequence of each input would be 2. Using this method, we could have lots of payments compressed into a single on-chain transaction as long as they happened before the locktime became valid.
 
 Unfortunately, as clever as this is, it turns out that it's quite easy for a miner to cheat. In our example, Bob could be a miner and ignore the updated trade transaction with sequence number 2 and mine the trade transaction with sequence number 1 and cheat Alice out of `y` Bitcoins.
 
@@ -230,20 +230,18 @@ We'll delve more deeply into how Script is parsed in the next chapter, but for n
 [source,python]
 ----
 >>> from io import BytesIO
->>> from script import Script
+>>> from script import Script  # <1>
 >>> script_hex = '6b483045..8a'
 >>> stream = BytesIO(bytes.fromhex(script_hex))
 >>> script_raw = Script.parse(stream)
 >>> print(script_raw)
 3045...01 0349...8a
 ----
-
-The details of how script is parsed is covered in Chapter 6.
+<1> Please note that this module will be more thoroughly explored in Chapter 6. For now, please trust that the `Script.parse` method will create the object that we need.
 
 ==== Exercise {counter:exercise}
 
 Write the inputs parsing part of the parse method in `Tx` and the parse method for `TxIn`.
-
 
 ==== Outputs
 
@@ -265,7 +263,7 @@ image::tx7.png[Output Fields]
 
 .UTXO Set
 ****
-UTXO stands for Unspent Transaction Output. The entire set of unspent transaction outputs at any given moment is called the UTXO Set. The reason why UTXOs are important is because they represent all the actual Bitcoins that are available to spend. In other words, these are the Bitcoins that are in circulation. Full nodes on the network keep track of the UTXO set because this makes validating new transactions much, much easier.
+UTXO stands for Unspent Transaction Output. The entire set of unspent transaction outputs at any given moment is called the UTXO Set. The reason why UTXOs are important is because they represent all the actual Bitcoins that are available to spend. In other words, these are the Bitcoins that are in circulation. Full nodes on the network must keep track of the UTXO set, and keeping it indexed and easy to look up makes validating new transactions much, much easier.
 
 For example, it's very easy to detect a double-spend simply by looking up the previous transaction output in the UTXO set. If the input of a new transaction is using a transaction output that's been spent already, that's an attempt at a double-spend and thus invalid. Keeping the UTXO set handy is also very useful for validating transactions. We need to look up the amounts and the ScriptPubKey from the previous transaction output, so having these UTXOs handy will greatly speed up transaction validation.
 ****
@@ -291,7 +289,7 @@ Write the outputs parsing part of the parse method in `Tx` and the parse method 
 
 ==== Locktime
 
-Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater than 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
+Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater or equal to 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
 
 The serialization is in Little-endian and 4-bytes like so:
 

@@ -163,7 +163,7 @@ Find the compressed SEC format for the Public Key where the Private Key secrets 
 
 Another class that we need to learn to serialize are signatures. Much like the SEC format, it needs to encode two different numbers, r and s. Unfortunately, unlike S256Point, Signature cannot be compressed as s cannot be derived solely from r.
 
-The standard for serializing signatures is called DER format. DER stands for Distinguished Encoding Rules and was used by Satoshi to create Bitcoin. This was most likely because the standard was already defined in 2008 and it was easy enough to adopt, rather than creating a new standard.
+The standard for serializing signatures is called DER format. DER stands for Distinguished Encoding Rules and was used by Satoshi to create Bitcoin. This was most likely because the standard was already defined in 2008, supported in OpenSSL and it was easy enough to adopt, rather than creating a new standard.
 
 DER Signatures are created like this:
 
@@ -224,7 +224,7 @@ At this point, you may think that communicating our public keys via SEC format a
 
 In order for Alice to effectively pay Bob, she has to know where to send Bob the money. This is true not just in Bitcoin, but any medium of exchange. Since Bitcoin is a digital bearer instrument, the address can be something like a public key in a public key cryptography scheme. Unfortunately, SEC format, especially uncompressed is a bit long (65 or 33 bytes). Furthermore, the 65 or 33 bytes are in binary format, not something that's easy to read, at least raw.
 
-There are three major considerations. The first is that the public key be readable (easy to write down or even say over the phone). The second is that it's short (not be so long that it's cumbersome). The third is that it's secure (harder to make mistakes).
+There are three major considerations. The first is that the public key be readable (easy to write down and not too difficult to mistake say over the phone). The second is that it's short (not be so long that it's cumbersome). The third is that it's secure (harder to make mistakes).
 
 So how do we get readability, compression and security? If we express the SEC format in hexadecimal (4 bits per character), it's actually double the length (130 or 66 characters). Can we do better?
 
@@ -259,6 +259,14 @@ def encode_base58(s):
 <3> Finally, we prepend all the zeros that we detected because otherwise, they wouldn't show up as prefixed 1's. This annoyingly happens with pay-to-pubkey-hash (p2pkh). More on that in Chapter 7 (Script)
 
 This will take any bytes in Python 3 and convert it to base58 bytes
+
+[NOTE]
+.Why Base58 is on the way out
+====
+Base58 has been utilized for a long time and while it does make it somewhat easier than something like Base64 to communicate, it's not really that convenient. Most people prefer to copy and paste the addresses and if you've ever tried to communicate an address over voice, trust me, it's a nightmare.
+
+What's much better is the new Bech32 standard which is defined in BIP0173. Bech32 uses a 32-character alphabet that's just numbers and lower case letters except 1, b, i and o. These are only thus far used in for Segwit (Chapter 14).
+====
 
 ==== Exercise {counter:exercise}
 
