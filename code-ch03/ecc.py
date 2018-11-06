@@ -31,30 +31,27 @@ class FieldElement:
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num + other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num - other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num * other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __pow__(self, exponent):
@@ -66,14 +63,13 @@ class FieldElement:
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
-        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
-        # self.prime is what you'll need to mod against
+        # self.prime is what we need to mod against
         # use fermat's little theorem:
         # self.num**(p-1) % p == 1
         # this means:
         # 1/n == pow(n, p-2, p)
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __rmul__(self, coefficient):
