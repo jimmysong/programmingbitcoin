@@ -178,7 +178,7 @@ Each input contains 4 fields, the first two which point ot the previous transact
 * ScriptSig
 * Sequence
 
-As explained above, each input is actually a previous transaction's output. The previous transaction id is the `double_sha256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is very, very small. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transactio* that we're spending.
+As explained above, each input is actually a previous transaction's output. The previous transaction id is the `hash256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is very, very small. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transactio* that we're spending.
 
 We will note here that the transaction id is 32 bytes and that the transaction index is 4 bytes. Both are in little-endian order
 
@@ -400,7 +400,7 @@ class TxIn:
         return self.cache[self.prev_tx]
 ----
 
-We can get the previous transaction using the `fetch_tx` method. You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (double_sha256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
+We can get the previous transaction using the `fetch_tx` method. You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (hash256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
 
 .Why we minimize trusting third parties
 [WARNING]

@@ -293,7 +293,7 @@ Step 4 of this process is called the checksum. We can do steps 4 and 5 in one go
 [source,python]
 ----
 def encode_base58_checksum(s):
-    return encode_base58(s + double_sha256(s)[:4]).decode('ascii')  # <1>
+    return encode_base58(s + hash256(s)[:4]).decode('ascii')  # <1>
 ----
 <1> Note that the `decode('ascii`)` part is necessary to convert from Python 3 bytes to a Python 3 string.
 

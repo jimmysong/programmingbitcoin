@@ -243,13 +243,13 @@ The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in litt
 .Append the hash type (SIGHASH_ALL)
 image::verifyp2sh4.png[Validation Step 3]
 
-The double_sha256 of this interpreted as a big-endian integer is our z. The code for getting our z looks like this:
+The hash256 of this interpreted as a big-endian integer is our z. The code for getting our z looks like this:
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> blob = bytes.fromhex('01000000...01000000')
->>> d256 = double_sha256(blob)
+>>> d256 = hash256(blob)
 >>> z = int.from_bytes(d256, 'big')
 >>> print(hex(z))
 0xe71bfa115715d6fd33796948126f40a8cdd39f187e4afb03896795189fe1423c
@@ -263,9 +263,9 @@ image::p2sh-sigelements.png[DER and SEC]
 [source,python]
 ----
 >>> from ecc import S256Point, Signature
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> blob = bytes.fromhex('01000000...01000000')
->>> d256 = double_sha256(blob)
+>>> d256 = hash256(blob)
 >>> z = int.from_bytes(d256, 'big')  # <1>
 >>> sec = bytes.fromhex('0226...70')
 >>> der = bytes.fromhex('3045....37')

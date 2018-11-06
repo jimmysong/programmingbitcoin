@@ -123,13 +123,13 @@ The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in litt
 .Append the hash type (SIGHASH_ALL)
 image::validation4.png[Validation Step 3]
 
-The double_sha256 of this interpreted as a big-endian integer is our z. The code for getting our z looks like this:
+The hash256 of this interpreted as a big-endian integer is our z. The code for getting our z looks like this:
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> blob = bytes.fromhex('01000000...01000000')
->>> d256 = double_sha256(blob)
+>>> d256 = hash256(blob)
 >>> z = int.from_bytes(d256, 'big')
 0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6
 ----
@@ -231,8 +231,8 @@ def decode_base58(s):
         num += BASE58_ALPHABET.index(c)
     combined = num.to_bytes(25, byteorder='big')  # <2>
     checksum = combined[-4:]
-    if double_sha256(combined[:-4])[:4] != checksum:
-        raise RuntimeError('bad address: {} {}'.format(checksum, double_sha256(combined)[:4]))
+    if hash256(combined[:-4])[:4] != checksum:
+        raise RuntimeError('bad address: {} {}'.format(checksum, hash256(combined)[:4]))
     return combined[1:-4]  # <3>
 ----
 <1> We have to figure out first what number is encoded in this base58 address

@@ -865,9 +865,9 @@ Note that using something like the `random` library from Python to do cryptograp
 ----
 >>> from ecc import S256Point, G, N
 >>> from random import randint
->>> from helper import double_sha256
->>> e = int.from_bytes(double_sha256(b'my secret'), 'big') # <1>
->>> z = int.from_bytes(double_sha256(b'my message'), 'big') # <2>
+>>> from helper import hash256
+>>> e = int.from_bytes(hash256(b'my secret'), 'big') # <1>
+>>> z = int.from_bytes(hash256(b'my message'), 'big') # <2>
 >>> k = randint(0, N)
 >>> r = (k*G).x.num # <3>
 >>> k_inv = pow(k, N-2, N)
@@ -894,7 +894,7 @@ Sign the following message with the secret
 
 ```
 e = 12345
-z = int.from_bytes(double_sha256('Programming Bitcoin!'), 'big')
+z = int.from_bytes(hash256('Programming Bitcoin!'), 'big')
 ```
 
 ==== Programming Message Signing

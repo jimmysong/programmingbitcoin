@@ -24,7 +24,7 @@ It turns out that the answer lies in the Merkle Root field from the block header
 
 === Merkle Tree
 
-A Merkle Tree is a computer science structure designed for efficient proofs of inclusion. The prerequisite is an ordered list of items and a hash function. In our case, transactions and double_sha256 are what we use. To construct the Merkle Tree, we follow this algorithm:
+A Merkle Tree is a computer science structure designed for efficient proofs of inclusion. The prerequisite is an ordered list of items and a hash function. In our case, transactions and hash256 are what we use. To construct the Merkle Tree, we follow this algorithm:
 
 1. Hash all the items of the ordered list with the provided hash function
 2. If there is exactly 1 hash, we are done
@@ -61,10 +61,10 @@ The actual calculation in Python is relatively straightforward:
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> hash1 = bytes.fromhex('c117...')
 >>> hash2 = bytes.fromhex('c131...')
->>> parent = double_sha256(hash1 + hash2)
+>>> parent = hash256(hash1 + hash2)
 >>> print(parent.hex())
 8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd
 ----

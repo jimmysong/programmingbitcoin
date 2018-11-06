@@ -10,5 +10,5 @@ def run_test(test):
     TextTestRunner().run(suite)
 
 
-def double_sha256(s):
+def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()

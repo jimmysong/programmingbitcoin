@@ -192,7 +192,8 @@ class Point:
         # Case 3: self.x == other.x, self.y == other.y
         if self == other:
             # Case 4: if we are tangent to the vertical line
-            # note instead of figuring out what 0 is for each type, we just use 0 * self.x
+            # note instead of figuring out what 0 is for each type
+            # we just use 0 * self.x
             if self.y == 0 * self.x:
                 return self.__class__(None, None, self.a, self.b)
             else:
@@ -256,7 +257,7 @@ class ECCTest(TestCase):
         # tests the following points whether they are on the curve or not
         # on curve y^2=x^3-7 over F_223:
         # (192,105) (17,56) (200,119) (1,193) (42,99)
-        # the ones that aren't should raise a RuntimeError
+        # the ones that aren't should raise a ValueError
         prime = 223
         a = FieldElement(0, prime)
         b = FieldElement(7, prime)
@@ -350,7 +351,6 @@ class S256Field(FieldElement):
 
 
 class S256Point(Point):
-    zero = S256Field(0)
 
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)

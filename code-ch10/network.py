@@ -7,7 +7,7 @@ from unittest import TestCase
 
 from block import Block
 from helper import (
-    double_sha256,
+    hash256,
     encode_varint,
     int_to_little_endian,
     little_endian_to_int,

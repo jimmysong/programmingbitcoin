@@ -20,14 +20,14 @@ Suppose there are 50 total transactions. There is one transaction we're interest
 
 The solution is to use a hash function and modulo to put each transaction into buckets.
 
-A Bloom Filter is a computer science structure that can be used on any data in a set, so suppose that we have one item "hello world" that we want to create a Bloom Filter for. We need a hash function, so we'll use one we already have `double_sha256`. The process of figuring out what bucket our item goes into looks like this:
+A Bloom Filter is a computer science structure that can be used on any data in a set, so suppose that we have one item "hello world" that we want to create a Bloom Filter for. We need a hash function, so we'll use one we already have `hash256`. The process of figuring out what bucket our item goes into looks like this:
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> bit_field_size = 10  # <1>
 >>> bit_field = [0] * bit_field_size
->>> h = double_sha256(b'hello world')  # <2>
+>>> h = hash256(b'hello world')  # <2>
 >>> bit = int.from_bytes(h, 'big') % bit_field_size  # <3>
 >>> bit_field[bit] = 1  # <4>
 >>> print(bit_field)
@@ -55,11 +55,11 @@ We can run a second item through the same exact filter and set that bit to 1 as 
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> bit_field_size = 10
 >>> bit_field = [0] * bit_field_size
 >>> for item in (b'hello world', b'goodbye'):  # <1>
-...     h = double_sha256(item)
+...     h = hash256(item)
 ...     bit = int.from_bytes(h, 'big') % bit_field_size
 ...     bit_field[bit] = 1
 >>> print(bit_field)
@@ -86,18 +86,18 @@ Here's what that would look like. For simplicity, we stick to the same 10-bit fi
 
 [source,python]
 ----
->>> from helper import double_sha256, hash160
+>>> from helper import hash256, hash160
 >>> bit_field_size = 10
 >>> bit_field = [0] * bit_field_size
 >>> for item in (b'hello world', b'goodbye'):
-...     for hash_function in (double_sha256, hash160):  # <1>
+...     for hash_function in (hash256, hash160):  # <1>
 ...         h = hash_function(item)
 ...         bit = int.from_bytes(h, 'big') % bit_field_size
 ...         bit_field[bit] = 1
 >>> print(bit_field)
 [1, 1, 1, 0, 0, 0, 0, 0, 0, 1]
 ----
-<1> We iterate over 2 different hash functions here (`double_sha256` and `hash160`), but we could just as easily have more.
+<1> We iterate over 2 different hash functions here (`hash256` and `hash160`), but we could just as easily have more.
 
 Conceptually, this is what we just did:
 

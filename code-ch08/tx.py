@@ -6,7 +6,7 @@ import requests
 from ecc import PrivateKey, S256Point, Signature
 from helper import (
     decode_base58,
-    double_sha256,
+    hash256,
     encode_varint,
     int_to_little_endian,
     little_endian_to_int,
@@ -127,8 +127,8 @@ class Tx:
             locktime=self.locktime)
         # add the hash_type int 4 bytes, little endian
         result = alt_tx.serialize() + int_to_little_endian(hash_type, 4)
-        # get the double_sha256 of the tx serialization
-        s256 = double_sha256(result)
+        # get the hash256 of the tx serialization
+        s256 = hash256(result)
         # convert this to a big-endian integer using int.from_bytes(x, 'big')
         return int.from_bytes(s256, 'big')
 

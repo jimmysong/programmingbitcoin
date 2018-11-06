@@ -6,7 +6,7 @@ import requests
 from ecc import PrivateKey, S256Point, Signature
 from helper import (
     decode_base58,
-    double_sha256,
+    hash256,
     encode_varint,
     int_to_little_endian,
     little_endian_to_int,

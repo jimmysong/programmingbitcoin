@@ -16,7 +16,7 @@ def run_test(test):
     TextTestRunner().run(suite)
 
 
-def double_sha256(s):
+def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
 
@@ -39,7 +39,7 @@ def encode_base58(s):
 
 
 def encode_base58_checksum(s):
-    return encode_base58(s + double_sha256(s)[:4]).decode('ascii')
+    return encode_base58(s + hash256(s)[:4]).decode('ascii')
 
 
 def hash160(s):
@@ -65,8 +65,8 @@ def decode_base58(s):
         num += BASE58_ALPHABET.index(c)
     combined = num.to_bytes(25, byteorder='big')
     checksum = combined[-4:]
-    if double_sha256(combined[:-4])[:4] != checksum:
-        raise RuntimeError('bad address: {} {}'.format(checksum, double_sha256(combined)[:4]))
+    if hash256(combined[:-4])[:4] != checksum:
+        raise RuntimeError('bad address: {} {}'.format(checksum, hash256(combined)[:4]))
     return combined[1:-4]
 
 
