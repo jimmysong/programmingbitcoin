@@ -569,22 +569,22 @@ class Signature:
         s = BytesIO(signature_bin)
         compound = s.read(1)[0]
         if compound != 0x30:
-            raise RuntimeError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         length = s.read(1)[0]
         if length + 2 != len(signature_bin):
-            raise RuntimeError("Bad Signature Length")
+            raise SyntaxError("Bad Signature Length")
         marker = s.read(1)[0]
         if marker != 0x02:
-            raise RuntimeError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         rlength = s.read(1)[0]
         r = int(s.read(rlength).hex(), 16)
         marker = s.read(1)[0]
         if marker != 0x02:
-            raise RuntimeError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         slength = s.read(1)[0]
         s = int(s.read(slength).hex(), 16)
         if len(signature_bin) != 6 + rlength + slength:
-            raise RuntimeError("Signature too long")
+            raise SyntaxError("Signature too long")
         return cls(r, s)
 
 
