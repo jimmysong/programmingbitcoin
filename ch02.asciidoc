@@ -244,7 +244,7 @@ class Point:
 <1> x-coordinate and y-coordinate being `None` is how we signify the point at infinity. Note that the next if statement will fail if we don't return here.
 <2> We overload the `+` operator here
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity. Thus, we return `other`
-<4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity. Thus, we return `self`
+<4> `other.x` being `None` means that `other` is the point at infinity, or the additive identity. Thus, we return `self`
 
 
 ==== Exercise {counter:exercise}
@@ -306,7 +306,7 @@ From above, we know that:
 
 x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-(sx~1~-y~1~)^2^=0
 
-There's a result from called the Theorem on the Equality of Polynomials, which states that the coefficients have to equal each other if the roots are the same. The first one that's interesting is the coefficient in front of x^2^:
+There's a result from the Theorem on the Equality of Polynomials, which states that the coefficients have to equal each other if the roots are the same. The first one that's interesting is the coefficient in front of x^2^:
 
 s^2^=x~1~+x~2~+x~3~
 
