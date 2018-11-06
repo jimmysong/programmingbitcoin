@@ -89,7 +89,25 @@ class Tx:
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
-        raise NotImplementedError
+        # s.read(n) will return n bytes
+        # version has 4 bytes, little-endian, interpret as int
+        version = little_endian_to_int(s.read(4))
+        # num_inputs is a varint, use read_varint(s)
+        num_inputs = read_varint(s)
+        # each input needs parsing
+        inputs = []
+        for _ in range(num_inputs):
+            inputs.append(TxIn.parse(s))
+        # num_outputs is a varint, use read_varint(s)
+        num_outputs = read_varint(s)
+        # each output needs parsing
+        outputs = []
+        for _ in range(num_outputs):
+            outputs.append(TxOut.parse(s))
+        # locktime is 4 bytes, little-endian
+        locktime = little_endian_to_int(s.read(4))
+        # return an instance of the class (cls(...))
+        return cls(version, inputs, outputs, locktime)
 
     def serialize(self):
         '''Returns the byte serialization of the transaction'''
@@ -114,7 +132,17 @@ class Tx:
     def fee(self, testnet=False):
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
-        raise NotImplementedError
+        input_sum, output_sum = 0, 0
+        # iterate through inputs
+        for tx_in in self.tx_ins:
+            # for each input get the value and add to input sum
+            input_sum += tx_in.value(testnet=testnet)
+        # iterate through outputs
+        for tx_out in self.tx_outs:
+            # for each output get the amount and add to output sum
+            output_sum += tx_out.amount
+        # return input sum - output sum
+        return input_sum - output_sum
 
 
 class TxIn:

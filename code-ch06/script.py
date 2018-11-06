@@ -29,6 +29,9 @@ class Script:
                 result += '{} '.format(instruction.hex())
         return result
 
+    def __add__(self, other):
+        return Script(self.items + other.items)
+
     @classmethod
     def parse(cls, s):
         # get the length of the entire field
@@ -94,7 +97,7 @@ class Script:
                     result += int_to_little_endian(76, 1)
                     result += int_to_little_endian(length, 1)
                 elif length >= 0x100 and length <= 520:
-                    # 77 is pushdata 2
+                    # 77 is pushdata2
                     result += int_to_little_endian(77, 1)
                     result += int_to_little_endian(length, 2)
                 else:
@@ -110,7 +113,7 @@ class Script:
         # encode_varint the total length of the result and prepend
         return encode_varint(total) + result
 
-    def evaluate(self, z, version, locktime, sequence, witness, bip65=True, bip112=True):
+    def evaluate(self, z):
         # create a copy as we may need to add to this list if we have a
         # RedeemScript
         instructions = self.instructions[:]
