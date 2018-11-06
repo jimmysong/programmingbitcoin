@@ -1,8 +1,7 @@
-from unittest import SkipTest, TestSuite, TextTestRunner
+from unittest import TestSuite, TextTestRunner
 
 
-@SkipTest
-def run_test(test):
+def run(test):
     suite = TestSuite()
     suite.addTest(test)
     TextTestRunner().run(suite)

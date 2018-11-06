@@ -1,4 +1,4 @@
-from unittest import SkipTest, TestCase, TestSuite, TextTestRunner
+from unittest import TestCase, TestSuite, TextTestRunner
 
 import hashlib
 
@@ -10,7 +10,6 @@ BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 TWO_WEEKS = 60 * 60 * 24 * 14
 
 
-@SkipTest
 def run_test(test):
     suite = TestSuite()
     suite.addTest(test)

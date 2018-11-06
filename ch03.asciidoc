@@ -126,8 +126,8 @@ We can now run this test like so:
 [source,python]
 ----
 >>> import ecc
->>> from helper import run_test # <1>
->>> run_test(ecc.ECCTest('test_on_curve'))
+>>> from helper import run # <1>
+>>> run(ecc.ECCTest('test_on_curve'))
 .
 ----------------------------------------------------------------------
 Ran 1 test in 0.001s
