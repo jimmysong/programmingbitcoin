@@ -436,8 +436,8 @@ class Point:
 ----
 <1> For reasons which will become clear in the next chapter, we need to define zero specific to the class.
 <2> If the two points are equal and the y coordinate is zero, we return the point at infinity.
-<3> This is how we create a point at infinity
+<3> This is how we create a point at infinity.
 
 === Conclusion
 
-We've covered what Elliptic Curves are, how they work and how to do point addition on them. We now combine the concepts from Chapters 1 and 2 to build Elliptic Curve Cryptography
+We've covered what Elliptic Curves are, how they work and how to do point addition on them. We now combine the concepts from Chapters 1 and 2 to build Elliptic Curve Cryptography.
