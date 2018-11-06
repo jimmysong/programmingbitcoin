@@ -224,7 +224,7 @@ We can actually do this as many times as we want. This is what we call Scalar Mu
 
 What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
 
-.Scalar Multiplication Results
+.Scalar Multiplication Results for y^2^=x^3^+7 over F~223~ for point (170,142)
 image::scatterplot.png[Scalar Multiplication Results]
 
 Each point is labeled by how many times we've added the point. You can see that this is a complete scattershot.
@@ -431,7 +431,7 @@ class Point:
 
 This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? If coefficient is 1 trillion, this is going to take a really long time, for example.
 
-It turns out there's a really fun technique called binary expansion. If bits is the number of bits required to represent the number coefficient, we only have to loop bits times. Note that 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
+It turns out there's a really cool technique called binary expansion that allows us to perform multiplaciton in log2(n) loops, which dramatically reduces the calculation time for large numbers. For example, 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
 
 [source,python]
 ----
@@ -459,7 +459,7 @@ With $$__add__$$ and $$__rmul__$$, we can now start defining some more complicat
 
 === Defining the curve for Bitcoin
 
-While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. That is try every single point in the group. That is, if the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
+While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. If the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
 
 But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of Elliptic Curve Cryptography depends on computers *not* being able to go through the entire space of the group.
 
@@ -483,7 +483,7 @@ There are a few things to notice about this curve. First, the equation is relati
 
 Second, p is really, really close to 2^256^. This means that most numbers under 2^256^ are in the prime field. n is also very close to 2^256^. This means most points on the curve are in the group. The curve was chosen, in part, because n is so close to P.
 
-Third, 2^256^ is a really big number (See the sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
+Third, 2^256^ is a really big number (See the "How big is 2^256^ sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
 
 Lastly, the curve itself is one that was published by Certicom, and is *not* a NIST curve. NIST stands for National Institute of Standards and Technology and they are affiliated with the NSA (National Security Administration). We don't really know why Satoshi chose the non-NIST curve as opposed to the NIST one, but some speculate this is because of the NSA affiliation.
 
@@ -699,8 +699,8 @@ Verification is simple:
 * uG+vP where u,v≠0
 * uG+vP=(z/s)G+(re/s)G=((z+re)/s)G=((z+re)/((z+re)/k))G=kG=(r,y)
 
-.Why We Don't Reveal `k`
 [WARNING]
+.Why We Don't Reveal `k`
 ====
 At this point, you might be wondering why we don't reveal k and instead reveal the x-coordinate of R or `r`. If we were to reveal k, then:
 
@@ -712,6 +712,8 @@ At this point, you might be wondering why we don't reveal k and instead reveal t
 * (k-u)*1/v = e
 
 Means that we'll be revealing our secret, which would defeat the whole purpose of the signature. We can, however, reveal R.
+
+It's worth mentioning again, make sure you're using truly random numbers for `k`, as revealing `k` for a known signature is the equivalent of revealing your secret and losing your funds!
 ====
 
 ==== Verification in-depth
@@ -737,7 +739,7 @@ uG + vP = (z/s)G + (r/s)P = (z/s)G + (re/s)G = ((z+re)/s)G
 
 We know s = (z+re)/k so:
 
-uG + vP = ((z+re)/((z+re)/k))G = kG = R
+uG + vP = ((z+re) / ((z+re)/k))G = kG = R
 
 We've successfully chosen u and v in a way as to generate R as we intended. Furthermore, we used r in the calculation of v proving we knew what R should be. The only way we could know the details of R beforehand is if we know e, proving we know e.
 
@@ -753,7 +755,7 @@ To whit, here are the steps:
 ====
 The calculation of z requires two rounds of sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
 
-There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017. Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
+There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html). Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
 
 There is no known SHA256 weakness like a birthday attack, but is doing two rounds is a defense against possible potential weaknesses.
 ====
@@ -866,13 +868,13 @@ Note that using something like the `random` library from Python to do cryptograp
 >>> from ecc import S256Point, G, N
 >>> from random import randint
 >>> from helper import hash256
->>> e = int.from_bytes(hash256(b'my secret'), 'big') # <1>
->>> z = int.from_bytes(hash256(b'my message'), 'big') # <2>
->>> k = randint(0, N)
->>> r = (k*G).x.num # <3>
+>>> e = int.from_bytes(hash256(b'my secret'), 'big')  # <1>
+>>> z = int.from_bytes(hash256(b'my message'), 'big')  # <2>
+>>> k = randint(0, N)  # <3>
+>>> r = (k*G).x.num  # <4>
 >>> k_inv = pow(k, N-2, N)
->>> s = (z+r*e) * k_inv % N # <4>
->>> point = e*G # <5>
+>>> s = (z+r*e) * k_inv % N  # <5>
+>>> point = e*G # <6>
 >>> print(point)
 S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
 >>> print(hex(z))
@@ -884,9 +886,10 @@ S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae98
 ----
 <1> This would be something like a "brain wallet". Please don't use this for a real secret.
 <2> This is the message that we're signing.
-<3> kG = (r,y) so we take the x coordinate only
-<4> s = (z+re)/k. We mod by N because we know this is a cyclical group of order N
-<5> The public point needs to be known by the verifier
+<3> Note this is not a cryptographically secure way to generate a random number. This is for demonstration purposes only.
+<4> kG = (r,y) so we take the x coordinate only
+<5> s = (z+re)/k. We mod by N because we know this is a cyclical group of order N
+<6> The public point needs to be known by the verifier
 
 ==== Exercise {counter:exercise}
 
@@ -946,16 +949,14 @@ class PrivateKey:
 
 .Importance of k being random
 ****
-
-There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
+There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be really random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
 
 Our secret is e and our z is the same.
 
-k~1~G=(r~1~,y), k~2~G=(r~2~,y)
-s~1~ = (z+r~1~e), s~2~ = (z+r~2~e)
-
-s~1~-s~2~ = (r~1~-r~2~)e
-e = (s~1~-s~2~) / (r~1~-r~2~)
+* k~1~G=(r~1~,y), k~2~G=(r~2~,y)
+* s~1~ = (z+r~1~e), s~2~ = (z+r~2~e)
+* s~1~-s~2~ = (r~1~-r~2~)e
+* e = (s~1~-s~2~) / (r~1~-r~2~)
 
 If anyone sees both signatures, they can run this formula and find our secret!
 
@@ -995,13 +996,16 @@ class PrivateKey:
             v = hmac.new(k, v, s256).digest()
 ----
 <1> We are using the deterministic k instead of a random one. Everything else remains the same.
-<2> This algorithm'returns a candidate that's suitable.
+<2> This algorithm returns a candidate that's suitable.
 
 The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
+
+Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time. This makes debugging much easier and unit tests a lot easier to write. In addition, transactions which use deterministic k will create the same transaction every time as the signature will not change. This makes transactions less malleable (more on that in Chapter 13)
 
 ****
 
 ### Conclusion
 
-We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message. We now turn to serializing a lot of these structures so that we can store them on disk, send them over the network and so on.
+We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message. Even if you don't read another page in this book, you've learned to implement what was once considered "weapons grade cryptogrpahy". This is a major step in your journey and will be essential for the rest of the book.
 
+We now turn to serializing a lot of these structures so that we can store them on disk, send them over the network and so on.

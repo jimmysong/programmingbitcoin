@@ -66,10 +66,10 @@ class Tx:
         version = serialization[0:4]  # <2>
 	...
 ----
-<1> This method would have to be a class method as the serialization would have to be converted to a `Tx` object.
+<1> This method has to be a class method as the serialization will return a new instance of a `Tx` object.
 <2> We assume here that the variable `serialization` is a byte array.
 
-This could definitely work, but practically speaking, the bytes size of the transaction may be very large. Ideally, we want to be able to parse from a _stream_ instead. This will allow us to not need the entire transaction serialization before we start parsing and from an engineering point, that allows to fail early and be more efficient. Thus, the code for parsing a transaction will look more like this:
+This could definitely work, but practically speaking, the bytes size of the transaction may be very large. Ideally, we want to be able to parse from a _stream_ instead. This will allow us to not need the entire transaction serialization before we start parsing and that allows us to fail early and be more efficient. Thus, the code for parsing a transaction will look more like this:
 
 [source,python]
 ----
@@ -107,7 +107,7 @@ image::tx3.png[Inputs]
 
 Each input points to an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
 
-Bitcoin's inputs are spending outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend it. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that each input needs to have:
+Bitcoin's inputs are spending outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend them. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that each input needs to have:
 
 * A reference to the previous Bitcoins you own
 * Proof that these are yours to spend
@@ -123,10 +123,10 @@ image::tx4.png[Inputs]
 
 We can see that the byte is actually `01`, which means that this transaction has 1 input. It may be tempting here to assume that it's always a single byte, but it's not. A single byte has 8 bits, so this means that anything over 255 inputs would not be expressible in a single byte.
 
-This is where varint comes in. Varint is shorthand for *variable integer* which is a way to encode an integer into bytes that range from 0 to 2^64^-1. We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be a relatively small number (say under 200). This is the case with the number of inputs in a normal transaction, so utilizing a varint helps to save space. You can see how they work in the sidebar.
+This is where varint comes in. Varint is shorthand for *variable integer* which is a way to encode an integer into bytes that range from 0 to 2^64^-1. We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be a relatively small number (say under 200). This is the case with the number of inputs in a normal transaction, so utilizing a varint helps to save space. You can see how they work in the `Varint` note.
 
-.Varint
 [NOTE]
+.Varint
 ====
 Variable integers work by these rules:
 
@@ -174,11 +174,11 @@ def encode_varint(i):
 Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
 
 * Previous Transaction ID
-* Previous transaction index
+* Previous Transaction Output Index
 * ScriptSig
 * Sequence
 
-As explained above, each input is actually a previous transaction's output. The previous transaction id is the `hash256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is very, very small. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transactio* that we're spending.
+As explained above, each input is actually a previous transaction's output. The previous transaction id is the `hash256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is impossibly low. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transaction* that we're spending.
 
 We will note here that the transaction id is 32 bytes and that the transaction index is 4 bytes. Both are in little-endian order
 
@@ -252,7 +252,7 @@ Like inputs, the transaction serialization starts with how many outputs there ar
 .Number of Outputs
 image::tx6.png[Outputs]
 
-Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin. This allows us to divide Bitcoin very finely, down to 1/100th of a penny in USD terms as of this writing. The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million bitcoins) in satoshis, which is 2,100,000,000,000,000 (2.1 quadrillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and thus be stored in more bytes. This is why amount takes up 8 bytes and is serialized in little-endian.
+Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin. This allows us to divide Bitcoin very finely, down to 1/100th of a penny in USD terms as of this writing. The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million bitcoins) in satoshis, which is 2,100,000,000,000,000 (2.1 quadrillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and thus must be stored in 64 bits, or 8 bytes. Amount is serialized in little-endian.
 
 ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart contract language Script. Think of ScriptPubKey as the lock box that can only be opened by the holder of the key. ScriptPubKey is essentially a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe. We'll explore what this is in more detail in chapter 6. Like ScriptSig, ScriptPubKey is a variable-length field and is thus preceded by the length of the field as a varint.
 
@@ -263,7 +263,7 @@ image::tx7.png[Output Fields]
 
 .UTXO Set
 ****
-UTXO stands for Unspent Transaction Output. The entire set of unspent transaction outputs at any given moment is called the UTXO Set. The reason why UTXOs are important is because they represent all the actual Bitcoins that are available to spend. In other words, these are the Bitcoins that are in circulation. Full nodes on the network must keep track of the UTXO set, and keeping it indexed and easy to look up makes validating new transactions much, much easier.
+UTXO stands for Unspent Transaction Output. The entire set of unspent transaction outputs at any given moment is called the UTXO Set. The reason why UTXOs are important is because they represent all the actual Bitcoins that are available to spend. In other words, these are the Bitcoins that are in circulation. Full nodes on the network must keep track of the UTXO set, and keeping it indexed and easy to look up makes validating new transactions much faster.
 
 For example, it's very easy to detect a double-spend simply by looking up the previous transaction output in the UTXO set. If the input of a new transaction is using a transaction output that's been spent already, that's an attempt at a double-spend and thus invalid. Keeping the UTXO set handy is also very useful for validating transactions. We need to look up the amounts and the ScriptPubKey from the previous transaction output, so having these UTXOs handy will greatly speed up transaction validation.
 ****
@@ -376,7 +376,7 @@ One thing that might be interesting to note is that the transaction fee is not s
 
 One of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on Coinbase transactions in Chapter 8), the amount in the inputs have to be greater than or equal to the amount in the outputs. You may be wondering why the inputs and outputs can't just be forced to be equal. This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks. Fees are a way to incentivize miners to include transactions in blocks. Transactions that are not in blocks are not part of the blockchain and cannot be counted on as being valid.
 
-The transaction fee is simply the input sum minus the output sum. The difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information. Here is how we can get the previous transaction and thus, the amount, for an input:
+The transaction fee is simply the sum of the inputs minus the sum of the outputs. This difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information. Here is how we can fetch the previous transaction and thus, the amount, for an input:
 
 [source,python]
 ----
