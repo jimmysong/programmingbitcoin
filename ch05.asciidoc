@@ -32,11 +32,12 @@ With this in mind, we can start constructing the Transaction class, which we'll 
 ----
 class Tx:
 
-    def __init__(self, version, tx_ins, tx_outs, locktime):
+    def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
         self.version = version
         self.tx_ins = tx_ins  # <1>
         self.tx_outs = tx_outs
         self.locktime = locktime
+	self.testnet = testnet  # <2>
 
     def __repr__(self):
         tx_ins = ''
@@ -51,8 +52,19 @@ class Tx:
             tx_outs,
             self.locktime,
         )
+
+    def id(self):  # <3>
+        '''Human-readable hexadecimal of the transaction hash'''
+        return self.hash().hex()
+
+    def hash(self):  # <4>
+        '''Binary hash of the legacy serialization'''
+        return hash256(self.serialize())[::-1]
 ----
 <1> Input and Output are very generic terms so we specify what kind of inputs they are. We'll define the specific object types they are later.
+<2> We need to know which network this transaction is on in order to be able to validate it fully.
+<3> The id is what block explorers use for looking up transactions. It's the hash in hexadecimal format.
+<4> The hash is the hash256 of the serialization in little-endian.
 
 The rest of this chapter will be concerned with parsing a transaction. This is very useful to know as this teaches you about the actual serialized format. You may at this point write some code like this:
 
@@ -376,42 +388,71 @@ One thing that might be interesting to note is that the transaction fee is not s
 
 One of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on Coinbase transactions in Chapter 8), the amount in the inputs have to be greater than or equal to the amount in the outputs. You may be wondering why the inputs and outputs can't just be forced to be equal. This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks. Fees are a way to incentivize miners to include transactions in blocks. Transactions that are not in blocks are not part of the blockchain and cannot be counted on as being valid.
 
-The transaction fee is simply the sum of the inputs minus the sum of the outputs. This difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information. Here is how we can fetch the previous transaction and thus, the amount, for an input:
+The transaction fee is simply the sum of the inputs minus the sum of the outputs. This difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information.
+
+We are creating a new class to handle this, called TxFetcher:
 
 [source,python]
 ----
-class TxIn:
-    ...
+class TxFetcher:
+    cache = {}
+
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://tbtc.programmingblockchain.com:18332'
+            return 'http://tbtc.programmingblockchain.com:18332'  # <1>
         else:
-            return 'http://btc.programmingblockchain.com:8332'
+            return 'http://btc.programmingblockchain.com:8332'  # <2>
 
-    def fetch_tx(self, testnet=False):
-        if self.prev_tx not in self.cache:
-            url = '{}/rest/tx/{}.hex'.format(
-                self.get_url(testnet), self.prev_tx.hex())
+    @classmethod
+    def fetch(cls, tx_id, testnet=False, fresh=False):
+        if fresh or (tx_id not in cls.cache):
+            url = '{}/rest/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
             response = requests.get(url)
-            stream = BytesIO(bytes.fromhex(response.text.strip()))
-            tx = Tx.parse(stream)
-            self.cache[self.prev_tx] = tx
-        return self.cache[self.prev_tx]
-----
+            try:
+                raw = bytes.fromhex(response.text.strip())
+            except ValueError:
+                raise ValueError('unexpected response: {}'.format(response.text))            # make sure the tx we got matches to the hash we requested
+            tx = Tx.parse(BytesIO(raw), testnet=testnet)
+            if tx.id() != tx_id:  # <3>
+                raise ValueError('not the same id: {} vs {}'.format(tx.id(), tx_id))
+            cls.cache[tx_id] = tx
+        cls.cache[tx_id].testnet = testnet
+        return cls.cache[tx_id]
 
-We can get the previous transaction using the `fetch_tx` method. You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (hash256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
+    @classmethod
+    def load_cache(cls, filename):
+        disk_cache = json.loads(open(filename, 'r').read())
+        for k, raw_hex in disk_cache.items():
+            cls.cache[k] = Tx.parse(BytesIO(bytes.fromhex(raw_hex)))
+
+    @classmethod
+    def dump_cache(cls, filename):
+        with open(filename, 'w') as f:
+            to_dump = {k: tx.serialize().hex() for k, tx in cls.cache.items()}
+            s = json.dumps(to_dump, sort_keys=True, indent=4)
+            f.write(s)
+----
+<1> Port 18332 is the default port for RPC on testnet
+<2> Port 8332 is the default port for RPC on mainnet
+<3> We check that the id is what we expect it to be
+
+You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (hash256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
 
 .Why we minimize trusting third parties
 [WARNING]
 ====
-As Nick Szabo so clearly wrote in his seminal essay "Trusted Third Parties are Security Holes" (https://nakamotoinstitute.org/trusted-third-parties/), trusting third parties to provide correct data is *not* a good security practice. The third party may be behaving well now, but you never know when they may get hacked, may have an employee go rogue or simply start implementing policies that are against your interests. Part of what makes Bitcoin secure is in *not* trusting, but actually verifying data that we're given.
+As Nick Szabo eloquently wrote in his seminal essay "Trusted Third Parties are Security Holes" (https://nakamotoinstitute.org/trusted-third-parties/), trusting third parties to provide correct data is *not* a good security practice. The third party may be behaving well now, but you never know when they may get hacked, may have an employee go rogue or simply start implementing policies that are against your interests. Part of what makes Bitcoin secure is in *not* trusting, but actually verifying data that we're given.
 ====
 
-We can now write methods to get the previous transaction output's amount and script_pubkey (the latter to be used in the next chapter):
+We can now create the appropriate method in `TxIn` to fetch the previous transaction and methods to get the previous transaction output's amount and script_pubkey (the latter to be used in the next chapter):
 
 [source,python]
 ----
+class TxIn:
+...
+    def fetch_tx(self, testnet=False):
+        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
         '''Get the outpoint value by looking up the tx hash on libbitcoin server

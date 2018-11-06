@@ -1,6 +1,7 @@
 from io import BytesIO
 from unittest import TestCase
 
+import json
 import requests
 
 from ecc import PrivateKey, S256Point, Signature
@@ -38,6 +39,14 @@ class Tx:
             tx_outs,
             self.locktime,
         )
+
+    def id(self):
+        '''Human-readable hexadecimal of the transaction hash'''
+        return self.hash().hex()
+
+    def hash(self):
+        '''Binary hash of the legacy serialization'''
+        return hash256(self.serialize())[::-1]
 
     @classmethod
     def parse(cls, s):
@@ -211,22 +220,8 @@ class TxIn:
         result += int_to_little_endian(self.sequence, 4)
         return result
 
-    @classmethod
-    def get_url(cls, testnet=False):
-        if testnet:
-            return 'http://tbtc.programmingblockchain.com:18332'
-        else:
-            return 'http://btc.programmingblockchain.com:8332'
-
     def fetch_tx(self, testnet=False):
-        if self.prev_tx not in self.cache:
-            url = '{}/rest/tx/{}.hex'.format(
-                self.get_url(testnet), self.prev_tx.hex())
-            response = requests.get(url)
-            stream = BytesIO(bytes.fromhex(response.text.strip()))
-            tx = Tx.parse(stream)
-            self.cache[self.prev_tx] = tx
-        return self.cache[self.prev_tx]
+        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
         '''Get the outpoint value by looking up the tx hash on libbitcoin server

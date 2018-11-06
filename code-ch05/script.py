@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from helper import (
     encode_varint,
+    int_to_little_endian,
     read_varint,
 )
 from op import (
