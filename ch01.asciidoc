@@ -27,7 +27,7 @@ Mathematically, a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
-* If *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
+* If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set. We call this property _closed_
 * The additive identity, *0* exists. This means *a + 0 = a*
 * The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
 * If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
@@ -565,4 +565,4 @@ Thankfully, we can do even better. We already know how to force a number into th
 
 === Conclusion
 
-In thes chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.

@@ -6,7 +6,7 @@
 == Serialization
 
 [.lead]
-We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`. We now need to start thinking about how to transmit thes objects to other computers on the network, or even to disk as we'll need to store objects of these classes. This is where serialization comes into play. We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`. Ideally, we want to do this efficiently for reasons we'll see in Chapter 10 (Networking).
+We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`. We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk as we'll need to store objects of these classes. This is where serialization comes into play. We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`. Ideally, we want to do this efficiently for reasons we'll see in Chapter 10 (Networking).
 
 === Uncompressed SEC format
 
@@ -37,7 +37,7 @@ Since Computers work in bytes, which have 8 bits, we have to think in base-256. 
 Unfortunately, some stuff in Bitcoin (like the SEC format x and y coordinates) are in Big-Endian. Other stuff in Bitcoin (like the transaction version number) are in Little-Endian. This book will let you know which ones are Big vs Little Endian.
 ====
 
-This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into a 32 bytes. Here's how this is done in code:
+This procedure is pretty straightforward. The trickiest part being converting a 256-bit number into 32 bytes. Here's how this is done in code:
 
 [source,python]
 ----

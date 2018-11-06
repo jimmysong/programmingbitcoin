@@ -15,7 +15,7 @@ Elliptic Curves are really just like many equations you've been seeing since aro
 
 y^2^=x^3^+ax+b
 
-This is probably somewhat familiar as you've worked with other equations that look similar. For example, you are probably learned the linear equation back in middle school:
+This is probably somewhat familiar as you've worked with other equations that look similar. For example, you probably learned the linear equation back in pre-algebra:
 
 y = mx + b
 
@@ -142,7 +142,7 @@ Like Field Addition, we are defining Point Addition. In our case, Point Addition
 
 For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
 
-* Find the point intersects the elliptic curve a third time by drawing a line through P~1~ and P~2~
+* Find the point intersecting the elliptic curve a third time by drawing a line through P~1~ and P~2~
 * Reflect the resulting point over the x-axis
 
 Visually, it looks something like this:
