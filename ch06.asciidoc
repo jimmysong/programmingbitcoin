@@ -8,7 +8,7 @@
 [.lead]
 The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin. Locking is leaving some Bitcoins to someone else. Unlocking is spending some Bitcoins that have been left for you.
 
-In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what combines what you've learned in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
+In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what combines what's covered in the first part of the book. Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
 
 === Mechanics of Script
 
@@ -32,7 +32,7 @@ The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) a
 
 === How Script works
 
-Script, as a language, operates by processing one item at a time. There are two possible types of items: elements and operations.
+Script, as a language, operates by processing one instruction at a time. There are two possible types of instructions: elements and operations.
 
 Elements are just data. They are byte strings of length 1 to 520. A typical element might be a der signature or a sec pubkey.
 
@@ -165,7 +165,9 @@ Specifying where the bitcoins go is the job of the scriptPubKey. As stated above
 .Pay-to-pubkey (p2pk) ScriptPubKey
 image::p2pk1.png[P2PK ScriptPubKey]
 
-Note the OP_CHECKSIG, as that will be very important. The ScriptSig is the part that unlocks the received bitcoins. In the case of p2pk, the ScriptSig is just the signature.
+Note the OP_CHECKSIG, as that will be very important. The ScriptSig is the part that unlocks the received bitcoins. The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see Chapter 4).
+
+In the case of p2pk, the ScriptSig is just the signature.
 
 .Pay-to-pubkey (p2pk) ScriptSig
 image::p2pk2.png[P2PK ScriptSig]
@@ -214,6 +216,8 @@ Pay-to-pub-key is pretty intuitive in the sense that there is a public key that 
 
 First, the public keys are long. We know from chapter 3 that SECP256K1 public points are 33 bytes in compressed and 65 bytes in uncompressed sec format. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain byte ranges as they are control characters or newlines or similar. The sec format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed formats 66 and 130 characters respectively, which is way bigger than most identifiers. To compound this, early Bitcoin transactions simply didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to communicate by email, much less by voice!
 
+That said, the original use-case for p2pk was for IP-to-IP payments where IP addresses were queried for their public keys, so communicating the public keys were done entirely via machine. Incidentally, this IP-to-IP payment system was phased out as it's not secure and prone to man-in-the-middle attacks.
+
 .Why did Satoshi use the Uncompressed SEC format?
 ****
 It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was utilizing the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
@@ -232,7 +236,7 @@ For these reasons p2pk is not really used currently on the network.
 Pay-to-pubkey-hash has a bunch of advantages over p2pk:
 
 1. The addresses are shorter.
-2. It's protected by ECDSA/SHA256 and RIPEMD160.
+2. It's additionally protected by SHA256 and RIPEMD160.
 
 Addresses are shorter due to the use of the SHA256 and RIPEMD160 hashing algorithms. We utilize both in succession and call that HASH160. The result of HASH160 is 160-bits or 20 bytes, which can be encoded into an address.
 
@@ -361,18 +365,20 @@ image::ex9.png[Example 1 End]
 
 Note that this isn't particularly hard to figure out and requires no signature. As a result, this sort of script is vulnerable to being taken by pretty much anyone. Think of this as a lock box with a very flimsy lock that anyone can break into. It turns out that most transactions have some signature component in them as a script without some signature component is very easily stolen.
 
+Of course, after it's been spent, included in a block and thus secured by proof-of-work, these coins are no longer as easily spendable. They would have to reverse proof-of-work, which is expensive (Chapter 9).
+
 ==== Exercise {counter:exercise}
 
-Create a ScriptSig that can unlock this ScriptPubKey
+Create a ScriptSig that can unlock this ScriptPubKey. Note OP_MUL multiplies the top two elements of the stack.
 
 .Exercise 1
 image::exercise1.png[Exercise 1]
 
 ==== Utilty of Scripts
 
-The previous exercise was a bit of a cheat as OP_MUL is no longer allowed on the Bitcoin network. Version 0.3.5 of Bitcoin disabled a lot of different OP codes as anything that had even a little bit of potential to create vulnerabilties on the network were disabled. The main culprits were a couple of severe bugs related to OP_LSHIFT and OP_RETURN.
+The previous exercise was a bit of a cheat as OP_MUL is no longer allowed on the Bitcoin network. Version 0.3.5 of Bitcoin disabled a lot of different OP codes as anything that had even a little bit of potential to create vulnerabilties on the network were disabled. The main culprits were a couple of bugs related to OP_LSHIFT.
 
-This is just as well since most of the functionality in Script is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. This is why Bitcoin is moving more towards simplifying the smart contract language and not expanding it. This is a way to make Bitcoin more secure.
+This is just as well since most of the functionality in Script is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. This is why Bitcoin is moving more towards simplifying the smart contract language and not expanding it (Scriptless Scripts, for example). This is a way to make Bitcoin more secure.
 
 This is in stark contrast to other projects which try to expand their smart contract languages.
 
@@ -386,6 +392,8 @@ image::exercise2.png[Exercise 2]
 ==== SHA1 Piñata
 
 In 2013, Peter Todd created a script very similar to the exercise above and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached 2.49153717 BTC and when Google actually found a hash collision for SHA1 in February of 2017, this script was promptly redeemed. The transaction output was 2.48 coins which was $2848.88 USD at the time.
+
+Peter created more piñatas for SHA256, HASH256 and HASH160, which add economic incentives to break these hashing functions.
 
 === Conclusion
 

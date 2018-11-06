@@ -259,7 +259,7 @@ Write the `handshake` method for `SimpleNode`
 
 === Getting headers
 
-Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading headers allows us to asynchronously ask for various blocks. For light clients, downloading headers allows us to verify the proof-of-work in each block and give us an idea of how long the blockchain is. As we'll see in Chapter 11, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
+Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading headers allows us to asynchronously ask for various blocks. For light clients, downloading headers allows us to verify the proof-of-work in each block and give us an idea of which chain has the most proof-of-work. As we'll see in Chapter 11, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
 
 Nodes can give us the block headers without taking up too much bandwidth. The command to get the block headers is called `getheaders` and it looks something like this:
 

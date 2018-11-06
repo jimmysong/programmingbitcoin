@@ -91,7 +91,7 @@ Furthermore, this is a special rule for Segwit Version 0. Segwit Version 1 can h
 
 === P2SH-P2WPKH
 
-P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of the p2wpkh ScriptPubKey. Simply put, p2wpkh uses bech32 addresses which older wallets won't understand.
+P2WPKH is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to them because they aren't aware of the p2wpkh ScriptPubKey. Simply put, p2wpkh uses bech32 addresses whose ScriptPubKEys older wallets don't know how to create.
 
 The segwit authors found an ingenious way to make Segwit backwards compatible by utilizing p2sh, essentially "wrapping" p2wpkh inside a p2sh. This is called "nested" Segwit as the Segwit stuff is embedded inside a p2sh.
 
@@ -155,8 +155,6 @@ As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to
 Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of z. Essentially, a lot of the calculations for z can be reused instead of requiring a new double_sha256 hash for each input. The details of the z calculation is detailed in BIP0143.
 
 Another improvement is that uncompressed SEC pubkeys are now forbidden and thus, only compressed SEC pubkeys are utilized for Segwit, saving space.
-
-In addition, to allow newer nodes to get the Segwit serialization, there is now a service bit in the version message that indicates whether the Segwit versions of the transaction serializations will be understood or not. Various network commands have extensions to allow for requesting Segwit-specific serializations. The specifications are detailed in BIP0144.
 
 ==== Conclusion
 

@@ -13,7 +13,7 @@ One of the trickiest things for a transaction is the process of validating a tra
 Every node, when receiving transactions makes sure that the transaction adheres to the network rules. This process is called _transaction validation_. Here are the main things that a node needs to check for:
 
 * Inputs of the transaction are previously unspent
-* Sum of the inputs > sum of the outputs
+* Sum of the inputs greater than or equal to the sum of the outputs
 * scriptSig actually unlocks the previous scriptPubKey
 
 The first aspect prevents double-spending. Any input that's already been spent cannot be spent again.
@@ -26,9 +26,9 @@ Let's look at how each is done.
 
 === Checking the spentness of inputs
 
-In order to prevent double-spending, each input has to be checked to see if it's previously been spent. In order to check that this input has *not* been used in any other transaction, we actually need access to the entire blockchain. We cannot glean from the transaction itself whether it's valid or not, no more than we can look at a personal check and determine whether that's overdrafting or not. The only way to know is to look at the entire set of transactions.
+In order to prevent double-spending, each input has to be checked to see if it's previously been spent. In order to check that this input has *not* been used in any other transaction, we actually need access to the entire blockchain or a verified unspent transaction output set (aka UTXOs, see Chapter 5). We cannot glean from the transaction itself whether it's valid or not, no more than we can look at a personal check and determine whether that's overdrafting or not. The only way to know is to be able to verify the entire set of transactions.
 
-In Bitcoin, we can determine whether an input is being double spent by keeping track of the unspent transaction outputs (aka UTXOs, see Chapter 5). If an input is in the UTXO set, the transaction is NOT double-spending. If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set. Light clients that do not have access to the blockchain have to trust other nodes for their information, including input spentness information.
+In Bitcoin, we can determine whether an input is being double spent by keeping track of the UTXOs. If an input is in the UTXO set, the transaction is NOT double-spending. If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set. Light clients that do not have access to the blockchain have to trust other nodes for their information, including input spentness information.
 
 A full node can check the spentness of an input pretty easily, a light client has to get this information from someone else.
 
@@ -60,11 +60,22 @@ We can test to see if this transaction is trying to print money by utilizing thi
 >>> from io import BytesIO
 >>> stream = BytesIO(bytes.fromhex('010000...0600'))
 >>> transaction = Tx.parse(stream)
->>> print(transaction.fee() >= 0)
+>>> print(transaction.fee() >= 0)  # <1>
 True
 ----
+<1> Note this only works because we're using Python. See note.
 
 If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create money out of thin air.
+
+[NOTE]
+.Value Overflow Incident
+====
+In block 74638, there was a transaction that created 184 Billion new bitcoins. This is due to the fact that in C++, the value field is actually an integer and not an unsigned integer. That is, the value could be negative!
+
+The clever transaction passed all the checks with regard to fees and not creating new bitcoins, but only because the amount overflowed past the maximum number. Note 2^64^ is roughly 1.84 * 10^19^ satoshis, which is 184 Billion Bitcoins. The fee was negative by enough that the C++ code was essentially tricked into believing that the fee was actually positive by 0.1 BTC!
+
+The vulnerability is detailed in CVE-2010-5139 and was patched in Bitcoin 0.3.11.
+====
 
 === Checking the Signature
 
@@ -198,7 +209,7 @@ Fee estimation is generally done on a per-byte basis. Roughly speaking, if your 
 
 When blocks aren't full, almost any amount above the default relay limit (1 satoshi/byte) is enough to get your transaction included. However, when blocks are full, this is not an easy thing to estimate. There are multiple ways to estimate fees including:
 
-* Looking at various fee levels and estimating the probability of inclusion based on past blocks.
+* Looking at various fee levels and estimating the probability of inclusion based on past blocks and the mempools at the time.
 * Looking at the current mempool and adding a fee that roughly corresponds to enough economic incentivization.
 * Going with some fixed fee
 
@@ -317,7 +328,7 @@ mqNK1JUujDXeufN9bDVKtzzvriqjnZLxHU
 ----
 <1> Please use some secret other than this number
 
-Now that you have an address, you can get some coins at a myriad of testnet faucets. Faucets are where you can get testnet coins for free. You can Google "testnet bitcoin faucet" to find them or use one from this list: https://en.bitcoin.it/wiki/Testnet#Faucets. At the time of this writing, https://testnet.coinfaucet.eu/en/ works. You will want to enter your address as generated above.
+Now that you have an address, you can get some coins at a myriad of testnet faucets. Faucets are where you can get testnet coins for free. You can Google "testnet bitcoin faucet" to find them or use one from this list: https://en.bitcoin.it/wiki/Testnet#Faucets. My website, https://testnet.programmingbitcoin.com/ will point to a testnet faucet that works. You will want to enter your address as generated above.
 
 After you get some coins, see if you can spend them using the library you've been writing. This is usually a big accomplishment for a budding Bitcoin developer, so please take some time to see if you can complete this exercise.
 

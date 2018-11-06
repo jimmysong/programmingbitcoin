@@ -19,7 +19,7 @@ The transaction is called "bare" multisig because it's a really long ScriptPubKe
 .Bare Multisig ScriptPubKey
 image::multisig1.png[Bare Multisig ScriptPubKey]
 
-This is the smallest reasonable multisig that you can get, and it's already really long. Note that p2pkh is only 25 bytes whereas this one is 101 bytes, and this is a 1 of 2! Here's what the ScriptSig looks like:
+This is a reasonably small multisig, and it's already really long. Note that p2pkh is only 25 bytes whereas this one is 101 bytes, and this is a 1 of 2! Here's what the ScriptSig looks like:
 
 .Bare Multisig ScriptSig
 image::multisig2.png[Bare Multisig ScriptSig]
@@ -67,11 +67,11 @@ As a way to combat malleabilty, however, most nodes on the Bitcoin network will 
 
 Bare multisig is a bit ugly, but it's very much functional. You can have m of n signatures required to release funds and there is plenty of utility in making outputs multisig, especially if you're a business. However, bare multisig suffers from a few problems:
 
-1. First problem: the long length of the ScriptPubKey. A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long. Unlike p2pkh or even p2pk, these are not easily sent even over email.
+1. First problem: the long length of the ScriptPubKey. A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long. Unlike p2pkh or even p2pk, these are not easily communicated, especially using voice or text message.
 
 2. Second problem: because the output is so long, it's rather taxing on node software. Nodes have to keep track of the UTXO set, so keeping a particularly big ScriptPubKey ready is onerous. A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
-3. Third problem: because the output can't be verified easily, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
+3. Third problem: because the output can be so much bigger, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: 54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 bare multisig outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
 
 In order to combat these problems, pay-to-script-hash (p2sh) was born.
 
@@ -183,7 +183,7 @@ Unfortunately, this much more elegant solution comes with an unwanted side-effec
 
 ==== More complicated scripts
 
-The nice thing about p2sh is that the RedeemScript can be arbitrarily long. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO output by pushing the burden of remembering the script back to the user.
+The nice thing about p2sh is that the RedeemScript can be as long as the largest single element from OP_PUSHDATA4, which is 520 bytes. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO output by pushing the burden of remembering the script back to the user.
 
 As we'll see in Chapter 13, p2sh will be used for backwards compatibility with Segwit.
 
