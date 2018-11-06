@@ -260,7 +260,7 @@ class ECCTest(TestCase):
         # tests the following points whether they are on the curve or not
         # on curve y^2=x^3-7 over F_223:
         # (192,105) (17,56) (200,119) (1,193) (42,99)
-        # the ones that aren't should raise a RuntimeError
+        # the ones that aren't should raise a ValueError
         prime = 223
         a = FieldElement(0, prime)
         b = FieldElement(7, prime)
@@ -388,9 +388,13 @@ class S256Point(Point):
         return super().__rmul__(coef)
 
     def verify(self, z, sig):
+        # By Fermat's Little Theorem, 1/s = pow(s, N-2, N)
         s_inv = pow(sig.s, N - 2, N)
+        # u = z / s
         u = z * s_inv % N
+        # v = r / s
         v = sig.r * s_inv % N
+        # u*G + v*P should have as the x coordinate, r
         total = u * G + v * self
         return total.x.num == sig.r
 
@@ -408,12 +412,12 @@ class S256Point(Point):
             # if non-compressed, starts with b'\x04' followod by self.x and then self.y
             return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
 
-    def h160(self, compressed=True):
+    def hash160(self, compressed=True):
         return hash160(self.sec(compressed))
 
     def address(self, compressed=True, testnet=False):
         '''Returns the address string'''
-        h160 = self.h160(compressed)
+        h160 = self.hash160(compressed)
         if testnet:
             prefix = b'\x6f'
         else:
