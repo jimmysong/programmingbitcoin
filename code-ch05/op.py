@@ -1,5 +1,10 @@
 import hashlib
 
+from helper import (
+    hash160,
+    hash256,
+)
+
 
 def encode_num(num):
     if num == 0:
@@ -624,19 +629,14 @@ def op_sha256(stack):
 
 
 def op_hash160(stack):
-    if len(stack) < 1:
-        return False
-    element = stack.pop()
-    h160 = hashlib.new('ripemd160', hashlib.sha256(element).digest()).digest()
-    stack.append(h160)
-    return True
+    raise NotImplementedError
 
 
 def op_hash256(stack):
     if len(stack) < 1:
         return False
     element = stack.pop()
-    stack.append(hashlib.sha256(hashlib.sha256(element).digest()).digest())
+    stack.append(hash256(element))
     return True
 
 

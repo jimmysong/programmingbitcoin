@@ -29,9 +29,6 @@ class Script:
                 result += '{} '.format(instruction.hex())
         return result
 
-    def __add__(self, other):
-        return Script(self.instructions + other.instructions)
-
     @classmethod
     def parse(cls, s):
         # get the length of the entire field
@@ -66,11 +63,6 @@ class Script:
                 data_length = little_endian_to_int(s.read(2))
                 instructions.append(s.read(data_length))
                 count += data_length + 2
-            elif current_byte == 78:
-                # op_pushdata4
-                data_length = little_endian_to_int(s.read(4))
-                instructions.append(s.read(data_length))
-                count += data_length + 4
             else:
                 # we have an op code. set the current byte to op_code
                 op_code = current_byte
@@ -101,14 +93,10 @@ class Script:
                     # 76 is pushdata1
                     result += int_to_little_endian(76, 1)
                     result += int_to_little_endian(length, 1)
-                elif length >= 0x100 and length < 0x10000:
+                elif length >= 0x100 and length <= 520:
                     # 77 is pushdata 2
                     result += int_to_little_endian(77, 1)
                     result += int_to_little_endian(length, 2)
-                elif length >= 0x10000 and length < 0x100000000:
-                    # 78 is pushdata 4
-                    result += int_to_little_endian(78, 1)
-                    result += int_to_little_endian(length, 4)
                 else:
                     raise ValueError('too long an instruction')
                 result += instruction
