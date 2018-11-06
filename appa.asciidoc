@@ -48,7 +48,7 @@ class FieldElement:
 ...
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot subtract two numbers in different Fields')
         num = (self.num - other.num) % self.prime
         return self.__class__(num, self.prime)
 ----
@@ -110,7 +110,7 @@ class FieldElement:
 ...
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
 	num = self.num * other.num % self.prime
 	return self.__class__(num, self.prime)
 ----
@@ -162,7 +162,7 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot divide two numbers in different Fields')
 	num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
 	return self.__class__(num, self.prime)
 ----

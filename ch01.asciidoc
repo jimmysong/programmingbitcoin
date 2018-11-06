@@ -75,7 +75,6 @@ We want to represent each finite field element and in Python, we'll be creating 
 
 The class represents an actual element in a field F~prime~. The bare bones of the class is pretty intuitive:
 
-.ecc.py
 [source,python]
 ----
 class FieldElement:
@@ -87,13 +86,13 @@ class FieldElement:
         self.num = num  # <2>
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):  # <3>
         if other is None:
             return False
         return self.num == other.num and self.prime == other.prime
-
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
 ----
 <1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method simply assigns the initialization values.

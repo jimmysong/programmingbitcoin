@@ -123,20 +123,24 @@ Run jupyter notebook:
 
 You should have a browser open up automatically to something that looks like this:
 
-image::jupyter1.png[Jupyter Notebook]
+.Jupyter
+image::jupyter1.png[Jupyter]
 
 You can navigate to various directories and if you wanted to do the exercises from Chapter 1, you would need to go navigate to the code from Chapter 1 in the code-ch01 directory:
 
-image::jupyter2.png[Chapter 1 Code Directory]
+.Jupyter Directory View
+image::jupyter2.png[Chapter 1 Directory]
 
 From here you can open `Programming Bitcoin Chapter 1.ipynb`:
 
+.Jupyter Notebook
 image::jupyter3.png[Chapter 1 Notebook]
 
 You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
 
 A large portion of the exercises will be coding concepts introduced in the book. The unit tests are written for you and you will need to write the Python code to make the tests pass. You can edit the file by clicking through a screen like the "this test" linke in Figure xxx. This will take you to a browser tab like this:
 
+.ecc.py
 image::jupyter4.png[Chapter 1 ecc.py]
 
 You can edit the file here and save in order to make the test pass.

@@ -15,6 +15,9 @@ class FieldElement:
         self.num = num
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):
         if other is None:
             return False
@@ -23,9 +26,6 @@ class FieldElement:
     def __ne__(self, other):
         # this should be the inverse of the == operator
         return not (self == other)
-
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
 
     def __add__(self, other):
         if self.prime != other.prime:
@@ -38,7 +38,7 @@ class FieldElement:
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot subtract two numbers in different Fields')
         # self.num and other.num are the actual values
         # self.prime is what we need to mod against
         num = (self.num - other.num) % self.prime
@@ -47,7 +47,7 @@ class FieldElement:
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
         # self.num and other.num are the actual values
         # self.prime is what we need to mod against
         num = (self.num * other.num) % self.prime
@@ -61,7 +61,7 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot divide two numbers in different Fields')
         # self.num and other.num are the actual values
         # self.prime is what we need to mod against
         # use fermat's little theorem:
