@@ -14,16 +14,16 @@ In this chapter we examine this locking/unlocking mechanism, which is often call
 
 If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. Script is the smart contract langauge, or the programming language used to express the conditions under which bitcoins are spendable.
 
-Bitcoin has the digital equivalent of a contract in Script. Script is a limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is therefore not Turing complete.
+Bitcoin has the digital equivalent of a contract in Script. Script is an intentionally limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is therefore not Turing complete.
 
-.Why Bitcoin isn't Turing Complete
 [NOTE]
+.Why Bitcoin isn't Turing Complete
 ====
 Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why Script doesn't allow for loops.
 
 There are a lot of reasons for this, but let's start with program execution. Anyone can create a Script program that every full node on the network executes this program. If Script were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network through what would be called a Denial of Service attack (DoS). A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
 
-There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to create behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money.
+There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to create behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money. This is not just theoretical, this was the major problem in the DAO which caused the Ethereum Classic hard fork.
 ====
 
 What you are required to do as part of a transaction is to assign Bitcoins to a *locking* script. The locking script is what's specified in ScriptPubKey (see chapter 5). Think of this as the lock box where some money is deposited which only the person with the key to the box can open. The money inside, of course, can only be accessed by someone with the key.
@@ -121,7 +121,7 @@ There are many more and the full list can be found at http://wiki.bitcoin.it
 
 ==== Coding a Script parser and serializer
 
-Given this rule, we can write a very basic parser. We assume that we have some lookup table that gives us what the name of a particular op code is in `OP_CODES`.
+Given this rule, we can write a very basic parser.
 
 [source,python]
 ----
@@ -129,6 +129,8 @@ class Script:
 
     def __init__(self, instructions):
         self.instructions = instructions  # <1>
+
+...
 
     @classmethod
     def parse(cls, s):
@@ -228,7 +230,7 @@ There are many types of standard scripts in Bitcoin including the following:
 
 Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, bech32) and create the appropriate ScriptPubKey. All of the above have a particular type of address format so people can pay to them.
 
-To show exactly how all this works, we'll next take a look at the original script pay-to-pubkey
+To show exactly how all this works, we'll now take a look at the original script pay-to-pubkey (p2pk).
 
 === p2pk
 
@@ -282,9 +284,9 @@ image::p2pk8.png[P2PK End 2]
 
 We end with a single item on the stack which is zero. This means the script is invalid and a transaction with this ScriptSig is invalid.
 
-The script will validate if the signature is valid, but fail if the signature is not. Essentially, we are in a situation where the ScriptSig will only unlock the ScriptPubKey if the signature is valid for that public key. In other words, only someone with knowledge of the secret can produce a valid ScriptSig.
+The script will validate if the signature is valid, but fail if the signature is invalid. Essentially, we are in a situation where the ScriptSig will only unlock the ScriptPubKey if the signature is valid for that public key. In other words, only someone with knowledge of the secret can produce a valid ScriptSig.
 
-Incidentally, we can see here why ScriptPubKey is called ScriptPubKey. The public key in uncompressed SEC format is the main item in ScriptPubKey in p2pk (the other being a OP_CHECKSIG). Similarly, ScriptSig is named as such because p2pk is a single item which is the DER signature format.
+Incidentally, we can see here why ScriptPubKey got its name. The public key in uncompressed SEC format is the main item in ScriptPubKey in p2pk (the other being a OP_CHECKSIG). Similarly, ScriptSig is named as such because p2pk is a single item which is the DER signature format.
 
 === Problems with p2pk
 
@@ -296,7 +298,7 @@ That said, the original use-case for p2pk was for IP-to-IP payments where IP add
 
 .Why did Satoshi use the Uncompressed SEC format?
 ****
-It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was utilizing the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
+It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was using the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
 
 Later on, Pieter Wuille discovered that the compressed SEC format was existed inOpenSSL, did their use in Bitcoin become more common.
 ****
@@ -305,7 +307,7 @@ Second, because the public keys are long, this causes a more subtle problem. The
 
 Third, because we're storing the public key in the ScriptPubKey field, it's known to everyone. That means should ECDSA someday be broken, these outputs could be stolen. This is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and would affect all of those things, too. For example, quantum computing has the potential to break RSA and ECDSA, so having something else in addition to protect these outputs would be more secure.
 
-For these reasons p2pk is not really used currently on the network.
+For these reasons p2pk is no longer used much on the network.
 
 === Solving the problems with p2pkh
 
@@ -318,15 +320,15 @@ Addresses are shorter due to the use of the SHA256 and RIPEMD160 hashing algorit
 
 The actual result is an address that you may have seen on the Bitcoin network, something that looks like this:
 
-1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH
+1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 
 This address actually has within it the 20 bytes in hex that look like this:
 
-751e76e8199196d454941c45d1b3a323f1433bd6
+f54a5851e9372b87810a8e60cdd2e7cfd80b6e31
 
 These 20 bytes are the result of doing a HASH160 operation on this (compressed) SEC public key:
 
-0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352
 
 === p2pkh
 
@@ -386,7 +388,7 @@ We are now at exactly where we were in during the OP_CHECKSIG part of processing
 .p2pkh End
 image::p2pkh10.png[P2PKH End]
 
-There are two ways this script can fail. If you provide a public key that does not HASH160 to the 20-byte hash in the ScriptPubKey, the script will fail at OP_EQUALVERIFY. The other fail condition is if you do provide the right public key, but an invalid signature. That would end the script with a 0 at the end, failing the script.
+There are two ways this script can fail. If you provide a public key that does not HASH160 to the 20-byte hash in the ScriptPubKey, the script will fail at OP_EQUALVERIFY (Figure 6-22). The other fail condition is if you do provide the right public key, but an invalid signature. That would end the script with a 0 at the end, failing the script.
 
 This is why we call this type of script pay-to-pubkey-*hash*. The ScriptPubKey has the 20-byte hash of the public key and not the public key itself. We are locking Bitcoins to a *hash* of the public key and are responsible for revealing the public key as part of spending the output in our ScriptSig.
 
