@@ -608,6 +608,7 @@ Find the wif for Private Key whose secrets are:
 
 [source,python]
 ----
+>>> from ecc import PrivateKey
 >>> priv = PrivateKey(5003)
 >>> print(priv.wif(compressed=True, testnet=True))
 cMahea7zqjxrtgAbB7LSGbcQUr1uX1ojuat9jZodMN8rFTv2sfUK
@@ -654,6 +655,7 @@ Create a testnet address for yourself using a secret that only you know. Go to a
 >>> passphrase = b'jimmy@programmingblockchain.com my secret'
 >>> secret = little_endian_to_int(hash256(passphrase))
 >>> priv = PrivateKey(secret)
+>>> print(priv.point.address(testnet=True))
 mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
 ----
 

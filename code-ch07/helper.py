@@ -9,7 +9,7 @@ SIGHASH_SINGLE = 3
 BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
 
-def run_test(test):
+def run(test):
     suite = TestSuite()
     suite.addTest(test)
     TextTestRunner().run(suite)

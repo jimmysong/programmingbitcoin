@@ -5,7 +5,7 @@ from random import randint
 from helper import hash256
 
 
-class Chapter2Test(TestCase):
+class Chapter3Test(TestCase):
 
     def test_apply(self):
 

@@ -116,7 +116,7 @@ BIP0037 defines exactly how Bloom Filters are defined. As before, the things tha
 
 While we could define lots of hash functions (sha256, keccak, ripemd, blake, etc), in practice, we only really use a single hash function with a different seed. This allows the implementation to be simpler. 
 
-The hash function we utilze is called `murmur3`. Unlike sha256, murmur3 is not cryptographically secure, but the task does not require cryptographic security, so murmur3 is the appropriate tool for the job. The seed formula is defined this way:
+The hash function we utilze is called `murmur3`. Unlike sha256, murmur3 is not cryptographically secure, but is much faster. The task of filtering and getting a deterministic, evenly distributed modulo does not require cryptographic security, but benefits from speed, so murmur3 is the appropriate tool for the job. The seed formula is defined this way:
 
 i*0xfba4c795 + tweak
 

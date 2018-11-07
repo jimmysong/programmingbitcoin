@@ -10,7 +10,7 @@ BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 TWO_WEEKS = 60 * 60 * 24 * 14
 
 
-def run_test(test):
+def run(test):
     suite = TestSuite()
     suite.addTest(test)
     TextTestRunner().run(suite)
