@@ -429,11 +429,11 @@ class S256Point(Point):
         '''returns a Point object from a compressed sec binary (not hex)
         '''
         if sec_bin[0] == 4:
-            x = int(sec_bin[1:33].hex(), 16)
-            y = int(sec_bin[33:65].hex(), 16)
+            x = int.from_bytes(sec_bin[1:33], 'big')
+            y = int.from_bytes(sec_bin[33:65], 'big')
             return S256Point(x=x, y=y)
         is_even = sec_bin[0] == 2
-        x = S256Field(int(sec_bin[1:].hex(), 16))
+        x = S256Field(int.from_bytes(sec_bin[1:], 'big'))
         # right side of the equation y^2 = x^3 + 7
         alpha = x**3 + S256Field(B)
         # solve for left side
@@ -569,22 +569,22 @@ class Signature:
         s = BytesIO(signature_bin)
         compound = s.read(1)[0]
         if compound != 0x30:
-            raise IOError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         length = s.read(1)[0]
         if length + 2 != len(signature_bin):
-            raise IOError("Bad Signature Length")
+            raise SyntaxError("Bad Signature Length")
         marker = s.read(1)[0]
         if marker != 0x02:
-            raise IOError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         rlength = s.read(1)[0]
-        r = int(s.read(rlength).hex(), 16)
+        r = int.from_bytes(s.read(rlength), 'big')
         marker = s.read(1)[0]
         if marker != 0x02:
-            raise IOError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         slength = s.read(1)[0]
-        s = int(s.read(slength).hex(), 16)
+        s = int.from_bytes(s.read(slength), 'big')
         if len(signature_bin) != 6 + rlength + slength:
-            raise IOError("Signature too long")
+            raise SyntaxError("Signature too long")
         return cls(r, s)
 
 

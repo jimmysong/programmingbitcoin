@@ -1,5 +1,7 @@
 import hashlib
 
+from unittest import TestCase
+
 from ecc import (
     S256Point,
     Signature,
@@ -472,6 +474,15 @@ def op_sub(stack):
     return True
 
 
+def op_mul(stack):
+    if len(stack) < 2:
+        return False
+    element1 = decode_num(stack.pop())
+    element2 = decode_num(stack.pop())
+    stack.append(encode_num(element2 * element1))
+    return True
+
+
 def op_booland(stack):
     if len(stack) < 2:
         return False
@@ -696,6 +707,24 @@ def op_checksequenceverify(stack, version, sequence):
     return True
 
 
+class OpTest(TestCase):
+
+    def test_op_hash160(self):
+        stack = [b'hello world']
+        self.assertTrue(op_hash160(stack))
+        self.assertEqual(
+            stack[0].hex(),
+            'd7d5ee7824ff93f94c3055af9382c86c68b5ca92')
+
+    def test_op_checksig(self):
+        z = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
+        sec = bytes.fromhex('04887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34')
+        sig = bytes.fromhex('3045022000eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c022100c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab601')
+        stack = [sig, sec]
+        self.assertTrue(op_checksig(stack, z))
+        self.assertEqual(decode_num(stack[0]), 1)
+
+
 OP_CODE_FUNCTIONS = {
     0: op_0,
     79: op_1negate,
@@ -750,6 +779,7 @@ OP_CODE_FUNCTIONS = {
     146: op_0notequal,
     147: op_add,
     148: op_sub,
+    149: op_mul,    
     154: op_booland,
     155: op_boolor,
     156: op_numequal,
@@ -842,6 +872,7 @@ OP_CODE_NAMES = {
     146: 'OP_0NOTEQUAL',
     147: 'OP_ADD',
     148: 'OP_SUB',
+    149: 'OP_MUL',
     154: 'OP_BOOLAND',
     155: 'OP_BOOLOR',
     156: 'OP_NUMEQUAL',

@@ -4,11 +4,15 @@ from unittest import TestCase
 import json
 import requests
 
+from ecc import PrivateKey, S256Point, Signature
 from helper import (
+    decode_base58,
+    hash256,
     encode_varint,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
+    SIGHASH_ALL,
 )
 from script import Script
 
@@ -53,6 +57,7 @@ class TxFetcher:
             s = json.dumps(to_dump, sort_keys=True, indent=4)
             f.write(s)
 
+
 class Tx:
 
     def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
@@ -85,7 +90,7 @@ class Tx:
         return hash256(self.serialize())[::-1]
 
     @classmethod
-    def parse(cls, s):
+    def parse(cls, s, testnet=False):
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
@@ -107,7 +112,7 @@ class Tx:
         # locktime is 4 bytes, little-endian
         locktime = little_endian_to_int(s.read(4))
         # return an instance of the class (cls(...))
-        return cls(version, inputs, outputs, locktime)
+        return cls(version, inputs, outputs, locktime, testnet=testnet)
 
     def serialize(self):
         '''Returns the byte serialization of the transaction'''
@@ -144,8 +149,23 @@ class Tx:
         # return input sum - output sum
         return input_sum - output_sum
 
+    def sig_hash(self, input_index, hash_type):
+        '''Returns the integer representation of the hash that needs to get
+        signed for index input_index'''
+        raise NotImplementedError
+
+    def verify_input(self, input_index):
+        '''Returns whether the input has a valid signature'''
+        raise NotImplementedError
+
+    def sign_input(self, input_index, private_key, hash_type):
+        raise NotImplementedError
+
 
 class TxIn:
+
+    cache = {}
+
     def __init__(self, prev_tx, prev_index, script_sig, sequence):
         self.prev_tx = prev_tx
         self.prev_index = prev_index
@@ -163,7 +183,18 @@ class TxIn:
         '''Takes a byte stream and parses the tx_input at the start
         return a TxIn object
         '''
-        raise NotImplementedError
+        # s.read(n) will return n bytes
+        # prev_tx is 32 bytes, little endian
+        prev_tx = s.read(32)[::-1]
+        # prev_index is 4 bytes, little endian, interpret as int
+        prev_index = little_endian_to_int(s.read(4))
+        # script_sig is a variable field (length followed by the data)
+        # you can use Script.parse to get the actual script
+        script_sig = Script.parse(s)
+        # sequence is 4 bytes, little-endian, interpret as int
+        sequence = little_endian_to_int(s.read(4))
+        # return an instance of the class (cls(...))
+        return cls(prev_tx, prev_index, script_sig, sequence)
 
     def serialize(self):
         '''Returns the byte serialization of the transaction input'''
@@ -200,6 +231,28 @@ class TxIn:
         # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
 
+    def der_signature(self):
+        '''returns a DER format signature and hash_type if the script_sig
+        has a signature'''
+        signature = self.script_sig.signature()
+        # last byte is the hash_type, rest is the signature
+        return signature[:-1]
+
+    def hash_type(self):
+        '''returns a DER format signature and hash_type if the script_sig
+        has a signature'''
+        signature = self.script_sig.signature()
+        # last byte is the hash_type, rest is the signature
+        return signature[-1]
+
+    def sec_pubkey(self):
+        '''returns the SEC format public if the script_sig has one'''
+        return self.script_sig.sec_pubkey()
+
+    def redeem_script(self):
+        '''return the Redeem Script if there is one'''
+        return self.script_sig.redeem_script()
+
 
 class TxOut:
 
@@ -215,7 +268,14 @@ class TxOut:
         '''Takes a byte stream and parses the tx_output at the start
         return a TxOut object
         '''
-        raise NotImplementedError
+        # s.read(n) will return n bytes
+        # amount is 8 bytes, little endian, interpret as int
+        amount = little_endian_to_int(s.read(8))
+        # script_pubkey is a variable field (length followed by the data)
+        # you can use Script.parse to get the actual script
+        script_pubkey = Script.parse(s)
+        # return an instance of the class (cls(...))
+        return cls(amount, script_pubkey)
 
     def serialize(self):
         '''Returns the byte serialization of the transaction output'''

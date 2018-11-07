@@ -3,6 +3,8 @@ from unittest import TestCase
 
 from helper import (
     encode_varint,
+    int_to_little_endian,
+    little_endian_to_int,
     read_varint,
 )
 from op import (
@@ -30,7 +32,7 @@ class Script:
         return result
 
     def __add__(self, other):
-        return Script(self.items + other.items)
+        return Script(self.instructions + other.instructions)
 
     @classmethod
     def parse(cls, s):

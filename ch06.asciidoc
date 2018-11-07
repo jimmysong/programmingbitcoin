@@ -74,9 +74,16 @@ def op_dup(stack):
         return False
     stack.append(stack[-1])  # <2>
     return True
+...
+OP_CODE_FUNCTIONS = {
+...
+    118: op_dup,  # <3>
+...
+}
 ----
 <1> We have to have at least one element to duplicate, otherwise, we can't execute this opcode.
 <2> This is how we duplicate the top element of the stack.
+<3> 118 = 0x76 which is the code for OP_DUP
 
 Note that we return a boolean with this opcode, as a way to tell whether the operation was successful. A failed operation automatically fails Script evaluation.
 
@@ -90,6 +97,12 @@ def op_hash256(stack):
     element = stack.pop()
     stack.append(hash256(element))
     return True
+...
+OP_CODE_FUNCTIONS = {
+...
+    170: op_hash256,
+...
+}
 ----
 
 ==== Exercise {counter:exercise}
@@ -228,11 +241,11 @@ The actual processing requires that we take the ScriptSig and ScriptPubKey, comb
 class Script:
 ...
     def __add__(self, other):
-        return Script(self.items + other.items)  # <1>
+        return Script(self.instructions + other.instructions)  # <1>
 ----
 <1> We are combining the instruction set to create a new Script object.
 
-We will utilize this for Script evaluation later on.
+We will utilize this for Script evaluation later in this chapter.
 
 === Stardard Scripts
 
@@ -310,16 +323,18 @@ We now need a way to do what we did above. That is, go through the instruction s
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from script import Script
->>> script_pubkey = Script.parse(BytesIO(bytes.fromhex('...')))
->>> script_sig = Script.parse(BytesIO(bytes.fromhex('...')))
->>> combined_script = script_pubkey + script_sig  # <1>
->>> print(combined_script.evaluate())  # <2>
+>>> z = 0x7c...3d
+>>> sec = bytes.fromhex('0488...34')
+>>> sig = bytes.fromhex('3045...01')
+>>> script_pubkey = Script([sec, 0xac])  # <1>
+>>> script_sig = Script([sig])
+>>> combined_script = script_sig + script_pubkey  # <2>
+>>> print(combined_script.evaluate(z))  # <3>
 True
 ----
-<1> We can do this because of the $$__add__$$ method we created above.
-<2> We want to go through the instructions and see if the result is True or not.
+<1> p2pk ScriptPubkey is the sec format pubkey followed by OP_CHECKSIG which is 0xac or 170.
+<2> We can do this because of the $$__add__$$ method we created above.
+<3> We want to go through the instructions and see if the result is True or not.
 
 Here is the method that we'll use for the *combined* instruction set (combination of ScriptSig of the current transaction and the ScriptPubKey of the previous transaction).
 
@@ -372,13 +387,60 @@ class Script:
 <9> If the stack's top element is an empty byte string (which is how the stack stores a 0 or False), then we also fail the script by returning `False`.
 <10> Any other result means that the script has passed.
 
-[NOTE]
-.Stack elements under the hood
-====
+
+==== Stack elements under the hood
+
 It may be confusing to note that sometimes the stack elements are numbers like 0 or 1 and other times they're byte-strings like a DER signature or a SEC pubkey. Under the hood, they're all bytes, just that some are interpreted as numbers for certain opcodes. For example, 1 is stored on the stack as the `01` byte, 11 is stored as the `0b` byte and so on. For the integer 0, this is actually *not* stored as the `00` byte, but as the empty byte-string.
 
-More information can be seen in the op.py file with the `encode_num` and `decode_num` functions.
-====
+The code in `op.py` can clarify what's going on:
+
+[source,python]
+----
+
+def encode_num(num):
+    if num == 0:
+        return b''
+    abs_num = abs(num)
+    negative = num < 0
+    result = bytearray()
+    while abs_num:
+        result.append(abs_num & 0xff)
+        abs_num >>= 8
+    if result[-1] & 0x80:
+        if negative:
+            result.append(0x80)
+        else:
+            result.append(0)
+    elif negative:
+        result[-1] |= 0x80
+    return bytes(result)
+
+
+def decode_num(element):
+    if element == b'':
+        return 0
+    big_endian = element[::-1]
+    if big_endian[0] & 0x80:
+        negative = True
+        result = big_endian[0] & 0x7f
+    else:
+        negative = False
+        result = big_endian[0]
+    for c in big_endian[1:]:
+        result <<= 8
+        result += c
+    if negative:
+        return -result
+    else:
+        return result
+
+
+def op_0(stack):
+    stack.append(encode_num(0))
+    return True
+----
+
+Numbers being pushed onto the stack are essentially encoded into bytes and decoded when the numerical value is need.
 
 ==== Exercise {counter:exercise}
 

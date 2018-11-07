@@ -819,16 +819,59 @@ class Tx:
 
 ==== Exercise {counter:ch6exercise}
 
+Write the `op_hash160` function.
+
+[source,python]
+----
+def op_hash160(stack):
+    if len(stack) < 1:
+        return False
+    element = stack.pop()
+    h160 = hash160(element)
+    stack.append(h160)
+    return True
+----
+
+==== Exercise {counter:exercise}
+
+Write the `op_checksig` function in op.py
+
+[source,python]
+----
+def op_checksig(stack, z):
+    if len(stack) < 2:
+        return False
+    sec_pubkey = stack.pop()
+    der_signature = stack.pop()[:-1]
+    try:
+        point = S256Point.parse(sec_pubkey)
+        sig = Signature.parse(der_signature)
+    except (ValueError, SyntaxError) as e:
+        print(e)
+        return False
+    if point.verify(z, sig):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+    return True
+----
+
+==== Exercise {counter:ch6exercise}
+
 Create a ScriptSig that can unlock this ScriptPubKey
 
-image::exercise1.png[Exercise 1]
+image::exercise1.png[Exercise 3]
 
 [source,python]
 ----
 >>> from script import Script
->>> hex_script = '767695935687'
->>> print(Script.parse(bytes.fromhex(hex_script)))
-OP_DUP OP_DUP OP_MUL OP_ADD OP_6 OP_EQUAL
+>>> hex_script_pubkey = '06767695935687'
+>>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
+>>> hex_script_sig = '0152'
+>>> script_sig = Script.parse(BytesIO(bytes.fromhex(hex_script_sig)))
+>>> combined_script = script_sig + script_pubkey
+>>> print(combined_script.evaluate(0))
+True
 ----
 
 OP_2 or `52` will satisfy the equation x^2^+x-6=0.
@@ -837,14 +880,17 @@ OP_2 or `52` will satisfy the equation x^2^+x-6=0.
 
 Figure out what this script is doing:
 
-image::exercise2.png[Exercise 2]
+image::exercise2.png[Exercise 4]
 
 [source,python]
 ----
->>> from script import Script
->>> hex_script = '6e879169a77ca787'
->>> print(Script.parse(bytes.fromhex(hex_script)))
-OP_2DUP OP_EQUAL OP_NOT OP_VERIFY OP_SHA1 OP_SWAP OP_SHA1 OP_EQUAL
+>>> hex_script_pubkey = '086e879169a77ca787'
+>>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
+>>> hex_script_sig = 'fd86...b1'
+>>> script_sig = Script.parse(BytesIO(bytes.fromhex(hex_script_sig)))
+>>> combined_script = script_sig + script_pubkey
+>>> print(combined_script.evaluate(0))
+True
 ----
 
 This is looking for a SHA1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
