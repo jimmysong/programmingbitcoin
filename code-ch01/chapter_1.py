@@ -1,32 +1,36 @@
 from unittest import TestCase
 
-from ecc import FieldElement, FieldElementTest
-from helper import run
+from ecc import FieldElement
 
 
 class Chapter1Test(TestCase):
 
     def test_apply(self):
+
         def ne(self, other):
             return not (self == other)
-        FieldElement.__ne__ = ne
+
         def sub(self, other):
             if self.prime != other.prime:
                 raise TypeError
             num = (self.num - other.num) % self.prime
             return self.__class__(num, self.prime)
-        FieldElement.__sub__ = sub
+
         def mul(self, other):
             if self.prime != other.prime:
                 raise TypeError
             num = self.num * other.num % self.prime
             return self.__class__(num, self.prime)
-        FieldElement.__mul__ = mul
+
         def div(self, other):
             if self.prime != other.prime:
                 raise TypeError
             num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
             return self.__class__(num, self.prime)
+
+        FieldElement.__ne__ = ne
+        FieldElement.__sub__ = sub
+        FieldElement.__mul__ = mul
         FieldElement.__truediv__ = div
     
     def test_example_1(self):

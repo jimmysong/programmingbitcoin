@@ -221,10 +221,12 @@ For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
 
 [source,python]
 ----
->>> s = (-1 - 5)/(-1 - 2)
->>> x3 = s**2 - 2 - (-1)
->>> y3 = s*(x3 - 2) - 5
->>> print(x3,y3)
+>>> x1, y1 = 2, 5
+>>> x2, y2 = -1, -1
+>>> s = (y2 - y1) / (x2 - x1)
+>>> x3 = s**2 - x1 - x2
+>>> y3 = s * (x1 - x3) - y1
+>>> print(x3, y3)
 3.0 -7.0
 ----
 
@@ -250,7 +252,7 @@ For the curve y^2^=x^3^+5x+7, what is (-1,1) + (-1,1)?
 [source,python]
 ----
 >>> a, x1, y1 = 5, -1, 1
->>> s = (3*x1**2 + a)/(2*y1)
+>>> s = (3 * x1**2 + a) / (2 * y1)
 >>> x3 = s**2 - 2*x1
 >>> y3 = s*(x1-x3)-y1
 >>> print(x3,y3)
@@ -288,15 +290,15 @@ Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
 >>> b = FieldElement(7, prime)
 >>> def on_curve(x,y):
 ...     return y**2 == x**3 + a*x + b
->>> print(on_curve(FieldElement(192,prime), FieldElement(105,prime)))
+>>> print(on_curve(FieldElement(192, prime), FieldElement(105, prime)))
 True
->>> print(on_curve(FieldElement(17,prime), FieldElement(56,prime)))
+>>> print(on_curve(FieldElement(17, prime), FieldElement(56, prime)))
 True
->>> print(on_curve(FieldElement(200,prime), FieldElement(119,prime)))
+>>> print(on_curve(FieldElement(200, prime), FieldElement(119, prime)))
 False
->>> print(on_curve(FieldElement(1,prime), FieldElement(193,prime)))
+>>> print(on_curve(FieldElement(1, prime), FieldElement(193, prime)))
 True
->>> print(on_curve(FieldElement(42,prime), FieldElement(99,prime)))
+>>> print(on_curve(FieldElement(42, prime), FieldElement(99, prime)))
 False
 ----
 
@@ -314,16 +316,16 @@ For the curve y^2^=x^3^+7 over F~223~, find:
 >>> prime = 223
 >>> a = FieldElement(0, prime)
 >>> b = FieldElement(7, prime)
->>> p1 = Point(FieldElement(170,prime), FieldElement(142,prime), a, b)
->>> p2 = Point(FieldElement(60,prime), FieldElement(139,prime), a, b)
+>>> p1 = Point(FieldElement(170, prime), FieldElement(142, prime), a, b)
+>>> p2 = Point(FieldElement(60, prime), FieldElement(139, prime), a, b)
 >>> print(p1+p2)
 Point(220,181)_223
->>> p1 = Point(FieldElement(47,prime), FieldElement(71,prime), a, b)
->>> p2 = Point(FieldElement(17,prime), FieldElement(56,prime), a, b)
+>>> p1 = Point(FieldElement(47, prime), FieldElement(71, prime), a, b)
+>>> p2 = Point(FieldElement(17, prime), FieldElement(56, prime), a, b)
 >>> print(p1+p2)
 Point(215,68)_223
->>> p1 = Point(FieldElement(143,prime), FieldElement(98,prime), a, b)
->>> p2 = Point(FieldElement(76,prime), FieldElement(66,prime), a, b)
+>>> p1 = Point(FieldElement(143, prime), FieldElement(98, prime), a, b)
+>>> p2 = Point(FieldElement(76, prime), FieldElement(66, prime), a, b)
 >>> print(p1+p2)
 Point(47,71)_223
 ----

@@ -73,7 +73,6 @@ When initializing `Point`, we will run through this part of the code:
 [source,python]
 ----
 class Point:
-    zero = 0
 
     def __init__(self, x, y, a, b):
         self.a = a
@@ -82,8 +81,8 @@ class Point:
         self.y = y
 	if self.x is None and self.y is None:
 	    return
-        if self.y**2 != self.x**3 + self.a*self.x + self.b:
-	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
+        if self.y**2 != self.x**3 + self.a * self.x + self.b:
+	    raise ValueError('Point ({},{}) is not on the curve'.format(x, y))
 ----
 
 The addition (+), multiplication (*), exponentiation (**) and equality (!=) here will end up utilizing the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
@@ -126,7 +125,7 @@ We can now run this test like so:
 [source,python]
 ----
 >>> import ecc
->>> from helper import run # <1>
+>>> from helper import run  # <1>
 >>> run(ecc.ECCTest('test_on_curve'))
 .
 ----------------------------------------------------------------------
@@ -153,38 +152,22 @@ Remarkably, point addition works over finite fields as well. This is because the
 
 when x~1~≠x~2~
 
-P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-
-P~1~+P~2~=P~3~
-
-s=(y~2~-y~1~)/(x~2~-x~1~)
-
-x~3~=s^2^-x~1~-x~2~
-
-y~3~=s(x~1~-x~3~)-y~1~
+* P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
+* P~1~+P~2~=P~3~
+* s=(y~2~-y~1~)/(x~2~-x~1~)
+* x~3~=s^2^-x~1~-x~2~
+* y~3~=s(x~1~-x~3~)-y~1~
 
 when P~1~=P~2~
 
-P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
-
-P~1~+P~1~=P~3~
-
-s=(3x~1~^2^+a)/(2y~1~)
-
-x~3~=s^2^-2x~1~
-
-y~3~=s(x~1~-x~3~)-y~1~
+* P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
+* P~1~+P~1~=P~3~
+* s=(3x~1~^2^+a)/(2y~1~)
+* x~3~=s^2^-2x~1~
+* y~3~=s(x~1~-x~3~)-y~1~
 
 All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some Cryptographic primitives.
 
-
-==== Exercise {counter:exercise}
-
-For the curve y^2^=x^3^+7 over F~223~, find:
-
-* (170,142) + (60,139)
-* (47,71) + (17,56)
-* (143,98) + (76,66)
 
 === Coding Point Addition over Finite Fields
 
@@ -205,6 +188,14 @@ Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$
 >>> print(p1+p2)
 Point(170,142)_223
 ----
+
+==== Exercise {counter:exercise}
+
+For the curve y^2^=x^3^+7 over F~223~, find:
+
+* (170,142) + (60,139)
+* (47,71) + (17,56)
+* (143,98) + (76,66)
 
 ==== Exercise {counter:exercise}
 
@@ -874,7 +865,7 @@ Note that using something like the `random` library from Python to do cryptograp
 >>> r = (k*G).x.num  # <4>
 >>> k_inv = pow(k, N-2, N)
 >>> s = (z+r*e) * k_inv % N  # <5>
->>> point = e*G # <6>
+>>> point = e*G  # <6>
 >>> print(point)
 S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
 >>> print(hex(z))
