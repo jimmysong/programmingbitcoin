@@ -670,12 +670,12 @@ Write the version parsing part of the parse method that we've defined. To do thi
 class Tx:
 ...
     @classmethod
-    def parse(cls, s):
+    def parse(cls, s, testnet=False):
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
         version = little_endian_to_int(s.read(4))
-        return cls(version, None, None, None)
+        return cls(version, None, None, None, testnet=testnet)
 ----
 
 ==== Exercise {counter:ch5exercise}
@@ -687,7 +687,7 @@ Write the inputs parsing part of the parse method in `Tx` and the parse method f
 class Tx:
 ...
     @classmethod
-    def parse(cls, s):
+    def parse(cls, s, testnet=False):
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
@@ -696,7 +696,7 @@ class Tx:
         inputs = []
         for _ in range(num_inputs):
             inputs.append(TxIn.parse(s))
-        return cls(version, inputs, None, None)
+        return cls(version, inputs, None, None, testnet=testnet)
 ...
 
 class TxIn:
@@ -722,7 +722,7 @@ Write the outputs parsing part of the parse method in `Tx` and the parse method 
 class Tx:
 ...
     @classmethod
-    def parse(cls, s):
+    def parse(cls, s, testnet=False):
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
@@ -735,7 +735,7 @@ class Tx:
         outputs = []
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(s))
-        return cls(version, inputs, outputs, None)
+        return cls(version, inputs, outputs, None, testnet=testnet)
 ...
 
 class TxOut:
@@ -759,7 +759,7 @@ Write the locktime parsing part of the parse method in `Tx`.
 class Tx:
 ...
     @classmethod
-    def parse(cls, s):
+    def parse(cls, s, testnet=False):
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
@@ -773,7 +773,7 @@ class Tx:
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(s))
         locktime = little_endian_to_int(s.read(4))
-        return cls(version, inputs, outputs, locktime)
+        return cls(version, inputs, outputs, locktime, testnet=testnet)
 ----
 
 ==== Exercise {counter:ch5exercise}

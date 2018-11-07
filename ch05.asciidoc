@@ -245,8 +245,8 @@ We'll delve more deeply into how Script is parsed in the next chapter, but for n
 >>> from script import Script  # <1>
 >>> script_hex = '6b483045..8a'
 >>> stream = BytesIO(bytes.fromhex(script_hex))
->>> script_raw = Script.parse(stream)
->>> print(script_raw)
+>>> script_sig = Script.parse(stream)
+>>> print(script_sig)
 3045...01 0349...8a
 ----
 <1> Please note that this module will be more thoroughly explored in Chapter 6. For now, please trust that the `Script.parse` method will create the object that we need.
