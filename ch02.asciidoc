@@ -79,10 +79,10 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-        if self.y**2 != self.x**3+self.a*self.x + self.b: # <1>
+        if self.y**2 != self.x**3+self.a*self.x + self.b: ## <1>
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
 
-    def __eq__(self, other): # <2>
+    def __eq__(self, other): ## <2>
         return self.a == other.a and self.b == other.b and self.x == other.x and self.y == other.y
 
 ----
@@ -226,19 +226,19 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-	if self.x is None and self.y is None:  # <1>
+	if self.x is None and self.y is None:  ## <1>
 	    return
         if self.y**2 != self.x**3 + self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
     ...
 
-    def __add__(self, other): # <2>
+    def __add__(self, other): ## <2>
         if self.a != other.a or self.b != other.b:
             raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
 
-    	if self.x is None: # <3>
+    	if self.x is None: ## <3>
 	    return other
-	if other.x is None: # <4>
+	if other.x is None: ## <4>
 	    return self
 ----
 <1> x-coordinate and y-coordinate being `None` is how we signify the point at infinity. Note that the next if statement will fail if we don't return here.
@@ -427,12 +427,12 @@ We can handle this using a special case:
 [source,python]
 ----
 class Point:
-    zero = 0 # <1>
+    zero = 0 ## <1>
     ...
     def __add__(self, other):
     	...
-	if self == other and self.y == self.zero: # <2>
-	    return self.__class__(None, None, self.a, self.b) # <3>
+	if self == other and self.y == self.zero: ## <2>
+	    return self.__class__(None, None, self.a, self.b) ## <3>
 ----
 <1> For reasons which will become clear in the next chapter, we need to define zero specific to the class.
 <2> If the two points are equal and the y coordinate is zero, we return the point at infinity.

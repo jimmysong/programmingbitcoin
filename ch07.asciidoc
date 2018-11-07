@@ -60,7 +60,7 @@ We can test to see if this transaction is trying to print money by utilizing thi
 >>> from io import BytesIO
 >>> stream = BytesIO(bytes.fromhex('010000...0600'))
 >>> transaction = Tx.parse(stream)
->>> print(transaction.fee() >= 0)  # <1>
+>>> print(transaction.fee() >= 0)  ## <1>
 True
 ----
 <1> Note this only works because we're using Python. See note.
@@ -141,7 +141,7 @@ Now that we have our z, we can take the public key in SEC format and the signatu
 >>> from ecc import S256Point, Signature
 >>> sec = bytes.fromhex('0349...8a')
 >>> der = bytes.fromhex('3045...ed')
->>> z = 0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6  # <1>
+>>> z = 0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6  ## <1>
 >>> point = S256Point.parse(sec)
 >>> signature = Signature.parse(der)
 >>> point.verify(z, signature)
@@ -226,14 +226,14 @@ We first need a way to take an address and get the 20-byte hash out of it. This 
 ----
 def decode_base58(s):
     num = 0
-    for c in s.encode('ascii'):  # <1>
+    for c in s.encode('ascii'):  ## <1>
         num *= 58
         num += BASE58_ALPHABET.index(c)
-    combined = num.to_bytes(25, byteorder='big')  # <2>
+    combined = num.to_bytes(25, byteorder='big')  ## <2>
     checksum = combined[-4:]
     if hash256(combined[:-4])[:4] != checksum:
         raise RuntimeError('bad address: {} {}'.format(checksum, hash256(combined)[:4]))
-    return combined[1:-4]  # <3>
+    return combined[1:-4]  ## <3>
 ----
 <1> We have to figure out first what number is encoded in this base58 address
 <2> Once we have the actual integer, we convert it to big-endian bytes
@@ -262,15 +262,15 @@ We can now proceed to create the transaction.
 >>> prev_index = 13
 >>> tx_ins.append(TxIn(prev_tx, prev_index, Script([]), 0xffffffff))
 >>> tx_outs = []
->>> change_amount = int(0.33*100000000)  # <1>
+>>> change_amount = int(0.33*100000000)  ## <1>
 >>> change_h160 = decode_base58('mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2')
 >>> change_script = p2pkh_script(change_h160)
 >>> tx_outs.append(TxOut(amount=change_amount, script_pubkey=change_script))
->>> target_amount = int(0.1*100000000)  # <1>
+>>> target_amount = int(0.1*100000000)  ## <1>
 >>> target_h160 = decode_base58('mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf')
 >>> target_script = p2pkh_script(target_h160)
 >>> tx_outs.append(TxOut(amount=target_amount, script_pubkey=target_script))
->>> transaction = Tx(1, tx_ins, tx_outs, 0, testnet=True)  # <2>
+>>> transaction = Tx(1, tx_ins, tx_outs, 0, testnet=True)  ## <2>
 >>> print(transaction)
 version: 1
 tx_ins:
@@ -296,13 +296,13 @@ The actual signing of the transaction is the trickiest part. Thankfully, we know
 >>> from ecc import PrivateKey
 >>> from helper import SIGHASH_ALL
 >>> hash_type = SIGHASH_ALL
->>> z = transaction.sig_hash(0, hash_type)  # <1>
+>>> z = transaction.sig_hash(0, hash_type)  ## <1>
 >>> private_key = PrivateKey(secret=8675309)
 >>> der = private_key.sign(z).der()
->>> sig = der + hash_type.to_bytes(1, 'big')  # <2>
+>>> sig = der + hash_type.to_bytes(1, 'big')  ## <2>
 >>> sec = private_key.point.sec()
->>> script_sig = Script([sig, sec])  # <3>
->>> transaction.tx_ins[0].script_sig = script_sig   # <4>
+>>> script_sig = Script([sig, sec])  ## <3>
+>>> transaction.tx_ins[0].script_sig = script_sig   ## <4>
 >>> print(transaction.serialize().hex())
 01000000...00000000
 ----

@@ -554,7 +554,7 @@ class Signature:
         # if rbin has a high bit, add a \x00
         if rbin[0] & 0x80:
             rbin = b'\x00' + rbin
-        result = bytes([2, len(rbin)]) + rbin  # <1>
+        result = bytes([2, len(rbin)]) + rbin  ## <1>
         sbin = self.s.to_bytes(32, byteorder='big')
         # remove all null bytes at the beginning
         sbin = sbin.lstrip(b'\x00')

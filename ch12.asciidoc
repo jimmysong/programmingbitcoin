@@ -25,11 +25,11 @@ A Bloom Filter is a computer science structure that can be used on any data in a
 [source,python]
 ----
 >>> from helper import hash256
->>> bit_field_size = 10  # <1>
+>>> bit_field_size = 10  ## <1>
 >>> bit_field = [0] * bit_field_size
->>> h = hash256(b'hello world')  # <2>
->>> bit = int.from_bytes(h, 'big') % bit_field_size  # <3>
->>> bit_field[bit] = 1  # <4>
+>>> h = hash256(b'hello world')  ## <2>
+>>> bit = int.from_bytes(h, 'big') % bit_field_size  ## <3>
+>>> bit_field[bit] = 1  ## <4>
 >>> print(bit_field)
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 ----
@@ -58,7 +58,7 @@ We can run a second item through the same exact filter and set that bit to 1 as 
 >>> from helper import hash256
 >>> bit_field_size = 10
 >>> bit_field = [0] * bit_field_size
->>> for item in (b'hello world', b'goodbye'):  # <1>
+>>> for item in (b'hello world', b'goodbye'):  ## <1>
 ...     h = hash256(item)
 ...     bit = int.from_bytes(h, 'big') % bit_field_size
 ...     bit_field[bit] = 1
@@ -90,7 +90,7 @@ Here's what that would look like. For simplicity, we stick to the same 10-bit fi
 >>> bit_field_size = 10
 >>> bit_field = [0] * bit_field_size
 >>> for item in (b'hello world', b'goodbye'):
-...     for hash_function in (hash256, hash160):  # <1>
+...     for hash_function in (hash256, hash160):  ## <1>
 ...         h = hash_function(item)
 ...         bit = int.from_bytes(h, 'big') % bit_field_size
 ...         bit_field[bit] = 1
@@ -124,17 +124,17 @@ The `fba4c795` number is a constant utilized for Bitcoin Bloom Filters and is ut
 
 [source,python]
 ----
->>> from helper import murmur3  # <1>
->>> from bloomfilter import BIP37_CONSTANT  # <2>
+>>> from helper import murmur3  ## <1>
+>>> from bloomfilter import BIP37_CONSTANT  ## <2>
 >>> field_size = 2
 >>> num_functions = 2
 >>> tweak = 42
 >>> bit_field_size = field_size * 8
 >>> bit_field = [0] * bit_field_size
->>> for phrase in (b'hello world', b'goodbye'):  # <3>
-...     for i in range(num_functions):  # <4>
-...         seed = i * BIP37_CONSTANT + tweak  # <5>
-...         h = murmur3(phrase, seed=seed)  # <6>
+>>> for phrase in (b'hello world', b'goodbye'):  ## <3>
+...     for i in range(num_functions):  ## <4>
+...         seed = i * BIP37_CONSTANT + tweak  ## <5>
+...         h = murmur3(phrase, seed=seed)  ## <6>
 ...         bit = h % bit_field_size
 ...         bit_field[bit] = 1
 >>> print(bit_field)
@@ -207,9 +207,9 @@ class GetDataMessage:
     command = b'getdata'
     
     def __init__(self):
-        self.data = []  # <1>
+        self.data = []  ## <1>
         
-    def add_data(self, data_type, identifier):  # <2>
+    def add_data(self, data_type, identifier):  ## <2>
         self.data.append((data_type, identifier))
 ----        
 <1> We have some data that we want.
@@ -235,33 +235,33 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
 >>> h160 = decode_base58(address)
 >>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
->>> bf = BloomFilter(30, 5, 90210)  # <1>
->>> bf.add(h160)  # <2>
+>>> bf = BloomFilter(30, 5, 90210)  ## <1>
+>>> bf.add(h160)  ## <2>
 >>> node.handshake()
->>> node.send(b'filterload', bf.filterload())  # <3>
+>>> node.send(b'filterload', bf.filterload())  ## <3>
 >>> start_block = bytes.fromhex(last_block_hex)
 >>> getheaders_message = GetHeadersMessage(start_block=start_block)
->>> node.send(b'getheaders', getheaders_message.serialize())  # <4>
+>>> node.send(b'getheaders', getheaders_message.serialize())  ## <4>
 >>> headers_envelope = node.wait_for_commands({b'headers'})
 >>> stream = headers_envelope.stream()
 >>> headers = HeadersMessage.parse(stream)
->>> get_data_message = GetDataMessage()  # <5>
+>>> get_data_message = GetDataMessage()  ## <5>
 >>> for b in headers.blocks:
 ...     if not b.check_pow():
 ...         raise RuntimeError('proof of work is invalid')
-...     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
-... node.send(b'getdata', get_data_message.serialize())  # <7>
+...     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  ## <6>
+... node.send(b'getdata', get_data_message.serialize())  ## <7>
 >>> while True:
-...     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  # <8>
+...     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  ## <8>
 ...     stream = envelope.stream()
 ...     if envelope.command == b'merkleblock':
 ...         mb = MerkleBlock.parse(stream)
-...         if not mb.is_valid():  # <9>
+...         if not mb.is_valid():  ## <9>
 ...             raise RuntimeError('invalid merkle proof')
-...     else:  # <10>
+...     else:  ## <10>
 ...         prev_tx_obj = Tx.parse(stream, testnet=True)
 ...         for i, tx_out in enumerate(prev_tx_obj.tx_outs):
-...             if tx_out.script_pubkey.address(testnet=True) == address:  # <11>
+...             if tx_out.script_pubkey.address(testnet=True) == address:  ## <11>
 ...                 print('found: {}:{}'.format(prev_tx_obj.hash().hex(), i))
 ----
 <1> We are creating a Bloom Filter that's 30 bytes, 5 hash functions using a particularly popular 90's tweak.

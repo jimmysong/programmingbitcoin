@@ -90,10 +90,10 @@ Note that since the Merkle Parent always consists of two hashes, we end up with 
 >>> from helper import merkle_parent
 >>> hashes = [...]
 >>> if len(hashes) % 2 == 1:
-...     hashes.append(hashes[-1])  # <1>
+...     hashes.append(hashes[-1])  ## <1>
 ...
 >>> parent_level = []
->>> for i in range(0, len(hashes), 2):  # <2>
+>>> for i in range(0, len(hashes), 2):  ## <2>
 ...     parent = merkle_parent(hashes[i], hashes[i+1])
 ...     parent_level.append(parent)
 >>> for item in parent_level:
@@ -132,10 +132,10 @@ The final hash is called the Merkle Root. As each level will halve the number of
 >>> from helper import merkle_parent_level
 >>> hashes = [...]
 >>> current_hashes = hashes
->>> while len(current_hashes) > 1:  # <1>
+>>> while len(current_hashes) > 1:  ## <1>
 ...     current_hashes = merkle_parent_level(current_hashes)
 ...
->>> print(current_hashes[0].hex())  # <2>
+>>> print(current_hashes[0].hex())  ## <2>
 acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
 ----
 <1> We loop until there's 1 hash left.
@@ -155,8 +155,8 @@ In practice, this simply means reversing the hash before we start and reversing 
 ----
 >>> from helper import merkle_root
 >>> tx_hashes = [...]
->>> hashes = [h[::-1] for h in tx_hashes]  # <1>
->>> print(merkle_root(current_level)[::-1].hex())  # <2>
+>>> hashes = [h[::-1] for h in tx_hashes]  ## <1>
+>>> print(merkle_root(current_level)[::-1].hex())  ## <2>
 654d6181e18e4ac4368383fdc5eead11bf138f9b7ac1e15334e4411b3c4797d9
 ----
 <1> This reverses each hash before we begin using a *list comprehension*
@@ -169,7 +169,7 @@ To make this calculatable for a `Block`, we have to adjust the class a bit:
     
 class Block:
 
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):  # <1>
+    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):  ## <1>
         self.version = version
         self.prev_block = prev_block
         self.merkle_root = merkle_root
@@ -245,12 +245,12 @@ The first thing we need to do is create the general structure of the Merkle Tree
 ----
 >>> import math
 >>> total = 16
->>> max_depth = math.ceil(math.log(total, 2))  # <1>
->>> merkle_tree = []  # <2>
->>> for depth in range(max_depth + 1):  # <3>
-...     num_items = math.ceil(total / 2**(max_depth - depth))  # <4>
-...     level_hashes = [None] * num_items  # <5>
-...     merkle_tree.append(level_hashes)  # <6>
+>>> max_depth = math.ceil(math.log(total, 2))  ## <1>
+>>> merkle_tree = []  ## <2>
+>>> for depth in range(max_depth + 1):  ## <3>
+...     num_items = math.ceil(total / 2**(max_depth - depth))  ## <4>
+...     level_hashes = [None] * num_items  ## <5>
+...     merkle_tree.append(level_hashes)  ## <6>
 >>> for level in merkle_tree:
 ...     print(level)
 [None]
@@ -285,10 +285,10 @@ class MerkleTree:
             num_items = math.ceil(self.total / 2**(self.max_depth - depth))
             level_hashes = [None] * num_items
             self.nodes.append(level_hashes)
-        self.current_depth = 0  # <1>
+        self.current_depth = 0  ## <1>
         self.current_index = 0
         
-    def __repr__(self):  # <2>
+    def __repr__(self):  ## <2>
         result = ''
         for depth, level in enumerate(self.nodes):
             for index, h in enumerate(level):
@@ -349,7 +349,7 @@ class MerkleTree:
     def root(self):
         return self.nodes[0][0]
 
-    def set_current_node(self, value):  # <1>
+    def set_current_node(self, value):  ## <1>
         self.nodes[self.current_depth][self.current_index] = value
 
     def get_current_node(self):
@@ -381,17 +381,17 @@ We can now traverse the tree using the `left`, `right` and `up` methods. Let's t
 >>> hex_hashes = [...]
 >>> tree = MerkleTree(len(hex_hashes))
 >>> tree.nodes[4] = [bytes.fromhex(h) for h in hex_hashes]
->>> while tree.root() is None:  # <1>
-...     if tree.is_leaf():  # <2>
+>>> while tree.root() is None:  ## <1>
+...     if tree.is_leaf():  ## <2>
 ...         tree.up()
 ...     else:
 ...         left_hash = tree.get_left_node()
 ...         right_hash = tree.get_right_node()
-...         if left_hash is None:  # <3>
+...         if left_hash is None:  ## <3>
 ...             tree.left()
-...         elif right_hash is None:  # <4>
+...         elif right_hash is None:  ## <4>
 ...             tree.right()
-...         else:  # <5>
+...         else:  ## <5>
 ...             tree.set_current_node(merkle_parent(left_hash, right_hash))
 ...             tree.up()
 >>> print(tree)
@@ -423,16 +423,16 @@ To do something a little more robust and allow for the possibility that the pare
 ...         tree.up()
 ...     else:
 ...         left_hash = tree.get_left_node()
-...         if left_hash is None:  # <1>
+...         if left_hash is None:  ## <1>
 ...             tree.left()
-...         elif tree.right_exists():  # <2>
+...         elif tree.right_exists():  ## <2>
 ...             right_hash = tree.get_right_node()
-...             if right_hash is None:  # <3>
+...             if right_hash is None:  ## <3>
 ...                 tree.right()
-...             else:  # <4>
+...             else:  ## <4>
 ...                 tree.set_current_node(merkle_parent(left_hash, right_hash))
 ...                 tree.up()
-...         else:  # <5>
+...         else:  ## <5>
 ...             tree.set_current_node(merkle_parent(left_hash, left_hash))
 ...             tree.up()
 >>> print(tree)
@@ -515,32 +515,32 @@ We can now code a way to populate the Merkle Tree and specifically, the root, gi
 class MerkleTree:
 ...
     def populate_tree(self, flag_bits, hashes):
-        while self.root() is None:  # <1>
-            if self.is_leaf():  # <2>
-                flag_bits.pop(0)  # <3>
-                self.set_current_node(hashes.pop(0))  # <4>
+        while self.root() is None:  ## <1>
+            if self.is_leaf():  ## <2>
+                flag_bits.pop(0)  ## <3>
+                self.set_current_node(hashes.pop(0))  ## <4>
                 self.up()
             else:
                 left_hash = self.get_left_node()
-                if left_hash is None:  # <5>
-                    if flag_bits.pop(0) == 0:  # <6>
+                if left_hash is None:  ## <5>
+                    if flag_bits.pop(0) == 0:  ## <6>
                         self.set_current_node(hashes.pop(0))
                         self.up()
                     else:
-                        self.left()  # <7>
-                elif self.right_exists():  # <8>
+                        self.left()  ## <7>
+                elif self.right_exists():  ## <8>
                     right_hash = self.get_right_node()
-                    if right_hash is None:  # <9>
+                    if right_hash is None:  ## <9>
                         self.right()
-                    else:  # <10>
+                    else:  ## <10>
                         self.set_current_node(merkle_parent(left_hash, right_hash))
                         self.up()
-                else:  # <11>
+                else:  ## <11>
                     self.set_current_node(merkle_parent(left_hash, left_hash))
                     self.up()
-        if len(hashes) != 0:  # <12>
+        if len(hashes) != 0:  ## <12>
             raise RuntimeError('hashes not all consumed {}'.format(len(hashes)))
-        for flag_bit in flag_bits:  # <13>
+        for flag_bit in flag_bits:  ## <13>
             if flag_bit != 0:
                 raise RuntimeError('flag bits not all consumed')
 ----

@@ -34,10 +34,10 @@ class Tx:
 
     def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
         self.version = version
-        self.tx_ins = tx_ins  # <1>
+        self.tx_ins = tx_ins  ## <1>
         self.tx_outs = tx_outs
         self.locktime = locktime
-	self.testnet = testnet  # <2>
+	self.testnet = testnet  ## <2>
 
     def __repr__(self):
         tx_ins = ''
@@ -53,11 +53,11 @@ class Tx:
             self.locktime,
         )
 
-    def id(self):  # <3>
+    def id(self):  ## <3>
         '''Human-readable hexadecimal of the transaction hash'''
         return self.hash().hex()
 
-    def hash(self):  # <4>
+    def hash(self):  ## <4>
         '''Binary hash of the legacy serialization'''
         return hash256(self.serialize())[::-1]
 ----
@@ -73,9 +73,9 @@ The rest of this chapter will be concerned with parsing a transaction. This is v
 class Tx:
     ...
 
-    @classmethod  # <1>
+    @classmethod  ## <1>
     def parse(cls, serialization):
-        version = serialization[0:4]  # <2>
+        version = serialization[0:4]  ## <2>
 	...
 ----
 <1> This method has to be a class method as the serialization will return a new instance of a `Tx` object.
@@ -90,7 +90,7 @@ class Tx:
 
     @classmethod
     def parse(cls, stream):
-        serialized_version = stream.read(4)  # <1>
+        serialized_version = stream.read(4)  ## <1>
 	...
 ----
 <1> The `read` method will allow us to parse on the fly as we won't have to wait on I/O 
@@ -225,7 +225,7 @@ class TxIn:
         self.script_sig = script_sig
         self.sequence = sequence
 
-    def __repr__(self):  # <1>
+    def __repr__(self):  ## <1>
         return '{}:{}'.format(
             self.prev_tx.hex(),
             self.prev_index,
@@ -242,7 +242,7 @@ We'll delve more deeply into how Script is parsed in the next chapter, but for n
 [source,python]
 ----
 >>> from io import BytesIO
->>> from script import Script  # <1>
+>>> from script import Script  ## <1>
 >>> script_hex = '6b483045..8a'
 >>> stream = BytesIO(bytes.fromhex(script_hex))
 >>> script_raw = Script.parse(stream)
@@ -335,7 +335,7 @@ We've already parsed the transactions, now we want to do the opposite, which is 
 class TxOut:
     ...
 
-    def serialize(self):  # <1>
+    def serialize(self):  ## <1>
         '''Returns the byte serialization of the transaction output'''
         result = int_to_little_endian(self.amount, 8)
         result += self.script_pubkey.serialize()
@@ -400,9 +400,9 @@ class TxFetcher:
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://tbtc.programmingblockchain.com:18332'  # <1>
+            return 'http://tbtc.programmingblockchain.com:18332'  ## <1>
         else:
-            return 'http://btc.programmingblockchain.com:8332'  # <2>
+            return 'http://btc.programmingblockchain.com:8332'  ## <2>
 
     @classmethod
     def fetch(cls, tx_id, testnet=False, fresh=False):
@@ -414,7 +414,7 @@ class TxFetcher:
             except ValueError:
                 raise ValueError('unexpected response: {}'.format(response.text))            # make sure the tx we got matches to the hash we requested
             tx = Tx.parse(BytesIO(raw), testnet=testnet)
-            if tx.id() != tx_id:  # <3>
+            if tx.id() != tx_id:  ## <3>
                 raise ValueError('not the same id: {} vs {}'.format(tx.id(), tx_id))
             cls.cache[tx_id] = tx
         cls.cache[tx_id].testnet = testnet

@@ -150,11 +150,11 @@ Checking for these features is relatively straightforward:
 >>> from io import BytesIO
 >>> from block import Block
 >>> b = Block.parse(BytesIO(bytes.fromhex('0200...')))
->>> print('BIP9: {}'.format(b.version << 29 == 0b001))  # <1>
+>>> print('BIP9: {}'.format(b.version << 29 == 0b001))  ## <1>
 True
->>> print('BIP91: {}'.format(b.version << 4 & 1 == 1))  # <2>
+>>> print('BIP91: {}'.format(b.version << 4 & 1 == 1))  ## <2>
 False
->>> print('BIP141: {}'.format(b.version << 1 & 1 == 1))  # <3>
+>>> print('BIP141: {}'.format(b.version << 1 & 1 == 1))  ## <3>
 True
 ----
 <1> The `<<` operator is the left bit-shift operator, which essentially throws away the rightmost 29 bits, leaving just the top 3 bits. The `0b001` is a way of writing a number in binary format in Python.
@@ -213,7 +213,7 @@ e93c0118a4ffd71d`
 ----
 >>> from helper import hash256
 >>> block_id = hash256(bytes.fromhex('02000020...a4ffd71d'))[::-1]
->>> print('{}'.format(block_id.hex()).zfill(64))  # <1>
+>>> print('{}'.format(block_id.hex()).zfill(64))  ## <1>
 0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
@@ -249,7 +249,7 @@ We can now calculate this given a bits field in Python:
 >>> exponent = bits[-1]
 >>> coefficient = little_endian_to_int(bits[:-1])
 >>> target = coefficient * 256 **(exponent-3)
->>> print('{:x}'.format(target).zfill(64))  # <1>
+>>> print('{:x}'.format(target).zfill(64))  ## <1>
 0000000000000000013ce9000000000000000000000000000000000000000000
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
@@ -262,7 +262,7 @@ We can check that this block's hash is indeed below the target:
 ----
 >>> from helper import little_endian_to_int
 >>> proof = little_endian_to_int(hash256(bytes.fromhex('02000020...a4ffd71d')))
->>> print(proof < target)  # <1>
+>>> print(proof < target)  ## <1>
 True
 ----
 <1> `target` is calculated above.
@@ -335,13 +335,13 @@ We can code this formula like so:
 
 [source,python]
 ----
->>> from block import Block, TWO_WEEKS  # <1>
+>>> from block import Block, TWO_WEEKS  ## <1>
 >>> last_block = Block.parse(BytesIO(bytes.fromhex('00...f5')))
 >>> first_block = Block.parse(BytesIO(bytes.fromhex('00...2e')))
 >>> time_differential = last_block.timestamp - first_block.timestamp
->>> if time_differential > TWO_WEEKS * 4:  # <2>
+>>> if time_differential > TWO_WEEKS * 4:  ## <2>
 ...     time_differential = TWO_WEEKS * 4
->>> if time_differential < TWO_WEEKS // 4:  # <3>
+>>> if time_differential < TWO_WEEKS // 4:  ## <3>
 ...     time_differential = TWO_WEEKS // 4
 >>> new_target = last_block.target() * time_differential // TWO_WEEKS
 >>> print('{:x}'.format(new_target).zfill(64))
@@ -356,15 +356,15 @@ The nice thing about this formula is that you only need the headers to calculate
 ----
 def target_to_bits(target):
     raw_bytes = target.to_bytes(32, 'big')
-    raw_bytes = raw_bytes.lstrip(b'\x00')  # <1>
-    if raw_bytes[0] > 0x7f:  # <2>
+    raw_bytes = raw_bytes.lstrip(b'\x00')  ## <1>
+    if raw_bytes[0] > 0x7f:  ## <2>
         exponent = len(raw_bytes) + 1
         coefficient = b'\x00' + raw_bytes[:2]
     else:
-        exponent = len(raw_bytes)  # <3>
-        coefficient = raw_bytes[:3]  # <4>
+        exponent = len(raw_bytes)  ## <3>
+        coefficient = raw_bytes[:3]  ## <4>
     new_bits_big_endian = bytes([exponent]) + coefficient
-    return new_bits_big_endian[::-1]  # <5>
+    return new_bits_big_endian[::-1]  ## <5>
 ----
 <1> Get rid of all the leading 0's.
 <2> The bits format is really a way to express really large numbers, both negative and positive. If the first bit in the coefficient is a 1, this is supposed to be interpreted as a negative number. Since target is always positive for us, we shift everything over by 1 byte if the first bit is 1.

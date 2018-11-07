@@ -266,7 +266,7 @@ image::p2sh-sigelements.png[DER and SEC]
 >>> from helper import hash256
 >>> blob = bytes.fromhex('01000000...01000000')
 >>> d256 = hash256(blob)
->>> z = int.from_bytes(d256, 'big')  # <1>
+>>> z = int.from_bytes(d256, 'big')  ## <1>
 >>> sec = bytes.fromhex('0226...70')
 >>> der = bytes.fromhex('3045....37')
 >>> point = S256Point.parse(sec)

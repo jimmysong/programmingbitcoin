@@ -80,16 +80,16 @@ The class represents an actual element in a field F~prime~. The bare bones of th
 class FieldElement:
 
     def __init__(self, num, prime):
-        if num >= prime or num < 0:  # <1>
+        if num >= prime or num < 0:  ## <1>
 	    error = 'Num {} not in field range 0 to {}'.format(num, prime-1)
 	    raise ValueError(error)
-        self.num = num  # <2>
+        self.num = num  ## <2>
         self.prime = prime
 
     def __repr__(self):
         return 'FieldElement_{}({})'.format(self.prime, self.num)
 
-    def __eq__(self, other):  # <3>
+    def __eq__(self, other):  ## <3>
         if other is None:
             return False
         return self.num == other.num and self.prime == other.prime
@@ -291,10 +291,10 @@ In Python we can define what addition means for our class with the $$__add__$$ m
 [source,python]
 ----
     def __add__(self, other):
-        if self.prime != other.prime: # <1>
+        if self.prime != other.prime: ## <1>
             raise TypeError('Cannot add two numbers in different Fields')
-        num = (self.num + other.num) % self.prime # <2>
-        return self.__class__(num, self.prime) # <3>
+        num = (self.num + other.num) % self.prime ## <2>
+        return self.__class__(num, self.prime) ## <3>
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't make any sense.
 <2> Addition in a Finite Field is defined with the modulo operator, which we use here.
@@ -405,8 +405,8 @@ Note that because the exponent is an integer, instead of another instance of `Fi
 [source,python]
 ----
     def __pow__(self, exponent):
-        num = (self.num ** exponent) % self.prime # <1>
-        return self.__class__(num, self.prime) # <2>
+        num = (self.num ** exponent) % self.prime ## <1>
+        return self.__class__(num, self.prime) ## <2>
 ----
 <1> This is a perfectly fine way to do it, but `pow(self.num, exponent, self.prime)` is more efficient.
 <2> We have to return an instance of the class as before.
@@ -544,8 +544,8 @@ This is a way we can do negative exponents. A naive implementation would do some
     def __pow__(self, exponent):
 	n = exponent
 	while n < 0:
-	    n += self.prime - 1 # <1>
-        num = pow(self.num, n, self.prime) # <2>
+	    n += self.prime - 1 ## <1>
+        num = pow(self.num, n, self.prime) ## <2>
         return self.__class__(num, self.prime)
 ----
 <1> We add until we get a positive exponent
@@ -556,7 +556,7 @@ Thankfully, we can do even better. We already know how to force a number into th
 [source,python]
 ----
     def __pow__(self, exponent):
-    	n = exponent % (self.prime - 1) # <1>
+    	n = exponent % (self.prime - 1) ## <1>
         num = pow(self.num, n, self.prime)
         return self.__class__(num, self.prime)
 ----

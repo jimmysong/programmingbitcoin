@@ -46,7 +46,7 @@ class S256Point(Point):
     def sec(self):
         '''returns the binary version of the sec format'''
 	return b'\x04' + self.x.num.to_bytes(32, 'big') \
-            + self.y.num.to_bytes(32, 'big')  # <1>
+            + self.y.num.to_bytes(32, 'big')  ## <1>
 ----
 <1> In Python 3, you can convert a number to bytes using the to_bytes method. The first argument is how many bytes it should take up and the second argument is the endianness (see sidebar).
 
@@ -207,7 +207,7 @@ class Signature:
         # if rbin has a high bit, add a \x00
         if rbin[0] & 0x80:
             rbin = b'\x00' + rbin
-        result = bytes([2, len(rbin)]) + rbin  # <1>
+        result = bytes([2, len(rbin)]) + rbin  ## <1>
         sbin = self.s.to_bytes(32, byteorder='big')
         # remove all null bytes at the beginning
         sbin = sbin.lstrip(b'\x00')
@@ -255,7 +255,7 @@ BASE58_ALPHABET = b'123...xyz'
 ...
 def encode_base58(s):
     count = 0
-    for c in s:  # <1>
+    for c in s:  ## <1>
         if c == 0:
             count += 1
         else:
@@ -263,11 +263,11 @@ def encode_base58(s):
     prefix = b'1' * count
     num = int.from_bytes(s, 'big')
     result = bytearray()
-    while num > 0:  # <2>
+    while num > 0:  ## <2>
         num, mod = divmod(num, 58)
         result.insert(0, BASE58_ALPHABET[mod])
 
-    return prefix + bytes(result)  # <3>
+    return prefix + bytes(result)  ## <3>
 ----
 <1> The purpose of this loop is to determine how many of the bytes are 0 bytes. We want to add them back at the end.
 <2> This is the loop that figures out what base-58 digit to use.
@@ -308,7 +308,7 @@ Step 4 of this process is called the checksum. We can do steps 4 and 5 in one go
 [source,python]
 ----
 def encode_base58_checksum(s):
-    return encode_base58(s + hash256(s)[:4]).decode('ascii')  # <1>
+    return encode_base58(s + hash256(s)[:4]).decode('ascii')  ## <1>
 ----
 <1> Note that the `decode('ascii`)` part is necessary to convert from Python 3 bytes to a Python 3 string.
 
@@ -317,7 +317,7 @@ The process of doing a SHA256 operation followed by a RIPEMD160 operation is cal
 [source,python]
 ----
 def hash160(s):
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()  # <1>
+    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()  ## <1>
 ----
 <1> Note that `hashlib.sha256(s).digest()` does the sha256 and the wrapper around it does the ripemd160
 

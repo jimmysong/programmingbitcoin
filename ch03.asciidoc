@@ -109,7 +109,7 @@ class ECCTest(TestCase):
             x = FieldElement(x_raw, prime)
             y = FieldElement(y_raw, prime)
             # Creating the point should not result in an error
-            Point(x, y, a, b) # <1>
+            Point(x, y, a, b) ## <1>
 
         # iterate over invalid points
         for x_raw, y_raw in invalid_points:
@@ -117,7 +117,7 @@ class ECCTest(TestCase):
             y = FieldElement(y_raw, prime)
             # check that creating the point results in a ValueError
             with self.assertRaises(ValueError):
-                Point(x, y, a, b) # <1>
+                Point(x, y, a, b) ## <1>
 ----
 <1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, utilize all the overloaded methods in `FieldElement`
 
@@ -126,7 +126,7 @@ We can now run this test like so:
 [source,python]
 ----
 >>> import ecc
->>> from helper import run # <1>
+>>> from helper import run ## <1>
 >>> run(ecc.ECCTest('test_on_curve'))
 .
 ----------------------------------------------------------------------
@@ -421,8 +421,8 @@ We want to be able to scalar multiply the point with some number. Thankfully, th
 class Point:
     ...
     def __rmul__(self, coefficient):
-        product = self.__class__(None, None, self.a, self.b) # <1>
-        for _ in range(coefficient): # <2>
+        product = self.__class__(None, None, self.a, self.b) ## <1>
+        for _ in range(coefficient): ## <2>
             product += self
         return product
 ----
@@ -438,14 +438,14 @@ It turns out there's a really cool technique called binary expansion that allows
 class Point:
     ...
     def __rmul__(self, coefficient):
-        current = self  # <1>
-        result = self.__class__(None, None, self.a, self.b)  # <2>
+        current = self  ## <1>
+        result = self.__class__(None, None, self.a, self.b)  ## <2>
         while coef:
-            if coef & 1:  # <3>
+            if coef & 1:  ## <3>
                 result += current
-            current += current  # <4>
+            current += current  ## <4>
             coef >>= 1
-        return result  # <5>
+        return result  ## <5>
 ----
 <1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
 <2> We start the result at "zero", or in Point Addition, the point at infinity.
@@ -561,14 +561,14 @@ B = 7
 
 class S256Point(Point):
 
-    zero = S256Field(0) # <1>
+    zero = S256Field(0) ## <1>
 
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)
         if type(x) == int:
             super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
         else:
-            super().__init__(x=x, y=y, a=a, b=b)  # <2>
+            super().__init__(x=x, y=y, a=a, b=b)  ## <2>
 
     def __repr__(self):
         if self.x is None:
@@ -588,7 +588,7 @@ We can also define $$__rmul__$$ a bit more efficiently since we know the order o
 class S256Point(Point):
     ...
     def __rmul__(self, coefficient):
-        coef = coefficient % N # <1>
+        coef = coefficient % N ## <1>
 	return super().__rmul__(coef)
 ----
 <1> We can mod by N because `N*G==Point(infinity)`. That is, every N times we add G to itself or any member of this group, we effectively go back to zero (Point at infinity).
@@ -771,9 +771,9 @@ We can now verify a signature using some of the primitives that we have.
 >>> r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
 >>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 >>> point = S256Point(0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574, 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4)
->>> u = z * pow(s, N-2, N) % N # <1>
->>> v = r * pow(s, N-2, N) % N # <2>
->>> print((u*G + v*point).x.num == r) # <3>
+>>> u = z * pow(s, N-2, N) % N ## <1>
+>>> v = r * pow(s, N-2, N) % N ## <2>
+>>> print((u*G + v*point).x.num == r) ## <3>
 True
 ----
 <1> u = z/s. Note that we use Fermat's Little Theorem for 1/s, since N is prime.
@@ -821,11 +821,11 @@ We can create an actual verify method on S256Point based on the above.
 class S256Point(Point):
     ...
     def verify(self, z, sig):
-        s_inv = pow(sig.s, N-2, N)  # <1>
-        u = z * s_inv % N  # <2>
-        v = sig.r * s_inv % N  # <3>
-        total = u*G + v*self  # <4>
-        return total.x.num == sig.r  # <5>
+        s_inv = pow(sig.s, N-2, N)  ## <1>
+        u = z * s_inv % N  ## <2>
+        v = sig.r * s_inv % N  ## <3>
+        total = u*G + v*self  ## <4>
+        return total.x.num == sig.r  ## <5>
 
 ----
 <1> s_inv (1/s) is calculated using Fermat's Little Theorem on the order of the group `N` which is prime.
@@ -868,13 +868,13 @@ Note that using something like the `random` library from Python to do cryptograp
 >>> from ecc import S256Point, G, N
 >>> from random import randint
 >>> from helper import hash256
->>> e = int.from_bytes(hash256(b'my secret'), 'big')  # <1>
->>> z = int.from_bytes(hash256(b'my message'), 'big')  # <2>
->>> k = randint(0, N)  # <3>
->>> r = (k*G).x.num  # <4>
+>>> e = int.from_bytes(hash256(b'my secret'), 'big')  ## <1>
+>>> z = int.from_bytes(hash256(b'my message'), 'big')  ## <2>
+>>> k = randint(0, N)  ## <3>
+>>> r = (k*G).x.num  ## <4>
 >>> k_inv = pow(k, N-2, N)
->>> s = (z+r*e) * k_inv % N  # <5>
->>> point = e*G # <6>
+>>> s = (z+r*e) * k_inv % N  ## <5>
+>>> point = e*G ## <6>
 >>> print(point)
 S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
 >>> print(hex(z))
@@ -932,13 +932,13 @@ from random import randint
 class PrivateKey:
 ...
     def sign(self, z):
-        k = randint(0, N)  # <1>
-        r = (k*G).x.num  # <2>
-        k_inv = pow(k, N-2, N)  # <3>
-        s = (z + r*self.secret) * k_inv % N  # <4>
-        if s > N/2:  # <5>
+        k = randint(0, N)  ## <1>
+        r = (k*G).x.num  ## <2>
+        k_inv = pow(k, N-2, N)  ## <3>
+        s = (z + r*self.secret) * k_inv % N  ## <4>
+        if s > N/2:  ## <5>
             s = N - s
-        return Signature(r, s) # <6>
+        return Signature(r, s) ## <6>
 ----
 <1> randint chooses a random integer from (0,N).
 <2> r is the x-coordinate of kG
@@ -970,7 +970,7 @@ To combat this, there is a deterministic k generation standard which uses our se
 class PrivateKey:
 ...
     def sign(self, z):
-        k = self.deterministic_k(z)  # <1>
+        k = self.deterministic_k(z)  ## <1>
         r = (k*G).x.num
         k_inv = pow(k, N-2, N)
         s = (z + r*self.secret) * k_inv % N
@@ -994,7 +994,7 @@ class PrivateKey:
             v = hmac.new(k, v, s256).digest()
             candidate = int.from_bytes(v, 'big')
             if candidate >= 1 and candidate < N:
-                return candidate  # <2>
+                return candidate  ## <2>
             k = hmac.new(k, v + b'\x00', s256).digest()
             v = hmac.new(k, v, s256).digest()
 ----

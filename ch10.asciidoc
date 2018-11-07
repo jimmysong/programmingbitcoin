@@ -153,12 +153,12 @@ Network communication is tricky due to its asynchronous nature. To experiment, w
 >>> port = 18333
 >>> socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 >>> socket.connect((host, port))
->>> stream = socket.makefile('rb', None)  # <1>
->>> version_message = VersionMessage()  # <2>
+>>> stream = socket.makefile('rb', None)  ## <1>
+>>> version_message = VersionMessage()  ## <2>
 >>> envelope = NetworkEnvelope(b'version', version_message.serialize(), testnet=True)
->>> socket.sendall(envelope.serialize())  # <3>
+>>> socket.sendall(envelope.serialize())  ## <3>
 >>> while True:
-...     new_message = NetworkEnvelope.parse(stream)  # <4>
+...     new_message = NetworkEnvelope.parse(stream)  ## <4>
 ...     print(new_message)
 ----
 <1> We create a stream to be able to read from the socket in the usual way. A stream made this way can be passed to all the parse methods.
@@ -188,7 +188,7 @@ class SimpleNode:
         # create a stream that we can use with the rest of the library
         self.stream = self.socket.makefile('rb', None)
         
-    def send(self, command, payload):  # <1>
+    def send(self, command, payload):  ## <1>
         '''Send a message to the connected node'''
         # create a network envelope
         envelope = NetworkEnvelope(command, payload, testnet=self.testnet)
@@ -197,14 +197,14 @@ class SimpleNode:
         # send the serialized envelope over the socket using sendall
         self.socket.sendall(envelope.serialize())
         
-    def read(self):  # <2>
+    def read(self):  ## <2>
         '''Read a message from the socket'''
         envelope = NetworkEnvelope.parse(self.stream, testnet=self.testnet)
         if self.logging:
             print('receiving: {}'.format(envelope))
         return envelope
 
-    def wait_for_commands(self, commands):  # <3>
+    def wait_for_commands(self, commands):  ## <3>
         '''Wait for one of the commands in the list'''
         # initialize the command we have, which should be None
         command = None
@@ -233,13 +233,13 @@ Now that we have a node, we can now handshake with another node.
 [source,python]
 ----
 >>> from network import SimpleNode, VersionMessage
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True)  # <1>
->>> version_message = VersionMessage()  # <2>
->>> node.send(version_message.command, version_message.serialize())  # <3>
+>>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True)  ## <1>
+>>> version_message = VersionMessage()  ## <2>
+>>> node.send(version_message.command, version_message.serialize())  ## <3>
 >>> verack_received = False
 >>> version_received = False
->>> while not verack_received and not version_received:  # <4>
-...     envelope = node.wait_for_commands([b'verack', b'version'])  # <5>
+>>> while not verack_received and not version_received:  ## <4>
+...     envelope = node.wait_for_commands([b'verack', b'version'])  ## <5>
 ...     if envelope.commend == b'verack':
 ...         verack_received = True
 ...     else:
@@ -278,12 +278,12 @@ class GetHeadersMessage:
     
     def __init__(self, version=70015, num_hashes=1, start_block=None, end_block=None):
         self.version = version
-        self.num_hashes = num_hashes  # <1>
-        if start_block is None:  # <2>
+        self.num_hashes = num_hashes  ## <1>
+        if start_block is None:  ## <2>
             raise RuntimeError('a starting block is required')
         self.start_block = start_block
         if end_block is None:
-            self.end_block = b'\x00' * 32  # <3>
+            self.end_block = b'\x00' * 32  ## <3>
         else:
             self.end_block = end_block
 
@@ -331,9 +331,9 @@ class HeadersMessage:
         num_headers = read_varint(stream)
         blocks = []
         for _ in range(num_headers):
-            blocks.append(Block.parse(stream))  # <1>
-            num_txs = read_varint(stream)  # <2>
-            if num_txs != 0:  # <3>
+            blocks.append(Block.parse(stream))  ## <1>
+            num_txs = read_varint(stream)  ## <2>
+            if num_txs != 0:  ## <3>
                 raise RuntimeError('number of txs not 0')
         return cls(blocks)
 ----
@@ -360,19 +360,19 @@ We can now do something useful with the network connection that we've set up. We
 ...     headers_envelope = node.wait_for_commands([b'headers'])
 ...     headers_message = HeadersMessage.parse(headers_envelope.stream())
 ...     for block in headers_message.blocks:
-...         if not block.check_pow():  # <1>
+...         if not block.check_pow():  ## <1>
 ...             raise RuntimeError('bad proof of work at block {}'.format(count))
-...         if last_block_hash != GENESIS_BLOCK_HASH and block.prev_block != last_block_hash:  # <2>
+...         if last_block_hash != GENESIS_BLOCK_HASH and block.prev_block != last_block_hash:  ## <2>
 ...             raise RuntimeError('discontinuous block at {}'.format(count))
-...         if expected_bits and block.bits != expected_bits:  # <3>
+...         if expected_bits and block.bits != expected_bits:  ## <3>
 ...             raise RuntimeError('bad bits at block {} {} vs {}'.format(count, block.bits.hex(), expected_bits.hex()))
-...         if first_epoch_block and count % 2016 == 2015:  # <4>
+...         if first_epoch_block and count % 2016 == 2015:  ## <4>
 ...             expected_bits = calculate_new_bits(
 ...                 expected_bits, block.timestamp - first_epoch_block.timestamp)
 ...             print(expected_bits.hex())
-...         elif first_epoch_block is None:  # <5>
+...         elif first_epoch_block is None:  ## <5>
 ...             expected_bits = block.bits
-...         if count % 2016 == 0 or not first_epoch_block:  # <6>
+...         if count % 2016 == 0 or not first_epoch_block:  ## <6>
 ...             first_epoch_block = block
 ...         count += 1
 ...         last_block_hash = block.hash()
