@@ -1,9 +1,5 @@
-import time
-
-from io import BytesIO
 from unittest import TestCase
 
-from block import Block
 from bloomfilter import BloomFilter, BIP37_CONSTANT
 from ecc import PrivateKey
 from helper import (
@@ -15,17 +11,13 @@ from helper import (
     int_to_little_endian,
     little_endian_to_int,
     murmur3,
-    read_varint,
-    SIGHASH_ALL,
 )
 from merkleblock import MerkleBlock
 from network import (
     GetDataMessage,
     GetHeadersMessage,
     HeadersMessage,
-    NetworkEnvelope,
     SimpleNode,
-    TX_DATA_TYPE,
     FILTERED_BLOCK_DATA_TYPE,
 )
 from script import p2pkh_script, Script
@@ -116,7 +108,7 @@ class Chapter12Test(TestCase):
         field_size = 10
         function_count = 5
         tweak = 99
-        items = (b'Hello World',  b'Goodbye!')
+        items = (b'Hello World', b'Goodbye!')
         bit_field_size = field_size * 8
         bit_field = [0] * bit_field_size
         for item in items:
@@ -221,8 +213,7 @@ class Chapter12Test(TestCase):
         TxFetcher.cache[prev_tx] = prev_tx_obj
         tx_ins = [tx_in]
         total = prev_tx_obj.tx_outs[prev_index].amount
-        tx_outs = [TxOut(total-fee, target_script)]
+        tx_outs = [TxOut(total - fee, target_script)]
         tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
         tx_obj.sign_input(0, private_key)
         self.assertEqual(tx_obj.serialize().hex(), '0100000001f1dddc18fe1c664bbd221d2d18e147f50776cb9aebb0535db7a96c561e0e93e3000000006a473044022046a49962540a89e83da0636455b6c81c11c2844b7f3cd414c02e1a13741f4d15022006eed4eeda994d2bfebb9f1a494bfa3c8bab96e7e4c82623f4a29736dfe309e70121021cdd761c7eb1c90c0af0a5963e94bf0203176b4662778d32bd6d7ab5d8628b32ffffff0001a1629ef5000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000')
-

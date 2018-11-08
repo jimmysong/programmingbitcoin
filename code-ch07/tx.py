@@ -4,17 +4,16 @@ from unittest import TestCase
 import json
 import requests
 
-from ecc import PrivateKey, S256Point, Signature
+from ecc import PrivateKey
 from helper import (
-    decode_base58,
-    hash256,
     encode_varint,
+    hash256,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
     SIGHASH_ALL,
 )
-from script import p2pkh_script, Script
+from script import Script
 
 
 class TxFetcher:
@@ -221,7 +220,7 @@ class TxIn:
         return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash on libbitcoin server
+        '''Get the outpoint value by looking up the tx hash
         Returns the amount in satoshi
         '''
         # use self.fetch_tx to get the transaction

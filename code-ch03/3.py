@@ -34,8 +34,8 @@ class Chapter3Test(TestCase):
 
     def test_exercise_1(self):
 
-        def on_curve(x,y):
-            return y**2 == x**3 + a*x + b
+        def on_curve(x, y):
+            return y**2 == x**3 + a * x + b
 
         prime = 223
         a = FieldElement(0, prime)
@@ -100,21 +100,21 @@ class Chapter3Test(TestCase):
         b = FieldElement(7, prime)
         x1 = FieldElement(num=192, prime=prime)
         y1 = FieldElement(num=105, prime=prime)
-        p = Point(x1,y1,a,b)
+        p = Point(x1, y1, a, b)
         p2 = p + p
         self.assertEqual(p2.x.num, 49)
         self.assertEqual(p2.y.num, 71)
         self.assertEqual(p2.x.prime, prime)
         x1 = FieldElement(num=143, prime=prime)
         y1 = FieldElement(num=98, prime=prime)
-        p = Point(x1,y1,a,b)
+        p = Point(x1, y1, a, b)
         p2 = p + p
         self.assertEqual(p2.x.num, 64)
         self.assertEqual(p2.y.num, 168)
         self.assertEqual(p2.x.prime, prime)
         x1 = FieldElement(num=47, prime=prime)
         y1 = FieldElement(num=71, prime=prime)
-        p = Point(x1,y1,a,b)
+        p = Point(x1, y1, a, b)
         p2 = p + p
         self.assertEqual(p2.x.num, 36)
         self.assertEqual(p2.y.num, 111)
@@ -123,11 +123,11 @@ class Chapter3Test(TestCase):
         self.assertEqual(p2.x.num, 194)
         self.assertEqual(p2.y.num, 51)
         self.assertEqual(p2.x.prime, prime)
-        p2 = p+p+p+p+p+p+p+p
+        p2 = p + p + p + p + p + p + p + p
         self.assertEqual(p2.x.num, 116)
         self.assertEqual(p2.y.num, 55)
         self.assertEqual(p2.x.prime, prime)
-        p2 = p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p
+        p2 = p + p + p + p + p + p + p + p + p + p + p + p + p + p + p + p + p + p + p + p + p
         self.assertEqual(p2.x, None)
 
     def test_example_4(self):
@@ -139,29 +139,29 @@ class Chapter3Test(TestCase):
         p = Point(x, y, a, b)
         want = (
             (None, None),
-            (47,71),
-            (36,111),
-            (15,137),
-            (194,51),
-            (126,96),
-            (139,137),
-            (92,47),
-            (116,55),
-            (69,86),
-            (154,150),
-            (154,73),
-            (69,137),
-            (116,168),
-            (92,176),
-            (139,86),
-            (126,127),
-            (194,172),
-            (15,86),
-            (36,112),
-            (47,152),
+            (47, 71),
+            (36, 111),
+            (15, 137),
+            (194, 51),
+            (126, 96),
+            (139, 137),
+            (92, 47),
+            (116, 55),
+            (69, 86),
+            (154, 150),
+            (154, 73),
+            (69, 137),
+            (116, 168),
+            (92, 176),
+            (139, 86),
+            (126, 127),
+            (194, 172),
+            (15, 86),
+            (36, 112),
+            (47, 152),
         )
         for s in range(1, 21):
-            result = s*p
+            result = s * p
             self.assertEqual((result.x.num, result.y.num), want[s])
 
     def test_exercise_5(self):
@@ -186,7 +186,7 @@ class Chapter3Test(TestCase):
         x = FieldElement(15, prime)
         y = FieldElement(86, prime)
         p = Point(x, y, a, b)
-        p2 = 7*p
+        p2 = 7 * p
         self.assertEqual(p2.x, None)
 
     def test_example_6(self):
@@ -205,11 +205,11 @@ class Chapter3Test(TestCase):
         seven = FieldElement(7, p)
         zero = FieldElement(0, p)
         G = Point(x, y, zero, seven)
-        p2 = n*G
+        p2 = n * G
         self.assertEqual(p2.x, None)
 
     def test_example_8(self):
-        p = N*G
+        p = N * G
         self.assertEqual(p.x, None)
 
     def test_example_9(self):
@@ -217,35 +217,35 @@ class Chapter3Test(TestCase):
         r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
         s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
         point = S256Point(0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574, 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4)
-        u = z * pow(s, N-2, N) % N
-        v = r * pow(s, N-2, N) % N
-        self.assertEqual((u*G + v*point).x.num, r)
+        u = z * pow(s, N - 2, N) % N
+        v = r * pow(s, N - 2, N) % N
+        self.assertEqual((u * G + v * point).x.num, r)
 
     def test_exercise_6(self):
         point = S256Point(
-            0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
+            0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c,
             0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
         z = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60
         r = 0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395
         s = 0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
-        u = z * pow(s, N-2, N) % N
-        v = r * pow(s, N-2, N) % N
-        self.assertEqual((u*G + v*point).x.num, r)
+        u = z * pow(s, N - 2, N) % N
+        v = r * pow(s, N - 2, N) % N
+        self.assertEqual((u * G + v * point).x.num, r)
         z = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
         r = 0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
         s = 0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
-        u = z * pow(s, N-2, N) % N
-        v = r * pow(s, N-2, N) % N
-        self.assertEqual((u*G + v*point).x.num, r)
+        u = z * pow(s, N - 2, N) % N
+        v = r * pow(s, N - 2, N) % N
+        self.assertEqual((u * G + v * point).x.num, r)
 
     def test_example_10(self):
         e = int.from_bytes(hash256(b'my secret'), 'big')
         z = int.from_bytes(hash256(b'my message'), 'big')
         k = randint(0, N)
-        r = (k*G).x.num
-        k_inv = pow(k, N-2, N)
-        s = (z+r*e) * k_inv % N
-        point = e*G
+        r = (k * G).x.num
+        k_inv = pow(k, N - 2, N)
+        s = (z + r * e) * k_inv % N
+        point = e * G
         self.assertEqual(
             point.x.num,
             0x028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52)
@@ -255,15 +255,17 @@ class Chapter3Test(TestCase):
         self.assertEqual(
             z,
             0x231c6f3d980a6b0fb7152f85cee7eb52bf92433d9919b9c5218cb08e79cce78)
+        self.assertTrue(r)
+        self.assertTrue(s)
 
     def test_exercise_7(self):
         e = 12345
         z = int.from_bytes(hash256(b'Programming Bitcoin!'), 'big')
         k = randint(0, N)
-        r = (k*G).x.num
-        k_inv = pow(k, N-2, N)
-        s = (z+r*e) * k_inv % N
-        point = e*G
+        r = (k * G).x.num
+        k_inv = pow(k, N - 2, N)
+        s = (z + r * e) * k_inv % N
+        point = e * G
         self.assertEqual(
             point.x.num,
             0xf01d6b9018ab421dd410404cb869072065522bf85734008f105cf385a023a80f)
@@ -273,3 +275,5 @@ class Chapter3Test(TestCase):
         self.assertEqual(
             z,
             0x969f6056aa26f7d2795fd013fe88868d09c9f6aed96965016e1936ae47060d48)
+        self.assertTrue(r)
+        self.assertTrue(s)

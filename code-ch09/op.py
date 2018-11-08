@@ -651,6 +651,7 @@ def op_hash256(stack):
     stack.append(hash256(element))
     return True
 
+
 def op_checksig(stack, z):
     if len(stack) < 2:
         return False

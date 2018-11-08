@@ -132,54 +132,44 @@ class Script:
     def evaluate(self, z):
         # create a copy as we may need to add to this list if we have a
         # RedeemScript
-        insts = self.instructions[:]
+        instructions = self.instructions[:]
         stack = []
         altstack = []
-        while len(insts) > 0:
-            inst = insts.pop(0)
-            if type(inst) == int:
+        while len(instructions) > 0:
+            instruction = instructions.pop(0)
+            if type(instruction) == int:
                 # do what the op code says
-                operation = OP_CODE_FUNCTIONS[inst]
-                if inst in (99, 100):
-                    # op_if/op_notif require the insts array
-                    if not operation(stack, insts):
-                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
+                operation = OP_CODE_FUNCTIONS[instruction]
+                if instruction in (99, 100):
+                    # op_if/op_notif require the instructions array
+                    if not operation(stack, instructions):
+                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
-                elif inst in (107, 108):
+                elif instruction in (107, 108):
                     # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
+                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
-                elif inst in (172, 173, 174, 175):
+                elif instruction in (172, 173, 174, 175):
                     # these are signing operations, they need a sig_hash
                     # to check against
                     if not operation(stack, z):
-                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
-                        return False
-                elif inst == 177:
-                    # op_checklocktimeverify requires locktime and sequence
-                    if bip65 and not operation(stack, locktime, sequence):
-                        print('bad cltv')
-                        return False
-                elif inst == 178:
-                    # op_checksequenceverify requires version and sequence
-                    if bip112 and not operation(stack, version, sequence):
-                        print('bad csv')
+                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 else:
                     if not operation(stack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
+                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
             else:
-                # add the inst to the stack
-                stack.append(inst)
-                if len(insts) == 3 and insts[0] == 0xa9 \
-                    and type(insts[1]) == bytes and len(insts[1]) == 20 \
-                    and insts[2] == 0x87:
+                # add the instruction to the stack
+                stack.append(instruction)
+                if len(instructions) == 3 and instructions[0] == 0xa9 \
+                    and type(instructions[1]) == bytes and len(instructions[1]) == 20 \
+                    and instructions[2] == 0x87:
                     # we execute the next three op codes
-                    insts.pop()
-                    h160 = insts.pop()
-                    insts.pop()
+                    instructions.pop()
+                    h160 = instructions.pop()
+                    instructions.pop()
                     if not op_hash160(stack):
                         return False
                     stack.append(h160)
@@ -190,9 +180,9 @@ class Script:
                         print('bad p2sh h160')
                         return False
                     # hashes match! now add the RedeemScript
-                    redeem_script = encode_varint(len(inst)) + inst
+                    redeem_script = encode_varint(len(instruction)) + instruction
                     stream = BytesIO(redeem_script)
-                    insts.extend(Script.parse(stream).instructions)
+                    instructions.extend(Script.parse(stream).instructions)
         if len(stack) == 0:
             return False
         if stack.pop() == b'':

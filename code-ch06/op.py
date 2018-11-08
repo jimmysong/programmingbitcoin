@@ -779,7 +779,7 @@ OP_CODE_FUNCTIONS = {
     146: op_0notequal,
     147: op_add,
     148: op_sub,
-    149: op_mul,    
+    149: op_mul,
     154: op_booland,
     155: op_boolor,
     156: op_numequal,

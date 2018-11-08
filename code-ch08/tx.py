@@ -4,17 +4,16 @@ from unittest import TestCase
 import json
 import requests
 
-from ecc import PrivateKey, S256Point, Signature
+from ecc import PrivateKey
 from helper import (
-    decode_base58,
-    hash256,
     encode_varint,
+    hash256,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
     SIGHASH_ALL,
 )
-from script import p2pkh_script, Script
+from script import Script
 
 
 class TxFetcher:
@@ -156,19 +155,17 @@ class Tx:
         alt_tx_ins = []
         # iterate over self.tx_ins
         for tx_in in self.tx_ins:
-            # create a new TxIn that has a blank script_sig (b'') and add to alt_tx_ins
+            # create a new TxIn that has no script_sig and add to alt_tx_ins
             alt_tx_ins.append(TxIn(
                 prev_tx=tx_in.prev_tx,
                 prev_index=tx_in.prev_index,
-                script_sig=b'',
+                script_sig=Script([]),
                 sequence=tx_in.sequence,
             ))
         # grab the input at the input_index
         signing_input = alt_tx_ins[input_index]
-        # grab the script_pubkey of the input
-        script_pubkey = signing_input.script_pubkey(self.testnet)
         # the script_sig of the signing_input should be script_pubkey
-        signing_input.script_sig = script_pubkey
+        signing_input.script_sig = signing_input.script_pubkey(self.testnet)
         # create an alternate transaction with the modified tx_ins
         alt_tx = self.__class__(
             version=self.version,
@@ -186,11 +183,11 @@ class Tx:
         '''Returns whether the input has a valid signature'''
         # get the relevant input
         tx_in = self.tx_ins[input_index]
-        # grab the previous ScriptPubkey
+        # grab the previous ScriptPubKey
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
         # get the sig_hash (z)
         z = self.sig_hash(input_index)
-        # combine the scripts
+        # combine the current ScriptSig and the previous ScriptPubKey
         combined = tx_in.script_sig + script_pubkey
         # evaluate the script and see if it passes
         return combined.evaluate(z)
@@ -274,7 +271,7 @@ class TxIn:
         return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash on libbitcoin server
+        '''Get the outpoint value by looking up the tx hash
         Returns the amount in satoshi
         '''
         # use self.fetch_tx to get the transaction

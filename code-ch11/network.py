@@ -83,6 +83,7 @@ class NetworkEnvelope:
         '''Returns a stream for parsing the payload'''
         return BytesIO(self.payload)
 
+
 class NetworkEnvelopeTest(TestCase):
 
     def test_parse(self):

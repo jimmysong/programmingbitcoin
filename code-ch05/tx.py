@@ -6,10 +6,10 @@ import requests
 
 from helper import (
     encode_varint,
+    hash256,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
-    hash256,
 )
 from script import Script
 
@@ -53,6 +53,7 @@ class TxFetcher:
             to_dump = {k: tx.serialize().hex() for k, tx in cls.cache.items()}
             s = json.dumps(to_dump, sort_keys=True, indent=4)
             f.write(s)
+
 
 class Tx:
 
@@ -154,7 +155,7 @@ class TxIn:
         return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash on libbitcoin server
+        '''Get the outpoint value by looking up the tx hash
         Returns the amount in satoshi
         '''
         # use self.fetch_tx to get the transaction
@@ -164,8 +165,8 @@ class TxIn:
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        '''Get the scriptPubKey by looking up the tx hash on libbitcoin server
-        Returns the binary scriptpubkey
+        '''Get the scriptPubKey by looking up the tx hash
+        Returns a Script object
         '''
         # use self.fetch_tx to get the transaction
         tx = self.fetch_tx(testnet=testnet)

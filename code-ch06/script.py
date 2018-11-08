@@ -142,16 +142,6 @@ class Script:
                     if not operation(stack, z):
                         print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
-                elif instruction == 177:
-                    # op_checklocktimeverify requires locktime and sequence
-                    if bip65 and not operation(stack, locktime, sequence):
-                        print('bad cltv')
-                        return False
-                elif instruction == 178:
-                    # op_checksequenceverify requires version and sequence
-                    if bip112 and not operation(stack, version, sequence):
-                        print('bad csv')
-                        return False
                 else:
                     if not operation(stack):
                         print('bad op: {}'.format(OP_CODE_NAMES[instruction]))

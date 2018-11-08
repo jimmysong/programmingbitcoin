@@ -14,10 +14,11 @@ from helper import (
 from script import Script
 from tx import Tx
 
+
 class Chapter9Test(TestCase):
 
     def test_apply(self):
-        
+
         def is_coinbase(self):
             if len(self.tx_ins) != 1:
                 return False
@@ -74,7 +75,7 @@ class Chapter9Test(TestCase):
 
         def target(self):
             return bits_to_target(self.bits)
-        
+
         def difficulty(self):
             lowest = 0xffff * 256**(0x1d - 3)
             return lowest / self.target()
@@ -133,14 +134,14 @@ class Chapter9Test(TestCase):
         bits = bytes.fromhex('e93c0118')
         exponent = bits[-1]
         coefficient = little_endian_to_int(bits[:-1])
-        target = coefficient*256**(exponent-3)
+        target = coefficient * 256**(exponent - 3)
         self.assertEqual('{:x}'.format(target).zfill(64), '0000000000000000013ce9000000000000000000000000000000000000000000')
 
     def test_example_7(self):
         bits = bytes.fromhex('e93c0118')
         exponent = bits[-1]
         coefficient = little_endian_to_int(bits[:-1])
-        target = coefficient*256**(exponent-3)
+        target = coefficient * 256**(exponent - 3)
         proof = little_endian_to_int(hash256(bytes.fromhex('020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd0000000000000000005b0750fce0a889502d40508d39576821155e9c9e3f5c3157f961db38fd8b25be1e77a759e93c0118a4ffd71d')))
         self.assertTrue(proof < target)
 
@@ -148,8 +149,8 @@ class Chapter9Test(TestCase):
         bits = bytes.fromhex('e93c0118')
         exponent = bits[-1]
         coefficient = little_endian_to_int(bits[:-1])
-        target = coefficient*256**(exponent-3)
-        difficulty = 0xffff * 256**(0x1d-3) // target
+        target = coefficient * 256**(exponent - 3)
+        difficulty = 0xffff * 256**(0x1d - 3) // target
         self.assertEqual(difficulty, 888171856257)
 
     def test_example_9(self):
@@ -175,4 +176,4 @@ class Chapter9Test(TestCase):
             time_differential = TWO_WEEKS // 4
         new_target = last_block.target() * time_differential // TWO_WEEKS
         new_bits = target_to_bits(new_target)
-        self.assertEqual(new_bits.hex(),'80df6217')
+        self.assertEqual(new_bits.hex(), '80df6217')

@@ -4,15 +4,12 @@ from unittest import TestCase
 import json
 import requests
 
-from ecc import PrivateKey, S256Point, Signature
 from helper import (
-    decode_base58,
-    hash256,
     encode_varint,
+    hash256,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
-    SIGHASH_ALL,
 )
 from script import Script
 
@@ -149,18 +146,6 @@ class Tx:
         # return input sum - output sum
         return input_sum - output_sum
 
-    def sig_hash(self, input_index, hash_type):
-        '''Returns the integer representation of the hash that needs to get
-        signed for index input_index'''
-        raise NotImplementedError
-
-    def verify_input(self, input_index):
-        '''Returns whether the input has a valid signature'''
-        raise NotImplementedError
-
-    def sign_input(self, input_index, private_key, hash_type):
-        raise NotImplementedError
-
 
 class TxIn:
 
@@ -212,7 +197,7 @@ class TxIn:
         return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash on libbitcoin server
+        '''Get the outpoint value by looking up the tx hash
         Returns the amount in satoshi
         '''
         # use self.fetch_tx to get the transaction
@@ -222,8 +207,8 @@ class TxIn:
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        '''Get the scriptPubKey by looking up the tx hash on libbitcoin server
-        Returns the binary scriptpubkey
+        '''Get the scriptPubKey by looking up the tx hash
+        Returns a Script object
         '''
         # use self.fetch_tx to get the transaction
         tx = self.fetch_tx(testnet=testnet)

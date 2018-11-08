@@ -1,6 +1,5 @@
 import math
 
-from io import BytesIO
 from unittest import TestCase
 
 import helper
@@ -103,7 +102,7 @@ class Chapter11Test(TestCase):
             hashes.append(hashes[-1])
         parent_level = []
         for i in range(0, len(hex_hashes), 2):
-            parent = merkle_parent(hashes[i], hashes[i+1])
+            parent = merkle_parent(hashes[i], hashes[i + 1])
             parent_level.append(parent)
         want = [
             '8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd',
@@ -153,7 +152,7 @@ class Chapter11Test(TestCase):
         total = 27
         max_depth = math.ceil(math.log(total, 2))
         merkle_tree = []
-        for depth in range(max_depth + 1): 
+        for depth in range(max_depth + 1):
             num_items = math.ceil(total / 2**(max_depth - depth))
             level_hashes = [None] * num_items
             merkle_tree.append(level_hashes)

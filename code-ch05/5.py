@@ -31,7 +31,7 @@ class Chapter5Test(TestCase):
             script_sig = Script.parse(s)
             sequence = little_endian_to_int(s.read(4))
             return cls(prev_tx, prev_index, script_sig, sequence)
-        
+
         @classmethod
         def tx_out_parse(cls, s):
             amount = little_endian_to_int(s.read(8))
@@ -64,7 +64,7 @@ class Chapter5Test(TestCase):
         tx_obj = Tx.parse(stream)
         self.assertEqual(
             tx_obj.tx_ins[1].script_sig.instructions[0].hex(),
-'304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601')
+            '304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601')
         self.assertEqual(
             tx_obj.tx_ins[1].script_sig.instructions[1].hex(),
             '035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937')

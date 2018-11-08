@@ -52,7 +52,7 @@ class Chapter10Test(TestCase):
             result += hash256(self.payload)[:4]
             result += self.payload
             return result
-        
+
         def serialize_2(self):
             result = int_to_little_endian(self.version, 4)
             result += int_to_little_endian(self.services, 8)
@@ -112,7 +112,7 @@ class Chapter10Test(TestCase):
             headers_envelope = node.wait_for_commands([b'headers'])
             headers_message = HeadersMessage.parse(headers_envelope.stream())
             for block in headers_message.blocks:
-                if not block.check_pow(): 
+                if not block.check_pow():
                     raise RuntimeError('bad proof of work at block {}'.format(count))
                 if last_block_hash != GENESIS_BLOCK_HASH and block.prev_block != last_block_hash:
                     raise RuntimeError('discontinuous block at {}'.format(count))

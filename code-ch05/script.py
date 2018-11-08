@@ -96,7 +96,7 @@ class Script:
                     result += int_to_little_endian(76, 1)
                     result += int_to_little_endian(length, 1)
                 elif length >= 0x100 and length <= 520:
-                    # 77 is pushdata 2
+                    # 77 is pushdata2
                     result += int_to_little_endian(77, 1)
                     result += int_to_little_endian(length, 2)
                 else:
@@ -112,7 +112,7 @@ class Script:
         # encode_varint the total length of the result and prepend
         return encode_varint(total) + result
 
-    def evaluate(self, z, version, locktime, sequence, witness, bip65=True, bip112=True):
+    def evaluate(self, z):
         # create a copy as we may need to add to this list if we have a
         # RedeemScript
         instructions = self.instructions[:]
@@ -138,16 +138,6 @@ class Script:
                     # to check against
                     if not operation(stack, z):
                         print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
-                        return False
-                elif instruction == 177:
-                    # op_checklocktimeverify requires locktime and sequence
-                    if bip65 and not operation(stack, locktime, sequence):
-                        print('bad cltv')
-                        return False
-                elif instruction == 178:
-                    # op_checksequenceverify requires version and sequence
-                    if bip112 and not operation(stack, version, sequence):
-                        print('bad csv')
                         return False
                 else:
                     if not operation(stack):

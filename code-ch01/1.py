@@ -25,14 +25,14 @@ class Chapter1Test(TestCase):
         def div(self, other):
             if self.prime != other.prime:
                 raise TypeError
-            num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
+            num = self.num * pow(other.num, self.prime - 2, self.prime) % self.prime
             return self.__class__(num, self.prime)
 
         FieldElement.__ne__ = ne
         FieldElement.__sub__ = sub
         FieldElement.__mul__ = mul
         FieldElement.__truediv__ = div
-    
+
     def test_example_1(self):
         a = FieldElement(7, 13)
         b = FieldElement(6, 13)
@@ -42,7 +42,7 @@ class Chapter1Test(TestCase):
     def test_example_2(self):
         self.assertEqual(7 % 3, 1)
         self.assertEqual(-27 % 13, 12)
-        
+
     def test_exercise_2(self):
         prime = 57
         self.assertEqual((44 + 33) % prime, 20)
@@ -83,10 +83,10 @@ class Chapter1Test(TestCase):
 
     def test_exercise_7(self):
         for prime in (7, 11, 17, 31, 43):
-            self.assertEqual([pow(i, prime-1, prime) for i in range(1, prime)], [1]*(prime-1))
+            self.assertEqual([pow(i, prime - 1, prime) for i in range(1, prime)], [1] * (prime - 1))
 
     def test_exercise_8(self):
         prime = 31
-        self.assertEqual(3 * pow(24, prime-2, prime) % prime, 4)
-        self.assertEqual(pow(17, prime-4, prime), 29)
-        self.assertEqual(pow(4, prime-5, prime) * 11 % prime, 13)
+        self.assertEqual(3 * pow(24, prime - 2, prime) % prime, 4)
+        self.assertEqual(pow(17, prime - 4, prime), 29)
+        self.assertEqual(pow(4, prime - 5, prime) * 11 % prime, 13)

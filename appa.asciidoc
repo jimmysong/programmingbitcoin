@@ -1856,7 +1856,7 @@ tx_outs = [TxOut(total-fee, target_script)]
 # create a new transaction
 tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
 # sign the transaction
-tx_obj.sign_input(0, private_key, SIGHASH_ALL)
+tx_obj.sign_input(0, private_key)
 # serialize and hex to see what it looks like
 print(tx_obj.serialize().hex())
 # send this signed transaction on the network

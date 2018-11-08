@@ -37,19 +37,19 @@ class Chapter2Test(TestCase):
         Point.__add__ = add
 
     def test_example_1(self):
-        p1 = Point(-1, -1, 5, 7)
+        Point(-1, -1, 5, 7)
         with self.assertRaises(ValueError):
-            p2 = Point(-1, -2, 5, 7)
+            Point(-1, -2, 5, 7)
 
     def test_exercise_1(self):
 
         def on_curve(x, y):
-            return y**2 == x**3 + 5*x + 7
+            return y**2 == x**3 + 5 * x + 7
 
-        self.assertEqual(on_curve(2,4), False)
-        self.assertEqual(on_curve(-1,-1), True)
-        self.assertEqual(on_curve(18,77), True)
-        self.assertEqual(on_curve(5,7), False)
+        self.assertEqual(on_curve(2, 4), False)
+        self.assertEqual(on_curve(-1, -1), True)
+        self.assertEqual(on_curve(18, 77), True)
+        self.assertEqual(on_curve(5, 7), False)
 
     def test_example_2(self):
         p1 = Point(-1, -1, 5, 7)
@@ -58,14 +58,16 @@ class Chapter2Test(TestCase):
         self.assertEqual(p1 + inf, p1)
         self.assertEqual(inf + p2, p2)
         self.assertEqual(p1 + p2, inf)
-        
+
     def test_exercise_3(self):
+
         def on_curve(x, y):
-            return y**2 == x**3 + 5*x + 7
-        self.assertEqual(on_curve(2,4), False)
-        self.assertEqual(on_curve(-1,-1), True)
-        self.assertEqual(on_curve(18,77), True)
-        self.assertEqual(on_curve(5,7), False)
+            return y**2 == x**3 + 5 * x + 7
+
+        self.assertEqual(on_curve(2, 4), False)
+        self.assertEqual(on_curve(-1, -1), True)
+        self.assertEqual(on_curve(18, 77), True)
+        self.assertEqual(on_curve(5, 7), False)
 
     def test_exercise_4(self):
         x1, y1 = 2, 5
