@@ -1222,9 +1222,8 @@ class Tx:
         '''
         if not self.is_coinbase():
             return None
-        first_input = self.tx_ins[0]
-        first_item = first_input.script_sig.items[0]
-        return little_endian_to_int(first_item)
+        element = self.tx_ins[0].script_sig.instructions[0]
+        return little_endian_to_int(element)
 ----
 
 ==== Exercise {counter:ch9exercise}

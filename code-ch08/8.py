@@ -4,7 +4,7 @@ from unittest import TestCase
 import helper
 import op
 
-
+from ecc import S256Point, Signature
 from helper import (
     encode_base58_checksum,
     encode_varint,
@@ -12,10 +12,8 @@ from helper import (
     int_to_little_endian,
 )
 from op import decode_num, encode_num
-from tx import Tx, TxIn, SIGHASH_ALL
-
-from ecc import PrivateKey, S256Point, Signature
 from script import Script
+from tx import Tx, TxIn, SIGHASH_ALL
 
 
 class Chapter8Test(TestCase):

@@ -149,26 +149,29 @@ class Tx:
         # return input sum - output sum
         return input_sum - output_sum
 
-    def sig_hash(self, input_index):
+    def sig_hash(self, input_index, redeem_script=None):
         '''Returns the integer representation of the hash that needs to get
         signed for index input_index'''
         # create a new set of tx_ins (alt_tx_ins)
         alt_tx_ins = []
         # iterate over self.tx_ins
         for tx_in in self.tx_ins:
-            # create a new TxIn that has a blank script_sig (b'') and add to alt_tx_ins
+            # create a new TxIn that has no script_sig and add to alt_tx_ins
             alt_tx_ins.append(TxIn(
                 prev_tx=tx_in.prev_tx,
                 prev_index=tx_in.prev_index,
-                script_sig=b'',
+                script_sig=Script([]),
                 sequence=tx_in.sequence,
             ))
         # grab the input at the input_index
         signing_input = alt_tx_ins[input_index]
-        # grab the script_pubkey of the input
-        script_pubkey = signing_input.script_pubkey(self.testnet)
-        # the script_sig of the signing_input should be script_pubkey
-        signing_input.script_sig = script_pubkey
+        # p2sh would require a redeem_script
+        if redeem_script:
+            # p2sh replaces the script_sig with the redeem_script
+            signing_input.script_sig = redeem_script
+        else:
+            # the script_sig of the signing_input should be script_pubkey
+            signing_input.script_sig = signing_input.script_pubkey(self.testnet)
         # create an alternate transaction with the modified tx_ins
         alt_tx = self.__class__(
             version=self.version,
@@ -186,14 +189,22 @@ class Tx:
         '''Returns whether the input has a valid signature'''
         # get the relevant input
         tx_in = self.tx_ins[input_index]
-        # grab the previous ScriptPubkey
+        # grab the previous ScriptPubKey
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
+        # check to see if the ScriptPubkey is a p2sh
+        if script_pubkey.is_p2sh_script_pubkey():
+            # the last element has to be the redeem script to trigger
+            element = tx_in.script_sig.instructions[-1]
+            raw_redeem = int_to_little_endian(len(element), 1) + element
+            redeem_script = Script.parse(BytesIO(raw_redeem))
+        else:
+            redeem_script = None
         # get the sig_hash (z)
-        z = self.sig_hash(input_index)
-        # combine the scripts
-        combined = tx_in.script_sig + script_pubkey
-        # evaluate the script and see if it passes
-        return combined.evaluate(z)
+        z = self.sig_hash(input_index, redeem_script)
+        # combine the current script_sig and the previous script_pubkey
+        script = tx_in.script_sig + script_pubkey
+        # now evaluate this script and see if it passes
+        return script.evaluate(z)
 
     def verify(self):
         '''Verify this transaction'''

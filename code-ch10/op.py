@@ -692,7 +692,17 @@ def op_checkmultisig(stack, z):
     # OP_CHECKMULTISIG bug
     stack.pop()
     try:
-        raise NotImplementedError
+        points = [S256Point.parse(sec) for sec in sec_pubkeys]
+        sigs = [Signature.parse(der) for der in der_signatures]
+        for sig in sigs:
+            if len(points) == 0:
+                print("signatures no good or not in right order")
+                return False
+            while points:
+                point = points.pop(0)
+                if point.verify(z, sig):
+                    break
+        stack.append(encode_num(1))
     except (ValueError, SyntaxError):
         return False
     return True

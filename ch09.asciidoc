@@ -51,7 +51,7 @@ This ScriptSig was composed by Satoshi and contains a message that we can take a
 >>> from script import Script
 >>> stream = BytesIO(bytes.fromhex('04ffff...6b73'))
 >>> s = Script.parse(stream)
->>> print(s.items[2])
+>>> print(s.instructions[2])
 b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
 ----
 
@@ -345,6 +345,7 @@ We can code this formula like so:
 ...     time_differential = TWO_WEEKS // 4
 >>> new_target = last_block.target() * time_differential // TWO_WEEKS
 >>> print('{:x}'.format(new_target).zfill(64))
+0000000000000000007615000000000000000000000000000000000000000000
 ----
 <1> Note that `TWO_WEEKS = 60*60*24*14` is the number of seconds in 2 weeks. 60 seconds times 60 minutes times 24 hours times 14 days.
 <2> This makes sure that if it took more than 8 weeks to find the last 2015 blocks, we don't decrease the difficulty too much.
