@@ -1655,10 +1655,10 @@ Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` h
 
 ==== Exercise {counter:ch12exercise}
 
-Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items?
+Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use bit_field_to_bytes to convert to bytes)
 
-b'Hello World'
-b'Goodbye!'
+* b'Hello World'
+* b'Goodbye!'
 
 [source,python]
 ----
@@ -1703,6 +1703,8 @@ Write the  `filterload` payload from the `BloomFilter` class.
 
 [source,python]
 ----
+class BloomFilter:
+...
     def filterload(self, flag=1):
         '''Return the payload that goes in a filterload message'''
         payload = encode_varint(self.size)
@@ -1753,7 +1755,7 @@ from network import (
     FILTERED_BLOCK_DATA_TYPE,
 )
 from script import p2pkh_script, Script
-from tx import Tx, TxIn, TxOut
+from tx import Tx, TxIn, TxOut, TxFetcher
 
 last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
 
@@ -1805,7 +1807,7 @@ for b in headers.blocks:
         raise RuntimeError('proof of work is invalid')
     # check that this block's prev_block is the last block
     if last_block is not None and b.prev_block != last_block:
-        raise RuntimeErrer('chain broken')
+        raise RuntimeError('chain broken')
     # add a new item to the get_data_message
     # should be FILTERED_BLOCK_DATA_TYPE and block hash
     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
@@ -1844,7 +1846,7 @@ while prev_tx is None:
 # create tx_in
 tx_in = TxIn(prev_tx, prev_index, Script([]), 0xffffff)
 # set the cache of the previous tx to prev_tx_obj so we don't talk to a block explorer
-tx_in.cache[prev_tx] = prev_tx_obj
+TxFetcher.cache[prev_tx] = prev_tx_obj
 # create the tx_ins array
 tx_ins = [tx_in]
 # calculate how much is in this UTXO

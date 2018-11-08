@@ -3,6 +3,8 @@ from unittest import TestCase
 
 from helper import (
     encode_varint,
+    h160_to_p2pkh_address,
+    h160_to_p2sh_address,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
@@ -213,6 +215,19 @@ class Script:
         return len(self.instructions) == 3 and self.instructions[0] == 0xa9 \
             and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 20 \
             and self.instructions[2] == 0x87
+
+    def address(self, testnet=False):
+        '''Returns the address corresponding to the script'''
+        if self.is_p2pkh_script_pubkey():  # p2pkh
+            # hash160 is the 3rd element
+            h160 = self.instructions[2]
+            # convert to p2pkh address using h160_to_p2pkh_address (remember testnet)
+            return h160_to_p2pkh_address(h160, testnet)
+        elif self.is_p2sh_script_pubkey():  # p2sh
+            # hash160 is the 2nd element
+            h160 = self.instructions[1]
+            # convert to p2sh address using h160_to_p2sh_address (remember testnet)
+            return h160_to_p2sh_address(h160, testnet)
 
 
 class ScriptTest(TestCase):
