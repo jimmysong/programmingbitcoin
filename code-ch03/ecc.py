@@ -15,6 +15,9 @@ class FieldElement:
         self.num = num
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):
         if other is None:
             return False
@@ -24,37 +27,31 @@ class FieldElement:
         # this should be the inverse of the == operator
         return not (self == other)
 
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
-
     def __add__(self, other):
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num + other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot subtract two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num - other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num * other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __pow__(self, exponent):
@@ -64,16 +61,15 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot divide two numbers in different Fields')
         # self.num and other.num are the actual values
-        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
-        # self.prime is what you'll need to mod against
+        # self.prime is what we need to mod against
         # use fermat's little theorem:
         # self.num**(p-1) % p == 1
         # this means:
         # 1/n == pow(n, p-2, p)
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __rmul__(self, coefficient):
@@ -136,7 +132,6 @@ class FieldElementTest(TestCase):
 
 
 class Point:
-    zero = 0
 
     def __init__(self, x, y, a, b):
         self.a = a
@@ -166,7 +161,7 @@ class Point:
         if self.x is None:
             return 'Point(infinity)'
         else:
-            return 'Point({},{})_{}'.format(self.x.num, self.y.num, self.x.prime)
+            return 'Point({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
@@ -195,19 +190,21 @@ class Point:
             return self.__class__(x, y, self.a, self.b)
 
         # Case 3: self.x == other.x, self.y == other.y
-        else:
-            # Formula (x3,y3)=(x1,y1)+(x1,y1)
-            # s=(3*x1**2+a)/(2*y1)
-            s = (3 * self.x**2 + self.a) / (2 * self.y)
-            # x3=s**2-2*x1
-            x = s**2 - 2 * self.x
-            # y3=s*(x1-x3)-y1
-            y = s * (self.x - x) - self.y
-            return self.__class__(x, y, self.a, self.b)
-
-        # Case 4: if we are tangent to the vertical line
-        if self == other and self.y == self.zero:
-            return self.__class__(None, None, self.a, self.b)
+        if self == other:
+            # Case 4: if we are tangent to the vertical line
+            # note instead of figuring out what 0 is for each type
+            # we just use 0 * self.x
+            if self.y == 0 * self.x:
+                return self.__class__(None, None, self.a, self.b)
+            else:
+                # Formula (x3,y3)=(x1,y1)+(x1,y1)
+                # s=(3*x1**2+a)/(2*y1)
+                s = (3 * self.x**2 + self.a) / (2 * self.y)
+                # x3=s**2-2*x1
+                x = s**2 - 2 * self.x
+                # y3=s*(x1-x3)-y1
+                y = s * (self.x - x) - self.y
+                return self.__class__(x, y, self.a, self.b)
 
     def __rmul__(self, coefficient):
         coef = coefficient
@@ -260,7 +257,7 @@ class ECCTest(TestCase):
         # tests the following points whether they are on the curve or not
         # on curve y^2=x^3-7 over F_223:
         # (192,105) (17,56) (200,119) (1,193) (42,99)
-        # the ones that aren't should raise a RuntimeError
+        # the ones that aren't should raise a ValueError
         prime = 223
         a = FieldElement(0, prime)
         b = FieldElement(7, prime)
@@ -354,8 +351,6 @@ class S256Field(FieldElement):
 
 
 class S256Point(Point):
-
-    zero = S256Field(0)
 
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)

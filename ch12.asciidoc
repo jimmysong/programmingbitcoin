@@ -20,14 +20,14 @@ Suppose there are 50 total transactions. There is one transaction we're interest
 
 The solution is to use a hash function and modulo to put each transaction into buckets.
 
-A Bloom Filter is a computer science structure that can be used on any data in a set, so suppose that we have one item "hello world" that we want to create a Bloom Filter for. We need a hash function, so we'll use one we already have `double_sha256`. The process of figuring out what bucket our item goes into looks like this:
+A Bloom Filter is a computer science structure that can be used on any data in a set, so suppose that we have one item "hello world" that we want to create a Bloom Filter for. We need a hash function, so we'll use one we already have `hash256`. The process of figuring out what bucket our item goes into looks like this:
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> bit_field_size = 10  # <1>
 >>> bit_field = [0] * bit_field_size
->>> h = double_sha256(b'hello world')  # <2>
+>>> h = hash256(b'hello world')  # <2>
 >>> bit = int.from_bytes(h, 'big') % bit_field_size  # <3>
 >>> bit_field[bit] = 1  # <4>
 >>> print(bit_field)
@@ -55,11 +55,11 @@ We can run a second item through the same exact filter and set that bit to 1 as 
 
 [source,python]
 ----
->>> from helper import double_sha256
+>>> from helper import hash256
 >>> bit_field_size = 10
 >>> bit_field = [0] * bit_field_size
 >>> for item in (b'hello world', b'goodbye'):  # <1>
-...     h = double_sha256(item)
+...     h = hash256(item)
 ...     bit = int.from_bytes(h, 'big') % bit_field_size
 ...     bit_field[bit] = 1
 >>> print(bit_field)
@@ -86,18 +86,18 @@ Here's what that would look like. For simplicity, we stick to the same 10-bit fi
 
 [source,python]
 ----
->>> from helper import double_sha256, hash160
+>>> from helper import hash256, hash160
 >>> bit_field_size = 10
 >>> bit_field = [0] * bit_field_size
 >>> for item in (b'hello world', b'goodbye'):
-...     for hash_function in (double_sha256, hash160):  # <1>
+...     for hash_function in (hash256, hash160):  # <1>
 ...         h = hash_function(item)
 ...         bit = int.from_bytes(h, 'big') % bit_field_size
 ...         bit_field[bit] = 1
 >>> print(bit_field)
 [1, 1, 1, 0, 0, 0, 0, 0, 0, 1]
 ----
-<1> We iterate over 2 different hash functions here (`double_sha256` and `hash160`), but we could just as easily have more.
+<1> We iterate over 2 different hash functions here (`hash256` and `hash160`), but we could just as easily have more.
 
 Conceptually, this is what we just did:
 
@@ -114,9 +114,9 @@ BIP0037 defines exactly how Bloom Filters are defined. As before, the things tha
 2. We also send over how many hash functions we want to use along with a "tweak" to make them unique and not reusable for anyone else.
 3. Lastly, we need to send over the actual bit field that results from running the Bloom Filter over our items.
 
-While we could define lots of hash functions (sha256, keccak, ripemd, blake, etc), in practice, we only really use a single hash function with a different seed. This allows the calculation to be more efficient.
+While we could define lots of hash functions (sha256, keccak, ripemd, blake, etc), in practice, we only really use a single hash function with a different seed. This allows the implementation to be simpler. 
 
-The hash function we utilze is called `murmur3` and the seed formula is defined this way:
+The hash function we utilze is called `murmur3`. Unlike sha256, murmur3 is not cryptographically secure, but is much faster. The task of filtering and getting a deterministic, evenly distributed modulo does not require cryptographic security, but benefits from speed, so murmur3 is the appropriate tool for the job. The seed formula is defined this way:
 
 i*0xfba4c795 + tweak
 
@@ -164,10 +164,10 @@ class BloomFilter:
 
 ==== Exercise {counter:exercise}
 
-Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items?
+Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use bit_field_to_bytes to convert to bytes)
 
-b'Hello World'
-b'Goodbye!'
+* b'Hello World'
+* b'Goodbye!'
 
 ==== Exercise {counter:exercise}
 
@@ -251,7 +251,8 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 ...         raise RuntimeError('proof of work is invalid')
 ...     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
 ... node.send(b'getdata', get_data_message.serialize())  # <7>
->>> while True:
+>>> found = False
+>>> while not found:
 ...     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  # <8>
 ...     stream = envelope.stream()
 ...     if envelope.command == b'merkleblock':
@@ -263,6 +264,8 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 ...         for i, tx_out in enumerate(prev_tx_obj.tx_outs):
 ...             if tx_out.script_pubkey.address(testnet=True) == address:  # <11>
 ...                 print('found: {}:{}'.format(prev_tx_obj.hash().hex(), i))
+...                 found = True
+...                 break
 ----
 <1> We are creating a Bloom Filter that's 30 bytes, 5 hash functions using a particularly popular 90's tweak.
 <2> The only thing we'll filter for is the address above.
@@ -286,5 +289,5 @@ Get the current testnet block id, send yourself some testnet coins, find the UTX
 
 In this chapter, we've managed to create everything necessary to connecting peer to peer as an SPV node, get the data necessary to construct a transaction and preserve privacy by using a Bloom Filter.
 
-We now turn to Segwit, which is a new type of Script that came into Bitcoin in 2017.
+We now turn to Segwit, which is a new type of transaction that came into Bitcoin in 2017.
 

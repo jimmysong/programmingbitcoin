@@ -11,6 +11,9 @@ class FieldElement:
         self.num = num
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):
         if other is None:
             return False
@@ -20,9 +23,6 @@ class FieldElement:
         # this should be the inverse of the == operator
         raise NotImplementedError
 
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
-
     def __add__(self, other):
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
@@ -31,12 +31,12 @@ class FieldElement:
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot subtract two numbers in different Fields')
         raise NotImplementedError
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
         raise NotImplementedError
 
     def __pow__(self, exponent):
@@ -46,7 +46,7 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot divide two numbers in different Fields')
         raise NotImplementedError
 
 

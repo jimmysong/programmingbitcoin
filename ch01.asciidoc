@@ -5,7 +5,9 @@
 == Finite Fields
 
 [.lead]
-One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else. This book is going to start with the basic math that you need to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms that are at the heart of how Transactions work.
+One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else before you can understand the original thing.
+
+This chapter is going to get you off to a start which is more manageable. It may seem strange, but we'll start with the basic math that you need to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms. These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin. By learning Finite Fields and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need in order to progress logically.
 
 Be aware that this chapter and the next chapter may feel a bit like you're eating some vegetables, especially if you haven't done formal math in a long time. I would encourage you to get through this as the concepts and code here will be utilized over and over again throughout the book.
 
@@ -25,7 +27,7 @@ Mathematically, a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
-* If *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
+* If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set. We call this property _closed_
 * The additive identity, *0* exists. This means *a + 0 = a*
 * The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
 * If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
@@ -65,7 +67,7 @@ A Finite Field of order 981
 
 F~981~= {0, 1, 2, ... 980}
 
-Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* have a  _prime_ order. This is because the properties of a finite field don't hold otherwise.
+Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* have an order that is a power of a prime. This is because the properties of a finite field don't hold otherwise.
 
 ==== Constructing a Finite Set in Python
 
@@ -73,7 +75,6 @@ We want to represent each finite field element and in Python, we'll be creating 
 
 The class represents an actual element in a field F~prime~. The bare bones of the class is pretty intuitive:
 
-.ecc.py
 [source,python]
 ----
 class FieldElement:
@@ -85,13 +86,13 @@ class FieldElement:
         self.num = num  # <2>
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):  # <3>
         if other is None:
             return False
         return self.num == other.num and self.prime == other.prime
-
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
 ----
 <1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method simply assigns the initialization values.
@@ -125,7 +126,7 @@ We can define addition on the finite set using something called modulo arithmeti
 .Long Division Example 1
 image::longdivision.png[Long Division Example 1]
 
-Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We can actually define modulo in the same way. We use the operator *%* for "modulo".
+Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We define modulo in the same way. We use the operator *%* for "modulo".
 
 7 % 3 = 1
 
@@ -134,7 +135,7 @@ Because
 .Long Division Example 2
 image::longdivision-2.png[Long Division Example 2]
 
-We can do the same for larger numbers:
+Formally speaking, the modulo operation is the remainder after division of one number by another. Let's look at another example with larger numbers:
 
 1747 % 241 = 60
 
@@ -563,4 +564,4 @@ Thankfully, we can do even better. We already know how to force a number into th
 
 === Conclusion
 
-In thes chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.

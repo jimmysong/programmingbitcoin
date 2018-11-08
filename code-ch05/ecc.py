@@ -18,6 +18,9 @@ class FieldElement:
         self.num = num
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):
         if other is None:
             return False
@@ -27,37 +30,31 @@ class FieldElement:
         # this should be the inverse of the == operator
         return not (self == other)
 
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
-
     def __add__(self, other):
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num + other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot subtract two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num - other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num * other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __pow__(self, exponent):
@@ -67,16 +64,15 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot divide two numbers in different Fields')
         # self.num and other.num are the actual values
-        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
-        # self.prime is what you'll need to mod against
+        # self.prime is what we need to mod against
         # use fermat's little theorem:
         # self.num**(p-1) % p == 1
         # this means:
         # 1/n == pow(n, p-2, p)
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __rmul__(self, coefficient):
@@ -139,7 +135,6 @@ class FieldElementTest(TestCase):
 
 
 class Point:
-    zero = 0
 
     def __init__(self, x, y, a, b):
         self.a = a
@@ -169,7 +164,7 @@ class Point:
         if self.x is None:
             return 'Point(infinity)'
         else:
-            return 'Point({},{})_{}'.format(self.x.num, self.y.num, self.x.prime)
+            return 'Point({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
@@ -198,19 +193,21 @@ class Point:
             return self.__class__(x, y, self.a, self.b)
 
         # Case 3: self.x == other.x, self.y == other.y
-        else:
-            # Formula (x3,y3)=(x1,y1)+(x1,y1)
-            # s=(3*x1**2+a)/(2*y1)
-            s = (3 * self.x**2 + self.a) / (2 * self.y)
-            # x3=s**2-2*x1
-            x = s**2 - 2 * self.x
-            # y3=s*(x1-x3)-y1
-            y = s * (self.x - x) - self.y
-            return self.__class__(x, y, self.a, self.b)
-
-        # Case 4: if we are tangent to the vertical line
-        if self == other and self.y == self.zero:
-            return self.__class__(None, None, self.a, self.b)
+        if self == other:
+            # Case 4: if we are tangent to the vertical line
+            # note instead of figuring out what 0 is for each type
+            # we just use 0 * self.x
+            if self.y == 0 * self.x:
+                return self.__class__(None, None, self.a, self.b)
+            else:
+                # Formula (x3,y3)=(x1,y1)+(x1,y1)
+                # s=(3*x1**2+a)/(2*y1)
+                s = (3 * self.x**2 + self.a) / (2 * self.y)
+                # x3=s**2-2*x1
+                x = s**2 - 2 * self.x
+                # y3=s*(x1-x3)-y1
+                y = s * (self.x - x) - self.y
+                return self.__class__(x, y, self.a, self.b)
 
     def __rmul__(self, coefficient):
         coef = coefficient
@@ -263,7 +260,7 @@ class ECCTest(TestCase):
         # tests the following points whether they are on the curve or not
         # on curve y^2=x^3-7 over F_223:
         # (192,105) (17,56) (200,119) (1,193) (42,99)
-        # the ones that aren't should raise a RuntimeError
+        # the ones that aren't should raise a ValueError
         prime = 223
         a = FieldElement(0, prime)
         b = FieldElement(7, prime)
@@ -373,8 +370,6 @@ class S256Field(FieldElement):
 
 class S256Point(Point):
 
-    zero = S256Field(0)
-
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)
         if type(x) == int:
@@ -393,9 +388,13 @@ class S256Point(Point):
         return super().__rmul__(coef)
 
     def verify(self, z, sig):
+        # By Fermat's Little Theorem, 1/s = pow(s, N-2, N)
         s_inv = pow(sig.s, N - 2, N)
+        # u = z / s
         u = z * s_inv % N
+        # v = r / s
         v = sig.r * s_inv % N
+        # u*G + v*P should have as the x coordinate, r
         total = u * G + v * self
         return total.x.num == sig.r
 
@@ -413,12 +412,12 @@ class S256Point(Point):
             # if non-compressed, starts with b'\x04' followod by self.x and then self.y
             return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
 
-    def h160(self, compressed=True):
+    def hash160(self, compressed=True):
         return hash160(self.sec(compressed))
 
     def address(self, compressed=True, testnet=False):
         '''Returns the address string'''
-        h160 = self.h160(compressed)
+        h160 = self.hash160(compressed)
         if testnet:
             prefix = b'\x6f'
         else:
@@ -430,11 +429,11 @@ class S256Point(Point):
         '''returns a Point object from a compressed sec binary (not hex)
         '''
         if sec_bin[0] == 4:
-            x = int(sec_bin[1:33].hex(), 16)
-            y = int(sec_bin[33:65].hex(), 16)
+            x = int.from_bytes(sec_bin[1:33], 'big')
+            y = int.from_bytes(sec_bin[33:65], 'big')
             return S256Point(x=x, y=y)
         is_even = sec_bin[0] == 2
-        x = S256Field(int(sec_bin[1:].hex(), 16))
+        x = S256Field(int.from_bytes(sec_bin[1:], 'big'))
         # right side of the equation y^2 = x^3 + 7
         alpha = x**3 + S256Field(B)
         # solve for left side
@@ -570,22 +569,22 @@ class Signature:
         s = BytesIO(signature_bin)
         compound = s.read(1)[0]
         if compound != 0x30:
-            raise RuntimeError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         length = s.read(1)[0]
         if length + 2 != len(signature_bin):
-            raise RuntimeError("Bad Signature Length")
+            raise SyntaxError("Bad Signature Length")
         marker = s.read(1)[0]
         if marker != 0x02:
-            raise RuntimeError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         rlength = s.read(1)[0]
-        r = int(s.read(rlength).hex(), 16)
+        r = int.from_bytes(s.read(rlength), 'big')
         marker = s.read(1)[0]
         if marker != 0x02:
-            raise RuntimeError("Bad Signature")
+            raise SyntaxError("Bad Signature")
         slength = s.read(1)[0]
-        s = int(s.read(slength).hex(), 16)
+        s = int.from_bytes(s.read(slength), 'big')
         if len(signature_bin) != 6 + rlength + slength:
-            raise RuntimeError("Signature too long")
+            raise SyntaxError("Signature too long")
         return cls(r, s)
 
 

@@ -5,3 +5,6 @@
 *.orig
 *.rej
 *.patch
+venv/*
+.idea
+

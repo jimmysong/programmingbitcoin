@@ -1,7 +1,7 @@
 from unittest import TestSuite, TextTestRunner
 
 
-def run_test(test):
+def run(test):
     suite = TestSuite()
     suite.addTest(test)
     TextTestRunner().run(suite)

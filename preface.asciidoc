@@ -14,7 +14,7 @@ After all, there are lots of books about Bitcoin, everything from the history of
 
 This book is for programmers who want to learn how Bitcoin works by coding it themselves. You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch. This is not a reference book where you can look up the specification for a particular feature.
 
-The material from this book has been largely taken from my 2-day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
+The material from this book has been largely taken from my two day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
 
 By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered, including the math, the parsing, the network connectivity and block validation.
 
@@ -36,7 +36,7 @@ Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves
 
 Chapter 5 covers the Transaction structure. Chapter 6 goes into the smart contract language behind Bitcoin called Script. Chapter 7 combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. Chapter 8 establishes how p2sh works, which is a way to make more powerful smart contracts.
 
-Chapter 9 covers Blocks, which are groups of Transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light node, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
+Chapter 9 covers Blocks, which are groups of Transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light client, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
 
 Chapter 13 covers Segwit and Chapter 14 covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things to learn.
 
@@ -45,6 +45,105 @@ Chapters 1-12 have lots of exercises that require you to build up the library fr
 The last exercise in Chapter 12 is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, the first 11 chapters are setting up toward being able to do this exercise.
 
 There will be a lot of unit tests that you will have to get to pass. The book has been designed this way so you can do the "fun" part of coding. We will be looking at a lot of code and diagrams throughout.
+
+=== Setting Up
+
+In order to get the most out of this book, you'll want to create an environment where you can run through the exercises. Here are the instructions for setting everything up.
+
+Install python 3.5 or above on your machine:
+
+* Windows: `https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe`
+* Mac OS X: `https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg`
+* Linux: see your distro docs (many Linux distributions like Ubuntu come with Python 3.5+ pre-installed)
+
+Install pip:
+
+Download this script `https://bootstrap.pypa.io/get-pip.py` and run it using python3:
+
+[source,bash]
+----
+$ python3 get-pip.py
+----
+
+Install git:
+
+The instructions for downloading and installing are at `https://git-scm.com/downloads`.
+
+Download the source code for this book:
+
+[source,bash]
+----
+$ git clone https://github.com/jimmysong/programming-bitcoin
+$ cd programming-bitcoin
+----
+
+Install virtualenv:
+
+[source,bash]
+----
+$ pip install virtualenv
+----
+
+Install the requirements:
+
+Linux/OSX:
+
+[source,bash]
+----
+$ virtualenv -p python3 .venv
+$ . .venv/bin/activate
+(.venv) $ pip install -r requirements.txt
+----
+
+Windows:
+
+[source,bash]
+----
+C:\programming-bitcoin> virtualenv -p C:\\PathToYourPythonInstallation\\Python.exe .venv
+C:\programming-bitcoin> .venv\Scripts\activate.bat
+C:\programming-bitcoin> pip install -r requirements.txt
+----
+
+Run jupyter notebook:
+
+[source,bash]
+----
+(.venv) $ jupyter notebook
+[I 11:13:23.061 NotebookApp] Serving notebooks from local directory: /home/jimmy/programming-bitcoin
+[I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
+[I 11:13:23.061 NotebookApp] http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 11:13:23.065 NotebookApp] No web browser found: could not locate runnable browser.
+[C 11:13:23.065 NotebookApp]
+
+    Copy/paste this URL into your browser when you connect for the first time,
+    to login with a token:
+        http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+----
+
+You should have a browser open up automatically to something that looks like this:
+
+.Jupyter
+image::jupyter1.png[Jupyter]
+
+You can navigate to various directories and if you wanted to do the exercises from Chapter 1, you would need to go navigate to the code from Chapter 1 in the code-ch01 directory:
+
+.Jupyter Directory View
+image::jupyter2.png[Chapter 1 Directory]
+
+From here you can open `Programming Bitcoin Chapter 1.ipynb`:
+
+.Jupyter Notebook
+image::jupyter3.png[Chapter 1 Notebook]
+
+You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
+
+A large portion of the exercises will be coding concepts introduced in the book. The unit tests are written for you and you will need to write the Python code to make the tests pass. You can edit the file by clicking through a screen like the "this test" linke in Figure xxx. This will take you to a browser tab like this:
+
+.ecc.py
+image::jupyter4.png[Chapter 1 ecc.py]
+
+You can edit the file here and save in order to make the test pass.
 
 === Conventions Used in This Book
 

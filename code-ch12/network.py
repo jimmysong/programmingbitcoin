@@ -7,7 +7,7 @@ from unittest import TestCase
 
 from block import Block
 from helper import (
-    double_sha256,
+    hash256,
     encode_varint,
     int_to_little_endian,
     little_endian_to_int,
@@ -63,7 +63,7 @@ class NetworkEnvelope:
         # payload is of length payload_length
         payload = s.read(payload_length)
         # verify checksum
-        calculated_checksum = double_sha256(payload)[:4]
+        calculated_checksum = hash256(payload)[:4]
         if calculated_checksum != checksum:
             raise RuntimeError('checksum does not match')
         return cls(command, payload, testnet=testnet)
@@ -78,7 +78,7 @@ class NetworkEnvelope:
         # payload length 4 bytes, little endian
         result += int_to_little_endian(len(self.payload), 4)
         # checksum 4 bytes, first four of double-sha256 of payload
-        result += double_sha256(self.payload)[:4]
+        result += hash256(self.payload)[:4]
         # payload
         result += self.payload
         return result

@@ -5,7 +5,7 @@
 == Elliptic Curve Cryptography
 
 [.lead]
-The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts to get Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
+The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts into Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
 === Elliptic Curves over Reals
 
@@ -32,15 +32,15 @@ What's interesting is that we can use this equation over any field, including th
 
 For example, we can see what to do for the equation y^2^=x^3^+7 over F~103~. Let's see if the point (17,64) is on the curve:
 
-64^2^%103=79
-(17^3^+7)%103=79
+* 64^2^%103=79
+* (17^3^+7)%103=79
 
 Indeed, that point is on the curve using the Finite Field math.
 
 Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different:
 
 .Elliptic Curve over a Finite Field
-image::elliptic3.png[Elliptic Curve over a Finite Field]
+image::finitefieldellipticcurve.png[Elliptic Curve over a Finite Field]
 
 As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete. About the only pattern is that the curve is symmetric right around the middle, which is due to the fact that the graph is symmetric, not over the x-axis as in the curve over reals, but about half-way up the y-axis.
 
@@ -54,7 +54,7 @@ Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
 
 === Coding Elliptic Curves over Finite Fields
 
-Because we defined an Ellptic curve point and utilize the +,-,* and / operators for Finite Fields, we can actually just combine the two classes to evaluate Elliptic Curve Points over a Finite Field.
+Because we defined an Elliptic curve point and utilize the +,-,* and / operators for Finite Fields, we can actually just combine the two classes to evaluate Elliptic Curve Points over a Finite Field.
 
 [source,python]
 ----
@@ -73,7 +73,6 @@ When initializing `Point`, we will run through this part of the code:
 [source,python]
 ----
 class Point:
-    zero = 0
 
     def __init__(self, x, y, a, b):
         self.a = a
@@ -82,8 +81,8 @@ class Point:
         self.y = y
 	if self.x is None and self.y is None:
 	    return
-        if self.y**2 != self.x**3 + self.a*self.x + self.b:
-	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
+        if self.y**2 != self.x**3 + self.a * self.x + self.b:
+	    raise ValueError('Point ({},{}) is not on the curve'.format(x, y))
 ----
 
 The addition (+), multiplication (*), exponentiation (**) and equality (!=) here will end up utilizing the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
@@ -126,8 +125,8 @@ We can now run this test like so:
 [source,python]
 ----
 >>> import ecc
->>> from helper import run_test # <1>
->>> run_test(ecc.ECCTest('test_on_curve'))
+>>> from helper import run  # <1>
+>>> run(ecc.ECCTest('test_on_curve'))
 .
 ----------------------------------------------------------------------
 Ran 1 test in 0.001s
@@ -153,38 +152,22 @@ Remarkably, point addition works over finite fields as well. This is because the
 
 when x~1~≠x~2~
 
-P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-
-P~1~+P~2~=P~3~
-
-s=(y~2~-y~1~)/(x~2~-x~1~)
-
-x~3~=s^2^-x~1~-x~2~
-
-y~3~=s(x~1~-x~3~)-y~1~
+* P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
+* P~1~+P~2~=P~3~
+* s=(y~2~-y~1~)/(x~2~-x~1~)
+* x~3~=s^2^-x~1~-x~2~
+* y~3~=s(x~1~-x~3~)-y~1~
 
 when P~1~=P~2~
 
-P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
-
-P~1~+P~1~=P~3~
-
-s=(3x~1~^2^+a)/(2y~1~)
-
-x~3~=s^2^-2x~1~
-
-y~3~=s(x~1~-x~3~)-y~1~
+* P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
+* P~1~+P~1~=P~3~
+* s=(3x~1~^2^+a)/(2y~1~)
+* x~3~=s^2^-2x~1~
+* y~3~=s(x~1~-x~3~)-y~1~
 
 All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some Cryptographic primitives.
 
-
-==== Exercise {counter:exercise}
-
-For the curve y^2^=x^3^+7 over F~223~, find:
-
-* (170,142) + (60,139)
-* (47,71) + (17,56)
-* (143,98) + (76,66)
 
 === Coding Point Addition over Finite Fields
 
@@ -208,6 +191,14 @@ Point(170,142)_223
 
 ==== Exercise {counter:exercise}
 
+For the curve y^2^=x^3^+7 over F~223~, find:
+
+* (170,142) + (60,139)
+* (47,71) + (17,56)
+* (143,98) + (76,66)
+
+==== Exercise {counter:exercise}
+
 Extend `ECCTest` to test for the additions from the previous exercise call this `test_add`.
 
 === Scalar multiplication for Elliptic Curves
@@ -224,7 +215,7 @@ We can actually do this as many times as we want. This is what we call Scalar Mu
 
 What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
 
-.Scalar Multiplication Results
+.Scalar Multiplication Results for y^2^=x^3^+7 over F~223~ for point (170,142)
 image::scatterplot.png[Scalar Multiplication Results]
 
 Each point is labeled by how many times we've added the point. You can see that this is a complete scattershot.
@@ -386,9 +377,9 @@ You can swap P~1~ and P~2~ to get the exact same equation.
 
 This is the hardest to prove but can be seen visually from the last chapter:
 
-.(P+Q)+R
+.(A+B)+C
 image::associativity1.png[Case 1]
-.P+(Q+R)
+.A+(B+C)
 image::associativity2.png[Case 2]
 
 Mathematically, this is a bit more involved, but the math can be proven given the definition that we have. There are proofs of this, but the polynomials involved take several pages and are thus outside the scope of this book.
@@ -431,7 +422,7 @@ class Point:
 
 This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? If coefficient is 1 trillion, this is going to take a really long time, for example.
 
-It turns out there's a really fun technique called binary expansion. If bits is the number of bits required to represent the number coefficient, we only have to loop bits times. Note that 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
+It turns out there's a really cool technique called binary expansion that allows us to perform multiplaciton in log2(n) loops, which dramatically reduces the calculation time for large numbers. For example, 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
 
 [source,python]
 ----
@@ -459,7 +450,7 @@ With $$__add__$$ and $$__rmul__$$, we can now start defining some more complicat
 
 === Defining the curve for Bitcoin
 
-While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. That is try every single point in the group. That is, if the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
+While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. If the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
 
 But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of Elliptic Curve Cryptography depends on computers *not* being able to go through the entire space of the group.
 
@@ -483,9 +474,9 @@ There are a few things to notice about this curve. First, the equation is relati
 
 Second, p is really, really close to 2^256^. This means that most numbers under 2^256^ are in the prime field. n is also very close to 2^256^. This means most points on the curve are in the group. The curve was chosen, in part, because n is so close to P.
 
-Third, 2^256^ is a really big number (See the sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
+Third, 2^256^ is a really big number (See the "How big is 2^256^ sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
 
-Lastly, the curve itself is one that was published by Centcom, and is *not* a NIST curve. NIST stands for xxx and is published by the NSA and Satoshi apparently didn't trust any curves chosen by the NSA.
+Lastly, the curve itself is one that was published by Certicom, and is *not* a NIST curve. NIST stands for National Institute of Standards and Technology and they are affiliated with the NSA (National Security Administration). We don't really know why Satoshi chose the non-NIST curve as opposed to the NIST one, but some speculate this is because of the NSA affiliation.
 
 .How Big is 2^256^?
 ****
@@ -498,9 +489,9 @@ Lastly, the curve itself is one that was published by Centcom, and is *not* a NI
  * Number of atoms in the Milky Way ~ 10^68^
  * Number of atoms in the universe ~ 10^80^
 
-A trillion (10^9^) computers doing a trillion computations every trillionth (10^-9^) of a second for a trillion years is still only 10^56^ computations. It's simply infeasible to brute force a private key.
+A trillion (10^12^) computers doing a trillion computations every trillionth (10^-12^) of a second for a trillion years is still less than 10^56^ computations.
 
-Think of finding a private key this way. It is a billion times easier to find a particular atom in the Milky Way than to find a private key in Bitcoin.
+Think of finding a private key this way. It is a billion times easier to pick a random atom in the Milky Way than to randomly pick the right private key in Bitcoin.
 ****
 
 ==== Working with secp256k1
@@ -619,7 +610,7 @@ Point(infinity)
 
 We can now describe Public Key Cryptography and how we can use Elliptic Curves over finite fields to build this up. In general, we need a finite cyclical group, which we have with point addition in order to make everything work.
 
-The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute P when we know e and G, but we cannot easily compute s when we know P and G. This is the Discrete Log Problem described earlier.
+The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute P when we know e and G, but we cannot easily compute e when we know P and G. This is the Discrete Log Problem described earlier.
 
 We'll use the fact that it's extremely difficult to compute e to create signing and verification.
 
@@ -631,11 +622,11 @@ To set up the motivation for why signing and verification exists, imagine this s
 
 Now if someone could observe you and interact with you, proving this would be easy. Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow. You, being a very good archer do this and prove that you are indeed, a very good archer. The target, if specified by the challenger, is easy for that challenger to verify.
 
-Unfortunately, this doesn't scale very well. If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges. What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer.
+Unfortunately, this doesn't scale very well. If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges. You could try to do something like have 10 people watch you shoot an arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of any target. What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer.
 
 If, for example, you shot an arrow into a target of your choosing, then the people observing afterwards won't necessarily be convinced. After all, you may be a sneaky person that paints the target around wherever your arrow happened to land. So what can you do?
 
-Here's a very clever thing you can do. Forge the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow. Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit. The tip clearly had to be forged before the arrow was shot, so this can prove you are indeed a good archer.
+Here's a very clever thing you can do. Inscribe the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow. Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit. The tip clearly had to be inscribed before the arrow was shot, so this can prove you are indeed a good archer.
 
 This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number. We want to prove possession of the secret without revealing the secret itself. We do this by putting the target into our calculation and hitting that target.
 
@@ -677,58 +668,50 @@ This means either we can break the Discrete Log problem or we knew e all along. 
 
 One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting. This is a contract that gets fulfilled as a result of the shooting at the target. William Tell, for example, was shooting so that he could save his son (shoot the target and you get to save your son). You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive. This has to be incorporated into our equations.
 
-In signature/verification parlance, this is called the _signature hash_. This generally is the hash of the message that both parties agree to that reveal the intent of the shooter. We denote this with the letter `z`. This is incorporated into our uG+vP calculation this way:
+In signature/verification parlance, this is called the _signature hash_. A hash is a deterministic function that takes arbitrary data into a data of fixed size.This is a fingerprint of the message containing the intent of the shooter that anyone verifying the message can figure out. We denote this with the letter `z`. This is incorporated into our uG+vP calculation this way:
 
-u = r/s, v = z/s
+u = z/s, v = r/s
 
 Since r is used in the calculation of u, we now have the tip of the arrow forged. We also have the intent of the shooter incorporated into v, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
 
 To make the equation work, we can calculate s:
 
-uG+vP=R=kG
-
-uG+veG=kG
-
-u+ve=k
-
-r/s+ze/s=k
-
-(r+ze)/s=k
-
-s=(r+ze)/k
+* uG+vP=R=kG
+* uG+veG=kG
+* u+ve=k
+* z/s+re/s=k
+* (z+re)/s=k
+* s=(z+re)/k
 
 This is indeed the basis of the signature algorithm and the two numbers actually communicated as part of the signature are r and s.
 
 Verification is simple:
 
-uG+vP where u,v≠0
+* uG+vP where u,v≠0
+* uG+vP=(z/s)G+(re/s)G=((z+re)/s)G=((z+re)/((z+re)/k))G=kG=(r,y)
 
-uG+vP=(r/s)G+(ze/s)G=((r+ze)/s)G=((r+ze)/((r+ze)/k))G=kG=(r,y)
-
+[WARNING]
 .Why We Don't Reveal `k`
-****
+====
 At this point, you might be wondering why we don't reveal k and instead reveal the x-coordinate of R or `r`. If we were to reveal k, then:
 
-uG+vP=R
-
-uG+veG=kG
-
-kG-uG=veG
-
-(k-u)G = veG
-
-(k-u) = ve
-
-(k-u)*1/v = e
+* uG+vP=R
+* uG+veG=kG
+* kG-uG=veG
+* (k-u)G = veG
+* (k-u) = ve
+* (k-u)*1/v = e
 
 Means that we'll be revealing our secret, which would defeat the whole purpose of the signature. We can, however, reveal R.
-****
+
+It's worth mentioning again, make sure you're using truly random numbers for `k`, as revealing `k` for a known signature is the equivalent of revealing your secret and losing your funds!
+====
 
 ==== Verification in-depth
 
 Generally, signatures sign some fixed-length value (our "contract"), in our case something that's 32 bytes. The fact that 32 bytes is 256 bits is not a coincidence as the thing we're signing needs to be a scalar for G.
 
-In order to guarantee that thing we're signing is 32 bytes, we hash the document first. In Bitcoin, the hashing function is double-sha256. This guarantees the thing that we're signing is exactly 32 bytes. We will call the result of the hash, z.
+In order to guarantee that the thing we're signing is 32 bytes, we hash the document first. In Bitcoin, the hashing function is double-sha256. This guarantees the thing that we're signing is exactly 32 bytes. We will call the result of the hash, z.
 
 The actual signature that we are verifying has two components, (r, s). The r is as above, it's the x-coordinate of some point R that we'll come back to. s is going to be defined as this:
 
@@ -747,7 +730,7 @@ uG + vP = (z/s)G + (r/s)P = (z/s)G + (re/s)G = ((z+re)/s)G
 
 We know s = (z+re)/k so:
 
-uG + vP = ((z+re)/((z+re)/k))G = kG = R
+uG + vP = ((z+re) / ((z+re)/k))G = kG = R
 
 We've successfully chosen u and v in a way as to generate R as we intended. Furthermore, we used r in the calculation of v proving we knew what R should be. The only way we could know the details of R beforehand is if we know e, proving we know e.
 
@@ -758,14 +741,15 @@ To whit, here are the steps:
 3. We calculate uG + vP = R
 4. If R's x coordinate equals r, the signature is valid.
 
+[NOTE]
 .Why Double-sha256?
-****
+====
 The calculation of z requires two rounds of sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
 
-There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017. Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
+There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html). Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
 
-There is no known SHA2 (of which SHA256 is a part) birthday attack, but is doubled in case one is found.
-****
+There is no known SHA256 weakness like a birthday attack, but is doing two rounds is a defense against possible potential weaknesses.
+====
 
 ==== Verifying a Signature
 
@@ -865,18 +849,23 @@ Note that the pubkey P and z have to be transmitted to whoever wants to verify a
 
 We can now create a signature using some of the primitives that we have.
 
+[WARNING]
+====
+Note that using something like the `random` library from Python to do cryptography is generally not a good idea. This library is for teaching purposes only, so please don't use any of the code explained to you here for production purposes.
+====
+
 [source,python]
 ----
 >>> from ecc import S256Point, G, N
 >>> from random import randint
->>> from helper import double_sha256
->>> e = int.from_bytes(double_sha256(b'my secret'), 'big') # <1>
->>> z = int.from_bytes(double_sha256(b'my message'), 'big') # <2>
->>> k = randint(0, N)
->>> r = (k*G).x.num # <3>
+>>> from helper import hash256
+>>> e = int.from_bytes(hash256(b'my secret'), 'big')  # <1>
+>>> z = int.from_bytes(hash256(b'my message'), 'big')  # <2>
+>>> k = randint(0, N)  # <3>
+>>> r = (k*G).x.num  # <4>
 >>> k_inv = pow(k, N-2, N)
->>> s = (z+r*e) * k_inv % N # <4>
->>> point = e*G # <5>
+>>> s = (z+r*e) * k_inv % N  # <5>
+>>> point = e*G  # <6>
 >>> print(point)
 S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
 >>> print(hex(z))
@@ -888,9 +877,10 @@ S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae98
 ----
 <1> This would be something like a "brain wallet". Please don't use this for a real secret.
 <2> This is the message that we're signing.
-<3> kG = (r,y) so we take the x coordinate only
-<4> s = (z+re)/k. We mod by N because we know this is a cyclical group of order N
-<5> The public point needs to be known by the verifier
+<3> Note this is not a cryptographically secure way to generate a random number. This is for demonstration purposes only.
+<4> kG = (r,y) so we take the x coordinate only
+<5> s = (z+re)/k. We mod by N because we know this is a cyclical group of order N
+<6> The public point needs to be known by the verifier
 
 ==== Exercise {counter:exercise}
 
@@ -898,7 +888,7 @@ Sign the following message with the secret
 
 ```
 e = 12345
-z = int.from_bytes(double_sha256('Programming Bitcoin!'), 'big')
+z = int.from_bytes(hash256('Programming Bitcoin!'), 'big')
 ```
 
 ==== Programming Message Signing
@@ -945,27 +935,26 @@ class PrivateKey:
 <2> r is the x-coordinate of kG
 <3> We use Fermat's Little Theorem again and N, which is prime
 <4> s = (z+re)/k
-<5> It turns out that we have to use a low-s value for malleability reasons
+<5> It turns out that using the low-s value will get nodes to relay our transactions easier. This is for malleability reasons
 <6> We return a Signature object from above.
 
-The `s` here has to be a low value
-
-.Importance of k being random
+.Importance of a unique `k`
 ****
+There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be unique per signature. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
 
-There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be random. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
+Our secret is e, we are reusing k to sign z~1~ and z~2~.
 
-Our secret is e and our z is the same.
+* kG=(r,y)
+* s~1~ = (z~1~+re) / k, s~2~ = (z~2~+re) / k
+* s~1~/s~2~ = (z~1~+re) / (z~2~+re)
+* s~1~(z~2~+re) = s~2~(z~1~+re)
+* s~1~z~2~ + s~1~re = s~2~z~1~ + s~2~re
+* s~1~re - s~2~re = s~2~z~1~ - s~1~z~2~
+* e = (s~2~z~1~ - s~1~z~2~) / (rs~1~ - rs~2~)
 
-k~1~G=(r~1~,y), k~2~G=(r~2~,y)
-s~1~ = (z+r~1~e), s~2~ = (z+r~2~e)
+If anyone sees both signatures, they can use this formula and find our secret!
 
-s~1~-s~2~ = (r~1~-r~2~)e
-e = (s~1~-s~2~) / (r~1~-r~2~)
-
-If anyone sees both signatures, they can run this formula and find our secret!
-
-To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique k every time. The specification is laid out in RFC6979 and the code changes to look like this:
+To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique, deterministic k every time. The specification is laid out in RFC6979 and the code changes to look like this:
 
 [source,python]
 ----
@@ -1001,13 +990,16 @@ class PrivateKey:
             v = hmac.new(k, v, s256).digest()
 ----
 <1> We are using the deterministic k instead of a random one. Everything else remains the same.
-<2> This algorithm'returns a candidate that's suitable.
+<2> This algorithm returns a candidate that's suitable.
 
 The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
+
+Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time. This makes debugging much easier and unit tests a lot easier to write. In addition, transactions which use deterministic k will create the same transaction every time as the signature will not change. This makes transactions less malleable (more on that in Chapter 13)
 
 ****
 
 ### Conclusion
 
-We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message. We now turn to serializing a lot of these structures so that we can store them on disk, send them over the network and so on.
+We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message. Even if you don't read another page in this book, you've learned to implement what was once considered "weapons grade cryptogrpahy". This is a major step in your journey and will be essential for the rest of the book.
 
+We now turn to serializing a lot of these structures so that we can store them on disk, send them over the network and so on.

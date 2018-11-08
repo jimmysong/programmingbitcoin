@@ -17,7 +17,7 @@ At a high level, a transaction really only has 4 components. They are:
 3. Outputs
 4. Locktime
 
-At this point a general overview of these fields might be helpful. Version defines what the format of the transaction is supposed to be, Inputs define what bitcoins are being spent, Outputs define where the bitcoins are going and Locktime defines what time this transaction starts being valid. We'll go through each component in depth.
+At this point a general overview of these fields might be helpful. Version indicates what additional features the transaction utilizes, Inputs define what bitcoins are being spent, Outputs define where the bitcoins are going and Locktime defines when this transaction starts being valid. We'll go through each component in depth.
 
 Here is a hexadecimal dump of a typical transaction that shows which parts are which.
 
@@ -32,11 +32,12 @@ With this in mind, we can start constructing the Transaction class, which we'll 
 ----
 class Tx:
 
-    def __init__(self, version, tx_ins, tx_outs, locktime):
+    def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
         self.version = version
         self.tx_ins = tx_ins  # <1>
         self.tx_outs = tx_outs
         self.locktime = locktime
+	self.testnet = testnet  # <2>
 
     def __repr__(self):
         tx_ins = ''
@@ -51,8 +52,19 @@ class Tx:
             tx_outs,
             self.locktime,
         )
+
+    def id(self):  # <3>
+        '''Human-readable hexadecimal of the transaction hash'''
+        return self.hash().hex()
+
+    def hash(self):  # <4>
+        '''Binary hash of the legacy serialization'''
+        return hash256(self.serialize())[::-1]
 ----
 <1> Input and Output are very generic terms so we specify what kind of inputs they are. We'll define the specific object types they are later.
+<2> We need to know which network this transaction is on in order to be able to validate it fully.
+<3> The id is what block explorers use for looking up transactions. It's the hash in hexadecimal format.
+<4> The hash is the hash256 of the serialization in little-endian.
 
 The rest of this chapter will be concerned with parsing a transaction. This is very useful to know as this teaches you about the actual serialized format. You may at this point write some code like this:
 
@@ -66,10 +78,10 @@ class Tx:
         version = serialization[0:4]  # <2>
 	...
 ----
-<1> This method would have to be a class method as the serialization would have to be converted to a `Tx` object.
+<1> This method has to be a class method as the serialization will return a new instance of a `Tx` object.
 <2> We assume here that the variable `serialization` is a byte array.
 
-This could definitely work, but practically speaking, the bytes size of the transaction may be very large. Ideally, we want to be able to parse from a _stream_ instead. This will allow us to not need the entire transaction serialization before we start parsing and from an engineering point, that allows to fail early and be more efficient. Thus, the code for parsing a transaction will look more like this:
+This could definitely work, but practically speaking, the bytes size of the transaction may be very large. Ideally, we want to be able to parse from a _stream_ instead. This will allow us to not need the entire transaction serialization before we start parsing and that allows us to fail early and be more efficient. Thus, the code for parsing a transaction will look more like this:
 
 [source,python]
 ----
@@ -92,7 +104,7 @@ image::tx2.png[Version]
 
 When you see a version number in something, it's meant to give the receiver information about what the versioned thing is supposed to represent. If, for example, you are running Windows 3.1, that's a version number that's very differnt than Windows 8 or Windows 10. You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
 
-In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions utilizing an OP code called OP_CHECKSEQUENCEVERIFY as defined in BIP0068)
+In a similar way, Bitcoin transactions have version numbers. In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions utilizing an opcode called OP_CHECKSEQUENCEVERIFY as defined in BIP68/BIP112/BIP113)
 
 You may notice here that the actual value in hexadecimal is 01000000, which doesn't look like 1. It actually is when the interpreted as a little-endian integer (recall the discussion from chapter 4).
 
@@ -105,9 +117,9 @@ Write the version parsing part of the parse method that we've defined. To do thi
 .Inputs
 image::tx3.png[Inputs]
 
-Each input is an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
+Each input points to an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
 
-Bitcoin's inputs are outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend it. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that each input needs to have:
+Bitcoin's inputs are spending outputs of another transaction. That is, there is some entity that needs to have sent you the Bitcoins for you to be able to spend them. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which bitcoins have been given to you. There are two things that each input needs to have:
 
 * A reference to the previous Bitcoins you own
 * Proof that these are yours to spend
@@ -123,10 +135,11 @@ image::tx4.png[Inputs]
 
 We can see that the byte is actually `01`, which means that this transaction has 1 input. It may be tempting here to assume that it's always a single byte, but it's not. A single byte has 8 bits, so this means that anything over 255 inputs would not be expressible in a single byte.
 
-This is where varint comes in. Varint is shorthand for *variable integer* which is a way to encode an integer into bytes that range from 0 to 2^64^-1. We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be a relatively small number (say under 200). This is the case with the number of inputs in a normal transaction, so utilizing a varint helps to save space. You can see how they work in the sidebar.
+This is where varint comes in. Varint is shorthand for *variable integer* which is a way to encode an integer into bytes that range from 0 to 2^64^-1. We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be a relatively small number (say under 200). This is the case with the number of inputs in a normal transaction, so utilizing a varint helps to save space. You can see how they work in the `Varint` note.
 
+[NOTE]
 .Varint
-****
+====
 Variable integers work by these rules:
 
 * If the number is below 253, encode that number as a single byte (e.g. 100 -> `64`)
@@ -168,35 +181,37 @@ def encode_varint(i):
 
 `read_varint` will read from a stream and return the actual integer that was encoded. `encode_varint` will do the opposite, which is take an integer and return the varint representation.
 
-****
+====
 
 Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
 
 * Previous Transaction ID
-* Previous transaction index
+* Previous Transaction Output Index
 * ScriptSig
 * Sequence
 
-As explained above, each input is actually a previous transaction's output. The previous transaction id is the `double_sha256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is very, very small. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transactio* that we're spending.
+As explained above, each input is actually a previous transaction's output. The previous transaction id is the `hash256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is impossibly low. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transaction* that we're spending.
 
 We will note here that the transaction id is 32 bytes and that the transaction index is 4 bytes. Both are in little-endian order
 
-ScriptSig has to do with Bitcoin's smart contract language SCRIPT, and will be discussed more thoroughly in chapter 6. For now, think of ScriptSig as opening a lock box. Something that can only be done by the owner of the transaction output. The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far. A variable-length field requires us to define exactly how long it will be which is why the field is preceded by a varint telling us how long the field is.
+ScriptSig has to do with Bitcoin's smart contract language Script, and will be discussed more thoroughly in chapter 6. For now, think of ScriptSig as opening a lock box. Something that can only be done by the owner of the transaction output. The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far. A variable-length field requires us to define exactly how long it will be which is why the field is preceded by a varint telling us how long the field is.
 
-Sequence was originally intended as a way to do payment channels (see sidebar), but is currently used with Replace-By-Fee and Check Sequence Verify. This field is also in little-endian and takes up 4 bytes. The resulting transaction looks something like this:
+Sequence was originally intended as a way to do what Satoshi called "high frequency trades" with the locktime field (see sidebar), but is currently used with Replace-By-Fee and Check Sequence Verify. Sequence is also in little-endian and takes up 4 bytes. The resulting transaction looks something like this:
 
 .The Fields of an Input
 image::tx5.png[Input Fields]
 
 .Sequence and Locktime
 ****
-Originally, Satoshi wanted to sequence and locktime to be used for something called payment channels. A payment channel is a way to do payments back and forth with another party without making lots and lots of on-chain transactions. For example, if Alice pays Bob `x` Bitcoins for something and then Bob pays Alice `y` Bitcoin for something else (say `x > y`), then we can have Alice just pay Bob `x-y`, instead of two separte transactions on-chain. We could do the same thing if Alice and Bob had 100 transactions between them. We can essentially compress a bunch of transactions into a single transaction.
+Originally, Satoshi wanted sequence and locktime to be used for something called "high frequency trades". What Nakamoto envisioned was a way to do payments back and forth with another party without making lots and lots of on-chain transactions. For example, if Alice pays Bob `x` Bitcoins for something and then Bob pays Alice `y` Bitcoin for something else (say `x > y`), then Alice can just pay Bob `x-y`, instead of two separte transactions on-chain. We could do the same thing if Alice and Bob had 100 transactions between them. We can essentially compress a bunch of transactions into a single transaction.
 
-That's the idea of a payment channel. It's a continuously updating mini-ledger between the two parties involved that gets settled on-chain. Satoshi's idea was to utilize sequence and locktime to update the payment channel transaction every time there is a new payment between the two parties. The payment-channel transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob. The payment-channel transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now).valid in 500 blocks. This would be the base transaction where Alice and Bob get the same amounts as they put in.
+That's the idea that Satoshi had: a continuously updating mini-ledger between the two parties involved that gets settled on-chain. Satoshi's idea was to utilize sequence and locktime to update the "high frequency trade" transaction every time a new payment between the two parties occurred. The trade transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob. The trade transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now), valid in 500 blocks. This would be the base transaction where Alice and Bob get the same amounts as they put in.
 
-After the first transaction where Alice pays Bob x Bitcoins, the sequence of each input would be 1 and the locktime earlier (say 499 blocks from now). After the second transaction where Bob pays Alice y Bitcoins, the sequence of each input would be 2 and the locktime even earlier (say 498 blocks from now). Using this method, we could have up to 500 payments compressed into a single on-chain transaction.
+After the first transaction where Alice pays Bob x Bitcoins, the sequence of each input would be 1. After the second transaction where Bob pays Alice y Bitcoins, the sequence of each input would be 2. Using this method, we could have lots of payments compressed into a single on-chain transaction as long as they happened before the locktime became valid.
 
-Unfortunately, as clever as this is, it turns out that it's quite easy for a miner to cheat. In our example, Bob could be a miner and ignore the updated payment channel transaction with sequence number 2 and mine the payment channel transaction with sequence number 1 and cheat Alice out of `y` Bitcoins.
+Unfortunately, as clever as this is, it turns out that it's quite easy for a miner to cheat. In our example, Bob could be a miner and ignore the updated trade transaction with sequence number 2 and mine the trade transaction with sequence number 1 and cheat Alice out of `y` Bitcoins.
+
+A much better design was created later with something called "payment channels", which is the basis for the Lightning Network.
 ****
 
 Now that we know what the fields are, we can start creating a `TxIn` class in Python:
@@ -227,20 +242,18 @@ We'll delve more deeply into how Script is parsed in the next chapter, but for n
 [source,python]
 ----
 >>> from io import BytesIO
->>> from script import Script
+>>> from script import Script  # <1>
 >>> script_hex = '6b483045..8a'
 >>> stream = BytesIO(bytes.fromhex(script_hex))
->>> script_raw = Script.parse(stream)
->>> print(script_raw)
+>>> script_sig = Script.parse(stream)
+>>> print(script_sig)
 3045...01 0349...8a
 ----
-
-The details of how script is parsed is covered in Chapter 6.
+<1> Please note that this module will be more thoroughly explored in Chapter 6. For now, please trust that the `Script.parse` method will create the object that we need.
 
 ==== Exercise {counter:exercise}
 
 Write the inputs parsing part of the parse method in `Tx` and the parse method for `TxIn`.
-
 
 ==== Outputs
 
@@ -251,9 +264,9 @@ Like inputs, the transaction serialization starts with how many outputs there ar
 .Number of Outputs
 image::tx6.png[Outputs]
 
-Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin. This allows us to divide Bitcoin very finely, down to 1/100th of a penny in USD terms as of this writing. The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million bitcoins) in satoshis, which is 2,100,000,000,000,000 (2.1 quadrillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and thus be stored in more bytes. This is why amount takes up 8 bytes and is serialized in little-endian.
+Outputs each have two fields: amount and ScriptPubKey. Amount is the amount of bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin. This allows us to divide Bitcoin very finely, down to 1/100th of a penny in USD terms as of this writing. The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million bitcoins) in satoshis, which is 2,100,000,000,000,000 (2.1 quadrillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and thus must be stored in 64 bits, or 8 bytes. Amount is serialized in little-endian.
 
-ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart contract language SCRIPT. Think of ScriptPubKey as the lock box that can only be opened by the holder of the key. ScriptPubKey is essentially a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe. We'll explore what this is in more detail in chapter 6. Like ScriptSig, ScriptPubKey is a variable-length field and is thus preceded by the length of the field as a varint.
+ScriptPubKey is much like ScriptSig in that it has to do with Bitcoin's smart contract language Script. Think of ScriptPubKey as the lock box that can only be opened by the holder of the key. ScriptPubKey is essentially a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe. We'll explore what this is in more detail in chapter 6. Like ScriptSig, ScriptPubKey is a variable-length field and is thus preceded by the length of the field as a varint.
 
 The actual output fields look like this
 
@@ -262,7 +275,7 @@ image::tx7.png[Output Fields]
 
 .UTXO Set
 ****
-UTXO stands for Unspent Transaction Output. The entire set of unspent transaction outputs at any given moment is called the UTXO Set. The reason why UTXOs are important is because they represent all the actual Bitcoins that are available to spend. In other words, these are the Bitcoins that are in circulation. Full nodes on the network keep track of the UTXO set because this makes validating new transactions much, much easier.
+UTXO stands for Unspent Transaction Output. The entire set of unspent transaction outputs at any given moment is called the UTXO Set. The reason why UTXOs are important is because they represent all the actual Bitcoins that are available to spend. In other words, these are the Bitcoins that are in circulation. Full nodes on the network must keep track of the UTXO set, and keeping it indexed and easy to look up makes validating new transactions much faster.
 
 For example, it's very easy to detect a double-spend simply by looking up the previous transaction output in the UTXO set. If the input of a new transaction is using a transaction output that's been spent already, that's an attempt at a double-spend and thus invalid. Keeping the UTXO set handy is also very useful for validating transactions. We need to look up the amounts and the ScriptPubKey from the previous transaction output, so having these UTXOs handy will greatly speed up transaction validation.
 ****
@@ -288,16 +301,18 @@ Write the outputs parsing part of the parse method in `Tx` and the parse method 
 
 ==== Locktime
 
-Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater than 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
+Locktime is a way to time-delay a transaction. A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see sidebar). The rule with locktime is that if the locktime is greater or equal to 500,000,000, locktime is a unix time stamp. If locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
 
 The serialization is in Little-endian and 4-bytes like so:
 
 .Locktime
 image::tx8.png[Locktime]
 
-This turns out not to be that useful as the recipient of the transaction has no certainty that the transaction will be good when the locktime comes. The sender can spend the inputs prior to the locktime transaction getting into the blockchain invalidating the transaction at locktime.
+The main problem with the original usage (see sidebar on Sequence and Locktime) is that the recipient of the transaction has no certainty that the transaction will be good when the locktime comes. The sender can spend the inputs prior to the locktime transaction getting into the blockchain invalidating the transaction at locktime.
 
-That said, BIP0065 introduced something called OP_CHECKLOCKTIMEVERIFY which makes use of locktime in a more useful way by making an output unspendable until a certain locktime.
+The uses before BIP0065 came along was for anti-fee sniping and spending money to another address you control and then deleting the private key as a way to force yourself to hold the coins until that locktime.
+
+BIP0065 introduced something called OP_CHECKLOCKTIMEVERIFY which makes locktime more useful by making an output unspendable until a certain locktime.
 
 ==== Exercise {counter:exercise}
 
@@ -373,36 +388,71 @@ One thing that might be interesting to note is that the transaction fee is not s
 
 One of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on Coinbase transactions in Chapter 8), the amount in the inputs have to be greater than or equal to the amount in the outputs. You may be wondering why the inputs and outputs can't just be forced to be equal. This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks. Fees are a way to incentivize miners to include transactions in blocks. Transactions that are not in blocks are not part of the blockchain and cannot be counted on as being valid.
 
-The transaction fee is simply the input sum minus the output sum. The difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information. Here is how we can get th previous transaction and thus, the amount, for an input:
+The transaction fee is simply the sum of the inputs minus the sum of the outputs. This difference is what the miner gets to keep. As inputs don't have an amount field, we have to look up the actual amount. This requires access to the blockchain, specifically the UTXO set. If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information.
+
+We are creating a new class to handle this, called TxFetcher:
+
+[source,python]
+----
+class TxFetcher:
+    cache = {}
+
+    @classmethod
+    def get_url(cls, testnet=False):
+        if testnet:
+            return 'http://tbtc.programmingblockchain.com:18332'  # <1>
+        else:
+            return 'http://btc.programmingblockchain.com:8332'  # <2>
+
+    @classmethod
+    def fetch(cls, tx_id, testnet=False, fresh=False):
+        if fresh or (tx_id not in cls.cache):
+            url = '{}/rest/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
+            response = requests.get(url)
+            try:
+                raw = bytes.fromhex(response.text.strip())
+            except ValueError:
+                raise ValueError('unexpected response: {}'.format(response.text))            # make sure the tx we got matches to the hash we requested
+            tx = Tx.parse(BytesIO(raw), testnet=testnet)
+            if tx.id() != tx_id:  # <3>
+                raise ValueError('not the same id: {} vs {}'.format(tx.id(), tx_id))
+            cls.cache[tx_id] = tx
+        cls.cache[tx_id].testnet = testnet
+        return cls.cache[tx_id]
+
+    @classmethod
+    def load_cache(cls, filename):
+        disk_cache = json.loads(open(filename, 'r').read())
+        for k, raw_hex in disk_cache.items():
+            cls.cache[k] = Tx.parse(BytesIO(bytes.fromhex(raw_hex)))
+
+    @classmethod
+    def dump_cache(cls, filename):
+        with open(filename, 'w') as f:
+            to_dump = {k: tx.serialize().hex() for k, tx in cls.cache.items()}
+            s = json.dumps(to_dump, sort_keys=True, indent=4)
+            f.write(s)
+----
+<1> Port 18332 is the default port for RPC on testnet
+<2> Port 8332 is the default port for RPC on mainnet
+<3> We check that the id is what we expect it to be
+
+You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (hash256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
+
+.Why we minimize trusting third parties
+[WARNING]
+====
+As Nick Szabo eloquently wrote in his seminal essay "Trusted Third Parties are Security Holes" (https://nakamotoinstitute.org/trusted-third-parties/), trusting third parties to provide correct data is *not* a good security practice. The third party may be behaving well now, but you never know when they may get hacked, may have an employee go rogue or simply start implementing policies that are against your interests. Part of what makes Bitcoin secure is in *not* trusting, but actually verifying data that we're given.
+====
+
+We can now create the appropriate method in `TxIn` to fetch the previous transaction and methods to get the previous transaction output's amount and script_pubkey (the latter to be used in the next chapter):
 
 [source,python]
 ----
 class TxIn:
-    ...
-    @classmethod
-    def get_url(cls, testnet=False):
-        if testnet:
-            return 'http://tbtc.programmingblockchain.com:18332'
-        else:
-            return 'http://btc.programmingblockchain.com:8332'
-
+...
     def fetch_tx(self, testnet=False):
-        if self.prev_tx not in self.cache:
-            url = '{}/rest/tx/{}.hex'.format(
-                self.get_url(testnet), self.prev_tx.hex())
-            response = requests.get(url)
-            stream = BytesIO(bytes.fromhex(response.text.strip()))
-            tx = Tx.parse(stream)
-            self.cache[self.prev_tx] = tx
-        return self.cache[self.prev_tx]
-----
-
-We can get the previous transaction using the `fetch_tx` method. You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction id (double_sha256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we get the entire transaction.
-
-We can now write methods to get the previous transaction output's amount and script_pubkey (the latter to be used in the next chapter):
-
-[source,python]
-----
+        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
         '''Get the outpoint value by looking up the tx hash on libbitcoin server

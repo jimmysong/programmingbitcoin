@@ -5,7 +5,7 @@
 == Networking
 
 [.lead]
-The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. 9400+ nodes are running on the network as of this writing and communicate constantly.
+The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. 65000+ nodes are running on the network as of this writing and communicate constantly.
 
 The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years.
 
@@ -24,7 +24,7 @@ The first four bytes are always the same and are referred to as the *network mag
 
 The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at https://wiki.bitcoin.it. Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
 
-The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the field is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB. Note the number is interpreted in little-endian, so in our case here, that is 101 bytes.
+The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the field is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB, though the reference client rejects any payloads over 32MB. Note the number is interpreted in little-endian, so in our case here, that is 101 bytes.
 
 The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the double-sha256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and double-sha256 has none. That said, the hash function is common in the rest of the protocol and is thus used here.
 
@@ -73,7 +73,7 @@ The fields for version are meant to give enough information for two nodes to be 
 
 Version specifies the network protocol version being communicated. Services give information about what services are available to connecting nodes. Timestamp here is 8 bytes (as opposed to 4 bytes in the block header) and is the same unix timestamp in little endian.
 
-IP addresses can be IPv6 or IPv4. If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP. The port is 2 bytes and in little_endian.
+IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's .onion addresses to IPv6). If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP. The port is 2 bytes and in little_endian.
 
 Nonce is a number used only once for reply messages. User Agent identifies the software being run. The latest block helps the other node know which block you are synced up to.
 
@@ -247,7 +247,7 @@ Now that we have a node, we can now handshake with another node.
 ...         node.send(b'verack', b''])
 ...
 ----
-<1> The server in this example is something the author has set up. You can find other IP addresses for both mainnet and testnet at https://bitnodes.earn.com/api/
+<1> The server in this example is something I have set up. You can find other IP addresses for both mainnet and testnet at https://bitnodes.earn.com/api/
 <2> It turns out most nodes don't really care about all the fields like ip address and port number all that much. We can connect with the defaults and everything will be just fine.
 <3> We start the handshake by sending the version message
 <4> We only finish when we've received both verack and version.
@@ -259,9 +259,9 @@ Write the `handshake` method for `SimpleNode`
 
 === Getting headers
 
-Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading headers allows us to asynchronously ask for various blocks. For light nodes, downloading headers allows us to verify the proof-of-work in each block and give us an idea of how long the blockchain is. As we'll see in Chapter 11, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
+Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading headers allows us to asynchronously ask for various blocks. For light clients, downloading headers allows us to verify the proof-of-work in each block and give us an idea of which chain has the most proof-of-work. As we'll see in Chapter 11, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
 
-Block headers, fortunately, are always available. It does not matter if the node we're connected to is a full node or not. Every node can give us the headers it has. The command to get the block headers is called `getheaders` and it looks something like this:
+Nodes can give us the block headers without taking up too much bandwidth. The command to get the block headers is called `getheaders` and it looks something like this:
 
 .Parsed `getheaders`
 image::getheaders.png[GetHeaders payload]

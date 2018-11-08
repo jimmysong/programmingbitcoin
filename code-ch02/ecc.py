@@ -11,6 +11,9 @@ class FieldElement:
         self.num = num
         self.prime = prime
 
+    def __repr__(self):
+        return 'FieldElement_{}({})'.format(self.prime, self.num)
+
     def __eq__(self, other):
         if other is None:
             return False
@@ -20,37 +23,31 @@ class FieldElement:
         # this should be the inverse of the == operator
         return not (self == other)
 
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
-
     def __add__(self, other):
         if self.prime != other.prime:
             raise TypeError('Cannot add two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num + other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot subtract two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num - other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
         # self.num and other.num are the actual values
+        # self.prime is what we need to mod against
         num = (self.num * other.num) % self.prime
-        # self.prime is what you'll need to mod against
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
     def __pow__(self, exponent):
@@ -60,16 +57,15 @@ class FieldElement:
 
     def __truediv__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot add two numbers in different Fields')
+            raise TypeError('Cannot divide two numbers in different Fields')
         # self.num and other.num are the actual values
-        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
-        # self.prime is what you'll need to mod against
+        # self.prime is what we need to mod against
         # use fermat's little theorem:
         # self.num**(p-1) % p == 1
         # this means:
         # 1/n == pow(n, p-2, p)
-        # You need to return an element of the same class
-        # use: self.__class__(num, prime)
+        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
+        # We return an element of the same class
         return self.__class__(num, self.prime)
 
 
@@ -123,7 +119,6 @@ class FieldElementTest(TestCase):
 
 
 class Point:
-    zero = 0
 
     def __init__(self, x, y, a, b):
         self.a = a
@@ -147,7 +142,7 @@ class Point:
         if self.x is None:
             return 'Point(infinity)'
         else:
-            return 'Point({}, {})'.format(self.x, self.y)
+            return 'Point({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
