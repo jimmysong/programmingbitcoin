@@ -247,7 +247,7 @@ class Script:
 
 We will utilize this for Script evaluation later in this chapter.
 
-=== Stardard Scripts
+=== Standard Scripts
 
 There are many types of standard scripts in Bitcoin including the following:
 
