@@ -994,7 +994,7 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 >>> change_satoshis = int(change_amount*100000000)
 >>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
 >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
->>> tx_obj.sign_input(0, priv, SIGHASH_ALL)
+>>> tx_obj.sign_input(0, priv)
 >>> if priv.point.address(testnet=True) != change_address:
 ...     raise RuntimeError('Private Key does not correspond to Change Address, check priv_key and change_address')
 >>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(change_address):
@@ -1032,8 +1032,8 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 >>> target_satoshis = int(target_amount*100000000)
 >>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
 >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
->>> tx_obj.sign_input(0, priv, SIGHASH_ALL)
->>> tx_obj.sign_input(1, priv, SIGHASH_ALL)
+>>> tx_obj.sign_input(0, priv)
+>>> tx_obj.sign_input(1, priv)
 >>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(priv.point.address(testnet=True)):
 ...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
 >>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:

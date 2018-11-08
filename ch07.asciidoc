@@ -318,7 +318,7 @@ The actual signing of the transaction is the trickiest part. Thankfully, we know
 ----
 >>> from ecc import PrivateKey
 >>> from helper import SIGHASH_ALL
->>> z = transaction.sig_hash(0, SIGHASH_ALL)  # <1>
+>>> z = transaction.sig_hash(0)  # <1>
 >>> private_key = PrivateKey(secret=8675309)
 >>> der = private_key.sign(z).der()
 >>> sig = der + hash_type.to_bytes(1, 'big')  # <2>

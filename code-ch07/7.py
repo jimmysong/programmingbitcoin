@@ -16,7 +16,7 @@ class Chapter7Test(TestCase):
 
     def test_apply(self):
 
-        def sig_hash(self, input_index, hash_type):
+        def sig_hash(self, input_index):
             alt_tx_ins = []
             for tx_in in self.tx_ins:
                 alt_tx_ins.append(TxIn(
@@ -33,21 +33,21 @@ class Chapter7Test(TestCase):
                 tx_outs=self.tx_outs,
                 locktime=self.locktime,
             )
-            result = alt_tx.serialize() + int_to_little_endian(hash_type, 4)
+            result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
             h256 = hash256(result)
             return int.from_bytes(h256, 'big')
 
         def verify_input(self, input_index):
             tx_in = self.tx_ins[input_index]
             script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-            z = self.sig_hash(input_index, SIGHASH_ALL)
+            z = self.sig_hash(input_index)
             combined = tx_in.script_sig + script_pubkey
             return combined.evaluate(z)
 
-        def sign_input(self, input_index, private_key, hash_type):
-            z = self.sig_hash(input_index, hash_type)
+        def sign_input(self, input_index, private_key):
+            z = self.sig_hash(input_index)
             der = private_key.sign(z).der()
-            sig = der + hash_type.to_bytes(1, 'big')
+            sig = der + SIGHASH_ALL.to_bytes(1, 'big')
             sec = private_key.point.sec()
             self.tx_ins[input_index].script_sig = Script([sig, sec])
             return self.verify_input(input_index)
@@ -116,7 +116,7 @@ class Chapter7Test(TestCase):
         target_script = p2pkh_script(target_h160)
         tx_outs.append(TxOut(amount=target_amount, script_pubkey=target_script))
         transaction = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-        z = transaction.sig_hash(0, SIGHASH_ALL)
+        z = transaction.sig_hash(0)
         private_key = PrivateKey(secret=8675309)
         der = private_key.sign(z).der()
         sig = der + SIGHASH_ALL.to_bytes(1, 'big')
@@ -152,7 +152,7 @@ class Chapter7Test(TestCase):
         change_satoshis = int(change_amount * 100000000)
         tx_outs.append(TxOut(change_satoshis, script_pubkey))
         tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-        self.assertTrue(tx_obj.sign_input(0, priv, SIGHASH_ALL))
+        self.assertTrue(tx_obj.sign_input(0, priv))
         self.assertTrue(tx_obj.verify())
         want = '01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175010000006b483045022100a08ebb92422b3599a2d2fcdaa11f8f807a66ccf33e7f4a9ff0a3c51f1b1ec5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca539012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff0240420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d00000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000'
         self.assertEqual(tx_obj.serialize().hex(), want)
@@ -175,8 +175,8 @@ class Chapter7Test(TestCase):
         target_satoshis = int(target_amount * 100000000)
         tx_outs.append(TxOut(target_satoshis, script_pubkey))
         tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-        self.assertTrue(tx_obj.sign_input(0, priv, SIGHASH_ALL))
-        self.assertTrue(tx_obj.sign_input(1, priv, SIGHASH_ALL))
+        self.assertTrue(tx_obj.sign_input(0, priv))
+        self.assertTrue(tx_obj.sign_input(1, priv))
         self.assertTrue(tx_obj.verify())
         want = '01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011010000006a47304402204cc5fe11b2b025f8fc9f6073b5e3942883bbba266b71751068badeb8f11f0364022070178363f5dea4149581a4b9b9dbad91ec1fd990e3fa14f9de3ccb421fa5b269012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153db0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b483045022100b7a938d4679aa7271f0d32d83b61a85eb0180cf1261d44feaad23dfd9799dafb02205ff2f366ddd9555f7146861a8298b7636be8b292090a224c5dc84268480d8be1012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d0754100000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000'
         self.assertEqual(tx_obj.serialize().hex(), want)
