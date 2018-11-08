@@ -8,6 +8,9 @@ from helper import (
     read_varint,
 )
 from op import (
+    op_hash160,
+    op_equal,
+    op_verify,
     OP_CODE_FUNCTIONS,
     OP_CODE_NAMES,
 )
@@ -16,6 +19,11 @@ from op import (
 def p2pkh_script(h160):
     '''Takes a hash160 and returns the p2pkh scriptPubKey'''
     return Script([0x76, 0xa9, h160, 0x88, 0xac])
+
+
+def p2sh_script(h160):
+    '''Takes a hash160 and returns the p2sh scriptPubKey'''
+    return Script([0xa9, h160, 0x87])
 
 
 class Script:
@@ -79,6 +87,7 @@ class Script:
                 # add the op_code to the list of instructions
                 instructions.append(op_code)
         if count != length:
+            print(Script(instructions))
             raise SyntaxError('parsing script failed')
         return cls(instructions)
 
@@ -123,52 +132,87 @@ class Script:
     def evaluate(self, z):
         # create a copy as we may need to add to this list if we have a
         # RedeemScript
-        instructions = self.instructions[:]
+        insts = self.instructions[:]
         stack = []
         altstack = []
-        while len(instructions) > 0:
-            instruction = instructions.pop(0)
-            if type(instruction) == int:
+        while len(insts) > 0:
+            inst = insts.pop(0)
+            if type(inst) == int:
                 # do what the op code says
-                operation = OP_CODE_FUNCTIONS[instruction]
-                if instruction in (99, 100):
-                    # op_if/op_notif require the instructions array
-                    if not operation(stack, instructions):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                operation = OP_CODE_FUNCTIONS[inst]
+                if inst in (99, 100):
+                    # op_if/op_notif require the insts array
+                    if not operation(stack, insts):
+                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
                         return False
-                elif instruction in (107, 108):
+                elif inst in (107, 108):
                     # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
                         return False
-                elif instruction in (172, 173, 174, 175):
+                elif inst in (172, 173, 174, 175):
                     # these are signing operations, they need a sig_hash
                     # to check against
                     if not operation(stack, z):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
                         return False
-                elif instruction == 177:
+                elif inst == 177:
                     # op_checklocktimeverify requires locktime and sequence
                     if bip65 and not operation(stack, locktime, sequence):
                         print('bad cltv')
                         return False
-                elif instruction == 178:
+                elif inst == 178:
                     # op_checksequenceverify requires version and sequence
                     if bip112 and not operation(stack, version, sequence):
                         print('bad csv')
                         return False
                 else:
                     if not operation(stack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        print('bad op: {}'.format(OP_CODE_NAMES[inst]))
                         return False
             else:
-                # add the instruction to the stack
-                stack.append(instruction)
+                # add the inst to the stack
+                stack.append(inst)
+                if len(insts) == 3 and insts[0] == 0xa9 \
+                    and type(insts[1]) == bytes and len(insts[1]) == 20 \
+                    and insts[2] == 0x87:
+                    # we execute the next three op codes
+                    insts.pop()
+                    h160 = insts.pop()
+                    insts.pop()
+                    if not op_hash160(stack):
+                        return False
+                    stack.append(h160)
+                    if not op_equal(stack):
+                        return False
+                    # final result should be a 1
+                    if not op_verify(stack):
+                        print('bad p2sh h160')
+                        return False
+                    # hashes match! now add the RedeemScript
+                    redeem_script = encode_varint(len(inst)) + inst
+                    stream = BytesIO(redeem_script)
+                    insts.extend(Script.parse(stream).instructions)
         if len(stack) == 0:
             return False
         if stack.pop() == b'':
             return False
         return True
+
+    def is_p2pkh_script_pubkey(self):
+        '''Returns whether this follows the
+        OP_DUP OP_HASH160 <20 byte hash> OP_EQUALVERIFY OP_CHECKSIG pattern.'''
+        return len(self.instructions) == 5 and self.instructions[0] == 0x76 \
+            and self.instructions[1] == 0xa9 \
+            and type(self.instructions[2]) == bytes and len(self.instructions[2]) == 20 \
+            and self.instructions[3] == 0x88 and self.instructions[4] == 0xac
+
+    def is_p2sh_script_pubkey(self):
+        '''Returns whether this follows the
+        OP_HASH160 <20 byte hash> OP_EQUAL pattern.'''
+        return len(self.instructions) == 3 and self.instructions[0] == 0xa9 \
+            and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 20 \
+            and self.instructions[2] == 0x87
 
 
 class ScriptTest(TestCase):
