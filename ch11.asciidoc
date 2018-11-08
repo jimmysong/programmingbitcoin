@@ -156,7 +156,7 @@ In practice, this simply means reversing the hash before we start and reversing 
 >>> from helper import merkle_root
 >>> tx_hashes = [...]
 >>> hashes = [h[::-1] for h in tx_hashes]  # <1>
->>> print(merkle_root(current_level)[::-1].hex())  # <2>
+>>> print(merkle_root(hashes)[::-1].hex())  # <2>
 654d6181e18e4ac4368383fdc5eead11bf138f9b7ac1e15334e4411b3c4797d9
 ----
 <1> This reverses each hash before we begin using a *list comprehension*
