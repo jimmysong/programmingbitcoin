@@ -256,12 +256,10 @@ class Tx:
         # if this is NOT a coinbase transaction, return None
         if not self.is_coinbase():
             return None
-        # grab the first input
-        first_input = self.tx_ins[0]
-        # grab the first item of the script_sig (.script_sig.items[0])
-        first_item = first_input.script_sig.items[0]
-        # convert the first item from little endian to int
-        return little_endian_to_int(first_item)
+        # grab the first element
+        element = self.tx_ins[0].script_sig.instructions[0]
+        # convert the element from little endian to int
+        return little_endian_to_int(element)
 
 
 class TxIn:

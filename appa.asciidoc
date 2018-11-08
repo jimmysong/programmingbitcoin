@@ -1410,13 +1410,13 @@ class NetworkEnvelope:
         '''Takes a stream and creates a NetworkEnvelope'''
         magic = s.read(4)
         if magic == b'':
-            raise RuntimeError('Connection reset!')
+            raise IOError('Connection reset!')
         if testnet:
             expected_magic = TESTNET_NETWORK_MAGIC
         else:
             expected_magic = NETWORK_MAGIC
         if magic != expected_magic:
-            raise RuntimeError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
+            raise SyntaxError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
         command = s.read(12)
         command = command.strip(b'\x00')
         payload_length = little_endian_to_int(s.read(4))
@@ -1424,7 +1424,7 @@ class NetworkEnvelope:
         payload = s.read(payload_length)
         calculated_checksum = hash256(payload)[:4]
         if calculated_checksum != checksum:
-            raise RuntimeError('checksum does not match')
+            raise IOError('checksum does not match')
         return cls(command, payload, testnet=testnet)
 
     def serialize(self):
