@@ -93,7 +93,7 @@ Perhaps the trickiest part of validating a transaction is the process of checkin
 True
 ----
 
-The sec and der formats make getting the P, r and s pretty simple. The hard part is getting the actual signature hash (z). You would think that this would be easy since you can just hash the transaction. But you can't do that since the signature itself is part of the ScriptSig and a signature can't sign itself.
+The SEC and DER formats make getting the public key and signature pretty straightforward. The hard part is getting the actual signature hash `z`. You would think that this would be easy since you can just hash the transaction. But you can't do that since the signature itself is part of the ScriptSig and a signature can't sign itself.
 
 .Validation Start
 image::validation1.png[Validation Start]
@@ -129,8 +129,9 @@ The hash256 of this interpreted as a big-endian integer is our z. The code for g
 ----
 >>> from helper import hash256
 >>> blob = bytes.fromhex('01000000...01000000')
->>> d256 = hash256(blob)
->>> z = int.from_bytes(d256, 'big')
+>>> h256 = hash256(blob)
+>>> z = int.from_bytes(h256, 'big')
+>>> print(hex(z))
 0x27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6
 ----
 
@@ -149,7 +150,7 @@ True
 ----
 <1> z is from the code above
 
-We can now make this process into a method of `Tx`.
+We can now make this process into a method of `Tx`. Thankfully, the script engine can already do the point verification (see Chapter 6), so our task is to glue everything together. We need the `z` to pass into the `evaluate` method and we need to combine the ScriptSig and ScriptPubKey.
 
 ==== Exercise {counter:exercise}
 
@@ -157,7 +158,29 @@ Write the `sig_hash` method for the `Tx` class.
 
 ==== Exercise {counter:exercise}
 
-Write the `verify_input` method for the `Tx` class. You will want to utilize the TxIn.der_signature(), TxIn.sec_pubkey() and TxIn.hash_type() methods to make this work.
+Write the `verify_input` method for the `Tx` class. You will want to use the TxIn.script_pubkey(), Script.evaluate() methods and the SIGHASH_ALL constant to make this work.
+
+=== Verifying the entire transaction
+
+Now that we can verify an input, the task of verifying the entire transaction is more or less straightforward:
+
+[source,python]
+----
+class Tx:
+...
+    def verify(self):
+        '''Verify this transaction'''
+        if self.fee() < 0:  # <1>
+            return False
+        for i in range(len(self.tx_ins)):
+            if not self.verify_input(i):  # <2>
+                return False
+        return True
+----
+<1> We make sure that we are not creating money out of thin air
+<2> We make sure that each input has a correct ScriptSig
+
+This is not sufficient as we're not checking for double-spends or checking some of the many other consensus rules (max sigops, size of transaction, etc). This is, however, a good start.
 
 === Creating transactions
 
@@ -244,7 +267,7 @@ The other thing we will need is a way to convert the 20-byte hash to a ScriptPub
 [source,python]
 ----
 def p2pkh_script(h160):
-    '''Takes a hash160 and returns the scriptPubKey'''
+    '''Takes a hash160 and returns the p2pkh scriptPubKey'''
     return Script([0x76, 0xa9, h160, 0x88, 0xac])
 ----
 
@@ -289,14 +312,13 @@ We have created the actual transaction. However, every ScriptSig in this transac
 
 === Signing a transaction
 
-The actual signing of the transaction is the trickiest part. Thankfully, we know how to get the sig_hash, or the z, from earlier in this chapter. We have to have the private key to actually sign the transaction and signing the z allows us to produce the der signature.
+The actual signing of the transaction is the trickiest part. Thankfully, we know how to get the sig_hash, or the z, from earlier in this chapter. We have to have the private key to actually sign the transaction and signing the z allows us to produce the DER signature.
 
 [source,python]
 ----
 >>> from ecc import PrivateKey
 >>> from helper import SIGHASH_ALL
->>> hash_type = SIGHASH_ALL
->>> z = transaction.sig_hash(0, hash_type)  # <1>
+>>> z = transaction.sig_hash(0, SIGHASH_ALL)  # <1>
 >>> private_key = PrivateKey(secret=8675309)
 >>> der = private_key.sign(z).der()
 >>> sig = der + hash_type.to_bytes(1, 'big')  # <2>
@@ -336,10 +358,16 @@ After you get some coins, see if you can spend them using the library you've bee
 
 Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
 
+You can broadcast this on a block explorer: https://testnet.blockchain.info/pushtx
+
 ==== Exercise {counter:exercise}
 
 Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
 
+You can broadcast this on a block explorer: https://testnet.blockchain.info/pushtx
+
 === Conclusion
 
-We've successfully validated existing transactions on the blockchain and we've also created our own transactions on testnet! This is the simple case of p2pkh. In the next chapter, we turn to a more advanced smart contract in Bitcoin, p2sh.
+We've successfully validated existing transactions on the blockchain and we've also created our own transactions on testnet! This is a major accomplishment and you should be proud.
+
+The code we have so far will do p2pkh and p2pk. In the next chapter, we turn to a more advanced smart contract in Bitcoin, p2sh.

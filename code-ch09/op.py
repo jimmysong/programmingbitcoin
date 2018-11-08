@@ -474,15 +474,6 @@ def op_sub(stack):
     return True
 
 
-def op_mul(stack):
-    if len(stack) < 2:
-        return False
-    element1 = decode_num(stack.pop())
-    element2 = decode_num(stack.pop())
-    stack.append(encode_num(element2 * element1))
-    return True
-
-
 def op_booland(stack):
     if len(stack) < 2:
         return False
@@ -797,7 +788,6 @@ OP_CODE_FUNCTIONS = {
     146: op_0notequal,
     147: op_add,
     148: op_sub,
-    149: op_mul,    
     154: op_booland,
     155: op_boolor,
     156: op_numequal,
@@ -890,7 +880,6 @@ OP_CODE_NAMES = {
     146: 'OP_0NOTEQUAL',
     147: 'OP_ADD',
     148: 'OP_SUB',
-    149: 'OP_MUL',
     154: 'OP_BOOLAND',
     155: 'OP_BOOLOR',
     156: 'OP_NUMEQUAL',

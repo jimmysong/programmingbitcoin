@@ -231,28 +231,6 @@ class TxIn:
         # return the script_pubkey property
         return tx.tx_outs[self.prev_index].script_pubkey
 
-    def der_signature(self):
-        '''returns a DER format signature and hash_type if the script_sig
-        has a signature'''
-        signature = self.script_sig.signature()
-        # last byte is the hash_type, rest is the signature
-        return signature[:-1]
-
-    def hash_type(self):
-        '''returns a DER format signature and hash_type if the script_sig
-        has a signature'''
-        signature = self.script_sig.signature()
-        # last byte is the hash_type, rest is the signature
-        return signature[-1]
-
-    def sec_pubkey(self):
-        '''returns the SEC format public if the script_sig has one'''
-        return self.script_sig.sec_pubkey()
-
-    def redeem_script(self):
-        '''return the Redeem Script if there is one'''
-        return self.script_sig.redeem_script()
-
 
 class TxOut:
 
