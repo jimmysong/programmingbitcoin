@@ -304,7 +304,7 @@ Scalar Multiplication is adding the same point to itself some number of times. T
 
 If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication. The x-coordinates don't always increase or decrease and neither do the y-coordinates. About the only pattern in this set is that between 10 and 11, the x coordinates seem to be aligned (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
 
-Scalar Multiplication looks really random and that's what we're going to use for what we call an *assymetric* problem. An *assymetric* problem is one that's easy to calculate in one direction, but hard to reverse. For example, it's easy enough to calculate 12⋅(47,71). But if we were presented this:
+Scalar Multiplication looks really random and that's what we're going to use for what we call an *asymmetric* problem. An *asymmetric* problem is one that's easy to calculate in one direction, but hard to reverse. For example, it's easy enough to calculate 12⋅(47,71). But if we were presented this:
 
 s⋅(47,71)=(194,172)
 
@@ -717,7 +717,7 @@ The actual signature that we are verifying has two components, (r, s). The r is 
 
 s = (z+re)/k
 
-Keep in mind that we know e (eG = P, or what we're proving we know in the first place), we know k (kG = R, remember?) and we know z.
+Keep in mind that we know e (P = eG, or what we're proving we know in the first place), we know k (kG = R, remember?) and we know z.
 
 We will now construct R=uG+vP by defining u and v this way:
 
@@ -875,7 +875,7 @@ S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae98
 >>> print(hex(s))
 0x40dbad2b4e539ffe797a6f41d414de5e38c5bd09aafe54b87a6dffe68c60f224
 ----
-<1> This would be something like a "brain wallet". Please don't use this for a real secret.
+<1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult. Please don't use this for a real secret.
 <2> This is the message that we're signing.
 <3> Note this is not a cryptographically secure way to generate a random number. This is for demonstration purposes only.
 <4> kG = (r,y) so we take the x coordinate only
@@ -954,7 +954,7 @@ Our secret is e, we are reusing k to sign z~1~ and z~2~.
 
 If anyone sees both signatures, they can use this formula and find our secret!
 
-To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique, deterministic k every time. The specification is laid out in RFC6979 and the code changes to look like this:
+To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique, deterministic k every time. The specification is laid out in RFC6979 (see https://tools.ietf.org/html/rfc6979 for details) and the code changes to look like this:
 
 [source,python]
 ----

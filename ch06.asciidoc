@@ -323,6 +323,7 @@ We now need a way to do what we did above. That is, go through the instruction s
 
 [source,python]
 ----
+>>> from script import Script
 >>> z = 0x7c...3d
 >>> sec = bytes.fromhex('0488...34')
 >>> sig = bytes.fromhex('3045...01')

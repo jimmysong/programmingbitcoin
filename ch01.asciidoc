@@ -17,7 +17,7 @@ Learning about new mathematical structures can be a bit intimidating and in this
 
 Think of Finite Fields as something that you could have learned in High School instead of Trigonomotry, just that the education system you're a part of decided that Trigonomotry was more important for you to learn.
 
-In any case, this is my way of telling you that Finite Fields are not that hard to learn and require no more background than what you knew by your second year in High School.
+In any case, this is my way of telling you that Finite Fields are not that hard to learn and require no more background than High School algebra.
 
 This chapter is essential if you want to learn the ins and outs of Elliptic Curve Cryptography. That, in turn is essential for how signing and verification work, which is at the heart of Bitcoin itself. As mentioned before, this chapter and the next may feel like eating vegetables, but I encourage you to endure. The fundamentials you learn here will make it so much easier to read the papers about Schnorr Signatures, Confidential Transactions, etc.
 
@@ -53,7 +53,7 @@ In classical math notation the set looks like:
 
 F~p~ = {0, 1, 2, ... p-1}
 
-The field is defined by what's in the set. In this case a bunch of numbers which we call _elements_. F~p~ is a specific finite field called "field of 13" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call _order_). The numbers between the {}`s represent what elements are in the field. We name the elements 0, 1, 2, etc because they're convenient for our purposes. 
+The field is defined by what's in the set. In this case a bunch of numbers which we call _elements_. F~p~ is a specific finite field called "field of p" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call _order_). The numbers between the {}`s represent what elements are in the field. We name the elements 0, 1, 2, etc because they're convenient for our purposes. 
 
 A Finite Field of order 11 looks like this:
 
@@ -564,4 +564,4 @@ Thankfully, we can do even better. We already know how to force a number into th
 
 === Conclusion
 
-In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing thes in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be utilizing these in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need and that's Elliptic Curves.

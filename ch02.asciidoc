@@ -87,7 +87,7 @@ class Point:
 
 ----
 <1> We check here that the point is actually on the curve.
-<2> Points are equal iff they are on the same curve and have the same coordinates
+<2> Points are equal if and only if they are on the same curve and have the same coordinates
 
 This allows us to do something like this:
 
@@ -294,7 +294,7 @@ y^2^=(s(x-x~1~)+y~1~)^2^=x^3^+ax+b
 
 Gathering all the terms, we have this polynomial equation:
 
-x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-(sx~1~-y~1~)^2^=0
+x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
 
 We also know that x~1~, x~2~ and x~3~ are solutions to this equation, thus:
 
@@ -304,7 +304,7 @@ x^3^-(x~1~+x~2~+x~3~)x^2^ +(x~1~x~2~+x~1~x~3~+x~2~x~3~)x-x~1~x~2~x~3~=0
 
 From above, we know that:
 
-x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-(sx~1~-y~1~)^2^=0
+x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
 
 There's a result from called the Theorem on the Equality of Polynomials, which states that the coefficients have to equal each other if the roots are the same. The first one that's interesting is the coefficient in front of x^2^:
 

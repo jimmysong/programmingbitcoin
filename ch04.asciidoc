@@ -28,11 +28,11 @@ image::sec1.png[Uncompressed SEC Format]
 [WARNING]
 .Big and Little Endian
 ====
-The motivation for Big and Little Endian encodings is storing a number on disk. Arabic numberals are read left-to-right. A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300. This is what we call Big-Endian because the Big End starts first.
+The motivation for Big and Little Endian encodings is storing a number on disk. Arabic numerals are read left-to-right. A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300. This is what we call Big-Endian because the Big End starts first.
 
 Computers can sometimes be more efficient using the opposite order or Little-Endian. That is, starting with the Little End first.
 
-Since Computers work in bytes, which have 8 bits, we have to think in base-256. This means that a number like 500 looks like this in Big-Endian `01f4`. That is, 500 = 1*256 + 246 (`f4` in hexadecimal). The same number looks like this in Little-Endian `f401`.
+Since Computers work in bytes, which have 8 bits, we have to think in base-256. This means that a number like 500 looks like this in Big-Endian `01f4`. That is, 500 = 1*256 + 244 (`f4` in hexadecimal). The same number looks like this in Little-Endian `f401`.
 
 Unfortunately, some stuff in Bitcoin (like the SEC format x and y coordinates) are in Big-Endian. Other stuff in Bitcoin (like the transaction version number) are in Little-Endian. This book will let you know which ones are Big vs Little Endian.
 ====

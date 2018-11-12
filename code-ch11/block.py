@@ -65,9 +65,9 @@ class Block:
         # serialize
         s = self.serialize()
         # double-sha256
-        sha = hash256(s)
+        h256 = hash256(s)
         # reverse
-        return sha[::-1]
+        return h256[::-1]
 
     def bip9(self):
         '''Returns whether this block is signaling readiness for BIP9'''
