@@ -7,8 +7,8 @@ import requests
 from ecc import PrivateKey
 from helper import (
     decode_base58,
-    hash256,
     encode_varint,
+    hash256,
     int_to_little_endian,
     little_endian_to_int,
     read_varint,
@@ -52,7 +52,14 @@ class TxFetcher:
     def load_cache(cls, filename):
         disk_cache = json.loads(open(filename, 'r').read())
         for k, raw_hex in disk_cache.items():
-            cls.cache[k] = Tx.parse(BytesIO(bytes.fromhex(raw_hex)))
+            raw = bytes.fromhex(raw_hex)
+            if raw[4] == 0:
+                raw = raw[:4] + raw[6:]
+                tx = Tx.parse(BytesIO(raw))
+                tx.locktime = little_endian_to_int(raw[-4:])
+            else:
+                tx = Tx.parse(BytesIO(raw))
+            cls.cache[k] = tx
 
     @classmethod
     def dump_cache(cls, filename):
@@ -83,7 +90,7 @@ class Tx:
         for tx_out in self.tx_outs:
             tx_outs += tx_out.__repr__() + '\n'
         return 'tx: {}\nversion: {}\ntx_ins:\n{}\ntx_outs:\n{}\nlocktime: {}\n'.format(
-            self.hash().hex(),
+            self.id(),
             self.version,
             tx_ins,
             tx_outs,
@@ -329,16 +336,16 @@ class Tx:
         '''Returns whether the input has a valid signature'''
         # get the relevant input
         tx_in = self.tx_ins[input_index]
-        # get the script_pubkey of the input
+        # grab the previous ScriptPubKey
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-        # check to see if the script_pubkey is a p2sh
+        # check to see if the ScriptPubkey is a p2sh
         if script_pubkey.is_p2sh_script_pubkey():
-            # the last instruction has to be the redeem script to trigger
+            # the last instruction has to be the RedeemScript to trigger
             instruction = tx_in.script_sig.instructions[-1]
-            # parse the redeem script
+            # parse the RedeemScript
             raw_redeem = int_to_little_endian(len(instruction), 1) + instruction
             redeem_script = Script.parse(BytesIO(raw_redeem))
-            # the redeem script might be a segwit pubkey
+            # the RedeemScript might be p2wpkh or p2wsh
             if redeem_script.is_p2wpkh_script_pubkey():
                 z = self.sig_hash_bip143(input_index, redeem_script)
                 witness = tx_in.witness
@@ -352,6 +359,7 @@ class Tx:
                 z = self.sig_hash(input_index, redeem_script)
                 witness = None
         else:
+            # ScriptPubkey might be a p2wpkh or p2wsh
             if script_pubkey.is_p2wpkh_script_pubkey():
                 z = self.sig_hash_bip143(input_index)
                 witness = tx_in.witness
@@ -364,15 +372,17 @@ class Tx:
             else:
                 z = self.sig_hash(input_index)
                 witness = None
-        # combine the scripts
-        combined_script = tx_in.script_sig + tx_in.script_pubkey(self.testnet)
+        # combine the current ScriptSig and the previous ScriptPubKey
+        combined = tx_in.script_sig + script_pubkey
         # evaluate the combined script
-        return combined_script.evaluate(z, witness)
+        return combined.evaluate(z, witness)
 
     def verify(self):
         '''Verify this transaction'''
+        # check that we're not creating money
         if self.fee() < 0:
             return False
+        # check that each input has a correct ScriptSig
         for i in range(len(self.tx_ins)):
             if not self.verify_input(i):
                 return False
@@ -388,7 +398,7 @@ class Tx:
         sig = der + SIGHASH_ALL.to_bytes(1, 'big')
         # calculate the sec
         sec = private_key.point.sec()
-        # initialize a new script with [sig, sec] as the elements
+        # initialize a new script with [sig, sec] as the instructions
         script_sig = Script([sig, sec])
         # change input's script_sig to new script
         self.tx_ins[input_index].script_sig = script_sig
@@ -417,15 +427,14 @@ class Tx:
         # if this is NOT a coinbase transaction, return None
         if not self.is_coinbase():
             return None
-        # grab the first input
-        first_input = self.tx_ins[0]
-        # grab the first instruction of the script_sig (.script_sig.instructions[0])
-        first_instruction = first_input.script_sig.instructions[0]
-        # convert the first instruction from little endian to int
+        # grab the first instruction
+        first_instruction = self.tx_ins[0].script_sig.instructions[0]
+        # convert the instruction from little endian to int
         return little_endian_to_int(first_instruction)
 
 
 class TxIn:
+
     def __init__(self, prev_tx, prev_index, script_sig=None, sequence=0xffffffff):
         self.prev_tx = prev_tx
         self.prev_index = prev_index
@@ -528,7 +537,7 @@ class TxOut:
 
 
 class TxTest(TestCase):
-    cache_file = 'tx.cache'
+    cache_file = '../tx.cache'
 
     @classmethod
     def setUpClass(cls):
@@ -609,9 +618,7 @@ class TxTest(TestCase):
         self.assertEqual(tx.fee(), 140500)
 
     def test_sig_hash(self):
-        raw_tx = bytes.fromhex('0100000001813f79011acb80925dfe69b3def355fe914bd1d96a3f5f71bf8303c6a989c7d1000000006b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278afeffffff02a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac99c39800000000001976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac19430600')
-        stream = BytesIO(raw_tx)
-        tx = Tx.parse(stream)
+        tx = TxFetcher.fetch('452c629d67e41baec3ac6f04fe744b4b9617f8f859c63b3002f8684e7a4fee03')
         want = int('27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6', 16)
         self.assertEqual(tx.sig_hash(0), want)
 
@@ -643,17 +650,11 @@ class TxTest(TestCase):
 
     def test_sign_input(self):
         private_key = PrivateKey(secret=8675309)
-        tx_ins = []
-        prev_tx = bytes.fromhex('0025bc3c0fa8b7eb55b9437fdbd016870d18e0df0ace7bc9864efc38414147c8')
-        tx_ins.append(TxIn(prev_tx, 0))
-        tx_outs = []
-        h160 = decode_base58('mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2')
-        tx_outs.append(TxOut(amount=int(0.99 * 100000000), script_pubkey=p2pkh_script(h160)))
-        h160 = decode_base58('mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf')
-        tx_outs.append(TxOut(amount=int(0.1 * 100000000), script_pubkey=p2pkh_script(h160)))
-
-        tx = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-        self.assertTrue(tx.sign_input(0, private_key))
+        stream = BytesIO(bytes.fromhex('010000000199a24308080ab26e6fb65c4eccfadf76749bb5bfa8cb08f291320b3c21e56f0d0d00000000ffffffff02408af701000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac80969800000000001976a914507b27411ccf7f16f10297de6cef3f291623eddf88ac00000000'))
+        tx_obj = Tx.parse(stream, testnet=True)
+        self.assertTrue(tx_obj.sign_input(0, private_key))
+        want = '010000000199a24308080ab26e6fb65c4eccfadf76749bb5bfa8cb08f291320b3c21e56f0d0d0000006b4830450221008ed46aa2cf12d6d81065bfabe903670165b538f65ee9a3385e6327d80c66d3b502203124f804410527497329ec4715e18558082d489b218677bd029e7fa306a72236012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff02408af701000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac80969800000000001976a914507b27411ccf7f16f10297de6cef3f291623eddf88ac00000000'
+        self.assertEqual(tx_obj.serialize().hex(), want)
 
     def test_is_coinbase(self):
         raw_tx = bytes.fromhex('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff5e03d71b07254d696e656420627920416e74506f6f6c20626a31312f4542312f4144362f43205914293101fabe6d6d678e2c8c34afc36896e7d9402824ed38e856676ee94bfdb0c6c4bcd8b2e5666a0400000000000000c7270000a5e00e00ffffffff01faf20b58000000001976a914338c84849423992471bffb1a54a8d9b1d69dc28a88ac00000000')

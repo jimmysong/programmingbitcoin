@@ -10,8 +10,8 @@ from helper import (
     read_varint,
 )
 from op import (
-    op_hash160,
     op_equal,
+    op_hash160,
     op_verify,
     OP_CODE_FUNCTIONS,
     OP_CODE_NAMES,
@@ -30,8 +30,11 @@ def p2sh_script(h160):
 
 class Script:
 
-    def __init__(self, instructions):
-        self.instructions = instructions
+    def __init__(self, instructions=None):
+        if instructions is None:
+            self.instructions = []
+        else:
+            self.instructions = instructions
 
     def __repr__(self):
         result = ''
@@ -89,7 +92,6 @@ class Script:
                 # add the op_code to the list of instructions
                 instructions.append(op_code)
         if count != length:
-            print(Script(instructions))
             raise SyntaxError('parsing script failed')
         return cls(instructions)
 
@@ -209,12 +211,12 @@ class Script:
     def address(self, testnet=False):
         '''Returns the address corresponding to the script'''
         if self.is_p2pkh_script_pubkey():  # p2pkh
-            # hash160 is the 3rd element
+            # hash160 is the 3rd instruction
             h160 = self.instructions[2]
             # convert to p2pkh address using h160_to_p2pkh_address (remember testnet)
             return h160_to_p2pkh_address(h160, testnet)
         elif self.is_p2sh_script_pubkey():  # p2sh
-            # hash160 is the 2nd element
+            # hash160 is the 2nd instruction
             h160 = self.instructions[1]
             # convert to p2sh address using h160_to_p2sh_address (remember testnet)
             return h160_to_p2sh_address(h160, testnet)

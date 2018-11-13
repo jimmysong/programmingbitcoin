@@ -8,8 +8,8 @@ from helper import (
     read_varint,
 )
 from op import (
-    op_hash160,
     op_equal,
+    op_hash160,
     op_verify,
     OP_CODE_FUNCTIONS,
     OP_CODE_NAMES,
@@ -28,8 +28,11 @@ def p2sh_script(h160):
 
 class Script:
 
-    def __init__(self, instructions):
-        self.instructions = instructions
+    def __init__(self, instructions=None):
+        if instructions is None:
+            self.instructions = []
+        else:
+            self.instructions = instructions
 
     def __repr__(self):
         result = ''
@@ -87,7 +90,6 @@ class Script:
                 # add the op_code to the list of instructions
                 instructions.append(op_code)
         if count != length:
-            print(Script(instructions))
             raise SyntaxError('parsing script failed')
         return cls(instructions)
 

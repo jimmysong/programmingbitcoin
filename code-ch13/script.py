@@ -200,6 +200,7 @@ class Script:
                         print('bad p2sh h160')
                         return False
                     # hashes match! now add the RedeemScript
+                    redeem_script = encode_varint(len(instruction)) + instruction
                     stream = BytesIO(redeem_script)
                     instructions.extend(Script.parse(stream).instructions)
                 # witness program version 0 rule. if stack instructions are:
@@ -263,19 +264,16 @@ class Script:
 
     def address(self, testnet=False):
         '''Returns the address corresponding to the script'''
-        # if p2pkh
         if self.is_p2pkh_script_pubkey():  # p2pkh
             # hash160 is the 3rd instruction
             h160 = self.instructions[2]
             # convert to p2pkh address using h160_to_p2pkh_address (remember testnet)
             return h160_to_p2pkh_address(h160, testnet)
-        # if p2sh
         elif self.is_p2sh_script_pubkey():  # p2sh
             # hash160 is the 2nd instruction
             h160 = self.instructions[1]
             # convert to p2sh address using h160_to_p2sh_address (remember testnet)
             return h160_to_p2sh_address(h160, testnet)
-        # raise a ValueError
         raise ValueError('Unknown ScriptPubKey')
 
 

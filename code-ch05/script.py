@@ -15,8 +15,11 @@ from op import (
 
 class Script:
 
-    def __init__(self, instructions):
-        self.instructions = instructions
+    def __init__(self, instructions=None):
+        if instructions is None:
+            self.instructions = []
+        else:
+            self.instructions = instructions
 
     def __repr__(self):
         result = ''
