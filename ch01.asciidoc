@@ -264,7 +264,7 @@ and so on.
 
 ==== Exercise {counter:exercise}
 
-Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
+Solve these problems in F~59~ (assume all +'s here are +~f~ and -`s here -~f~)
 
 . 44+33
 . 9-29
