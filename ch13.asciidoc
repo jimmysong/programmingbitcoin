@@ -281,7 +281,7 @@ class Tx:
                     result += encode_varint(len(item)) + item
         result += int_to_little_endian(self.locktime, 4)
         return result
----
+----
 <1> What used to be called `serialize` is now `serialize_legacy`.
 <2> The segwit serialization needs the markers here.
 <3> The witness is serialized at the end.
