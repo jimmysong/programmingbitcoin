@@ -58,7 +58,7 @@ class NetworkEnvelope:
         command = command.strip(b'\x00')
         # payload length 4 bytes, little endian
         payload_length = little_endian_to_int(s.read(4))
-        # checksum 4 bytes, first four of double-sha256 of payload
+        # checksum 4 bytes, first four of hash256 of payload
         checksum = s.read(4)
         # payload is of length payload_length
         payload = s.read(payload_length)
@@ -77,7 +77,7 @@ class NetworkEnvelope:
         result += self.command + b'\x00' * (12 - len(self.command))
         # payload length 4 bytes, little endian
         result += int_to_little_endian(len(self.payload), 4)
-        # checksum 4 bytes, first four of double-sha256 of payload
+        # checksum 4 bytes, first four of hash256 of payload
         result += hash256(self.payload)[:4]
         # payload
         result += self.payload
@@ -266,7 +266,14 @@ class GetDataMessage:
         self.data.append((data_type, identifier))
 
     def serialize(self):
-        raise NotImplementedError
+        # start with the number of items as a varint
+        result = encode_varint(len(self.data))
+        for data_type, identifier in self.data:
+            # data type is 4 bytes little endian
+            result += int_to_little_endian(data_type, 4)
+            # identifier needs to be in little endian
+            result += identifier[::-1]
+        return result
 
 
 class GetDataMessageTest(TestCase):

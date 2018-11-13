@@ -27,6 +27,10 @@ def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
 
+def sha256(s):
+    return hashlib.sha256(s).digest()
+
+
 def encode_base58(s):
     # determine how many 0 bytes (b'\x00') s starts with
     count = 0
