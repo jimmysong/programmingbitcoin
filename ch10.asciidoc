@@ -244,7 +244,6 @@ Now that we have a node, we can now handshake with another node.
 ...         verack_received = True
 ...     else:
 ...         version_received = True
-...         node.send(b'verack', b''])
 ...
 ----
 <1> The server in this example is something I have set up. You can find other IP addresses for both mainnet and testnet at https://bitnodes.earn.com/api/
