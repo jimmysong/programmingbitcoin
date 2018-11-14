@@ -238,7 +238,7 @@ Now that we have a node, we can now handshake with another node.
 >>> node.send(version_message.command, version_message.serialize())  # <3>
 >>> verack_received = False
 >>> version_received = False
->>> while not verack_received and not version_received:  # <4>
+>>> while not verack_received or not version_received:  # <4>
 ...     envelope = node.wait_for_commands([b'verack', b'version'])  # <5>
 ...     if envelope.commend == b'verack':
 ...         verack_received = True
