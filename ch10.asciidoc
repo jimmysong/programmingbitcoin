@@ -240,7 +240,7 @@ Now that we have a node, we can now handshake with another node.
 >>> version_received = False
 >>> while not verack_received or not version_received:  # <4>
 ...     envelope = node.wait_for_commands([b'verack', b'version'])  # <5>
-...     if envelope.commend == b'verack':
+...     if envelope.command == b'verack':
 ...         verack_received = True
 ...     else:
 ...         version_received = True
