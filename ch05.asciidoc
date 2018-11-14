@@ -171,16 +171,16 @@ def encode_varint(i):
 
 ====
 
-Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
+Each input contains 4 fields, the first two which point to the previous transaction output and two more that define how it can be spent. These are as follows:
 
-* Previous Transaction ID
+* Previous transaction ID
 * Previous transaction index
 * ScriptSig
 * Sequence
 
-As explained above, each input is actually a previous transaction's output. The previous transaction id is the `hash256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is very, very small. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transactio* that we're spending.
+As explained above, each input is actually a previous transaction's output. The previous transaction id is the `hash256` of the previous transaction's contents *in little endian order*. This uniquely defines the previous transaction as the probability of a hash collision is very, very small. As we'll see below, each transaction has to have at least 1 output, but may have many. Thus, we need to define exactly which output *within a transaction* that we're spending.
 
-We will note here that the transaction id is 32 bytes and that the transaction index is 4 bytes. Both are in little-endian order
+We will note here that the transaction id is 32 bytes and that the transaction index is 4 bytes. Both are in little-endian order.
 
 ScriptSig has to do with Bitcoin's smart contract language Script, and will be discussed more thoroughly in chapter 6. For now, think of ScriptSig as opening a lock box. Something that can only be done by the owner of the transaction output. The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far. A variable-length field requires us to define exactly how long it will be which is why the field is preceded by a varint telling us how long the field is.
 
@@ -414,7 +414,7 @@ We can now write methods to get the previous transaction output's amount and scr
 ----
 
     def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash on libbitcoin server
+        '''Get the output value by looking up the tx hash on libbitcoin server
         Returns the amount in satoshi
         '''
         tx = self.fetch_tx(testnet=testnet)
