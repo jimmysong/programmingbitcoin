@@ -173,8 +173,8 @@ def calculate_new_bits(previous_bits, time_differential):
 
 
 def merkle_parent(hash1, hash2):
-    '''Takes the binary hashes and calculates the double-sha256'''
-    # return the double-sha256 of hash1 + hash2
+    '''Takes the binary hashes and calculates the hash256'''
+    # return the hash256 of hash1 + hash2
     return hash256(hash1 + hash2)
 
 

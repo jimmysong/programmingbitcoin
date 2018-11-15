@@ -300,7 +300,7 @@ By taking the SEC format from 33 bytes to 20 bytes, we can shorten the address s
 1. For mainnet addresses, start with the prefix 0x00, for testnet 0x6f
 2. Take the SEC format (compressed or uncompressed) and do a SHA256 operation followed by the RIPEMD160 hash operation.
 3. combine the prefix from #1 and resulting hash from #2
-4. Do a double SHA256 of the result from #3 and get the first 4 bytes.
+4. Do a hash256 of the result from #3 and get the first 4 bytes.
 5. Take the combination of #3 and #4 and encode in Base58.
 
 Step 4 of this process is called the checksum. We can do steps 4 and 5 in one go this way:
@@ -360,7 +360,7 @@ Here is how the WIF format is created:
 2. Encode the secret in 32-byte big-endian.
 3. If the sec format used for the public key address was compressed add a suffix of 0x01. 
 4. Combine the prefix from #1, serialized secret from #2 and suffix from #3
-5. Do a double SHA256 of the result from #4 and get the first 4 bytes.
+5. Do a hash256 of the result from #4 and get the first 4 bytes.
 6. Take the combination of #4 and #5 and encode in Base58.
  
 We can now create the wif method on the PrivateKey class.

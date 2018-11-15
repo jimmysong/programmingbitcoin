@@ -711,7 +711,7 @@ It's worth mentioning again, make sure you're using truly random numbers for `k`
 
 Generally, signatures sign some fixed-length value (our "contract"), in our case something that's 32 bytes. The fact that 32 bytes is 256 bits is not a coincidence as the thing we're signing needs to be a scalar for G.
 
-In order to guarantee that the thing we're signing is 32 bytes, we hash the document first. In Bitcoin, the hashing function is double-sha256. This guarantees the thing that we're signing is exactly 32 bytes. We will call the result of the hash, z.
+In order to guarantee that the thing we're signing is 32 bytes, we hash the document first. In Bitcoin, the hashing function is hash256. This guarantees the thing that we're signing is exactly 32 bytes. We will call the result of the hash, z.
 
 The actual signature that we are verifying has two components, (r, s). The r is as above, it's the x-coordinate of some point R that we'll come back to. s is going to be defined as this:
 

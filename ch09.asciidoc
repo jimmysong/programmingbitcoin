@@ -313,7 +313,7 @@ Write the difficulty method for the Block class
 
 ==== Checking that the Proof-of-Work is sufficient
 
-We already learned that proof-of-work can be calculated by computing the double-sha256 of the block header and interpreting this as a little-endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
+We already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a little-endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
 
 ==== Exercise {counter:exercise}
 

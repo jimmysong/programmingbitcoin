@@ -61,10 +61,10 @@ class Block:
         return result
 
     def hash(self):
-        '''Returns the double-sha256 interpreted little endian of the block'''
+        '''Returns the hash256 interpreted little endian of the block'''
         # serialize
         s = self.serialize()
-        # double-sha256
+        # hash256
         sha = hash256(s)
         # reverse
         return sha[::-1]

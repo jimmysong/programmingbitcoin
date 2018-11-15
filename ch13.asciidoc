@@ -27,7 +27,7 @@ Transaction Malleability is the ability to change the transaction's ID without a
 
 Malleability of the ID turns out to be an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network. A malleable transaction ID makes creating the Lightning Network much more difficult, so fixing malleability was a priority.
 
-The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the double-sha256 of the transaction itself. Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
+The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The txid is simply the hash256 of the transaction itself. Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
 
 The one field that does allow for some manipulation without invalidating the Signature is the ScriptSig field on each input. The ScriptSig is emptied before creating the signature hash (see Chapter 7), so changing the ScriptSig typically does not invalidate the signature. Also, as we learned in Chapter 3, signatures contain a random component. This means that two different ScriptSigs can essentially mean the same thing.
 

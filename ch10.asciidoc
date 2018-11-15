@@ -26,7 +26,7 @@ The next 12 bytes define the command, or what the payload actually carries. Ther
 
 The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the field is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB, though the reference client rejects any payloads over 32MB. Note the number is interpreted in little-endian, so in our case here, that is 101 bytes.
 
-The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the double-sha256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and double-sha256 has none. That said, the hash function is common in the rest of the protocol and is thus used here.
+The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the hash256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and hash256 has none. That said, the hash function is common in the rest of the protocol and is thus used here.
 
 The code to handle network messages requires us to create a new class:
 
