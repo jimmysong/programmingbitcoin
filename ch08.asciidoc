@@ -56,7 +56,7 @@ image::multisig8.png[Bare Multisig End]
 
 [Note]
 .OP_CHECKMULTISIG Off-by-one Bug
-----
+====
 The elements consumed by OP_CHECKMULTISIG are supposed to be:
 
 m, m different signatures, n, n different pubkeys.
@@ -64,7 +64,7 @@ m, m different signatures, n, n different pubkeys.
 The number of elements consumed should be 2 (m and n themselves) + m (signatures) + n (pubkeys). Unfortunately, the OP code actually consumes 1 more element than the m+n+2 that it's supposed to. OP_CHECKMULTISIG consumes m+n+3, so the extra element is added in order to not cause a failure. The OP code does nothing with that extra element and that extra element can be anything.
 
 As a way to combat malleabilty, however, most nodes on the Bitcoin network will not relay the transaction unless that extra element is OP_0. Note that if we had m+n+2 elements, that OP_CHECKMULTISIG will just fail as there are not enough elements to be consumed and the transaction will be invalid.
-----
+====
 
 === Coding OP_CHECKMULTISIG
 
@@ -139,7 +139,7 @@ This is a ScriptPubKey for a Bare Multisig. What we need to do to convert this t
 .Pay-to-script-hash (p2sh) ScriptPubKey
 image::p2sh3.png[p2sh ScriptPubKey]
 
-The hash here is the hash of the RedeemScript, or what was previously the ScriptPubKey. We've essentially compressed the ScriptPubKey by taking the Hash160 of the RedeemScript.
+The hash digest here is the hash of the RedeemScript, or what was previously the ScriptPubKey. We've essentially compressed the ScriptPubKey by taking the Hash160 of the RedeemScript.
 
 Creating the ScriptSig for a p2sh script involves not only revealing the RedeemScript, but also unlocking the RedeemScript. At this point, you might wonder, where is the RedeemScript stored? The RedeemScript is not on the blockchain until actual redemption, so it must be stored by the creator of the pay-to-script-hash address. If the RedeemScript is lost and cannot be reconstructed, the funds are lost, so it's very important to keep track of it!
 
@@ -164,7 +164,7 @@ Note that the OP_0 needs to be there because of the OP_CHECKMULTISIG bug. The ke
 .p2sh pattern that executes the special rule
 image::p2sh1.png[p2sh Pattern]
 
-Upon execution of this sequence, if the result is 1, the RedeemScript is put in for the Script processing. In other words, if we reveal a RedeemScript that hashes to the hash in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead. We are essentially hashing the script that locks the funds and putting that into the blockchain instead of the script itself.
+Upon execution of this sequence, if the result is 1, the RedeemScript is put in for the Script processing. In other words, if we reveal a RedeemScript whose hashes to the hash in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead. We are essentially hashing the script that locks the funds and putting that into the blockchain instead of the script itself.
 
 Let's go through exactly how this works. We'll start with the script elements to process like this:
 
