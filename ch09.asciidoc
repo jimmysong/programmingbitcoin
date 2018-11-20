@@ -15,7 +15,7 @@ Bitcoin finds a middle ground between these extremes by settling every 10 minute
 
 === Coinbase Transactions
 
-We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US. It is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by the miner and include all the transaction fees of the other transactions in the block.
+We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US. It is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by whomever the mining entity designates and include all the transaction fees of the other transactions in the block.
 
 Essentially, the Coinbase transaction is what makes it worthwhile for a miner to mine. Here's what a Coinbase transaction looks like:
 
@@ -59,7 +59,7 @@ This was the headline from The Times newspaper on January 3, 2009. This proves t
 
 ==== BIP0034
 
-One of the rules for a Coinbase Transaction was added in BIP0034. This was due to a network problem where miners were using the *same* Coinbase Transaction for different blocks. This was possible in the early days as the 32-bit nonce space was enough to mine blocks. 
+One of the rules for a Coinbase Transaction was added in BIP0034. This was due to a network problem where miners were using the *same* Coinbase Transaction for different blocks. This was possible in the early days as the 32-bit nonce space was enough to mine blocks and is possible today if extra bits from the version field are used.
 
 The Coinbase Transaction being the same byte-wise means that the transaction id is also the same as the hash256 of the transaction is deterministic. To combat this, the Core developers soft-forked in a rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
 
@@ -76,7 +76,7 @@ The height must be interpreted as a little-endian integer and must equal the hei
 465879
 ----
 
-We now know which block the transaction was in! This forces Coinbase Transactions to have a different ScriptSig and thus different Transaction IDs. This rule continues to be needed as optimizations like ASICBoost allow the possibility of the same Coinbase Transaction IDs if BIP0034 wasn't a rule.
+We now know which block the transaction was supposed to be in! This forces Coinbase Transactions to have a different ScriptSig and thus different Transaction IDs. This rule continues to be needed as optimizations like ASICBoost allow the possibility of the same Coinbase Transaction IDs if BIP0034 wasn't a rule.
 
 ==== Exercise {counter:exercise}
 
@@ -141,7 +141,7 @@ The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header t
 
 This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
 
-BIP9 requires that 95% of blocks to signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. The only soft forks to utilize BIP9 as of this writing have been BIP68/BIP112/BIP113 (OP_CHECKSEQUENCEVERIFY and related changes), BIP141 (segwit) and BIP91 (reducing threshold for segwit). These BIPs used bits 0, 1 and 4 for signaling respectively.
+BIP9 requires that 95% of blocks to signal readiness in a given 2016 block period before the soft fork feature gets activated on the network. Soft forks which used BIP9 as of this writing have been BIP68/BIP112/BIP113 (OP_CHECKSEQUENCEVERIFY and related changes), BIP141 (segwit) and BIP91 (reducing threshold for segwit). These BIPs used bits 0, 1 and 4 for signaling respectively. BIP91 was a little bit of a cheat in that it used an 80% threshold and used a smaller block period.
 
 Checking for these features is relatively straightforward:
 
@@ -184,7 +184,7 @@ Bitcoin's timestamp field in the block header is 32 bits. This means that once t
 
 Many people mistakenly believe that we only have until 68 years after 1970, or 2038, but that's only when the field is a signed integer (2^31^ seconds is 68 years), so we get the benefit of that extra bit, giving us until 2106.
 
-In 2106, the block header will need to roll over or use some sort of soft-fork as the timestamp in the block header will no longer continuously increase (due to being reset to 0).
+In 2106, the block header will need some sort of fork as the timestamp in the block header will no longer continuously increase (due to being reset to 0).
 ====
 
 === Bits
@@ -232,7 +232,7 @@ What miners can then do is to change the Coinbase transaction, which then change
 
 ==== Target
 
-Proof-of-work is the requirement that every block in Bitcoin must be below a certain *target*. Target is a 256-bit number that is computed directly from the bits field. The target is very small compared to a random 256-bit number.
+Proof-of-work is the requirement that every block in Bitcoin must be below a certain *target*. Target is a 256-bit number that is computed directly from the bits field. The target is very small compared to an average 256-bit number.
 
 `e93c0118`
 
@@ -397,5 +397,5 @@ Write the calculate_new_bits function.
 
 === Conclusion
 
-We've learned how to calculate proof of work, how to calculate the difficulty adjustment for a block in addition to learning about Coinbase Transactions. We'll now move onto the one field we haven't really covered, which is the merkle root in the next chapter.
+We've learned how to calculate proof of work, how to calculate the difficulty adjustment for a block in addition to learning about Coinbase Transactions. We'll now move onto networking on our way to the one field we haven't really covered, which is the merkle root in the next chapter.
 

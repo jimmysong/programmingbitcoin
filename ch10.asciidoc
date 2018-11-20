@@ -137,7 +137,8 @@ The network handshake for two nodes is how node communication is established. It
 
  * A wants to connect to B and sends the version message.
  * B receives the version message and responds with the verack message and sends its own version message.
- * A receives the version and verack messages and continues communication
+ * A receives the version and verack messages and sends back a verack message
+ * B receives the verack message and continues communication
 
 Once the handshake is finished, A and B can communicate however they want. Note that there is no authentication here and it's up to the nodes to verify all data that come in themselves. A node sending a bad tx or block, for example, can expect to get banned by other nodes.
 

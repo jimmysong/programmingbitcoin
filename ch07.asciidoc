@@ -71,11 +71,11 @@ If the fee is negative, we know that the `output_sum` is greater than the `input
 [NOTE]
 .Value Overflow Incident
 ====
-In block 74638, there was a transaction that created 184 Billion new bitcoins. This is due to the fact that in C++, the value field is actually an integer and not an unsigned integer. That is, the value could be negative!
+Back in 2010, there was a transaction that created 184 Billion new bitcoins. This is due to the fact that in C++, the value field is actually an integer and not an unsigned integer. That is, the value could be negative!
 
 The clever transaction passed all the checks with regard to fees and not creating new bitcoins, but only because the amount overflowed past the maximum number. Note 2^64^ is roughly 1.84 * 10^19^ satoshis, which is 184 Billion Bitcoins. The fee was negative by enough that the C++ code was essentially tricked into believing that the fee was actually positive by 0.1 BTC!
 
-The vulnerability is detailed in CVE-2010-5139 and was patched via soft-fork in Bitcoin 0.3.11.
+The vulnerability is detailed in CVE-2010-5139 and was patched via soft-fork in Bitcoin 0.3.11. The transaction and the extra bitcoins it created was invalidated retroactively and a new block was mined to replace it.
 ====
 
 === Checking the Signature
@@ -117,7 +117,7 @@ image::validation3.png[Validation Step 2]
 
 ==== Step 3: Append the hash type
 
-Lastly, we add a 4-byte hash type to the end. This is to specify what the signature is authorizing. The signature can authorize that this input has to go with all the other inputs and outputs (SIGHASH_ALL), go with a specific output (SIGHASH_SINGLE) or go with none of the outputs (SIGHASH_NONE). The latter two have some theoretical use cases, but in practice, almost every transaction is signed with SIGHASH_ALL. That is, the entire transaction has to go through, or the input signature is invalid.
+Lastly, we add a 4-byte hash type to the end. This is to specify what the signature is authorizing. The signature can authorize that this input has to go with all the other inputs and outputs (SIGHASH_ALL), go with a specific output (SIGHASH_SINGLE) or go with any output whatsoever (SIGHASH_NONE). The latter two have some theoretical use cases, but in practice, almost every transaction is signed with SIGHASH_ALL. That is, the final transaction must have the exact outputs that were signed, or the input signature is invalid.
 
 The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in little-endian over 4 bytes, which makes the transaction look like this:
 

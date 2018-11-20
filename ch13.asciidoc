@@ -12,17 +12,17 @@ As a brief overview, Segwit did a multitude of things:
 
 * Block size increase
 * Transaction Malleability Fix
-* Clear upgrade path
+* Clean script upgrade path
 
 It's not entirely obvious what segwit is, without looking at how it's implemented. We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
 
 === Pay to Witness Pubkey Hash
 
-Pay to witness pubkey hash (p2wpkh) is one of four new types of script that coins can be sent to. This is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the "unlocking" data elsewhere. The rearrangement is to fix transaction malleability.
+Pay to witness pubkey hash (p2wpkh) is one of four types of scripts defined by Segwit in BIP0141 and BIP0143. This is a smart contract that acts a lot like pay-to-pubkey-hash, but has some of the "unlocking" data elsewhere. The rearrangement is to fix transaction malleability.
 
 ==== Transaction Malleability
 
-Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was not allowing withdrawals back in 2013. This turned out not to be the case, but the term has since stuck.
+Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was not allowing withdrawals back in 2013.
 
 Malleability of the ID turns out to be an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network. A malleable transaction ID makes creating the Lightning Network much more difficult, so fixing malleability was a priority.
 
@@ -147,7 +147,7 @@ The rest of the processing is exactly the same as p2pkh (Chapter 6). Assuming th
 .p2sh-p2wpkh End
 image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
 
-As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would stop once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would stop at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do the complete validation, including checking the signature and pubkey.
+As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would consider the script valid once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would consider the script valid at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do the complete validation, including checking the signature and pubkey.
 
 ==== Coding p2wpkh and p2sh-p2wpkh
 
@@ -197,7 +197,7 @@ class Tx:
         return cls(version, inputs, outputs, locktime, testnet=testnet, segwit=False)
 ----
 <1> To determine whether we have a segwit transaction or not, we look at the fifth byte. The first four are version, the fifth is the segwit marker.
-<2> The fifth byte being 0 means that it's segwit. We use different parsers depending on whether it's segwit.
+<2> The fifth byte being 0 is how we tell that this transaction is Segwit (this is not fool-proof, but is what we're going to use). We use different parsers depending on whether it's segwit.
 <3> We have to put the stream back to the position before we examined the first 5 bytes.
 
 We've essentially moved the old `parse` method to be `parse_legacy`.

@@ -6,9 +6,15 @@
 == Pay To Script Hash
 
 [.lead]
-So far, we've been doing single-key transactions, ones where only a single private key has to sign in order to disperse the funds. But what if we wanted something a little more complicated? A company that has $100 million in Bitcoin might not want all of the funds in a single public key as that key can be stolen by an employee. Loss of a single key would mean all funds would then be lost. What can we do?
+So far, we've been doing single-key transactions, ones where only a single private key has to sign in order to disperse the funds. But what if we wanted something a little more complicated? A company that has $100 million in Bitcoin might not want all of the funds in a single private key as that key can be stolen by an employee. Loss of a single key would mean all funds would then be lost. What can we do?
 
-The solution is multi-sig, or multiple signatures. This was built into Bitcoin from the beginning, but was clunky at first and so wasn't used. In fact, as we'll discover, it turns out Satoshi never really tested OP_CHECKMULTISIG as it has a very obvious off-by-one error (see OP_CHECKMULTISIG Off-by-one Bug later in the chapter). The bug has had to stay in the protocol as fixing it would require a hard fork.
+The solution is multi-sig, or multiple signatures. This was built into Bitcoin from the beginning, but was clunky at first and so wasn't used. In fact, as we'll discover, it turns out Satoshi never really tested OP_CHECKMULTISIG as it has a very obvious off-by-one error (see OP_CHECKMULTISIG Off-by-one Bug later in the chapter). The bug has had to stay in the protocol as fixing it would require a hard fork. In addition, it's possible that certain multisig transactions that haven't been broadcast yet would be invalidated, which could cause inadvertant loss of funds.
+
+[NOTE]
+.Multiple Private Keys to a Single Aggregated Public Key
+====
+It is possible to "split" a key into multiple private keys and use an interactive method to aggregate signatures, but this is not a common practice. Schnorr signatures will make this easier in the future.
+====
 
 === Bare Multisig
 
@@ -19,7 +25,7 @@ The transaction is called "bare" multisig because it's a really long ScriptPubKe
 .Bare Multisig ScriptPubKey
 image::multisig1.png[Bare Multisig ScriptPubKey]
 
-This is a reasonably small multisig, and it's already really long. Note that p2pkh is only 25 bytes whereas this one is 101 bytes, and this is a 1 of 2! Here's what the ScriptSig looks like:
+This is a reasonably small multisig, and it's already really long. Note that p2pkh is only 25 bytes whereas this one is 101 bytes (though obviously, compressed SEC format would reduce it some), and this is a 1 of 2! Here's what the ScriptSig looks like:
 
 .Bare Multisig ScriptSig
 image::multisig2.png[Bare Multisig ScriptSig]
@@ -29,7 +35,7 @@ We only need 1 signature for this 1-of-2 multisig, so this is a lot shorter, tho
 .Bare Multisig Combined. Note m and are something between 1 and 16 inclusive.
 image::multisig3.png[Bare Multisig Combination]
 
-We've generalized here so we can see what a m-of-n multisig would look like. Note the OP_0 at the top. The script stack, then starts like this:
+We've generalized here so we can see what a m-of-n multisig would look like (m and n can be anything from 1 to 75). Note the OP_0 at the top. The script stack, then starts like this:
 
 .Bare Multisig Start
 image::multisig4.png[Bare Multisig Start]
@@ -94,7 +100,7 @@ def op_checkmultisig(stack, z):
         return False
     return True
 ----
-<1> Each DER signature is assumed to be using SIGHASH_ALL
+<1> Each DER signature is assumed to be using SIGHASH_ALL. This isn't required, but is generally the case on the network as of this writing.
 <2> We have to take care of the off-by-one error by popping off the stack and not doing anything with the element.
 <3> This is the part that you will need to do for the next exercise
 
@@ -116,7 +122,7 @@ In order to combat these problems, pay-to-script-hash (p2sh) was born.
 
 === Pay to Script Hash
 
-Pay to Script Hash is a general solution to the long address/ScriptPubKey problem. It's possible to have a more complicated script than bare multisig and there's no real way to compress those into addresses, either. To make this work, we have to be able to take the hash of a bunch of script elements and then somehow reveal the pre-image script elements later. This is at the heart of the design around pay-to-script-hash.
+Pay to Script Hash is a general solution to the long address/ScriptPubKey problem. It's possible to have a more complicated script than bare multisig and there's no real way to use those as addresses either. To make this work, we have to be able to take the hash of a bunch of script elements and then somehow reveal the pre-image script elements later. This is at the heart of the design around pay-to-script-hash.
 
 Pay to script hash was introduced in 2011 to a lot of controversy. There were multiple proposals, but as we'll see, pay-to-script-hash (aka p2sh) is kludgy, but works.
 
@@ -218,7 +224,7 @@ image::op_eval.png[OP_EVAL]
 
 OP_EVAL would consume the top element of the script and put the interpreted SCRIPT elements into the Script column.
 
-Unfortunately, this much more elegant solution comes with an unwanted side-effect, namely Turing-completeness. Turing completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see Chapter 6). Thus, the more hacky, but less vulnerable option of special-casing was chosen as part of BIP0016. This was implemented in 2011 and continues to be a part of the network today.
+Unfortunately, this much more elegant solution comes with an unwanted side-effect, namely Turing-completeness. Turing completeness is undesirable as it not only makes the security of a smart contract much harder to guarantee (see Chapter 6). Thus, the more hacky, but less vulnerable option of special-casing was chosen as part of BIP0016. This was implemented in 2011 and continues to be a part of the network today.
 
 === Coding p2sh
 
@@ -268,7 +274,7 @@ We now need to special case the particular sequence of redeem_script, OP_HASH160
 
 ==== More complicated scripts
 
-The nice thing about p2sh is that the RedeemScript can be as long as the largest single element from OP_PUSHDATA2, which is 520 bytes. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO output by pushing the burden of remembering the script back to the user.
+The nice thing about p2sh is that the RedeemScript can be as long as the largest single element from OP_PUSHDATA2, which is 520 bytes. Multisig is just one possibility. You can have more complicated scripts that essentially say something like "2 of 3 of these keys or 5 of 7 of these other keys" and similar. The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO set size by pushing the burden of remembering the script back to the user.
 
 As we'll see in Chapter 13, p2sh will be used for backwards compatibility with Segwit.
 
@@ -372,4 +378,4 @@ Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh trans
 
 === Conclusion
 
-We've learned how p2sh works and how it's much easier to use, despite its clunkiness. We've covered Transactions for the last 4 chapters, we now turn to how they are grouped and that's Blocks.
+We've learned how p2sh works and how its addresses are much easier to use, despite its clunkiness. We've covered Transactions for the last 4 chapters, we now turn to how they are grouped and that's Blocks.

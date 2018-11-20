@@ -8,7 +8,7 @@
 [.lead]
 The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin. Locking is leaving some Bitcoins to someone else. Unlocking is spending some Bitcoins that have been left for you.
 
-In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what allows the elliptic curve cryptography (Chapter 3) to be evaluated within the transaction (Chapter 5). Script is the glue that makes transactions work with digital signatures. Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
+In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what allows the elliptic curve cryptography (Chapter 3) to be evaluated within the transaction (Chapter 5). Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
 
 === Mechanics of Script
 
@@ -32,7 +32,7 @@ The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) a
 
 === How Script works
 
-Script, as a language, operates by processing one instruction at a time. There are two possible types of instructions: elements and operations.
+Script, as a language, processes one instruction at a time on a stack of elements. There are two possible types of instructions: elements and operations.
 
 Elements are just data. They are byte strings of length 1 to 520. A typical element might be a der signature or a sec pubkey.
 
@@ -49,7 +49,7 @@ A typical operation might be something like OP_DUP, which will duplicate the top
 .OP_DUP duplicates the top element
 image::op_dup.png[OP_DUP]
 
-At the end of evaluating all the instructions, the top element of the stack must be non-zero for the Script to execute successfully. Having no elements on the stack or having the top element be zero would result in a failed execution. Failed execution generally means that the transaction which includes the unlocking Script is invalid and not accepted on the network.
+At the end of evaluating all the instructions, the top element of the stack must be non-zero for the Script to execute successfully. Having no elements on the stack or having the top element be zero would result in a failed execution. Failed execution means that the transaction which includes the unlocking Script is invalid and not accepted on the network.
 
 === Example Operations
 
@@ -126,7 +126,9 @@ Both ScriptPubKey and ScriptSig are parsed the same way. If the byte is between 
 ====
 You might be wondering what would happen if you had an element that's greater than 0x4b (75 in decimal). There are specific 3 specific OP codes for this, namely, OP_PUSHDATA1, OP_PUSHDATA2 and OP_PUSHDATA4. OP_PUSHDATA1 means that the next byte contains how many bytes we need to read for the element. OP_PUSHDATA2 means that the next 2 bytes contain how many bytes we need to read for the element. OP_PUSHDATA4 means that the next 4 bytes contain how many bytes we need to read for the element.
 
-Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use OP_PUSHDATA1, length of the element, element. For anything between 256 bytes and 520 bytes inclusive, we use OP_PUSHDATA2. Anything larger than 520 bytes is actually not allowed by consensus, so OP_PUSHDATA4 is unnecessary.
+Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use OP_PUSHDATA1 <length of the element> <element>. For anything between 256 bytes and 520 bytes inclusive, we use OP_PUSHDATA2. Anything larger than 520 bytes is actually not allowed by consensus, so OP_PUSHDATA4 is unnecessary.
+
+It is possible to encode a number below 76 using OP_PUSHDATA1 or a number below 256 using OP_PUSHDATA2 or even any number 520 and below using OP_PUSHDATA4. These are considered non-standard transactions, meaning most bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
 ====
 
 There are many more opcodes, which are coded in `op.py` and the full list can be found at http://wiki.bitcoin.it.
@@ -257,7 +259,7 @@ There are many types of standard scripts in Bitcoin including the following:
 * p2wpkh - Pay-to-witness-pubkey-hash
 * p2wsh - Pay-to-witness-script-hash
 
-Addresses are actually compressed ScriptPubKeys. Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKey. All of the above have a particular type of address format (base58, bech32) so people can pay to them.
+Addresses are data that fit into known script templates like that above. Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKey. All of the above have a particular type of address format (base58, bech32) so people can pay to them.
 
 To show exactly how all this works, we'll now take a look at the original script pay-to-pubkey (p2pk).
 
@@ -459,7 +461,7 @@ That said, the original use-case for p2pk was for IP-to-IP payments where IP add
 ****
 It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was using the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
 
-Only when Pieter Wuille discovered that the compressed SEC format existed in OpenSSL did its use in Bitcoin become more common.
+Only when Pieter Wuille discovered that the compressed SEC format existed in OpenSSL did it start being used in Bitcoin.
 ****
 
 Second, because the public keys are long, this causes a more subtle problem. The UTXO set becomes bigger since this large public key has to be kept around and indexed to see if it's spendable. This may require more resources on the part of nodes.
@@ -555,7 +557,7 @@ The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a ha
 
 === Scripts can be arbitrarily constructed
 
-Note that scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the bitcoins can be unlocked in any manner that you wish. The one limitation is that there is nothing that lets you do anything like loops due to the lack of Turing Completeness. Here is an example ScriptPubKey:
+Note that scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the bitcoins can be unlocked in any manner that you wish. Here is an example ScriptPubKey:
 
 .Example ScriptPubKey
 image::ex1.png[Example 1 ScriptPubKey]
@@ -615,7 +617,7 @@ image::exercise1.png[Exercise 3]
 
 The previous exercise was a bit of a cheat as OP_MUL is no longer allowed on the Bitcoin network. Version 0.3.5 of Bitcoin disabled a lot of different OP codes as anything that had even a little bit of potential to create vulnerabilties on the network were disabled.
 
-This is just as well since most of the functionality in Script is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. This is why Bitcoin is moving more towards simplifying the smart contract language and not expanding it (Scriptless Scripts, for example). Simplifying is a way to make Bitcoin more secure.
+This is just as well since most of the functionality in Script is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. Simplifying was a way to make Bitcoin more secure.
 
 This is in stark contrast to other projects which try to expand their smart contract languages, often increasing the attack surface along with the new features.
 

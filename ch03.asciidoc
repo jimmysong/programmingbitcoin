@@ -452,7 +452,7 @@ With $$__add__$$ and $$__rmul__$$, we can now start defining some more complicat
 
 While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. If the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
 
-But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of Elliptic Curve Cryptography depends on computers *not* being able to go through the entire space of the group.
+But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of Elliptic Curve Cryptography depends on computers *not* being able to go through the an appreciable fraction of the group.
 
 Any Elliptic Curve has to be defined with the following parameters:
 
@@ -491,7 +491,7 @@ Lastly, the curve itself is one that was published by Certicom, and is *not* a N
 
 A trillion (10^12^) computers doing a trillion computations every trillionth (10^-12^) of a second for a trillion years is still less than 10^56^ computations.
 
-Think of finding a private key this way. It is a billion times easier to pick a random atom in the Milky Way than to randomly pick the right private key in Bitcoin.
+Think of finding a private key this way. There are as many possible private keys in Bitcoin as there are atoms in a billion galaxies.
 ****
 
 ==== Working with secp256k1
@@ -632,9 +632,9 @@ This is the same technique we're using with signing and verification, except wha
 
 Ultimately this is going to be used in Transactions which will prove that the rightful owners of the secrets are spending the Bitcoins and not someone who doesn't know the secret.
 
-==== Forging the Target
+==== Inscribing the Target
 
-The forging of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
+The inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
 
 The secret in our case is `e` satisfying:
 
@@ -672,7 +672,7 @@ In signature/verification parlance, this is called the _signature hash_. A hash 
 
 u = z/s, v = r/s
 
-Since r is used in the calculation of u, we now have the tip of the arrow forged. We also have the intent of the shooter incorporated into v, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
+Since r is used in the calculation of u, we now have the tip of the arrow inscribed. We also have the intent of the shooter incorporated into v, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
 
 To make the equation work, we can calculate s:
 

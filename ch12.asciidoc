@@ -10,7 +10,7 @@ In the previous chapter we learned how to validate a Merkle Block. Another node 
 
 We could tell the other node our addresses (in reality, ScriptPubKeys). The other node can check for transactions that are relevant to these addresses, but that would be compromising our privacy. We wouldn't want to reveal, for example, that we have 1000 BTC to another node which can then figure out what IP address we're at. If they happen to be bad guys, perhaps they would try to take that BTC away from us. Privacy leaks are security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
 
-The solution is to tell the other node enough information to give us a _superset_ of all transactions we are interested in. To create this superset, we have to create something called a Bloom Filter
+The solution is to tell the other node enough information to give us a _superset_ of all transactions we are interested in. To create this superset, we create something called a Bloom Filter
 
 === What is a Bloom Filter?
 
@@ -108,10 +108,10 @@ This means that we can manipulate our Bloom Filter to have the optimum number of
 
 === BIP0037 Bloom Filters
 
-BIP0037 defines exactly how Bloom Filters are defined. As before, the things that we need to let the other node know about are:
+BIP0037 defines exactly how Bitcoin uses Bloom Filters. As before, the things that we need to let the other node know about are:
 
 1. The size of the bit field. We send this in bytes (8 bits per byte) and round up if we need to.
-2. We also send over how many hash functions we want to use along with a "tweak" to make each hash function unique and not reusable for anyone else.
+2. We also send over how many hash functions we want to use along with a "tweak" to be able to change our bloom filter if our filter hits too many items.
 3. Lastly, we need to send over the actual bit field that results from running the Bloom Filter over our items.
 
 While we could define lots of hash functions (sha256, keccak, ripemd, blake, etc), in practice, we only really use a single hash function with a different seed. This allows the implementation to be simpler. 
@@ -120,7 +120,7 @@ The hash function we use is called `murmur3`. Unlike sha256, murmur3 is not cryp
 
 `i*0xfba4c795 + tweak`
 
-The `fba4c795` number is a constant utilized for Bitcoin Bloom Filters and is used so the seed won't conflict with other seeds. `i` is 0 for the first hash function, 1 for the second, 2 for the third and so on. The `tweak` is something you can define to make the hash function not conflict with anyone else using BIP0037. These hash functions and the size of the bit field are enough to calculate the bit field we need to send over.
+The `fba4c795` number is a constant utilized for Bitcoin Bloom Filters and is used so the seed won't conflict with other seeds. `i` is 0 for the first hash function, 1 for the second, 2 for the third and so on. The `tweak` is something you can define to make the hash function filter in the right ratio. These hash functions and the size of the bit field are enough to calculate the bit field we need to send over.
 
 [source,python]
 ----

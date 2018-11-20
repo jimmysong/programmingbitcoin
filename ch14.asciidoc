@@ -12,9 +12,9 @@ Creating a wallet is a difficult task as securing private keys turns out to be v
 
 ==== Heirarchical Deterministic Wallets
 
-For privacy purposes, reusing addresses is very bad (see Chapter 7). That means we need to create lots of addresses. Unfortunately, storing a different secret for each address generated quickly becomes a security and backup nightmare. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
+For privacy purposes, reusing addresses is very bad (see Chapter 7). That means we need to create lots of addresses. Unfortunately, storing a different secret for each address generated can become a security and backup problem. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
 
-To combat this problem, Armory, an early Bitcoin wallet, originally came up with the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical Deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path. The specifications and test vectors are defined in the standard, so implementing your own HD wallet on testnet would be a great way to learn what Bitcoin development would be like.
+To combat this problem, Armory, an early Bitcoin wallet, first implemented the concept of deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical Deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path. The specifications and test vectors are defined in the standard, so implementing your own HD wallet on testnet would be a great way to learn what Bitcoin development would be like.
 
 Additionally, BIP0044 defines exactly what each layer of the BIP0032 heirarchy means and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies. Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better. Note that while many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and utilize their own standard (Electrum and Airbitz being two).
 
@@ -39,7 +39,7 @@ A large part of the Bitcoin ethic is in contributing back to the community. The 
 * https://github.com/richardkiss/pycoin - pycoin, a Python library for Bitcoin
 * https://github.com/bitcoinj/bitcoinj - BitcoinJ, a Java library for Bitcoin
 * https://github.com/bitcoinjs/bitcoinjs-lib - BitcoinJS, a Javascript library for Bitcoin
-* https://github.com/bitpay/insight - Insight, a Bitcoin block explorer written in NodeJS, maintained by BitPay
+
 
 Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas and so on.
 
@@ -61,7 +61,7 @@ A bitcoin-based shop of some kind is another project that helps you learn. This 
 
 ==== Utility Library
 
-A utility library like the one that's been built during the course of this book is another great way to learn more about Bitcoin. Writing the BIP0143 serialization of Segwit, for example, can be instructive in getting used to protocol programming. Porting the code from this book to another programming language would also be a great learning tool.
+A utility library like the one that's been built during the course of this book is another great way to learn more about Bitcoin. Writing the BIP0143 serialization for the z of Segwit, for example, can be instructive in getting used to protocol programming. Porting the code from this book to another programming language would also be a great learning tool.
 
 === Finding a Job
 

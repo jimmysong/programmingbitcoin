@@ -9,7 +9,7 @@ The one field that we didn't investigate much in the Chapter 9 is the Merkle Roo
 
 === Motivation
 
-For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 170GB, which is a lot more than many phones can store. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
+For a device that doesn't have much hard drive space, like your phone, it's hard to store the entire blockchain. As of this writing, the entire Bitcoin blockchain is around 200GB, which is a lot more than many phones can store. If the entire blockchain cannot be put on the phone, what else can we do? Is it possible to create a Bitcoin wallet on a phone without having all the data?
 
 For any wallet, there are two scenarios that we're concerned with:
 
@@ -180,7 +180,7 @@ class Block:
 ----
 <1> We now allow the transaction hashes to be set as part of the initialization of the block. The hashes would have to be in order.
 
-As a full node, if we are given all of the transaction hashes, we can now calculate the merkle root and check that the merkle root is what we expect.
+As a full node, if we are given all of the transactions, we can now calculate the merkle root and check that the merkle root is what we expect.
 
 ==== Exercise {counter:exercise}
 
