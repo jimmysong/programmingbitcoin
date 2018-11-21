@@ -21,9 +21,9 @@ Bitcoin has the digital equivalent of a contract in Script. Script is an intenti
 ====
 Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why Script doesn't allow for loops.
 
-There are a lot of reasons for this, but let's start with program execution. Anyone can create a Script program that every full node on the network executes this program. If Script were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network through what would be called a Denial of Service attack (DoS). A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
+There are a lot of reasons for this, but let's start with program execution. Anyone can create a Script program that every full node on the network executes. If Script were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network through what would be called a Denial of Service attack (DoS). A single script that has an infinite loop could take down Bitcoin! This would not be good, for obvious reasons and would be a large systematic vulnerabilty. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
 
-There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus easy to create behavior that's unintended, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money. This is not just theoretical, this was the major problem in the DAO which caused the Ethereum Classic hard fork.
+There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus it's easy to create unintended behavior, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract writer would lose money. This is not just theoretical, this was the major problem in the DAO which caused the Ethereum Classic hard fork.
 ====
 
 What you are required to do as part of a transaction is to assign Bitcoins to a *locking* Script. The locking Script is what's specified in ScriptPubKey (see chapter 5). Think of this as the lock box where some money is deposited which only a particular key can open. The money inside, of course, can only be accessed by someone with that key.
@@ -124,7 +124,7 @@ Both ScriptPubKey and ScriptSig are parsed the same way. If the byte is between 
 [NOTE]
 .Longer than 75-byte elements
 ====
-You might be wondering what would happen if you had an element that's greater than 0x4b (75 in decimal). There are specific 3 specific OP codes for this, namely, OP_PUSHDATA1, OP_PUSHDATA2 and OP_PUSHDATA4. OP_PUSHDATA1 means that the next byte contains how many bytes we need to read for the element. OP_PUSHDATA2 means that the next 2 bytes contain how many bytes we need to read for the element. OP_PUSHDATA4 means that the next 4 bytes contain how many bytes we need to read for the element.
+You might be wondering what would happen if you had an element that's greater than 0x4b (75 in decimal). There are 3 specific OP codes for this, namely, OP_PUSHDATA1, OP_PUSHDATA2 and OP_PUSHDATA4. OP_PUSHDATA1 means that the next byte contains how many bytes we need to read for the element. OP_PUSHDATA2 means that the next 2 bytes contain how many bytes we need to read for the element. OP_PUSHDATA4 means that the next 4 bytes contain how many bytes we need to read for the element.
 
 Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use OP_PUSHDATA1 <length of the element> <element>. For anything between 256 bytes and 520 bytes inclusive, we use OP_PUSHDATA2. Anything larger than 520 bytes is actually not allowed by consensus, so OP_PUSHDATA4 is unnecessary.
 
@@ -493,7 +493,7 @@ Given p2pkh is shorter and more secure, p2pk is no longer used much on the netwo
 
 === p2pkh
 
-Pay-to-pubkey-hash was used during early days of bitcoin, though not nearly as much as p2pk.
+Pay-to-pubkey-hash was used during the early days of bitcoin, though not nearly as much as p2pk.
 
 Once again, the lockbox where the bitcoins go is the job of the ScriptPubKey. The actual ScriptPubKey looks like this:
 
@@ -509,7 +509,7 @@ image::p2pkh2.png[P2PKH ScriptSig]
 
 As in p2pk, the ScriptSig has the DER signature. Unlike p2pk, however, the ScriptSig now also has the SEC pubkey. In essence, the pubkey has moved from ScriptPubKey to ScriptSig.
 
-The ScriptPubKey and ScriptSig combine to make a processing list of items that need processing that looks like this:
+The ScriptPubKey and ScriptSig combine to make a list of items for processing that looks like this:
 
 .p2pkh Combined
 image::p2pkh3.png[P2PKH Combination]
@@ -544,7 +544,7 @@ We are now at OP_EQUALVERIFY. What this op code does is it consumes the top two 
 .p2pkh Step 5
 image::p2pkh9.png[P2PKH Step 5]
 
-We are now at exactly where we were in during the OP_CHECKSIG part of processing p2pk. Once again, we assume that the signature is valid:
+We are now exactly where we were during the OP_CHECKSIG part of processing p2pk. Once again, we assume that the signature is valid:
 
 .p2pkh End
 image::p2pkh10.png[P2PKH End]

@@ -35,7 +35,7 @@ We only need 1 signature for this 1-of-2 multisig, so this is a lot shorter, tho
 .Bare Multisig Combined. Note m and are something between 1 and 16 inclusive.
 image::multisig3.png[Bare Multisig Combination]
 
-We've generalized here so we can see what a m-of-n multisig would look like (m and n can be anything from 1 to 75). Note the OP_0 at the top. The script stack, then starts like this:
+We've generalized here so we can see what a m-of-n multisig would look like (m and n can be anything from 1 to 20, though there's only up to OP_16, 17 to 20 would require something like `0112` for push the number 18). Note the OP_0 at the top. The script stack, then starts like this:
 
 .Bare Multisig Start
 image::multisig4.png[Bare Multisig Start]

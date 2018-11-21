@@ -11,11 +11,11 @@ This is where a major innovation of Bitcoin comes in with Blocks. Think of Block
 
 Now it would be really nice if we could order transactions one at a time, but that would require everyone to agree on which transaction is supposed to be next and would cause a lot of transmission overhead in coming to consensus. We can also order large batches of transactions, maybe once per day, but that wouldn't be very practical as the transactions would settle only once per day.
 
-Bitcoin finds a middle ground between these extremes by settling every 10 minutes in batches of transactions. These batches of transactions are what we call blocks. In this chapter we'll go through how to parse them and how to check what's called the proof of work. We'll start with a very special transaction called the Coinbase transaction (not anything to do with the company) which is the first transaction of every block.
+Bitcoin finds a middle ground between these extremes by settling every 10 minutes in batches of transactions. These batches of transactions are what we call blocks. In this chapter we'll go through how to parse them and how to check what's called the proof of work. We'll start with a very special transaction called the Coinbase transaction which is the first transaction of every block.
 
 === Coinbase Transactions
 
-We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US. It is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by whomever the mining entity designates and include all the transaction fees of the other transactions in the block.
+We start with special transactions called Coinbase transactions. This has nothing to do with the company of the same name based in the US. It is the only type of transaction that's allowed to bring new coins into existence. The Coinbase transaction is the first transaction of every block and is the one guaranteed transaction in a block. This transaction's outputs are kept by whomever the mining entity designates and include all the transaction fees of the other transactions in the block as well as something called the block reward.
 
 Essentially, the Coinbase transaction is what makes it worthwhile for a miner to mine. Here's what a Coinbase transaction looks like:
 
@@ -167,7 +167,7 @@ Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
 
 === Previous Block
 
-All blocks have to point to a previous block. This is why the data structure is called a *blockchain*. Blocks link back all the way to what we call the Genesis Block. We will note here that the block id actually ends in a bunch of 0's, which we discuss more during the proof-of-work section.
+All blocks have to point to a previous block. This is why the data structure is called a *blockchain*. Blocks link back all the way to what we call the Genesis Block. We will note here that the previous block field ends in a bunch of `00` bytes, which we discuss more during the proof-of-work section.
 
 === Merkle Root
 
@@ -218,7 +218,7 @@ e93c0118a4ffd71d`
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
 
-We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits being 00, 0.25. The first three bits being 000, 0.125 and so on. Note that each 0 in the hexadecimal above represents 4 0-bits. In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^. This is a really tiny probability. You have to look at on average 10^22^ or 10 trillion trillion random numbers before you find one this small.
+We can calculate the probability of any random 256-bit number being this small. The probability of the first bit in a 256-bit number being 0 is 0.5. The first two bits being 00, 0.25. The first three bits being 000, 0.125 and so on. Note that each 0 in the hexadecimal above represents 4 0-bits. In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^. This is a really tiny probability. You have to look at on average 10^22^ or 10 trillion trillion random numbers before you find one this small. 
 
 Hash functions like hash256 have the property that the result is more or less random. Since we used hash256 as the hash function to get the block hash, another way to look at this number is to say that we need to calculate 10^22^ hashes on average to find one this small. In other words, the process of finding proof-of-work requires us to process around 10^22^ numerical dirt and rock to find our numerical gold nugget.
 
@@ -270,12 +270,10 @@ True
 We can actually see that the proof of work is lower by lining up the numbers in 64 hex characters:
 
 Target:
-```0000000000000000013ce9000000000000000000000000000000000000000000
-```
+`0000000000000000013ce9000000000000000000000000000000000000000000`
 
 Proof of Work:
-```0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523
-```
+`0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523`
 
 ==== Exercise {counter:exercise}
 
@@ -323,7 +321,7 @@ Write the check_pow method for the Block class.
 
 In Bitcoin, each group of 2016 blocks is called a _difficulty adjustment period_. At the end of every difficulty adjustment period, the target is adjusted according to this formula:
 
-time_differential = block timestamp of last block in difficulty adjustment period - block timestamp of first block in difficulty adjustment period
+time_differential = (block timestamp of last block in difficulty adjustment period) - (block timestamp of first block in difficulty adjustment period)
 
 new_target = previous_target * time_differential / (2 weeks)
 
@@ -335,7 +333,8 @@ We can code this formula like so:
 
 [source,python]
 ----
->>> from block import Block, TWO_WEEKS  # <1>
+>>> from block import Block
+>>> from helper import TWO_WEEKS  # <1>
 >>> last_block = Block.parse(BytesIO(bytes.fromhex('00...f5')))
 >>> first_block = Block.parse(BytesIO(bytes.fromhex('00...2e')))
 >>> time_differential = last_block.timestamp - first_block.timestamp

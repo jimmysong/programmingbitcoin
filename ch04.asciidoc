@@ -181,9 +181,9 @@ DER Signatures are created like this:
 1. Start with the 0x30 byte
 2. Encode the length of the rest of the signature (usually 0x44 or 0x45) and append
 3. Append the marker byte (0x02)
-4. Encode r as a big endian integer, but prepend with 0x00 byte if r's first byte >= 0x80. Add this to the result
+4. Encode r as a big endian integer, but prepend with 0x00 byte if r's first byte >= 0x80. Prepend the resulting length to r. Add this to the result.
 5. Append the marker byte (0x02)
-6. Encode s as a big endian integer, but prepend with 0x00 byte if s's first byte >= 0x80. Add this to the result
+6. Encode s as a big endian integer, but prepend with 0x00 byte if s's first byte >= 0x80. Prepend the resulting length to s. Add this to the result.
 
 The rules for #4 and #6 with the first byte starting with something greater than or equal to 0x80 is because DER allows for negative numbers to be encoded and the first bit being 1 means that the number is negative. All numbers in an ECDSA signature are positive, so we have to prepend with 0x00 if the first bit is zero which is equivalent to first byte >= 0x80.
 

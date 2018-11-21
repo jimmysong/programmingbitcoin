@@ -183,7 +183,7 @@ def encode_varint(i):
 
 ====
 
-Each input contains 4 fields, the first two which point ot the previous transaction output and two more that define how it can be spent. These are as follows:
+Each input contains 4 fields. The first two fields point to the previous transaction output and the last two fields define how the previous transaction output can be spent. The fields are as follows:
 
 * Previous Transaction ID
 * Previous Transaction Output Index
@@ -310,7 +310,7 @@ image::tx8.png[Locktime]
 
 The main problem with the original usage (see sidebar on Sequence and Locktime) is that the recipient of the transaction has no certainty that the transaction will be good when the locktime comes. The sender can spend the inputs prior to the locktime transaction getting into the blockchain invalidating the transaction at locktime.
 
-The uses before BIP0065 came along was for anti-fee sniping and spending money to another address you control and then deleting the private key as a way to force yourself to hold the coins until that locktime.
+The uses before BIP0065 came along was for anti-fee sniping and creating a transaction where the money went to another address you control and then deleting the spending private key as a way to force yourself to hold the coins until that locktime.
 
 BIP0065 introduced something called OP_CHECKLOCKTIMEVERIFY which makes locktime more useful by making an output unspendable until a certain locktime.
 
