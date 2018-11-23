@@ -193,7 +193,7 @@ Now that we know how a Merkle Tree is constructed, we can now utilize it to get 
 .Merkle Proof
 image::merkleproof.png[Merkle Proof]
 
-Say that we have two transactions that we are interested in, which would be the hashes marked by green boxes, H~K~ and H~N~ above. A full node can to prove to us that these transactions were a part of the block by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~. We would then perform these calculations:
+Say that we have two transactions that we are interested in, which would be the hashes marked by green boxes, H~K~ and H~N~ above. A full node can prove to us that these transactions were a part of the block by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~. We would then perform these calculations:
 
 * H~KL~ = merkle_parent(H~K~, H~L~)
 * H~MN~ = merkle_parent(H~M~, H~N~)
