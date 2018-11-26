@@ -41,39 +41,41 @@ def merkle_root(hashes):
     return current_level[0]
 
 
+def validate_merkle_root(self):
+    hashes = [h[::-1] for h in self.tx_hashes]
+    root = merkle_root(hashes)
+    return root[::-1] == self.merkle_root
+
+
+@classmethod
+def parse(cls, s):
+    version = little_endian_to_int(s.read(4))
+    prev_block = s.read(32)[::-1]
+    merkle_root = s.read(32)[::-1]
+    timestamp = little_endian_to_int(s.read(4))
+    bits = s.read(4)
+    nonce = s.read(4)
+    total = little_endian_to_int(s.read(4))
+    num_txs = read_varint(s)
+    hashes = []
+    for _ in range(num_txs):
+        hashes.append(s.read(32)[::-1])
+    flags_length = read_varint(s)
+    flags = s.read(flags_length)
+    return cls(version, prev_block, merkle_root, timestamp, bits,
+               nonce, total, hashes, flags)
+
+def is_valid(self):
+    flag_bits = bytes_to_bit_field(self.flags)
+    hashes = [h[::-1] for h in self.hashes]
+    merkle_tree = MerkleTree(self.total)
+    merkle_tree.populate_tree(flag_bits, hashes)
+    return merkle_tree.root()[::-1] == self.merkle_root
+
+
 class Chapter11Test(TestCase):
 
     def test_apply(self):
-
-        def validate_merkle_root(self):
-            hashes = [h[::-1] for h in self.tx_hashes]
-            root = merkle_root(hashes)
-            return root[::-1] == self.merkle_root
-
-        @classmethod
-        def parse(cls, s):
-            version = little_endian_to_int(s.read(4))
-            prev_block = s.read(32)[::-1]
-            merkle_root = s.read(32)[::-1]
-            timestamp = little_endian_to_int(s.read(4))
-            bits = s.read(4)
-            nonce = s.read(4)
-            total = little_endian_to_int(s.read(4))
-            num_txs = read_varint(s)
-            hashes = []
-            for _ in range(num_txs):
-                hashes.append(s.read(32)[::-1])
-            flags_length = read_varint(s)
-            flags = s.read(flags_length)
-            return cls(version, prev_block, merkle_root, timestamp, bits,
-                       nonce, total, hashes, flags)
-
-        def is_valid(self):
-            flag_bits = bytes_to_bit_field(self.flags)
-            hashes = [h[::-1] for h in self.hashes]
-            merkle_tree = MerkleTree(self.total)
-            merkle_tree.populate_tree(flag_bits, hashes)
-            return merkle_tree.root()[::-1] == self.merkle_root
 
         helper.merkle_parent = merkle_parent
         merkleblock.merkle_parent = merkle_parent

@@ -70,6 +70,7 @@ class TxFetcher:
 
 
 class Tx:
+    command = b'tx'
 
     def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
         self.version = version

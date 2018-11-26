@@ -46,4 +46,4 @@ class BloomFilterTest(TestCase):
         item = b'Goodbye!'
         bf.add(item)
         expected = '0a4000600a080000010940050000006300000001'
-        self.assertEqual(bf.filterload().hex(), expected)
+        self.assertEqual(bf.filterload().serialize().hex(), expected)
