@@ -94,7 +94,7 @@ class FieldElement:
             return False
         return self.num == other.num and self.prime == other.prime
 ----
-<1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we got an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
+<1> We first check that `num` is actually between `0` and `prime-1` inclusive. If not, we get an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method simply assigns the initialization values.
 <3> The $$__eq__$$ method checks if two objects of class `FieldElement` are equal or not. This is only true when the `num` and `prime` properties are equal.
 
