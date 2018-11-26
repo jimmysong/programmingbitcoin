@@ -18,7 +18,7 @@ It is possible to "split" a key into multiple private keys and use an interactiv
 
 === Bare Multisig
 
-Bare Multisig was the first attempt at creating a transaction that could be signed by multiple parties. To understand Bare Multisig, one must first understand the OP_CHECKMULTISIG operator. As discussed in Chapter 6, SCRIPT has a lot of different OP codes. OP_CHECKMULTISIG is one of them at `ae`. The operator consumes a lot of elements from the stack and returns whether or not a certain number of signatures are valid for this transaction.
+Bare Multisig was the first attempt at creating a transaction that could be signed by multiple parties. To understand Bare Multisig, one must first understand the OP_CHECKMULTISIG operator. As discussed in Chapter 6, SCRIPT has a lot of different opcodes. OP_CHECKMULTISIG is one of them at `ae`. The operator consumes a lot of elements from the stack and returns whether or not a certain number of signatures are valid for this transaction.
 
 The transaction is called "bare" multisig because it's a really long ScriptPubKey. Here's what a ScriptPubKey for a 1-of-2 multisig looks like.
 
@@ -67,7 +67,7 @@ The elements consumed by OP_CHECKMULTISIG are supposed to be:
 
 m, m different signatures, n, n different pubkeys.
 
-The number of elements consumed should be 2 (m and n themselves) + m (signatures) + n (pubkeys). Unfortunately, the OP code actually consumes 1 more element than the m+n+2 that it's supposed to. OP_CHECKMULTISIG consumes m+n+3, so the extra element is added in order to not cause a failure. The OP code does nothing with that extra element and that extra element can be anything.
+The number of elements consumed should be 2 (m and n themselves) + m (signatures) + n (pubkeys). Unfortunately, the opcode actually consumes 1 more element than the m+n+2 that it's supposed to. OP_CHECKMULTISIG consumes m+n+3, so the extra element is added in order to not cause a failure. The opcode does nothing with that extra element and that extra element can be anything.
 
 As a way to combat malleabilty, however, most nodes on the Bitcoin network will not relay the transaction unless that extra element is OP_0. Note that if we had m+n+2 elements, that OP_CHECKMULTISIG will just fail as there are not enough elements to be consumed and the transaction will be invalid.
 ====
