@@ -51,9 +51,9 @@ There was a vulnerability that Bitcoin 0.4-0.6 was susecptible to. CVE-2012-2459
 
 Given two hashes, we need some way to produce another hash that represents both of them. As they are ordered, we will call the two hashes the *left* hash and the *right* hash. Tho combination, we call the *parent* hash. The formula for getting the parent is pretty simple:
 
-H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash
+`H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash`
 
-P=H(L||R)
+`P=H(L||R)`
 
 Note the `||` symbol is typically used to denote concatenation.
 
@@ -81,7 +81,7 @@ Given an ordered list of more than two hashes, we can calculate an entire list o
 
 The Merkle Tree solution is to simply duplicate the last item. So, for a list like [A, B, C] what we do is add C again to get [A, B, C, C]. At this point, we can calculate the merkle parent of A and B and calculate the merkle parent of C and C to get:
 
-[H(A||B), H(C||C)]
+`[H(A||B), H(C||C)]`
 
 Note that since the Merkle Parent always consists of two hashes, we end up with exactly half the number of hashes before, rounded up. The rounding up is because an odd number of hashes is expanded to be one more.
 
@@ -115,15 +115,15 @@ Write the `merkle_parent_level` function.
 
 The process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash. If, for example, we have items A through G, we combine to get the parent level:
 
-[H(A||B), H(C||D), H(E||F), H(G||G)]
+`[H(A||B), H(C||D), H(E||F), H(G||G)]`
 
 Then we combine to get the parent level again:
 
-[H(H(A||B)||H(C||D)), H(H(E||F)||H(G||G))]
+`[H(H(A||B)||H(C||D)), H(H(E||F)||H(G||G))]`
 
 We are left with just 2 items, which we combine one more time:
 
-H(H(A||B)||H(C||D))||H(H(E||F)||H(G||G))
+`H(H(A||B)||H(C||D))||H(H(E||F)||H(G||G))`
 
 The final hash is called the Merkle Root. As each level will halve the number of hashes, this will result in a single item eventually.
 
@@ -169,7 +169,8 @@ To make this calculatable for a `Block`, we have to adjust the class a bit:
     
 class Block:
 
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):  # <1>
+    def __init__(self, version, prev_block, merkle_root,
+                 timestamp, bits, nonce, tx_hashes=None):  # <1>
         self.version = version
         self.prev_block = prev_block
         self.merkle_root = merkle_root

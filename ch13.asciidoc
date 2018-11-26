@@ -6,15 +6,17 @@
 == Segwit
 
 [.lead]
-Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the actual activation was controversial, the actual features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what Segwit enables.
+Segwit stands for segregated witness and was a backwards-compatible upgrade or "soft fork" that activated on the Bitcoin network in August of 2017. While the activation was controversial, the features of this technology require some explanation and in this chapter, we'll explore how Segwit works, why it's backwards compatible and what Segwit enables.
 
 As a brief overview, Segwit did a multitude of things:
 
 * Block size increase
-* Transaction Malleability Fix
-* Clean script upgrade path
+* Transaction malleability fix
+* Introduced Segwit versioning for clear upgrade paths
+* Quadratic hashing fix
+* Offline wallet fee calculation security
 
-It's not entirely obvious what segwit is, without looking at how it's implemented. We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
+It's not entirely obvious what Segwit is, without looking at how it's implemented. We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
 
 === Pay to Witness Pubkey Hash
 
@@ -24,7 +26,7 @@ Pay to witness pubkey hash (p2wpkh) is one of four types of scripts defined by S
 
 Transaction Malleability is the ability to change the transaction's ID without altering the transaction's meaning. Mt. Gox CEO Mark Karpeles famously cited this as the reason why his exchange was not allowing withdrawals back in 2013.
 
-Malleability of the ID turns out to be an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network. A malleable transaction ID makes creating the Lightning Network much more difficult, so fixing malleability was a priority.
+Malleability of the ID turns out to be an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network. A malleable transaction ID makes creating the Lightning Network much more difficult.
 
 The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The ID of the transaction is simply the hash256 of the transaction itself. Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
 
@@ -34,7 +36,7 @@ The fact that ScriptSig is _malleable_, that is, able to be changed without chan
 
 === Fixing malleability
 
-The authors of Segwit fixed malleabilty by simply emptying the scriptSig field and putting that data elsewhere. For p2wpkh, the signature and pubkey got moved. This way, the transaction ID stays stable as the malleabilty vector disappears. So where do the signature and pubkey go? The signature and pubkey are now put into something called the Witness field, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness field and don't verify the pubkey and signature.
+Transaction malleabilty is fixed by simply emptying the scriptSig field and putting that data elsewhere. For p2wpkh, the signature and pubkey got moved. This way, the transaction ID stays stable as the malleabilty vector disappears. So where do the signature and pubkey go? The signature and pubkey are now put into something called the Witness field, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness field and don't verify the pubkey and signature.
 
 If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork (backwards-compatible upgrade) and not a hard fork (backwards-incompatible upgrade).
 
@@ -90,7 +92,7 @@ Furthermore, this is a special rule for Segwit Version 0. Segwit Version 1 can h
 
 === P2SH-P2WPKH
 
-P2WPKH is great, but unfortunately, this is a new type of script and older wallets who are unaware of the p2wpkh ScriptPubKey format cannot send bitcoins to these ScriptPubKeys. P2wpkh uses bech32 addresses whose ScriptPubKeys older wallets don't know how to create.
+P2WPKH is great, but unfortunately, this is a new type of script and older wallets who are unaware of the p2wpkh ScriptPubKey format cannot send bitcoins to these ScriptPubKeys. P2wpkh uses a new address format called bech32, whose ScriptPubKeys older wallets don't know how to create.
 
 The segwit authors found an ingenious way to make Segwit backwards compatible by using p2sh. We can "wrap" p2wpkh inside a p2sh. This is called "nested" Segwit as the Segwit script is nested in a p2sh RedeemScript.
 
@@ -148,6 +150,12 @@ The rest of the processing is exactly the same as p2pkh (Chapter 6). Assuming th
 image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
 
 As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016. A node pre-BIP0016 would consider the script valid once the redeemScripts were equal and a post-BIP0016, pre-Segwit node would consider the script valid at the 20-byte hash. Both would not do the full validation and would accept the transaction. A post-Segwit node would do the complete validation, including checking the signature and pubkey.
+
+[NOTE]
+.Can Anyone Spend Segwit Outputs?
+====
+Detractors to Segwit have referred to Segwit outputs as "anyone can spend". This is true if the majority of mining hash power didn't upgrade to Segwit. Fortunately, Segwit was activated on the network with nearly all of the hashing power committed to validating Segwit transactions.
+====
 
 ==== Coding p2wpkh and p2sh-p2wpkh
 
@@ -462,7 +470,7 @@ image::p2sh-p2wsh-1.png[p2sh-p2wsh to New Nodes]
 As with p2sh-p2wpkh, the ScriptPubKey is indistinguishable from any other p2sh and the ScriptSig is only the RedeemScript:
 
 .p2sh-p2wsh ScriptPubKey
-image::p2sh-p2wpkh-5.png
+image::p2sh-p2wpkh5.png
 
 We start the p2sh-p2wsh in exactly the same way that p2sh-p2wpkh starts.
 

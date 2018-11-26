@@ -145,6 +145,10 @@ image::jupyter4.png[Chapter 1 ecc.py]
 
 You can edit the file here and save in order to make the test pass.
 
+=== Answers
+
+All the answers to the various exercises in this book are in the Appendix at the end.
+
 === Conventions Used in This Book
 
 The following typographical conventions are used in this book:

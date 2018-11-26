@@ -9,7 +9,7 @@ The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robu
 
 The Bitcoin network is a broadcast network or a gossip network. Every node is constantly announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years.
 
-The nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
+One nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
 
 With that in mind, let's start with the very first message that one node sends to another, the version message.
 
@@ -20,7 +20,7 @@ Network messages have a particular form that looks like this
 .Network Message or the Envelope that contains the actual payload
 image::network1.png[Network Message]
 
-The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted. Magic bytes are also useful to make sure the node is on the right network. You would not want a Bitcoin node to connect to a Litecoin node, for example. Thus, a Litecoin node has a differnt magic. Bitcoin testnet also has a different magic `0b110907` as opposed to the Bitcoin mainnet magic `f9beb4d9` above.
+The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted. Magic bytes are also useful to make sure the node is on the right network. You would not want a Bitcoin node to connect to a Litecoin node, for example. Thus, a Litecoin node has a different magic. Bitcoin testnet also has a different magic `0b110907` as opposed to the Bitcoin mainnet magic `f9beb4d9` above.
 
 The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at https://wiki.bitcoin.it. Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
 

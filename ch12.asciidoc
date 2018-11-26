@@ -8,7 +8,7 @@
 [.lead]
 In the previous chapter we learned how to validate a Merkle Block. Another node can prove to us that transactions we're interested in are in a particular block through the merkleblock command. But how does the other node know which transactions we're interested in?
 
-We could tell the other node our addresses (in reality, ScriptPubKeys). The other node can check for transactions that are relevant to these addresses, but that would be compromising our privacy. We wouldn't want to reveal, for example, that we have 1000 BTC to another node which can then figure out what IP address we're at. If they happen to be bad guys, perhaps they would try to take that BTC away from us. Privacy leaks are security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
+We could tell the other node our addresses (in reality, ScriptPubKeys). The other node can check for transactions that are relevant to these addresses, but that would be compromising our privacy. We wouldn't want to reveal, for example, that we have 1000 BTC to another node which can then figure out what IP address we're at. Privacy leaks are security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
 
 The solution is to tell the other node enough information to give us a _superset_ of all transactions we are interested in. To create this superset, we create something called a Bloom Filter
 
@@ -235,7 +235,7 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
 >>> h160 = decode_base58(address)
 >>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
->>> bf = BloomFilter(30, 5, 90210)  # <1>
+>>> bf = BloomFilter(size=30, function_count=5, tweak=90210)  # <1>
 >>> bf.add(h160)  # <2>
 >>> node.handshake()
 >>> node.send(b'filterload', bf.filterload())  # <3>

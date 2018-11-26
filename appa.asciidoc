@@ -1,3 +1,6 @@
+= Programming Bitcoin
+:imagesdir: images
+
 [appendix]
 == Solutions
 
@@ -832,7 +835,7 @@ def op_hash160(stack):
     return True
 ----
 
-==== Exercise {counter:exercise}
+==== Exercise {counter:ch6exercise}
 
 Write the `op_checksig` function in op.py
 
@@ -860,6 +863,7 @@ def op_checksig(stack, z):
 
 Create a ScriptSig that can unlock this ScriptPubKey
 
+.Exercise 6.3
 image::exercise1.png[Exercise 3]
 
 [source,python]
@@ -880,6 +884,7 @@ OP_2 or `52` will satisfy the equation x^2^+x-6=0.
 
 Figure out what this script is doing:
 
+.Exercise 6.4
 image::exercise2.png[Exercise 4]
 
 [source,python]
