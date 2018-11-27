@@ -320,7 +320,7 @@ Write the locktime parsing part of the parse method in `Tx`.
 
 ==== Exercise {counter:exercise}
 
-What is the ScriptSig from the second input, scriptPubKey from the first output and the amount of the second output for this transaction?
+What is the ScriptSig from the second input, ScriptPubKey from the first output and the amount of the second output for this transaction?
 
 ```
 010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e
@@ -479,7 +479,7 @@ class TxIn:
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        '''Get the scriptPubKey by looking up the tx hash on libbitcoin server
+        '''Get the ScriptPubKey by looking up the tx hash on libbitcoin server
         Returns the binary scriptpubkey
         '''
         tx = self.fetch_tx(testnet=testnet)

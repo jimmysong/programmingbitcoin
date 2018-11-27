@@ -6,16 +6,16 @@ from helper import encode_base58, hash256
 import helper
 
 
+def ltoi(b):
+    return int.from_bytes(b, 'little')
+
+def itol(n, length):
+    return n.to_bytes(length, 'little')
+
+
 class Chapter4Test(TestCase):
 
     def test_apply(self):
-
-        def ltoi(b):
-            return int.from_bytes(b, 'little')
-
-        def itol(n, length):
-            return n.to_bytes(length, 'little')
-
         helper.little_endian_to_int = ltoi
         helper.int_to_little_endian = itol
 

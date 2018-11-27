@@ -36,7 +36,7 @@ The fact that ScriptSig is _malleable_, that is, able to be changed without chan
 
 === Fixing malleability
 
-Transaction malleabilty is fixed by simply emptying the scriptSig field and putting that data elsewhere. For p2wpkh, the signature and pubkey got moved. This way, the transaction ID stays stable as the malleabilty vector disappears. So where do the signature and pubkey go? The signature and pubkey are now put into something called the Witness field, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness field and don't verify the pubkey and signature.
+Transaction malleabilty is fixed by simply emptying the ScriptSig field and putting that data elsewhere. For p2wpkh, the signature and pubkey got moved. This way, the transaction ID stays stable as the malleabilty vector disappears. So where do the signature and pubkey go? The signature and pubkey are now put into something called the Witness field, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness field and don't verify the pubkey and signature.
 
 If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork (backwards-compatible upgrade) and not a hard fork (backwards-incompatible upgrade).
 
@@ -342,7 +342,7 @@ We also define what a p2wpkh Script looks like in `script.py`.
 [source,python]
 ----
 def p2wpkh_script(h160):
-    '''Takes a hash160 and returns the p2wpkh scriptPubKey'''
+    '''Takes a hash160 and returns the p2wpkh ScriptPubKey'''
     return Script([0x00, h160])  # <1>
 ...
 class Script:

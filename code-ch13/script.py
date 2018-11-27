@@ -21,22 +21,22 @@ from op import (
 
 
 def p2pkh_script(h160):
-    '''Takes a hash160 and returns the p2pkh scriptPubKey'''
+    '''Takes a hash160 and returns the p2pkh ScriptPubKey'''
     return Script([0x76, 0xa9, h160, 0x88, 0xac])
 
 
 def p2sh_script(h160):
-    '''Takes a hash160 and returns the p2sh scriptPubKey'''
+    '''Takes a hash160 and returns the p2sh ScriptPubKey'''
     return Script([0xa9, h160, 0x87])
 
 
 def p2wpkh_script(h160):
-    '''Takes a hash160 and returns the p2wpkh scriptPubKey'''
+    '''Takes a hash160 and returns the p2wpkh ScriptPubKey'''
     return Script([0x00, h160])
 
 
 def p2wsh_script(h256):
-    '''Takes a hash160 and returns the p2wsh scriptPubKey'''
+    '''Takes a hash160 and returns the p2wsh ScriptPubKey'''
     return Script([0x00, h256])
 
 
