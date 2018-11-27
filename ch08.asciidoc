@@ -116,7 +116,7 @@ Bare multisig is a bit ugly, but it's very much functional. You can have `m` of 
 
 2. Second problem: because the output is so long, it's rather taxing on node software. Nodes have to keep track of the UTXO set, so keeping a particularly big ScriptPubKey ready is onerous. A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
-3. Third problem: because the ScriptPubKey can be so much bigger, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: `54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 bare multisig outputs. The outputs are not spendable but have to be kept around by all the node software as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
+3. Third problem: because the ScriptPubKey can be so much bigger, bare multisig can and has been abused. The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: `54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`. The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys. These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 bare multisig outputs. The outputs are not spendable but have to be kept around by full nodes as they are unspent. This is a tax every full node has to pay and is in that sense very abusive.
 
 In order to combat these problems, pay-to-script-hash (p2sh) was born.
 
@@ -128,7 +128,7 @@ Pay-to-script-hash was introduced in 2011 to a lot of controversy. There were mu
 
 Essentially, p2sh executes a very special rule only when the script goes in this pattern:
 
-.Pay-to-script-hash Pattern the executes the special rule
+.Pay-to-script-hash Pattern that executes the special rule
 image::p2sh1.png[p2sh Pattern]
 
 If this exact sequence ends up with a 1, then the RedeemScript (top item in figure 8-9) is interpreted as Script and then added to the Script instruction set as if it's part of the Script. This is a very special pattern and the Bitcoin codebase makes sure to check for this particular sequence. The RedeemScript does not add new Script instructions for processing unless this _exact_ sequence is encountered.
@@ -170,7 +170,7 @@ Note that the `OP_0` needs to be there because of the `OP_CHECKMULTISIG` bug. Th
 .p2sh pattern that executes the special rule
 image::p2sh1.png[p2sh Pattern]
 
-Upon execution of this sequence, if the result is 1, the RedeemScript is put into the Script instruction set. In other words, if we reveal a RedeemScript whose hash160 is the same hash160 in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead. We are essentially hashing the Script that locks the funds and putting that into the blockchain instead of the Script itself.
+Upon execution of this sequence, if the result is 1, the RedeemScript is inserted into the Script instruction set. In other words, if we reveal a RedeemScript whose hash160 is the same hash160 in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead. We are essentially hashing the Script that locks the funds and putting that into the blockchain instead of the Script itself.
 
 Let's go through exactly how this works. We'll start with the Script instructions:
 
@@ -221,7 +221,7 @@ image::p2sh13.png[p2sh End]
 
 This is a bit hacky and there's a lot of special-cased code in Bitcoin to handle this. Why didn't the core devs do something a lot less hacky and more intuitive? Well, it turns out that there was indeed another proposal BIP0012 which used something called `OP_EVAL`, which would have been a lot more elegant. A Script like this would have sufficed:
 
-.`OP_EVAL` would have evaluated and put new items for processing
+.`OP_EVAL` would have evaluated and added additional instructions.
 image::op_eval.png[`OP_EVAL`]
 
 `OP_EVAL` would consume the top element of the stack and interpret that as Script instructions to be put into the Script column.
@@ -282,7 +282,7 @@ As we'll see in Chapter 13, p2sh will be used for backwards compatibility with S
 
 ==== Addresses
 
-P2sh addresses have a very similar structure to p2pkh addresses. Namely, there's 20 bytes that are being encoded with a particular prefix and a checksum that helps identify if any of the characters are wrong encoded in Base58.
+P2sh addresses have a very similar structure to p2pkh addresses. Namely, 20 bytes are being encoded with a particular prefix and a checksum that helps identify if any of the characters are encoded wrong in Base58.
 
 Specifically, p2sh uses the `0x05` byte on mainnet which translates to addresses that start with a 3 in base58. This can be done using the `encode_base58_checksum` function from `helper.py`.
 
@@ -294,7 +294,7 @@ Specifically, p2sh uses the `0x05` byte on mainnet which translates to addresses
 3CLoMMyuoDQTPRD3XYZtCvgvkadrAdvdXh
 ----
 
-The testnet prefix is the `0xc4` byte which creates addresses that start with at 2 in base58.
+The testnet prefix is the `0xc4` byte which creates addresses that start with a 2 in base58.
 
 ==== Exercise {counter:exercise}
 
