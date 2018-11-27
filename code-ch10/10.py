@@ -114,21 +114,21 @@ class Chapter10Test(TestCase):
         for bits in want:
             getheaders = GetHeadersMessage(start_block=last_block_hash)
             node.send(getheaders)
-            headers_message = node.wait_for(HeadersMessage)
-            for block in headers_message.blocks:
-                if not block.check_pow():
+            headers = node.wait_for(HeadersMessage)
+            for b in headers.blocks:
+                if not b.check_pow():
                     raise RuntimeError('bad proof of work at block {}'.format(count))
-                if last_block_hash != GENESIS_BLOCK_HASH and block.prev_block != last_block_hash:
+                if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_block_hash:
                     raise RuntimeError('discontinuous block at {}'.format(count))
-                if expected_bits and block.bits != expected_bits:
-                    raise RuntimeError('bad bits at block {} {} vs {}'.format(count, block.bits.hex(), expected_bits.hex()))
+                if expected_bits and b.bits != expected_bits:
+                    raise RuntimeError('bad bits at block {} {} vs {}'.format(count, b.bits.hex(), expected_bits.hex()))
                 if first_epoch_block and count % 2016 == 2015:
                     expected_bits = calculate_new_bits(
-                        expected_bits, block.timestamp - first_epoch_block.timestamp)
+                        expected_bits, b.timestamp - first_epoch_block.timestamp)
                     self.assertEqual(expected_bits.hex(), bits)
                 elif first_epoch_block is None:
-                    expected_bits = block.bits
+                    expected_bits = b.bits
                 if count % 2016 == 0 or not first_epoch_block:
-                    first_epoch_block = block
+                    first_epoch_block = b
                 count += 1
-                last_block_hash = block.hash()
+                last_block_hash = b.hash()
