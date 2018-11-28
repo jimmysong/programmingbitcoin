@@ -69,13 +69,14 @@ F~981~= {0, 1, 2, ... 980}
 
 Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* have an order that is a power of a prime. This is because the properties of a finite field don't hold otherwise.
 
-==== Constructing a Finite Set in Python
+==== Constructing a Finite Field in Python
 
 We want to represent each finite field element and in Python, we'll be creating a class that represents a single finite field element. Naturally, we'll name the class `FieldElement`. 
 
 The class represents an actual element in a field F~prime~. The bare bones of the class is pretty intuitive:
 
 [source,python]
+.ecc.py
 ----
 class FieldElement:
 
