@@ -175,7 +175,7 @@ Write the `add` method for `BloomFilter`
 
 === Loading a Bloom Filter
 
-Once we've created a Bloom Filter, we can now let the other node know the details of the filter so the other node can send us proofs-of-inclusion. The first thing we must do is set the optional relay flag in the version message (see <<chapter_networking>>) to 1. This tells the other node not to send over transactions unless they match a Bloom Filter. Of course, after the version message, we haven't sent any details to the other node about the actual Bloom Filter, so they won't send us anything until we send them the Bloom Filter information.
+Once we've created a Bloom Filter, we can now let the other node know the details of the filter so the other node can send us proofs-of-inclusion. The first thing we must do is set the optional relay flag in the version message (see <<chapter_networking>>) to 0. This tells the other node not to send over transactions unless they match a Bloom Filter. Of course, after the version message, we haven't sent any details to the other node about the actual Bloom Filter, so they won't send us anything until we send them the Bloom Filter information.
 
 The actual command to set the Bloom Filter is called `filterload`. The payload looks like this:
 
