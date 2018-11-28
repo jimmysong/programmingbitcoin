@@ -335,7 +335,7 @@ We now need a way to do what we did above. That is, go through the instruction s
 >>> print(combined_Script.evaluate(z))  # <3>
 True
 ----
-<1> p2pk ScriptPubkey is the sec format pubkey followed by `OP_CHECKSIG` which is `0xac` or 170.
+<1> p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG` which is `0xac` or 170.
 <2> We can do this because of the $$__add__$$ method we created above.
 <3> We want to go through the instructions and see if the result is `True` or not.
 
@@ -508,7 +508,7 @@ Once again, the lockbox where the bitcoins go is the job of the ScriptPubKey. Th
 .Pay-to-pubkey-hash (p2pkh) ScriptPubKey
 image::p2pkh1.png[P2PKH ScriptPubKey]
 
-Note that `OP_CHECKSIG` is still here and `OP_HASH160` makes an appearance. Also note that the sec pubkey has disappeared and has been replaced by a 20 byte hash. There is also a new opcode that you haven't seen before, `OP_EQUALVERIFY`.
+Note that `OP_CHECKSIG` is still here and `OP_HASH160` makes an appearance. Also note that the SEC pubkey has disappeared and has been replaced by a 20 byte hash. There is also a new opcode that you haven't seen before, `OP_EQUALVERIFY`.
 
 The ScriptSig, or the unlocking part of the Script looks like this:
 

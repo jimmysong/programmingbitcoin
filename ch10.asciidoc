@@ -24,7 +24,7 @@ The first four bytes are always the same and are referred to as the *network mag
 
 The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at https://wiki.bitcoin.it. Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
 
-The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the payload is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB, though the reference client rejects any payloads over 32MB. Note the number is interpreted in little-endian, so in our case here, `0x00000065` is 101 bytes.
+The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the payload is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB, though the reference client rejects any payloads over 32MB. Note the number is interpreted in Little-Endian, so in our case here, `0x00000065` is 101 bytes.
 
 The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the hash256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and hash256 has none. That said, hash256 is common in the rest of the Bitcoin protocol and is thus used here.
 
@@ -73,7 +73,7 @@ The fields for Version are meant to give enough information for two nodes to be 
 
 The first field is the network protocol version, which specifies the what messages may be communicated. The service field give information about what capabilities are available to connecting nodes. The timestamp field is 8 bytes (as opposed to 4 bytes in the block header) and is the unix timestamp in little endian.
 
-IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's `.onion` addresses to IPv6). If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP. The port is 2 bytes (default is 8333, which maps to `208d` in little-endian hex) and in little-endian.
+IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's `.onion` addresses to IPv6). If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP. The port is 2 bytes (default is 8333, which maps to `208d` in Little-Endian hex) and in Little-Endian.
 
 Nonce is a number used only once for reply messages. User Agent identifies the software being run. The height or latest block field helps the other node know which block a node is synced up to.
 

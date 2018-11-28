@@ -119,12 +119,12 @@ image::validation3.png[Validation Step 2]
 
 Lastly, we add a 4-byte hash type to the end. This is to specify what the signature is authorizing. The signature can authorize that this input has to go with all the other inputs and outputs (SIGHASH_ALL), go with a specific output (SIGHASH_SINGLE) or go with any output whatsoever (SIGHASH_NONE). The latter two have some theoretical use cases, but in practice, almost every transaction is signed with SIGHASH_ALL. That is, the final transaction must have the exact outputs that were signed, or the input signature is invalid.
 
-The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in little-endian over 4 bytes, which makes the transaction look like this:
+The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the transaction look like this:
 
 .Append the hash type (SIGHASH_ALL), or the orange `01000000`
 image::validation4.png[Validation Step 3]
 
-The hash256 of this modified transaction is interpreted as a big-endian integer is our `z`. The code for getting our `z` looks like this:
+The hash256 of this modified transaction is interpreted as a Big-Endian integer is our `z`. The code for getting our `z` looks like this:
 
 [source,python]
 ----
@@ -271,7 +271,7 @@ def decode_base58(s):
     return combined[1:-4]  # <3>
 ----
 <1> We have to figure out first what number is encoded in this base58 address
-<2> Once we have the actual integer, we convert it to big-endian bytes
+<2> Once we have the actual integer, we convert it to Big-Endian bytes
 <3> The first byte is the network prefix and the last 4 are the checksum. The middle 20 is the actual 20-byte hash (aka hash160).
 
 The other thing we will need is a way to convert the 20-byte hash to a ScriptPubKey. We call this `p2pkh_script` since we're converting the hash160 to a p2pkh.

@@ -147,7 +147,7 @@ Write the `merkle_root` function.
 
 === Merkle Root in Blocks
 
-The way we calculate the Merkle Root in Blocks should be pretty straightforward, but due to endian-ness issues, this turns out to be a bit counterintuitive. Specifically, we have to calculate the hash of a transaction and use the little-endian ordering as the leaves for the Merkle Tree. After we calculate the Merkle Root, we have to again interpret that in little-endian in order to compare against the Merkle Root stored in the block.
+The way we calculate the Merkle Root in Blocks should be pretty straightforward, but due to endian-ness issues, this turns out to be a bit counterintuitive. Specifically, we have to calculate the hash of a transaction and use the Little-Endian ordering as the leaves for the Merkle Tree. After we calculate the Merkle Root, we have to again interpret that in Little-Endian in order to compare against the Merkle Root stored in the block.
 
 In practice, this simply means reversing the hash before we start and reversing the hash at the end.
 

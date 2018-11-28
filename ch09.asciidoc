@@ -63,7 +63,7 @@ One of the rules for a Coinbase Transaction was added in BIP0034. This was due t
 
 The Coinbase Transaction being the same byte-wise means that the transaction ID is also the same since the hash256 of the transaction is deterministic. To combat this, the Core developers soft-forked in a rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
 
-The height is interpreted as a little-endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block). Here's how we can parse the height from the Coinbase Transaction in Figure 9-1:
+The height is interpreted as a Little-Endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block). Here's how we can parse the height from the Coinbase Transaction in Figure 9-1:
 
 [source,python]
 ----
@@ -236,7 +236,7 @@ Proof-of-work is the requirement that every block in Bitcoin must be below a cer
 
 `e93c0118`
 
-The bits field is actually two different numbers. The first is the exponent, which is the last byte. The second is the other three bytes, which is the coefficient in little-endian. The formula for calculating the target from these two numbers is:
+The bits field is actually two different numbers. The first is the exponent, which is the last byte. The second is the other three bytes, which is the coefficient in Little-Endian. The formula for calculating the target from these two numbers is:
 
 target = coefficient * 256^exponent-3^
 
@@ -254,7 +254,7 @@ Let's calculate the target given the bits field in Python:
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
 
-A valid proof-of-work is a hash of the block which, when interpreted as a little-endian integer, is below the target number. Proof-of-work hashes are exceedingly rare and the process of mining is essentially the process of finding one of these hashes. To find a single proof-of-work with the above target, the network as a whole must calculate 3.8 * 10^21^ hashes. To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof-of-work below this target.
+A valid proof-of-work is a hash of the block which, when interpreted as a Little-Endian integer, is below the target number. Proof-of-work hashes are exceedingly rare and the process of mining is essentially the process of finding one of these hashes. To find a single proof-of-work with the above target, the network as a whole must calculate 3.8 * 10^21^ hashes. To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof-of-work below this target.
 
 We can check that this block's hash is indeed below the target:
 
@@ -309,7 +309,7 @@ Write the `difficulty` method for `Block`
 
 ==== Checking that the Proof-of-Work is Sufficient
 
-We already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a little-endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
+We already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a Little-Endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
 
 ==== Exercise {counter:exercise}
 

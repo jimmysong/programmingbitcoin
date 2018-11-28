@@ -640,7 +640,7 @@ Write a function `little_endian_to_int` which takes Python bytes, interprets tho
 [source,python]
 ----
 def little_endian_to_int(b):
-    '''little_endian_to_int takes byte sequence as a little-endian number.
+    '''little_endian_to_int takes byte sequence as a Little-Endian number.
     Returns an integer'''
     return int.from_bytes(b, 'little')
 ----
@@ -652,7 +652,7 @@ Write a function `int_to_little_endian` which does the reverse of the last exerc
 [source,python]
 ----
 def int_to_little_endian(n, length):
-    '''endian_to_little_endian takes an integer and returns the little-endian
+    '''endian_to_little_endian takes an integer and returns the Little-Endian
     byte sequence of length'''
     return n.to_bytes(length, 'little')
 ----
@@ -676,7 +676,7 @@ mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
 
 ==== Exercise {counter:ch5exercise}
 
-Write the version parsing part of the parse method that we've defined. To do this properly, you'll have to convert 4 bytes into a little-endian integer.
+Write the version parsing part of the parse method that we've defined. To do this properly, you'll have to convert 4 bytes into a Little-Endian integer.
 
 [source,python]
 ----

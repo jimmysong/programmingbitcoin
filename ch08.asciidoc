@@ -331,12 +331,12 @@ image::verifyp2sh3.png[Validation Step 2]
 
 Lastly, we add a 4-byte hash type to the end. This is the same as in p2pkh.
 
-The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in little-endian over 4 bytes, which makes the transaction look like this:
+The integer corresponding to SIGHASH_ALL is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the transaction look like this:
 
 .Append the hash type (SIGHASH_ALL), or the blue part at the end.
 image::verifyp2sh4.png[Validation Step 3]
 
-The hash256 of this interpreted as a big-endian integer is our `z`. The code for getting our signature hash, or `z`, looks like this:
+The hash256 of this interpreted as a Big-Endian integer is our `z`. The code for getting our signature hash, or `z`, looks like this:
 
 [source,python]
 ----
