@@ -76,7 +76,6 @@ We want to represent each finite field element and in Python, we'll be creating 
 The class represents an actual element in a field F~prime~. The bare bones of the class is pretty intuitive:
 
 [source,python]
-.ecc.py
 ----
 class FieldElement:
 
@@ -113,6 +112,8 @@ True
 ----
 
 Python allows us to override the $$==$$ operator with the $$__eq__$$ method, which is something we'll be taking advantage of going forward.
+
+You can see this in action in the code that accompanies this book. Once you've set up Jupyter Notebook (see Preface), you can navigate to code-ch01/Chapter1.ipynb and run the code to see the results. For the next exercise, you'll want to open up ecc.py by clicking the link in the Exercise 1 box.
 
 ==== Exercise {counter:exercise}
 
