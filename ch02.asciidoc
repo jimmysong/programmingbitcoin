@@ -68,7 +68,7 @@ image::elliptic3.png[secp256k1 Curve]
 
 === Coding Elliptic Curves in Python
 
-For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers *a* and *b*.
+For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers `a` and `b`.
 
 [source,python]
 ----
@@ -83,7 +83,8 @@ class Point:
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
 
     def __eq__(self, other): # <2>
-        return self.a == other.a and self.b == other.b and self.x == other.x and self.y == other.y
+        return self.a == other.a and self.b == other.b \
+            and self.x == other.x and self.y == other.y
 
 ----
 <1> We check here that the point is actually on the curve.
@@ -163,13 +164,13 @@ One of the properties that we are going to use is that point addition is not eas
 * Associativity
 * Invertibiltiy
 
-Identity here means that there's a zero. That is, there exists some point (I) which when added to a point (P) results in P. We'll call this point the point at infinity (reasons for this will become clear in a bit). That is:
+Identity here means that there's a zero. That is, there exists some point (I) which when added to a point (A) results in A. We'll call this point the point at infinity (reasons for this will become clear in a bit). That is:
 
-I + P = P
+I + A = A
 
-This is also related to invertibility. For some point P, there's some other point -P which results in the Identity point. That is:
+This is also related to invertibility. For some point A, there's some other point -A which results in the Identity point. That is:
 
-P + (-P) = I
+A + (-A) = I
 
 Visually, these are points opposite each other in the elliptic curve.
 
@@ -178,13 +179,13 @@ image::intersect2-1.png[Vertical Line]
 
 This is why we call this point the point at infinity. We have one extra point in the elliptic curve which makes the vertical line intersect a third time.
 
-Commutativity means that P+Q=Q+P. This is obvious since the line going through P and Q will intersect the curve a third time in the same place no matter what order.
+Commutativity means that A+B=B+A. This is obvious since the line going through A and B will intersect the curve a third time in the same place no matter what order.
 
-Associativity means that (P+Q) + R = P + (Q+R). This isn't obvious and is the reason for flipping over the x-axis.
+Associativity means that (A+B)+C=A+(B+C). This isn't obvious and is the reason for flipping over the x-axis.
 
-.(P+Q)+R
+.(A+B)+C
 image::associativity1.png[Case 1]
-.P+(Q+R)
+.A+(B+C)
 image::associativity2.png[Case 2]
 
 You can see that in both cases, the final point is exactly the same. While this doesn't prove the associativity of Point addition, the visual should at least give you the intuition that this is true.
@@ -215,7 +216,7 @@ Point(infinity)
 
 In order to make this work, we have to do two things:
 
-First, we have to adjust the $$__init__$$ method slightly so it doesn't check that the curve equation is satisfied. Second, we have to overload the addition operator or $$__add__$$ as we did with the FieldElement class.
+First, we have to adjust the $$__init__$$ method slightly so it doesn't check that the curve equation is satisfied. Second, we have to overload the addition operator or $$__add__$$ as we did with the `FieldElement` class.
 
 [source,python]
 ----
@@ -249,7 +250,7 @@ class Point:
 
 ==== Exercise {counter:exercise}
 
-Handle the case where the two points are negatives of each other. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
+Handle the case where the two points are additive inverses. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
 
 === Point Addition for when x~1~≠x~2~
 
@@ -261,7 +262,7 @@ P~1~+P~2~=P~3~
 
 s=(y~2~-y~1~)/(x~2~-x~1~)
 
-This is the slope and we can figure out where the x~3~ intersection is. Once we know that, we can calculate y~3~. P~3~ can thus be derived using this formula:
+This is the slope and we can use the slope to calculate x~3~. Once we know x~3~, we can calculate y~3~. P~3~ can be derived using this formula:
 
 x~3~=s^2^-x~1~-x~2~
 
@@ -306,7 +307,7 @@ From above, we know that:
 
 x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
 
-There's a result from called the Theorem on the Equality of Polynomials, which states that the coefficients have to equal each other if the roots are the same. The first one that's interesting is the coefficient in front of x^2^:
+There's a result from called the Theorem on the Equality of Polynomials, which states that the coefficients have to equal each other if the roots are the same. The first coefficient that's interesting is the coefficient in front of x^2^:
 
 s^2^=x~1~+x~2~+x~3~
 
@@ -318,9 +319,9 @@ We can plug this in to the formula for the line above:
 
 y=s(x-x~1~)+y~1~
 
-But we have to reflect over the x-axis, so this has to be negated:
+But we have to reflect over the x-axis, so the right side has to be negated:
 
-y~3~=-(s(x-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
+y~3~=-(s(x~3~-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
 
 That's how we arrive at this formula.
 ****
@@ -372,9 +373,9 @@ x~3~=s^2^-2x~1~
 
 y~3~=s(x~1~-x~3~)-y~1~
 
-
+[Note]
 .Deriving the Tangent LIne
-****
+====
 We can derive the slope of the tangent line using some slightly more advanced math: calculus. We know that the slope at a given point is
 
 dy/dx
@@ -392,7 +393,7 @@ Solving for dy/dx, we get:
 dy/dx=(3x^2^+a)/(2y)
 
 That's how we arrive at the slope formula. The rest of the results from the point addition formula derivation hold.
-****
+====
 
 ==== Exercise {counter:exercise}
 
@@ -427,17 +428,14 @@ We can handle this using a special case:
 [source,python]
 ----
 class Point:
-    zero = 0 # <1>
     ...
     def __add__(self, other):
     	...
-	if self == other and self.y == self.zero: # <2>
-	    return self.__class__(None, None, self.a, self.b) # <3>
+	if self == other and self.y == 0 * self.x:  # <1>
+	    return self.__class__(None, None, self.a, self.b)
 ----
-<1> For reasons which will become clear in the next chapter, we need to define zero specific to the class.
-<2> If the two points are equal and the y coordinate is zero, we return the point at infinity.
-<3> This is how we create a point at infinity
+<1> If the two points are equal and the y coordinate is zero, we return the point at infinity.
 
 === Conclusion
 
-We've covered what Elliptic Curves are, how they work and how to do point addition on them. We now combine the concepts from Chapters 1 and 2 to build Elliptic Curve Cryptography
+We've covered what Elliptic Curves are, how they work and how to do point addition on them. We now combine the concepts from Chapters 1 and 2 to learn Elliptic Curve Cryptography.

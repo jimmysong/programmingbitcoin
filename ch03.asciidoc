@@ -65,7 +65,7 @@ Because we defined an Elliptic curve point and utilize the +,-,* and / operators
 >>> y = FieldElement(num=105, prime=223)
 >>> p1 = Point(x, y, a, b)
 >>> print(p1)
-Point(192, 105)_223
+Point(FieldElement_223(192),FieldElement_223(105))_FieldElement_223(0)_FieldElement_223(7)
 ----
 
 When initializing `Point`, we will run through this part of the code:
@@ -148,9 +148,9 @@ image::linefinitefield.png[Line over a Finite Field]
 
 Still, the equation works and we can calculate what y should be for a given x.
 
-Remarkably, point addition works over finite fields as well. This is because the elliptic curve and line equations still work! The same exact formulas we used to calculate Point Addition over Reals work just as well over Finite Fields. Specifically:
+Remarkably, point addition works over finite fields as well. This is because the elliptic curve and line equations still work! The same exact formulas we used to calculate Point Addition over Reals work over Finite Fields. Specifically:
 
-when x~1~≠x~2~
+when x~1~≠x~2~:
 
 * P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
 * P~1~+P~2~=P~3~
@@ -158,7 +158,7 @@ when x~1~≠x~2~
 * x~3~=s^2^-x~1~-x~2~
 * y~3~=s(x~1~-x~3~)-y~1~
 
-when P~1~=P~2~
+when P~1~=P~2~:
 
 * P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
 * P~1~+P~1~=P~3~
@@ -186,7 +186,7 @@ Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$
 >>> p1 = Point(x1, y1, a, b)
 >>> p2 = Point(x2, y2, a, b)
 >>> print(p1+p2)
-Point(170,142)_223
+Point(FieldElement_223(170),FieldElement_223(142))_FieldElement_223(0)_FieldElement_223(7)
 ----
 
 ==== Exercise {counter:exercise}
@@ -322,7 +322,7 @@ It turns out that we have all of these things with Point Addition. Let's look at
 
 If you haven't guessed by now, the identity is defined as the point at infinity. This is the point, when added to any other point produces the other point. So:
 
-0 + P = P
+0 + A = A
 
 We call 0 the point at infinity because visually, it's the point that exists to help the math work out:
 
@@ -341,7 +341,7 @@ We know that the result is going to be:
 
 How do we know if this element is in the group? If a+b < n, then we know it's in the group by definition. If a+b >= n, then we know a < n and b < n, so a+b<2n so a+b-n<n.
 
-(a+b-n)G=aG+bG-nG=aG+bG-O=aG+bG
+(a+b-n)G=aG+bG-nG=aG+bG-0=aG+bG
 
 So we know that this element is in the group, proving closure.
 
@@ -352,7 +352,7 @@ Visually, invertibility is easy to see:
 .Each point is invertible by taking the reflection over the x-axis
 image::intersect2-1.png[Vertical Line]
 
-Mathematically, we know that if aG is in the group, (n-a)G is also in the group. You can add them together to get 0.
+Mathematically, we know that if aG is in the group, (n-a)G is also in the group. You can add them together to get aG+(n-a)G=(a+n-a)G=nG=0.
 
 ==== Commutativity
 
@@ -420,9 +420,9 @@ class Point:
 <1> We start the `product` at "zero", which in case of Point Addition is the point at infinity.
 <2> We loop `coefficient` times and add the point each time
 
-This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? If coefficient is 1 trillion, this is going to take a really long time, for example.
+This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? For example, a coefficient of 1 trillion is going to take a really long time.
 
-It turns out there's a really cool technique called binary expansion that allows us to perform multiplaciton in log2(n) loops, which dramatically reduces the calculation time for large numbers. For example, 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
+It turns out there's a really cool technique called binary expansion that allows us to perform multiplaciton in `log2(n)` loops, which dramatically reduces the calculation time for large numbers. For example, 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
 
 [source,python]
 ----
@@ -440,7 +440,7 @@ class Point:
 ----
 <1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
 <2> We start the result at "zero", or in Point Addition, the point at infinity.
-<3> We are looking at whether the right-most bit is a 1. If it is, then we add the current
+<3> We are looking at whether the right-most bit is a 1. If it is, then we add the current.
 <4> We need to double the point until we're past how big the coefficient can be.
 <5> We bit shift the coefficient to the right.
 
@@ -465,10 +465,11 @@ These numbers are known publicly and together form the curve. There are many cur
 
 * a = 0, b = 7, making the equation y^2^=x^3^+7
 * p = 2^256^-2^32^-977
-* G = (0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798, 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
+* G~x~ = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+* G~y~ = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
 * n = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
-The numbers starting with '0x' indicate this is a hexadecimal number.
+G~x~ refers to the x-coordinate of the point G and G~y~ the y-coordinate. The numbers starting with '0x' indicate this is a hexadecimal number.
 
 There are a few things to notice about this curve. First, the equation is relatively simple. Many curves have a and b that are 256 bits long. secp256k1 has a really simple equation.
 
@@ -525,7 +526,7 @@ Furthermore, we can verify in Python whether the generator point, G, has the ord
 Point(infinity)
 ----
 
-Since we know the curve we will work in, this might be a good time to create a subclass in Python to work exclusively with the parameters for secp256k1. We'll define the equivalent `FieldElement` and `Point` objects, but specific to the secp256k1 curve. Let's start by defining the field we'll be working in.
+Since we know the curve we will work in, this is a good time to create a subclass in Python to work exclusively with the parameters for secp256k1. We'll define the equivalent `FieldElement` and `Point` objects, but specific to the secp256k1 curve. Let's start by defining the field we'll be working in.
 
 [source,python]
 ----
@@ -552,14 +553,12 @@ B = 7
 
 class S256Point(Point):
 
-    zero = S256Field(0) # <1>
-
     def __init__(self, x, y, a=None, b=None):
         a, b = S256Field(A), S256Field(B)
         if type(x) == int:
             super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
         else:
-            super().__init__(x=x, y=y, a=a, b=b)  # <2>
+            super().__init__(x=x, y=y, a=a, b=b)  # <1>
 
     def __repr__(self):
         if self.x is None:
@@ -567,8 +566,7 @@ class S256Point(Point):
         else:
             return 'Point({},{})'.format(self.x, self.y)
 ----
-<1> `zero` needs to be defined as a `S256Field` object so that the equality in the $$__add__$$ method still works.
-<2> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
+<1> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
 
 This should give us an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
 
@@ -748,7 +746,7 @@ The calculation of z requires two rounds of sha256. You may be wondering why the
 
 There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html). Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
 
-There is no known SHA256 weakness like a birthday attack, but is doing two rounds is a defense against possible potential weaknesses.
+There is no known sha256 weakness like a birthday attack, but is doing two rounds is a defense against possible potential weaknesses.
 ====
 
 ==== Verifying a Signature
@@ -761,15 +759,19 @@ We can now verify a signature using some of the primitives that we have.
 >>> z = 0xbc62d4b80d9e36da29c16c5d4d9f11731f36052c72401a76c23c0fb5a9b74423
 >>> r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
 >>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
->>> point = S256Point(0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574, 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4)
->>> u = z * pow(s, N-2, N) % N # <1>
->>> v = r * pow(s, N-2, N) % N # <2>
->>> print((u*G + v*point).x.num == r) # <3>
+>>> px = 0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574
+>>> py = 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4
+>>> point = S256Point(px, py)
+>>> s_inv = pow(s, N-2, N)  # <1>
+>>> u = z * s_inv % N  # <2>
+>>> v = r * s_inv % N  # <3>
+>>> print((u*G + v*point).x.num == r)  # <4>
 True
 ----
-<1> u = z/s. Note that we use Fermat's Little Theorem for 1/s, since N is prime.
-<2> v = v/s. Note that we use Fermat's Little Theorem for 1/s, since N is prime.
-<3> uG+vP = (r,y). We need to check that the x-coordinate is r)
+<1> Note that we use Fermat's Little Theorem for 1/s, since N is prime.
+<2> u = z/s
+<3> v = r/s
+<4> uG+vP = (r,y). We need to check that the x-coordinate is r
 
 ==== Exercise {counter:exercise}
 
@@ -803,9 +805,9 @@ class Signature:
 	self.s = s
 ----
 
-We will be doing more with this class later.
+We will be doing more with this class in Chapter 4.
 
-We can create an actual verify method on S256Point based on the above.
+We can write the `verify` method on `S256Point` based on the above.
 
 [source,python]
 ----
@@ -825,9 +827,7 @@ class S256Point(Point):
 <4> uG+vP should be R
 <5> We check that the x-coordinate is r
 
-
-So given a public key (or point on the elliptic curve), we can verify whether a signature is valid or not.
-
+So given a public key, which is a point on the secp256k1 curve and a message, `z`, we can verify whether a signature is valid or not.
 
 ==== Signing In-depth
 
@@ -867,7 +867,8 @@ Note that using something like the `random` library from Python to do cryptograp
 >>> s = (z+r*e) * k_inv % N  # <5>
 >>> point = e*G  # <6>
 >>> print(point)
-S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
+S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,
+0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
 >>> print(hex(z))
 0x231c6f3d980a6b0fb7152f85cee7eb52bf92433d9919b9c5218cb08e79cce78
 >>> print(hex(r))
@@ -940,9 +941,9 @@ class PrivateKey:
 
 .Importance of a unique `k`
 ****
-There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be unique per signature. That is, it cannot get reused. In fact, a `k` that's reused will result in you losing your secret! This is because:
+There's an important rule in signatures that utilize a random component like we have here. The `k` needs to be unique per signature. That is, it cannot get reused. In fact, a `k` that's reused will result in you revealing your secret! This is because:
 
-Our secret is e, we are reusing k to sign z~1~ and z~2~.
+Our secret is `e`, we are reusing `k` to sign z~1~ and z~2~.
 
 * kG=(r,y)
 * s~1~ = (z~1~+re) / k, s~2~ = (z~2~+re) / k
@@ -954,7 +955,7 @@ Our secret is e, we are reusing k to sign z~1~ and z~2~.
 
 If anyone sees both signatures, they can use this formula and find our secret!
 
-To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique, deterministic k every time. The specification is laid out in RFC6979 (see https://tools.ietf.org/html/rfc6979 for details) and the code changes to look like this:
+To combat this, there is a deterministic k generation standard which uses our secret and z to create a unique, deterministic k every time. The specification is in RFC6979 (https://tools.ietf.org/html/rfc6979) and the code changes to look like this:
 
 [source,python]
 ----
@@ -992,7 +993,7 @@ class PrivateKey:
 <1> We are using the deterministic k instead of a random one. Everything else remains the same.
 <2> This algorithm returns a candidate that's suitable.
 
-The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because SHA256 is collision-resistant and no collisions to date have been found.
+The nice thing about this algorithm is that the k is with very high probability not going to be utilized again. This is because sha256 is collision-resistant and no collisions to date have been found.
 
 Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time. This makes debugging much easier and unit tests a lot easier to write. In addition, transactions which use deterministic k will create the same transaction every time as the signature will not change. This makes transactions less malleable (more on that in Chapter 13)
 

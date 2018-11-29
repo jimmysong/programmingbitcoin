@@ -53,9 +53,9 @@ At the end of evaluating all the instructions, the top element of the stack must
 
 === Example Operations
 
-There are many other operations besides `OP_DUP`. `OP_HASH160` does a SHA256 followed by a RIPEMD160 to the top element of the stack (consuming 1) and putting a new element back (pushing 1). Note in the diagram that `y = RIPEMD160(SHA256(x))`.
+There are many other operations besides `OP_DUP`. `OP_HASH160` does a sha256 followed by a ripemd160 to the top element of the stack (consuming 1) and putting a new element back (pushing 1). Note in the diagram that `y = ripemd160(sha256(x))`.
 
-.`OP_HASH160` does a SHA256 followed by RIPEMD160 to the top element
+.`OP_HASH160` does a sha256 followed by ripemd160 to the top element
 image::op_hash160.png[OP_HASH160]
 
 Another very important operation is `OP_CHECKSIG`. `OP_CHECKSIG` consumes 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey. If so, OP_CHECKSIG pushes a 1 onto the stack, otherwise pushes a 0 on the stack.
@@ -481,9 +481,9 @@ Third, because we're storing the public key in the ScriptPubKey field, it's know
 Pay-to-pubkey-hash (p2pkh) is an alternative Script that has a bunch of advantages over p2pk:
 
 1. The addresses are shorter.
-2. It's additionally protected by SHA256 and RIPEMD160.
+2. It's additionally protected by sha256 and ripemd160.
 
-Addresses are shorter due to the use of the SHA256 and RIPEMD160 hashing algorithms. We utilize both in succession and call that HASH160. The result of HASH160 is 160-bits or 20 bytes, which can be encoded into an address.
+Addresses are shorter due to the use of the sha256 and ripemd160 hashing algorithms. We utilize both in succession and call that hash160. The result of hash160 is 160-bits or 20 bytes, which can be encoded into an address.
 
 The actual result is an address that you may have seen on the Bitcoin network, something that looks like this:
 
@@ -493,7 +493,7 @@ This address actually has within it the 20 bytes in hex that look like this:
 
 `f54a5851e9372b87810a8e60cdd2e7cfd80b6e31`
 
-These 20 bytes are the result of doing a HASH160 operation on this (compressed) SEC public key:
+These 20 bytes are the result of doing a hash160 operation on this (compressed) SEC public key:
 
 `0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352`
 
@@ -537,7 +537,7 @@ image::p2pkh5.png[P2PKH Step 1]
 .p2pkh Step 2
 image::p2pkh6.png[P2PKH Step 2]
 
-`OP_HASH160` will take the top element and perform the HASH160 operation on it (SHA256 followed by RIPEMD160), creating a 20-byte hash like so:
+`OP_HASH160` will take the top element and perform the hash160 operation on it (sha256 followed by ripemd160), creating a 20-byte hash like so:
 
 .p2pkh Step 3
 image::p2pkh7.png[P2PKH Step 3]
@@ -561,7 +561,7 @@ There are two main ways this Script can fail. If you provide a public key that d
 
 This is why we call this type of Script pay-to-pubkey-_hash_. The ScriptPubKey has the 20-byte _hash160_ of the public key and not the public key itself. We are locking Bitcoins to a _hash_ of the public key and are responsible for revealing the public key as part of spending the output in our ScriptSig.
 
-The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a hacker would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both RIPEMD160 and SHA256.
+The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a hacker would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.
 
 === Scripts can be Arbitrarily Constructed
 
@@ -640,7 +640,7 @@ image::exercise2.png[Exercise 4]
 
 In 2013, Peter Todd created a Script very similar to the exercise above and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached 2.49153717 BTC and when Google actually found a hash collision for SHA1 in February of 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html), this Script was promptly redeemed. The transaction output was 2.48 coins which was $2848.88 USD at the time.
 
-Peter created more piñatas for SHA256, HASH256 and HASH160, which add economic incentives to find collisions for these hashing functions.
+Peter created more piñatas for sha256, hash256 and hash160, which add economic incentives to find collisions for these hashing functions.
 
 === Conclusion
 
