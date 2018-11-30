@@ -5,28 +5,28 @@
 == Elliptic Curve Cryptography
 
 [.lead]
-The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts into Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
+The previous two chapters covered some fundamental math. We learned how Finite Fields work and we also learned what an Elliptic Curve is. In this chapter, we're going to combine the two concepts to learn Elliptic Curve Cryptography. Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
 === Elliptic Curves over Reals
 
-We discussed in the last chapter what an Elliptic curve looks like visually because we were plotting the curve over *real* numbers. Specifically, it's not just integers or even rational numbers, but all *real* numbers. Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
+We discussed in Chapter 2 what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers. Specifically, it's not just integers or even rational numbers, but all _real_ numbers. Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
 
-What's interesting is that *real* numbers are also a field. Note unlike a *finite* field, there are an infinite number of real numbers, but otherwise the same properties hold:
+What's interesting is that _real_ numbers are also a field. Note unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
 
-* if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
-* The additive identity, *0* exists. This means *a + 0 = a*
-* The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
-* If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
-* If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
+1. if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
+2. The additive identity, *0* exists. This means *a + 0 = a*
+3. The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
+4. If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
+5. If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
 
-Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse. Normal math applies to everything here.
+Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse.
 
-The nice thing about real numbers is that we can easily plot what's going on and see the whole thing visually as we did in the last chapter. For example, y^2^=x^3^+7 can be plotted like this:
+Real numbers are easy to plot and see the whole thing visually as we did in Chapter 2. For example, y^2^=x^3^+7 can be plotted like this:
 
 .secp256k1 over real numbers
 image::elliptic3.png[secp256k1 Curve]
 
-What's interesting is that we can use this equation over any field, including the Finite Fields we explored in Chapter 1. The only difference is that we have to use the addition/subtraction/multiplication/division as we defined them, not the "normal" versions that the real numbers use.
+What's interesting is that we can use this equation over any field, including the Finite Fields we learned in Chapter 1. The only difference is that we have to use the addition/subtraction/multiplication/division as defined in Chapter 1, not the "normal" versions that the real numbers use.
 
 === Elliptic Curves over Finite Fields
 
@@ -42,9 +42,9 @@ Because we're evaluating the equation over a Finite Field, the plot of the equat
 .Elliptic Curve over a Finite Field
 image::finitefieldellipticcurve.png[Elliptic Curve over a Finite Field]
 
-As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete. About the only pattern is that the curve is symmetric right around the middle, which is due to the fact that the graph is symmetric, not over the x-axis as in the curve over reals, but about half-way up the y-axis.
+As you can see, it's very much a scattershot of points and there's no smooth curve here. This is not surprising since the points are discrete. About the only pattern is that the curve is symmetric right around the middle, which is due to the y^2^ term. The graph is not symmetric over the x-axis as in the curve over reals, but about half-way up the y-axis due to there not being negative numbers in a finite field.
 
-What's important here to realize is that we can evaluate the same equation using the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works. This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
+What's amazing is that we can use the same equations with the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works. This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
 
 ==== Exercise {counter:exercise}
 
@@ -54,7 +54,7 @@ Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
 
 === Coding Elliptic Curves over Finite Fields
 
-Because we defined an Elliptic curve point and utilize the +,-,* and / operators for Finite Fields, we can actually just combine the two classes to evaluate Elliptic Curve Points over a Finite Field.
+Because we defined an Elliptic Curve point and we defined the +,-,* and / operators for Finite Fields, we can combine the two classes to create Elliptic Curve Points over a Finite Field.
 
 [source,python]
 ----
@@ -85,9 +85,9 @@ class Point:
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x, y))
 ----
 
-The addition (+), multiplication (*), exponentiation (**) and equality (!=) here will end up utilizing the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is what will allow us to construct an Elliptic Curve Cryptography library.
+The addition (+), multiplication (*), exponentiation (**) and equality (!=) here use the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is how we will construct an Elliptic Curve Cryptography library.
 
-We've already coded the two classes that we need to implement Elliptic Curve points over a Finite Field. However, to check our work, it will be useful to create a test suite. We will do this using the results of the previous exercise.
+We've already coded the two classes that we need to implement Elliptic Curve points over a Finite Field. However, to check our work, it will be useful to create a test suite. We will do this using the results of Exercise 2.
 
 [source,python]
 ----
@@ -118,7 +118,7 @@ class ECCTest(TestCase):
             with self.assertRaises(ValueError):
                 Point(x, y, a, b) # <1>
 ----
-<1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, utilize all the overloaded methods in `FieldElement`
+<1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, use all the overloaded methods in `FieldElement`
 
 We can now run this test like so:
 
@@ -133,7 +133,7 @@ Ran 1 test in 0.001s
 
 OK
 ----
-<1> helper is a module with some very useful utility functions, including the ability to run unit tests individually.
+<1> `helper` is a module with some very useful utility functions, including the ability to run unit tests individually.
 
 === Point Addition over Finite Fields
 
@@ -141,12 +141,12 @@ We can use all the same equations over finite fields, including the linear equat
 
 y=mx+b
 
-It turns out that a "line" in a finite field is not quite what you'd expect, either:
+It turns out that a "line" in a finite field is not quite what you'd expect:
 
 .Line over a Finite Field
 image::linefinitefield.png[Line over a Finite Field]
 
-Still, the equation works and we can calculate what y should be for a given x.
+The equation nevertheless works and we can calculate what y should be for a given x.
 
 Remarkably, point addition works over finite fields as well. This is because the elliptic curve and line equations still work! The same exact formulas we used to calculate Point Addition over Reals work over Finite Fields. Specifically:
 
@@ -166,8 +166,7 @@ when P~1~=P~2~:
 * x~3~=s^2^-2x~1~
 * y~3~=s(x~1~-x~3~)-y~1~
 
-All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some Cryptographic primitives.
-
+All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some cryptographic primitives.
 
 === Coding Point Addition over Finite Fields
 
@@ -211,24 +210,24 @@ Similarly, because we have associativity, we can actually add the point again:
 
 2⋅(170,142) + (170,142) = 3⋅(170, 142)
 
-We can actually do this as many times as we want. This is what we call Scalar Multiplication. That is, we have a _scalar_ number in front of the point. We can do this because we have defined point addition.
+We can do this as many times as we want. This is what we call Scalar Multiplication. That is, we have a _scalar_ number in front of the point. We can do this because we have defined point addition and point addition is associative.
 
-What's interesting about scalar multiplication is that it's really hard to predict without actually calculating:
+One property of scalar multiplication is that it's really hard to predict without calculating:
 
 .Scalar Multiplication Results for y^2^=x^3^+7 over F~223~ for point (170,142)
 image::scatterplot.png[Scalar Multiplication Results]
 
 Each point is labeled by how many times we've added the point. You can see that this is a complete scattershot.
 
-This is because point addition is non-linear. That is, not easy to calculate. In fact, doing the scalar multiplication is more or less straightforward, but doing the opposite, Point division, is not.
+This is because point addition is non-linear. That is, not easy to calculate. Performing scalar multiplication is straightforward, but doing the opposite, Point division, is not.
 
 This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
-The interesting thing about Scalar Multiplication is that at a certain number, we get to the point at infinity (remember, point at infinity is the additive identity or 0). If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set like this:
+Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, point at infinity is the additive identity or 0). If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set like this:
 
 { G, 2G, 3G, 4G, ... nG }
 
-It turns out that this set is called a Group and because n is finite, we have a Finite Group. Groups are interesting mathematically because they behave a lot like addition:
+It turns out that this set is called a Group and because n is finite, we have a Finite Group (or more specifically a Finite Cyclic Group). Groups are interesting mathematically because they behave a lot like addition:
 
 G+4G=5G or aG+bG=(a+b)G
 
@@ -236,7 +235,7 @@ When we combine the fact that scalar multiplication is easy to go in one directi
 
 .Why is this called the Discrete Log Problem?
 ****
-You may be wondering why the problem of scalar *multiplication* is referred to as the discrete *log* problem.
+You may be wondering why the problem of reversing scalar *multiplication* is referred to as the discrete *log* problem.
 
 We called the operation between the points "addition", but we could easily have called it a point "operation". Typically, a new operation that you define in math utilizes the dot operator (⋅). The dot operator is also used for multiplication, and it sometimes helps to think that way:
 
@@ -266,7 +265,7 @@ For the curve y^2^=x^3^+7 over F~223~, find:
 
 === Scalar Multiplication Redux
 
-Scalar Multiplication is adding the same point to itself some number of times. The key insight to set up Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse. Note the previous exercise. Most likely, you calculated the point s⋅(47,71) in F~223~ for s from 1 until 21. Here are the results:
+Scalar Multiplication is adding the same point to itself some number of times. The key making scalar multiplication into Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse. Note the previous exercise. Most likely, you calculated the point s⋅(47,71) in F~223~ for s from 1 until 21. Here are the results:
 
 [source,python]
 ----
@@ -302,25 +301,25 @@ Scalar Multiplication is adding the same point to itself some number of times. T
 20*(47,71)=(47,152)
 ----
 
-If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication. The x-coordinates don't always increase or decrease and neither do the y-coordinates. About the only pattern in this set is that between 10 and 11, the x coordinates seem to be aligned (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
+If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication. The x-coordinates don't always increase or decrease and neither do the y-coordinates. About the only pattern is that between 10 and 11, the x-coordinates are equal (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
 
-Scalar Multiplication looks really random and that's what we're going to use for what we call an *asymmetric* problem. An *asymmetric* problem is one that's easy to calculate in one direction, but hard to reverse. For example, it's easy enough to calculate 12⋅(47,71). But if we were presented this:
+Scalar multiplication looks really random and that's what we're going to use for what we call an *asymmetric* problem. An *asymmetric* problem is one that's easy to calculate in one direction, but hard to reverse. For example, it's easy enough to calculate 12⋅(47,71). But if we were presented this:
 
 s⋅(47,71)=(194,172)
 
-Would you be able to solve for `s`? We can look up the table above, but that's because we have a small field. We'll see later that when we have numbers that are a lot larger, this becomes problematic.
+Would you be able to solve for `s`? We can look up the table above, but that's because we have a small group. We'll see later that when we have numbers that are a lot larger, discrete log becomes an intractable problem.
 
 === Mathematical Groups
 
-The preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point. What we really want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can then generate this Finite Cyclic Group.
+The preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point. What we really want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate this Finite Cyclic Group.
 
 Unlike fields, groups have only a single operation. In our case, Point Addition is our operation. We also have a few other properties like closure, invertibility, commutativity and associativity. Lastly, we need the identity.
 
-It turns out that we have all of these things with Point Addition. Let's look at each property
+Let's look at each property.
 
 ==== Identity
 
-If you haven't guessed by now, the identity is defined as the point at infinity. This is the point, when added to any other point produces the other point. So:
+If you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group since we start with 0. This is the point, when added to any other point produces the other point. So:
 
 0 + A = A
 
@@ -339,9 +338,11 @@ We know that the result is going to be:
 
 (a+b)G
 
-How do we know if this element is in the group? If a+b < n, then we know it's in the group by definition. If a+b >= n, then we know a < n and b < n, so a+b<2n so a+b-n<n.
+How do we know if this element is in the group? If a+b < n (where n is the order of the group), then we know it's in the group by definition. If a+b >= n, then we know a < n and b < n, so a+b<2n so a+b-n<n.
 
 (a+b-n)G=aG+bG-nG=aG+bG-0=aG+bG
+
+More generally (a+b)G=((a+b)%n)G where n is the order of the group.
 
 So we know that this element is in the group, proving closure.
 
@@ -356,33 +357,23 @@ Mathematically, we know that if aG is in the group, (n-a)G is also in the group.
 
 ==== Commutativity
 
-Again, this is very easy to see visually:
+We know from Point Addition that A+B=B+A:
 
 .The Line through the points doesn't change
 image::pointaddition.png[Point Addition]
 
-Clearly, P+Q=Q+P because they end up drawing the same line.
-
-The equations for figuring out the third point also make this clear:
-
-P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-
-x~3~=s^2^-x~1~-x~2~
-
-y~3~=s(x~1~-x~3~)-y~1~=s(x~2~-x~3~)-y~2~
-
-You can swap P~1~ and P~2~ to get the exact same equation.
+This means that aG+bG=bG+aG, which proves commutativity.
 
 ==== Associativity
 
-This is the hardest to prove but can be seen visually from the last chapter:
+We know from Point Addition that A+(B+C)=(A+B)+C
 
 .(A+B)+C
 image::associativity1.png[Case 1]
 .A+(B+C)
 image::associativity2.png[Case 2]
 
-Mathematically, this is a bit more involved, but the math can be proven given the definition that we have. There are proofs of this, but the polynomials involved take several pages and are thus outside the scope of this book.
+Thus, aG+(bG+cG)=(aG+bG)+cG proving associativity.
 
 ==== Exercise {counter:exercise}
 
@@ -417,12 +408,12 @@ class Point:
             product += self
         return product
 ----
-<1> We start the `product` at "zero", which in case of Point Addition is the point at infinity.
+<1> We start the `product` at 0, which in case of Point Addition is the point at infinity.
 <2> We loop `coefficient` times and add the point each time
 
 This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? For example, a coefficient of 1 trillion is going to take a really long time.
 
-It turns out there's a really cool technique called binary expansion that allows us to perform multiplaciton in `log2(n)` loops, which dramatically reduces the calculation time for large numbers. For example, 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
+There's a really cool technique called binary expansion that allows us to perform multiplaciton in `log2(n)` loops, which dramatically reduces the calculation time for large numbers. For example, 1 trillion is still only 40 bits, so we only have to loop 40 times for a number that's generally considered very large.
 
 [source,python]
 ----
@@ -439,29 +430,29 @@ class Point:
         return result  # <5>
 ----
 <1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
-<2> We start the result at "zero", or in Point Addition, the point at infinity.
+<2> We start the result at 0, or the point at infinity.
 <3> We are looking at whether the right-most bit is a 1. If it is, then we add the current.
 <4> We need to double the point until we're past how big the coefficient can be.
 <5> We bit shift the coefficient to the right.
 
 This is an advanced technique and if you don't understand bitwise operators, think of representing the coefficient in binary and only adding the point where there are 1's.
 
-With $$__add__$$ and $$__rmul__$$, we can now start defining some more complicated Elliptic Curves.
+With $$__add__$$ and $$__rmul__$$, we can start defining some more complicated Elliptic Curves.
 
 === Defining the curve for Bitcoin
 
-While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. If the group has a size of 301, the computer can easily do 301 computations to figure out what the scalar multiple was.
+While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers. Small primes mean that we can use a computer to search through the entire Group. If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication.
 
-But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. Indeed the security of Elliptic Curve Cryptography depends on computers *not* being able to go through the an appreciable fraction of the group.
+But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using. The security of Elliptic Curve Cryptography depends on computers *not* being able to go through the an appreciable fraction of the group.
 
-Any Elliptic Curve has to be defined with the following parameters:
+An Elliptic Curve for Cryptography is defined with the following parameters:
 
-* We have to define a, b of the curve y^2^=x^3^+ax+b.
-* We also define the prime of the finte field, p.
-* We define the x and y coordinates of the generator point G
-* We also have the order of the group generated by G, n.
+* We specify the a and b of the curve y^2^=x^3^+ax+b.
+* We specify the prime of the finite field, p.
+* We specify the x and y coordinates of the generator point G
+* We specify the order of the group generated by G, n.
 
-These numbers are known publicly and together form the curve. There are many curves and they have different security/convenience tradeoffs, but the one we're most interested in is the one defined for Bitcoin. Specifically, the curve secp256k1. The parameters for secp256k1 are thus:
+These numbers are known publicly and together form the cryptographic curve. There are many cryptographic curves and they have different security/convenience tradeoffs, but the one we're most interested in is the one defined for Bitcoin. Specifically, the curve secp256k1. The parameters for secp256k1 are thus:
 
 * a = 0, b = 7, making the equation y^2^=x^3^+7
 * p = 2^256^-2^32^-977
@@ -469,15 +460,13 @@ These numbers are known publicly and together form the curve. There are many cur
 * G~y~ = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
 * n = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
-G~x~ refers to the x-coordinate of the point G and G~y~ the y-coordinate. The numbers starting with '0x' indicate this is a hexadecimal number.
+G~x~ refers to the x-coordinate of the point G and G~y~ the y-coordinate. The numbers starting with '0x' indicate a hexadecimal number.
 
-There are a few things to notice about this curve. First, the equation is relatively simple. Many curves have a and b that are 256 bits long. secp256k1 has a really simple equation.
+There are a few things to notice about this curve. First, the equation is relatively simple. Many curves have a and b that are much bigger. secp256k1 has a really simple equation.
 
-Second, p is really, really close to 2^256^. This means that most numbers under 2^256^ are in the prime field. n is also very close to 2^256^. This means most points on the curve are in the group. The curve was chosen, in part, because n is so close to P.
+Second, `p` is really, really close to 2^256^. This means that most numbers under 2^256^ are in the prime field. `n` is also very close to 2^256^. This means most points on the curve are in the group. The curve was chosen, in part, because `n` is so close to `p`.
 
-Third, 2^256^ is a really big number (See the "How big is 2^256^ sidebar to see just how huge). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can still store the private key relatively easily.
-
-Lastly, the curve itself is one that was published by Certicom, and is *not* a NIST curve. NIST stands for National Institute of Standards and Technology and they are affiliated with the NSA (National Security Administration). We don't really know why Satoshi chose the non-NIST curve as opposed to the NIST one, but some speculate this is because of the NSA affiliation.
+Third, 2^256^ is a really big number (See the _How Big is 2^256^_). Amazingly, any number below 2^256^ can be stored in 32 bytes. This means that we can store the private key relatively easily.
 
 .How Big is 2^256^?
 ****
@@ -568,7 +557,7 @@ class S256Point(Point):
 ----
 <1> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
 
-This should give us an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
+We now have an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
 
 We can also define $$__rmul__$$ a bit more efficiently since we know the order of the group, `N`.
 
@@ -580,9 +569,9 @@ class S256Point(Point):
         coef = coefficient % N # <1>
 	return super().__rmul__(coef)
 ----
-<1> We can mod by N because `N*G==Point(infinity)`. That is, every N times we add G to itself or any member of this group, we effectively go back to zero (Point at infinity).
+<1> We can mod by `N` because `N*G==Point(infinity)`. That is, every `N` times we add `G` to itself or any member of this group, we effectively go back to zero (Point at infinity).
 
-We can also define G directly and keep it around since we'll be using it a lot going forward. We'll also define N since that's very useful.
+We can also define `G` directly and keep it around since we'll be using it a lot going forward. We'll also define `N` since that's very useful.
 
 [source,python]
 ----
@@ -606,13 +595,13 @@ Point(infinity)
 
 === Public Key Cryptography
 
-We can now describe Public Key Cryptography and how we can use Elliptic Curves over finite fields to build this up. In general, we need a finite cyclical group, which we have with point addition in order to make everything work.
+We can now describe Public Key Cryptography and how we can use Elliptic Curves over finite fields to build this up. In general, we need a Finite Cyclical Group, which we have with point addition in order to make everything work.
 
-The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute P when we know e and G, but we cannot easily compute e when we know P and G. This is the Discrete Log Problem described earlier.
+The key here is that when we have `P=eG` that this is an *asymmetric* equation. We can easily compute `P` when we know `e` and `G`, but we cannot easily compute `e` when we know `P` and `G`. This is the Discrete Log Problem described earlier.
 
-We'll use the fact that it's extremely difficult to compute e to create signing and verification.
+We'll use the fact that it's extremely difficult to compute `e` in that scenario to create signing and verification.
 
-Generally, we call `e` the Private Key and `P` the Public Key. We'll note here that the private key is a single 256-bit number and the public key is a coordinate (x,y) where x and y are _each_ 256-bit numbers.
+Generally, we call `e` the Private Key and `P` the Public Key. We'll note here that the private key is a single 256-bit number and the public key is a coordinate `(x,y)` where `x` and `y` are _each_ 256-bit numbers.
 
 === Signing and Verification
 
