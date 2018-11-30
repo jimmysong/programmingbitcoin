@@ -266,7 +266,6 @@ Now that we have a node, we can now handshake with another node.
 ...         verack_received = True
 ...     else:
 ...         version_received = True
-...         node.send(VerAckMessage())
 ...
 ----
 <1> It turns out most nodes don't care about the fields like IP address and port number all that much. We can connect with the defaults and everything will be just fine.
