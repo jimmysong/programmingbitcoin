@@ -104,6 +104,14 @@ class Tx:
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
+        # s.read(n) will return n bytes
+        # version is an integer in 4 bytes, little-endian
+        # num_inputs is a varint, use read_varint(s)
+        # parse num_inputs number of TxIns
+        # num_outputs is a varint, use read_varint(s)
+        # parse num_outputs number of TxOuts
+        # locktime is an integer in 4 bytes, little-endian
+        # return an instance of the class (see __init__ for args)
         raise NotImplementedError
 
     def serialize(self):
@@ -129,6 +137,9 @@ class Tx:
     def fee(self):
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
+        # use TxIn.value() to sum up the input amounts
+        # use TxOut.amount to sum up the output amounts
+        # fee is input sum - output sum
         raise NotImplementedError
 
 
@@ -153,6 +164,11 @@ class TxIn:
         '''Takes a byte stream and parses the tx_input at the start
         return a TxIn object
         '''
+        # prev_tx is 32 bytes, little endian
+        # prev_index is an integer in 4 bytes, little endian
+        # use Script.parse to get the ScriptSig
+        # sequence is an integer in 4 bytes, little-endian
+        # return an instance of the class (see __init__ for args)
         raise NotImplementedError
 
     def serialize(self):
@@ -205,6 +221,9 @@ class TxOut:
         '''Takes a byte stream and parses the tx_output at the start
         return a TxOut object
         '''
+        # amount is an integer in 8 bytes, little endian
+        # use Script.parse to get the ScriptPubKey
+        # return an instance of the class (see __init__ for args)
         raise NotImplementedError
 
     def serialize(self):

@@ -117,14 +117,14 @@ Write the version parsing part of the `parse` method that we've defined. To do t
 .Inputs
 image::tx3.png[Inputs]
 
-Each input points to an output of a previous transaction. This last sentence requires more explanation as it's not intuitively obvious at first.
+Each input points to an output of a previous transaction. This fact requires more explanation as it's not intuitively obvious at first.
 
-Bitcoin's inputs are spending outputs of another transaction. That is, you need to have received Bitcoins for you to be able to spend something. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs are there to show which Bitcoins have been given to you. There are two things that each input needs to have:
+Bitcoin's inputs are spending outputs of another transaction. That is, you need to have received Bitcoins for you to be able to spend something. This makes intuitive sense. You cannot spend money unless someone gave you some first. The inputs refer to Bitcoins that belong to you. There are two things that each input needs to have:
 
 * A reference to the previous Bitcoins you own
 * Proof that these are yours to spend
 
-It is the second part that ends up needing ECDSA (Chapter 3). You don't want people to be able to forge this, so most inputs contain signatures which only the owner(s) of the private key(s) can produce.
+The second part uses ECDSA (Chapter 3). You don't want people to be able to forge this, so most inputs contain signatures which only the owner(s) of the private key(s) can produce.
 
 The inputs field can contain more than one input. This is analogous to using a single 100 bill to pay for a 70 dollar meal or a 50 and a 20. The former only requires one input ("bill") the latter requires 2. There are situations where there could be even more. In our analogy, we can pay for a 70 dollar meal with 14 5-dollar bills or even 7000 pennies. This would be analogous to 14 inputs or 7000 inputs.
 
