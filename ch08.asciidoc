@@ -267,7 +267,7 @@ We now need to special case the particular sequence of redeem_script, `OP_HASH16
             return False
         return True
 ----
-<1> 0xa9 is `OP_HASH160`, 0x87 is `OP_EQUAL`. We're checking here that the next 3 instructions are exactly the pattern we're looking for.
+<1> `0xa9` is `OP_HASH160`, `0x87` is `OP_EQUAL`. We're checking here that the next 3 instructions are exactly the pattern we're looking for.
 <2> We know that this is `OP_HASH160`, so we just pop it off. Similarly, we know the next one is the 20-byte hash value and the third item is `OP_EQUAL`, which is what we tested for in the if statement above it.
 <3> We run the `OP_HASH160`, 20-byte hash push on the stack and `OP_EQUAL` as normal.
 <4> There should be a 1 remaining, which is what op_verify checks for (`OP_VERIFY` consumes 1 element and does not put anything back).
@@ -278,7 +278,7 @@ We now need to special case the particular sequence of redeem_script, `OP_HASH16
 
 The nice thing about p2sh is that the RedeemScript can be as long as the largest single element from `OP_PUSHDATA2`, which is 520 bytes. Multisig is just one possibility. You can have Scripts that define more complicated logic like "2 of 3 of these keys or 5 of 7 of these other keys". The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO set size by pushing the burden of storing part of the Script back to the user.
 
-As we'll see in Chapter 13, p2sh will be used for backwards compatibility with Segwit.
+As we'll see in Chapter 13, p2sh is used to make Segwit backwards compatible.
 
 ==== Addresses
 

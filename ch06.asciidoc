@@ -223,11 +223,11 @@ class Script:
 <5> Any element longer than 520 bytes cannot be serialized.
 <6> We prepend with the length of the entire Script.
 
-Note that both the parser and serializer were used in Chapter 5 for Transaction parsing/serializing. The Script object represents the instruction set that needs to be validated.
+Note that both the parser and serializer were used in Chapter 5 for Transaction parsing/serializing. The Script object represents the instruction set that requires validation.
 
 === Combining the Script fields
 
-It's important to realize at this point that the lockbox (ScriptPubKey) and the unlocking (ScriptSig) are in *different* transactions. Specifically, the lockbox is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction *points to the receiving transaction*. Essentially, we have a situation like this:
+To evaluate Script, we need to combine the ScriptPubKey and ScriptSig fields. The lockbox (ScriptPubKey) and the unlocking (ScriptSig) are in _different_ transactions. Specifically, the lockbox is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction _points to the receiving transaction_. Essentially, we have a situation like this:
 
 .ScriptPubKey and ScriptSig
 image::Script3.png[ScriptPubKey and ScriptSig]
@@ -247,7 +247,7 @@ class Script:
 ----
 <1> We are combining the instruction set to create a new Script object.
 
-We will utilize this for Script evaluation later in this chapter.
+We will use this ability to combine Scripts for evaluation later in this chapter.
 
 === Stardard Scripts
 
@@ -339,7 +339,7 @@ True
 <2> We can do this because of the $$__add__$$ method we created above.
 <3> We want to go through the instructions and see if the result is `True` or not.
 
-Here is the method that we'll use for the *combined* instruction set (combination of ScriptSig of the current transaction and the ScriptPubKey of the previous transaction).
+Here is the method that we'll use for the _combined_ instruction set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current transaction).
 
 [source,python]
 ----
@@ -395,7 +395,7 @@ class Script:
 ====
 The code shown here is a little bit of a cheat as the combined Script is not executed this way exactly. The ScriptSig is evaluated separately from the ScriptPubKey as to not allow operations from ScriptSig to affect the ScriptPubKey instructions.
 
-Specifically, the stack after all the ScriptSig instructions are evaluated are stored and then the ScriptPubkey is evaluated on its own.
+Specifically, the stack after all the ScriptSig instructions are evaluated are stored and then the ScriptPubkey instructions are evaluated on their own.
 ====
 
 
@@ -451,7 +451,7 @@ def op_0(stack):
     return True
 ----
 
-Numbers being pushed onto the stack are essentially encoded into bytes and decoded when the numerical value is need.
+Numbers being pushed onto the stack are encoded into bytes and decoded from bytes when the numerical value is needed.
 
 ==== Exercise {counter:exercise}
 
@@ -636,9 +636,9 @@ Figure out what this Script is doing:
 .Exercise 4
 image::exercise2.png[Exercise 4]
 
-==== SHA1 Piñata
+==== Sha1 Piñata
 
-In 2013, Peter Todd created a Script very similar to the exercise above and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached 2.49153717 BTC and when Google actually found a hash collision for SHA1 in February of 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html), this Script was promptly redeemed. The transaction output was 2.48 coins which was $2848.88 USD at the time.
+In 2013, Peter Todd created a Script very similar to the Script in Exercise 4 and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached 2.49153717 BTC and when Google actually found a hash collision for sha1 in February of 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html), this Script was promptly redeemed. The transaction output was 2.48 coins which was $2848.88 USD at the time.
 
 Peter created more piñatas for sha256, hash256 and hash160, which add economic incentives to find collisions for these hashing functions.
 

@@ -38,10 +38,33 @@ class NetworkEnvelope:
     @classmethod
     def parse(cls, s, testnet=False):
         '''Takes a stream and creates a NetworkEnvelope'''
+        # check the network magic
+        magic = s.read(4)
+        if magic == b'':
+            raise RuntimeError('Connection reset!')
+        if testnet:
+            expected_magic = TESTNET_NETWORK_MAGIC
+        else:
+            expected_magic = NETWORK_MAGIC
+        if magic != expected_magic:
+            raise RuntimeError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
+        # command 12 bytes
+        # strip the trailing 0's
+        # payload length 4 bytes, little endian
+        # checksum 4 bytes, first four of hash256 of payload
+        # payload is of length payload_length
+        # verify checksum
+        # return an instance of the class
         raise NotImplementedError
 
     def serialize(self):
         '''Returns the byte serialization of the entire network message'''
+        # add the network magic
+        # command 12 bytes
+        # fill with 0's
+        # payload length 4 bytes, little endian
+        # checksum 4 bytes, first four of hash256 of payload
+        # payload
         raise NotImplementedError
 
     def stream(self):
@@ -106,6 +129,19 @@ class VersionMessage:
 
     def serialize(self):
         '''Serialize this message to send over the network'''
+        # version is 4 bytes little endian
+        # services is 8 bytes little endian
+        # timestamp is 8 bytes little endian
+        # receiver services is 8 bytes little endian
+        # IPV4 is 10 00 bytes and 2 ff bytes then receiver ip
+        # receiver port is 2 bytes, little endian should be 0
+        # sender services is 8 bytes little endian
+        # IPV4 is 10 00 bytes and 2 ff bytes then sender ip
+        # sender port is 2 bytes, little endian should be 0
+        # nonce should be 8 bytes
+        # useragent is a variable string, so varint first
+        # latest block is 4 bytes little endian
+        # relay is 00 if false, 01 if true
         raise NotImplementedError
 
 
@@ -175,6 +211,10 @@ class GetHeadersMessage:
 
     def serialize(self):
         '''Serialize this message to send over the network'''
+        # protocol version is 4 bytes little-endian
+        # number of hashes is a varint
+        # start block is in little-endian
+        # end block is also in little-endian
         raise NotImplementedError
 
 
@@ -240,6 +280,9 @@ class SimpleNode:
 
     def handshake(self):
         '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
+        # create a version message
+        # send the command
+        # wait for a verack message
         raise NotImplementedError
 
     def send(self, message):

@@ -733,7 +733,7 @@ To whit, here are the steps:
 ====
 The calculation of z requires two rounds of sha256. You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number. The reason is for security.
 
-There is a well-known hash collision attack on SHA1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a SHA1 collision in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html). Using SHA1 twice, or double-SHA1 is the way to defeat this attack.
+There is a well-known hash collision attack on sha1 called a _birthday attack_ which basically makes finding collisions much easier. This is how Google found a sha1 collision in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html). Using sha1 twice, or double-sha1 is the way to defeat this attack.
 
 There is no known sha256 weakness like a birthday attack, but is doing two rounds is a defense against possible potential weaknesses.
 ====

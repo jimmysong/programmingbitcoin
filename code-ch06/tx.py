@@ -148,15 +148,13 @@ class Tx:
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
         input_sum, output_sum = 0, 0
-        # iterate through inputs
+        # use TxIn.value() to sum up the input amounts
         for tx_in in self.tx_ins:
-            # for each input get the value and add to input sum
             input_sum += tx_in.value(self.testnet)
-        # iterate through outputs
+        # use TxOut.amount to sum up the output amounts
         for tx_out in self.tx_outs:
-            # for each output get the amount and add to output sum
             output_sum += tx_out.amount
-        # return input sum - output sum
+        # fee is input sum - output sum
         return input_sum - output_sum
 
 
@@ -244,9 +242,9 @@ class TxOut:
         return a TxOut object
         '''
         # amount is an integer in 8 bytes, little endian
+        amount = little_endian_to_int(s.read(8))
         # use Script.parse to get the ScriptPubKey
         script_pubkey = Script.parse(s)
-        amount = little_endian_to_int(s.read(8))
         # return an instance of the class (see __init__ for args)
         return cls(amount, script_pubkey)
 

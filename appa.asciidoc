@@ -138,7 +138,7 @@ For p = 7, 11, 17, 31, 43, what is this set in F~p~?
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,... 1]
 ----
 
 ==== Exercise {counter:ch1exercise}
@@ -495,7 +495,8 @@ z = int.from_bytes(hash256('Programming Bitcoin!'), 'big')
 >>> k_inv = pow(k, N-2, N)
 >>> s = (z+r*e) * k_inv % N
 >>> print(e*G)
-S256Point(f01d6b9018ab421dd410404cb869072065522bf85734008f105cf385a023a80f,0eba29d0f0c5408ed681984dc525982abefccd9f7ff01dd26da4999cf3f6a295)
+S256Point(f01d6b9018ab421dd410404cb869072065522bf85734008f105cf385a023a80f,
+0eba29d0f0c5408ed681984dc525982abefccd9f7ff01dd26da4999cf3f6a295)
 >>> print(hex(z))
 0x969f6056aa26f7d2795fd013fe88868d09c9f6aed96965016e1936ae47060d48
 >>> print(hex(r))
@@ -519,13 +520,16 @@ Find the uncompressed SEC format for the Public Key where the Private Key secret
 >>> from ecc import PrivateKey
 >>> priv = PrivateKey(5000)
 >>> print(priv.point.sec(compressed=False).hex())
-04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10
+04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4f10a1481c031b03b35
+1b0dc79901ca18a00cf009dbdb157a1d10
 >>> priv = PrivateKey(2018**5)
 >>> print(priv.point.sec(compressed=False).hex())
-04027f3da1918455e03c46f659266a1bb5204e959db7364d2f473bdf8f0a13cc9dff87647fd023c13b4a4994f17691895806e1b40b57f4fd22581a4f46851f3b06
+04027f3da1918455e03c46f659266a1bb5204e959db7364d2f473bdf8f0a13cc9dff87647fd023c13b4a4994f1769189
+5806e1b40b57f4fd22581a4f46851f3b06
 >>> priv = PrivateKey(0xdeadbeef12345)
 >>> print(priv.point.sec(compressed=False).hex())
-04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa762fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121
+04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa762fd59961d0e99803c61edb
+a8b3e3f7dc3a341836f97733aebf987121
 ----
 
 ==== Exercise {counter:ch4exercise}
@@ -564,7 +568,8 @@ s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 >>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 >>> sig = Signature(r,s)
 >>> print(sig.der().hex())
-3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c60221008ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c60221008ca63759c1157ebe
+aec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 ----
 
 ==== Exercise {counter:ch4exercise}
@@ -793,7 +798,26 @@ class Tx:
 
 What is the ScriptSig from the second input, ScriptPubKey from the first output and the amount of the second output for this transaction?
 
-010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e010000006a47304402204585bcdef85e6b1c6af5c2669d4830ff86e42dd205c0e089bc2a821657e951c002201024a10366077f87d6bce1f7100ad8cfa8a064b39d4e8fe4ea13a7b71aa8180f012102f0da57e85eec2934a82a585ea337ce2f4998b50ae699dd79f5880e253dafafb7feffffffeb8f51f4038dc17e6313cf831d4f02281c2a468bde0fafd37f1bf882729e7fd3000000006a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937feffffff567bf40595119d1bb8a3037c356efd56170b64cbcc160fb028fa10704b45d775000000006a47304402204c7c7818424c7f7911da6cddc59655a70af1cb5eaf17c69dadbfc74ffa0b662f02207599e08bc8023693ad4e9527dc42c34210f7a7d1d1ddfc8492b654a11e7620a0012102158b46fbdff65d0172b7989aec8850aa0dae49abfb84c81ae6e5b251a58ace5cfeffffffd63a5e6c16e620f86f375925b21cabaf736c779f88fd04dcad51d26690f7f345010000006a47304402200633ea0d3314bea0d95b3cd8dadb2ef79ea8331ffe1e61f762c0f6daea0fabde022029f23b3e9c30f080446150b23852028751635dcee2be669c2a1686a4b5edf304012103ffd6f4a67e94aba353a00882e563ff2722eb4cff0ad6006e86ee20dfe7520d55feffffff0251430f00000000001976a914ab0c0b2e98b1ab6dbf67d4750b0a56244948a87988ac005a6202000000001976a9143c82d7df364eb6c75be8c80df2b3eda8db57397088ac46430600
+```
+010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e
+010000006a47304402204585bcdef85e6b1c6af5c2669d4830ff86e42dd205c0e089bc2a82
+1657e951c002201024a10366077f87d6bce1f7100ad8cfa8a064b39d4e8fe4ea13a7b71aa8
+180f012102f0da57e85eec2934a82a585ea337ce2f4998b50ae699dd79f5880e253dafafb7
+feffffffeb8f51f4038dc17e6313cf831d4f02281c2a468bde0fafd37f1bf882729e7fd300
+0000006a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1
+cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7
+160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937fe
+ffffff567bf40595119d1bb8a3037c356efd56170b64cbcc160fb028fa10704b45d7750000
+00006a47304402204c7c7818424c7f7911da6cddc59655a70af1cb5eaf17c69dadbfc74ffa
+0b662f02207599e08bc8023693ad4e9527dc42c34210f7a7d1d1ddfc8492b654a11e7620a0
+012102158b46fbdff65d0172b7989aec8850aa0dae49abfb84c81ae6e5b251a58ace5cfeff
+ffffd63a5e6c16e620f86f375925b21cabaf736c779f88fd04dcad51d26690f7f345010000
+006a47304402200633ea0d3314bea0d95b3cd8dadb2ef79ea8331ffe1e61f762c0f6daea0f
+abde022029f23b3e9c30f080446150b23852028751635dcee2be669c2a1686a4b5edf30401
+2103ffd6f4a67e94aba353a00882e563ff2722eb4cff0ad6006e86ee20dfe7520d55feffff
+ff0251430f00000000001976a914ab0c0b2e98b1ab6dbf67d4750b0a56244948a87988ac00
+5a6202000000001976a9143c82d7df364eb6c75be8c80df2b3eda8db57397088ac46430600
+```
 
 [source,python]
 ----
@@ -881,8 +905,7 @@ image::exercise1.png[Exercise 3]
 >>> from script import Script
 >>> hex_script_pubkey = '06767695935687'
 >>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
->>> hex_script_sig = '0152'
->>> script_sig = Script.parse(BytesIO(bytes.fromhex(hex_script_sig)))
+>>> script_sig = Script([0x52])
 >>> combined_script = script_sig + script_pubkey
 >>> print(combined_script.evaluate(0))
 True
@@ -901,14 +924,40 @@ image::exercise2.png[Exercise 4]
 ----
 >>> hex_script_pubkey = '086e879169a77ca787'
 >>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
->>> hex_script_sig = 'fd86...b1'
->>> script_sig = Script.parse(BytesIO(bytes.fromhex(hex_script_sig)))
+>>> collision1 = bytes.fromhex('2550...a1')  # <1>
+>>> collision2 = bytes.fromhex('2550...b1')
+>>> script_sig = Script([collision1, collision2])
 >>> combined_script = script_sig + script_pubkey
 >>> print(combined_script.evaluate(0))
 True
 ----
+<1> `collision1` and `collision2` are from the sha1 preimages that were found to collide from Google. (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html)
 
-This is looking for a SHA1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
+This is looking for a sha1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
+
+The hexadecimals of the two collisions are here for reference:
+
+```
+255044462d312e330a25e2e3cfd30a0a0a312030206f626a0a3c3c2f57696474682032203020
+522f4865696768742033203020522f547970652034203020522f537562747970652035203020
+522f46696c7465722036203020522f436f6c6f7253706163652037203020522f4c656e677468
+2038203020522f42697473506572436f6d706f6e656e7420383e3e0a73747265616d0affd8ff
+fe00245348412d3120697320646561642121212121852fec092339759c39b1a1c63c4c97e1ff
+fe017f46dc93a6b67e013b029aaa1db2560b45ca67d688c7f84b8c4c791fe02b3df614f86db1
+690901c56b45c1530afedfb76038e972722fe7ad728f0e4904e046c230570fe9d41398abe12e
+f5bc942be33542a4802d98b5d70f2a332ec37fac3514e74ddc0f2cc1a874cd0c78305a215664
+61309789606bd0bf3f98cda8044629a1
+
+255044462d312e330a25e2e3cfd30a0a0a312030206f626a0a3c3c2f57696474682032203020
+522f4865696768742033203020522f547970652034203020522f537562747970652035203020
+522f46696c7465722036203020522f436f6c6f7253706163652037203020522f4c656e677468
+2038203020522f42697473506572436f6d706f6e656e7420383e3e0a73747265616d0affd8ff
+fe00245348412d3120697320646561642121212121852fec092339759c39b1a1c63c4c97e1ff
+fe017346dc9166b67e118f029ab621b2560ff9ca67cca8c7f85ba84c79030c2b3de218f86db3
+a90901d5df45c14f26fedfb3dc38e96ac22fe7bd728f0e45bce046d23c570feb141398bb552e
+f5a0a82be331fea48037b8b5d71f0e332edf93ac3500eb4ddc0decc1a864790c782c76215660
+dd309791d06bd0af3f98cda4bc4629b1
+```
 
 === Chapter 7: Transaction Creation and Validation
 
@@ -923,25 +972,29 @@ class Tx:
     def sig_hash(self, input_index):
         '''Returns the integer representation of the hash that needs to get
         signed for index input_index'''
-        alt_tx_ins = []
-        for tx_in in self.tx_ins:
-            alt_tx_ins.append(TxIn(
-                prev_tx=tx_in.prev_tx,
-                prev_index=tx_in.prev_index,
-                script_sig=Script([]),
-                sequence=tx_in.sequence,
-            ))
-        signing_input = alt_tx_ins[input_index]
-        signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-        alt_tx = self.__class__(
-            version=self.version,
-            tx_ins=alt_tx_ins,
-            tx_outs=self.tx_outs,
-            locktime=self.locktime,
-	)
-        result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-        h256 = hash256(result)
-        return int.from_bytes(h256, 'big')
+	s = int_to_little_endian(self.version, 4)
+	s += encode_varint(len(self.tx_ins))
+	for i, tx_in in enumerate(self.tx_ins):
+	    if i == input_index:
+		s += TxIn(
+		    prev_tx=tx_in.prev_tx,
+		    prev_index=tx_in.prev_index,
+		    script_sig=tx_in.script_pubkey(self.testnet),
+		    sequence=tx_in.sequence,
+		).serialize()
+	    else:
+		s += TxIn(
+		    prev_tx=tx_in.prev_tx,
+		    prev_index=tx_in.prev_index,
+		    sequence=tx_in.sequence,
+		).serialize()
+	s += encode_varint(len(self.tx_outs))
+	for tx_out in self.tx_outs:
+	    s += tx_out.serialize()
+	s += int_to_little_endian(self.locktime, 4)
+	s += int_to_little_endian(SIGHASH_ALL, 4)
+	h256 = hash256(s)
+	return int.from_bytes(h256, 'big')
 ----
 
 ==== Exercise {counter:ch7exercise}
@@ -998,7 +1051,7 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 >>> secret = 8675309
 >>> priv = PrivateKey(secret=secret)
 >>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx, prev_index, Script([]), 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx, prev_index))
 >>> tx_outs = []
 >>> h160 = decode_base58(target_address)
 >>> script_pubkey = p2pkh_script(h160)
@@ -1010,12 +1063,6 @@ Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3
 >>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
 >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
 >>> tx_obj.sign_input(0, priv)
->>> if priv.point.address(testnet=True) != change_address:
-...     raise RuntimeError('Private Key does not correspond to Change Address, check priv_key and change_address')
->>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(change_address):
-...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
->>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
-...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
 >>> print(tx_obj.serialize().hex())
 01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175010000006b483045022100b610b6df76364e1fcad579a862152623cb364d6409fe59e1922da69f32a8520b022059007da287d10088b39f487764f9d04160ece1ae551d5c7b4b2cb5f03cd44f55012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff0240420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d00000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000
 ----
@@ -1039,8 +1086,8 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 >>> secret = 8675309
 >>> priv = PrivateKey(secret=secret)
 >>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx_1, prev_index_1, Script([]), 0xffffffff))
->>> tx_ins.append(TxIn(prev_tx_2, prev_index_2, Script([]), 0xffffffff))
+>>> tx_ins.append(TxIn(prev_tx_1, prev_index_1))
+>>> tx_ins.append(TxIn(prev_tx_2, prev_index_2))
 >>> tx_outs = []
 >>> h160 = decode_base58(target_address)
 >>> script_pubkey = p2pkh_script(h160)
@@ -1049,10 +1096,6 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
 >>> tx_obj.sign_input(0, priv)
 >>> tx_obj.sign_input(1, priv)
->>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(priv.point.address(testnet=True)):
-...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
->>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
-...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
 >>> print(tx_obj.serialize().hex())
 01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011010000006b483045022100dddbb9f2ae014631a80265b133369ff2aa9e429cf2188e66f4256cab60062caa02200889b7494b5343dadcdfdab335c585f0ebd600a0ac8792ea06c8a3c00420eea1012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153db0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b483045022100bb3ad8379b0729fe23b867b7ad49e72ddf5d040bafcf6479463c9b4ea0e7f07b02202ba53fa490602b41b0f37ac0aaf20dfe909d761868e5721739ce392f9c6dd268012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d0754100000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
 ----
@@ -1138,14 +1181,21 @@ Validate the second signature from the transaction above.
 >>> hex_tx = '0100...0000'
 >>> hex_sec = '03b2...71'
 >>> hex_der = '3045...22'
->>> hex_redeem_script = '5221...ae'
+>>> hex_redeem_script = '475221...ae'
 >>> sec = bytes.fromhex(hex_sec)
 >>> der = bytes.fromhex(hex_der)
 >>> redeem_script = Script.parse(BytesIO(bytes.fromhex(hex_redeem_script)))
 >>> stream = BytesIO(bytes.fromhex(hex_tx))
 >>> tx_obj = Tx.parse(stream)
->>> tx_obj.tx_ins[0].script_sig = Script.parse(redeem_script)
->>> s = tx_obj.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
+>>> s = int_to_little_endian(tx_obj.version, 4)
+>>> s += encode_varint(len(tx_obj.tx_ins))
+>>> i = tx_obj.tx_ins[0]
+>>> s += TxIn(i.prev_tx, i.prev_index, redeem_script, i.sequence).serialize()
+>>> s += encode_varint(len(tx_obj.tx_outs))
+>>> for tx_out in tx_obj.tx_outs:
+...    s += tx_out.serialize()
+>>> s += int_to_little_endian(tx_obj.locktime, 4)
+>>> s += int_to_little_endian(SIGHASH_ALL, 4)
 >>> z = int.from_bytes(hash256(s), 'big')
 >>> point = S256Point.parse(sec)
 >>> sig = Signature.parse(der)
@@ -1161,44 +1211,51 @@ Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh trans
 ----
 class Tx:
 ...
+
     def sig_hash(self, input_index, redeem_script=None):
-        alt_tx_ins = []
-        for tx_in in self.tx_ins:
-            alt_tx_ins.append(TxIn(
-                prev_tx=tx_in.prev_tx,
-                prev_index=tx_in.prev_index,
-                script_sig=Script([]),
-                sequence=tx_in.sequence,
-            ))
-        signing_input = alt_tx_ins[input_index]
-        if redeem_script:
-            print(redeem_script)
-            signing_input.script_sig = redeem_script
-        else:
-            signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-        for i in alt_tx_ins:
-            print(i.script_sig)
-        alt_tx = self.__class__(
-            version=self.version,
-            tx_ins=alt_tx_ins,
-            tx_outs=self.tx_outs,
-            locktime=self.locktime)
-        result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-        h256 = hash256(result)
+        '''Returns the integer representation of the hash that needs to get
+        signed for index input_index'''
+        s = int_to_little_endian(self.version, 4)
+        s += encode_varint(len(self.tx_ins))
+        for i, tx_in in enumerate(self.tx_ins):
+            if i == input_index:
+                if redeem_script:
+                    script_sig = redeem_script
+                else:
+                    script_sig = tx_in.script_pubkey(self.testnet)
+                s += TxIn(
+                    prev_tx=tx_in.prev_tx,
+                    prev_index=tx_in.prev_index,
+                    script_sig=script_sig,
+                    sequence=tx_in.sequence,
+                ).serialize()
+            else:
+                s += TxIn(
+                    prev_tx=tx_in.prev_tx,
+                    prev_index=tx_in.prev_index,
+                    sequence=tx_in.sequence,
+                ).serialize()
+        s += encode_varint(len(self.tx_outs))
+        for tx_out in self.tx_outs:
+            s += tx_out.serialize()
+        s += int_to_little_endian(self.locktime, 4)
+        s += int_to_little_endian(SIGHASH_ALL, 4)
+        h256 = hash256(s)
         return int.from_bytes(h256, 'big')
 
     def verify_input(self, input_index):
+        '''Returns whether the input has a valid signature'''
         tx_in = self.tx_ins[input_index]
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
         if script_pubkey.is_p2sh_script_pubkey():
-            element = tx_in.script_sig.instructions[-1]
-            raw_redeem = encode_varint(len(element)) + element
+            instruction = tx_in.script_sig.instructions[-1]
+            raw_redeem = encode_varint(len(instruction)) + instruction
             redeem_script = Script.parse(BytesIO(raw_redeem))
         else:
             redeem_script = None
         z = self.sig_hash(input_index, redeem_script)
-        script = tx_in.script_sig + script_pubkey
-        return script.evaluate(z)
+        combined = tx_in.script_sig + script_pubkey
+        return combined.evaluate(z)
 ----
 
 === Chapter 9: Blocks
@@ -1273,8 +1330,8 @@ class Block:
     def hash(self):
         '''Returns the hash256 interpreted little endian of the block'''
         s = self.serialize()
-        sha = hash256(s)
-        return sha[::-1]
+        h256 = hash256(s)
+        return h256[::-1]
 ----
 
 ==== Exercise {counter:ch9exercise}
@@ -1335,8 +1392,8 @@ class Block:
 ...
     def check_pow(self):
         '''Returns whether this block satisfies proof of work'''
-        sha = hash256(self.serialize())
-        proof = little_endian_to_int(sha)
+        h256 = hash256(self.serialize())
+        proof = little_endian_to_int(h256)
         return proof < self.target()
 ----
 
@@ -1347,13 +1404,17 @@ Calculate the new bits given the first and last blocks of this 2016 block diffic
 Block 471744:
 
 ```
-000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800000000000000000010c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb845597e8b0118e43a81d3
+000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd88000000000000000000
+10c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb84559
+7e8b0118e43a81d3
 ```
 
 Block 473759:
 
 ```
-02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e1264258597e8b0118e5f00474
+02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000
+b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e126425859
+7e8b0118e5f00474
 ```
 
 [source,python]
@@ -1431,7 +1492,8 @@ class NetworkEnvelope:
         else:
             expected_magic = NETWORK_MAGIC
         if magic != expected_magic:
-            raise SyntaxError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
+            raise SyntaxError('magic is not right {} vs {}'.format(
+                magic.hex(), expected_magic.hex()))
         command = s.read(12)
         command = command.strip(b'\x00')
         payload_length = little_endian_to_int(s.read(4))
@@ -1491,7 +1553,8 @@ Write the `handshake` method for `SimpleNode`
 class SimpleNode:
 ...
     def handshake(self):
-        '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
+        '''Do a handshake with the other node.
+	Handshake is sending a version message and getting a verack back.'''
         version = VersionMessage()
         self.send(version.command, version.serialize())
         self.wait_for_commands({b'verack'})
@@ -1600,7 +1663,7 @@ Create an empty Merkle Tree with 27 items and print each level.
 [None, None, None, None]
 [None, None, None, None, None, None, None]
 [None, None, None, None, None, None, None, None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ..., None]
 ----
 
 ==== Exercise {counter:ch11exercise}
@@ -1758,7 +1821,14 @@ import time
 from block import Block
 from bloomfilter import BloomFilter
 from ecc import PrivateKey
-from helper import hash256, little_endian_to_int, encode_varint, read_varint, decode_base58, SIGHASH_ALL
+from helper import (
+    decode_base58,
+    encode_varint,
+    hash256,
+    little_endian_to_int,
+    read_varint,
+    SIGHASH_ALL,
+)
 from merkleblock import MerkleBlock
 from network import (
     GetDataMessage,
@@ -1860,7 +1930,7 @@ while prev_tx is None:
                 print('found: {}:{}'.format(prev_tx.hex(), prev_index))
 # create tx_in
 tx_in = TxIn(prev_tx, prev_index, Script([]), 0xffffff)
-# set the cache of the previous tx to prev_tx_obj so we don't talk to a block explorer
+# set the cache of the previous tx to prev_tx_obj
 TxFetcher.cache[prev_tx] = prev_tx_obj
 # create the tx_ins array
 tx_ins = [tx_in]

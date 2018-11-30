@@ -645,6 +645,9 @@ def op_sha256(stack):
 
 
 def op_hash160(stack):
+    # check that there's at least 1 element on the stack
+    # pop off the top element from the stack
+    # push a hash160 of the popped off element to the stack
     raise NotImplementedError
 
 
@@ -657,6 +660,13 @@ def op_hash256(stack):
 
 
 def op_checksig(stack, z):
+    # check that there are at least 2 elements on the stack
+    # the top element of the stack is the SEC pubkey
+    # the next element of the stack is the DER signature
+    # take off the last byte of the signature as that's the hash_type
+    # parse the serialized pubkey and signature into objects
+    # verify the signature using S256Point.verify()
+    # push an encoded 1 or 0 depending on whether the signature verified
     raise NotImplementedError
 
 

@@ -150,50 +150,55 @@ class Tx:
         '''Returns the fee of this transaction in satoshi'''
         # initialize input sum and output sum
         input_sum, output_sum = 0, 0
-        # iterate through inputs
+        # use TxIn.value() to sum up the input amounts
         for tx_in in self.tx_ins:
-            # for each input get the value and add to input sum
             input_sum += tx_in.value(self.testnet)
-        # iterate through outputs
+        # use TxOut.amount to sum up the output amounts
         for tx_out in self.tx_outs:
-            # for each output get the amount and add to output sum
             output_sum += tx_out.amount
-        # return input sum - output sum
+        # fee is input sum - output sum
         return input_sum - output_sum
 
     def sig_hash(self, input_index, redeem_script=None):
         '''Returns the integer representation of the hash that needs to get
         signed for index input_index'''
-        # create a new set of tx_ins (alt_tx_ins)
-        alt_tx_ins = []
-        # iterate over self.tx_ins
-        for tx_in in self.tx_ins:
-            # create a new TxIn that has no script_sig and add to alt_tx_ins
-            alt_tx_ins.append(TxIn(
+        # start the serialization with version
+        # use int_to_little_endian in 4 bytes
+        s = int_to_little_endian(self.version, 4)
+        # add how many inputs there are using encode_varint
+        s += encode_varint(len(self.tx_ins))
+        # loop through each input using enumerate, so we have the input index
+        for i, tx_in in enumerate(self.tx_ins):
+            # if the input index is the one we're signing
+            if i == input_index:
+                # if the RedeemScript was passed in, that's the ScriptSig
+                if redeem_script:
+                    script_sig = redeem_script
+                # otherwise the previous tx's ScriptPubkey is the ScriptSig
+                else:
+                    script_sig = tx_in.script_pubkey(self.testnet)
+            # Otherwise, the ScriptSig is empty
+            else:
+                script_sig = None
+            # add the serialization of the input with the ScriptSig we want
+            s += TxIn(
                 prev_tx=tx_in.prev_tx,
                 prev_index=tx_in.prev_index,
+                script_sig=script_sig,
                 sequence=tx_in.sequence,
-            ))
-        # grab the input at the input_index
-        signing_input = alt_tx_ins[input_index]
-        # p2sh would require a redeem_script
-        if redeem_script:
-            # p2sh replaces the script_sig with the redeem_script
-            signing_input.script_sig = redeem_script
-        else:
-            # the script_sig of the signing_input should be script_pubkey
-            signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-        # create an alternate transaction with the modified tx_ins
-        alt_tx = self.__class__(
-            version=self.version,
-            tx_ins=alt_tx_ins,
-            tx_outs=self.tx_outs,
-            locktime=self.locktime)
-        # add the SIGHASH_ALL int 4 bytes, little endian
-        result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-        # get the hash256 of the tx serialization
-        h256 = hash256(result)
-        # convert this to a big-endian integer using int.from_bytes(x, 'big')
+            ).serialize()
+        # add how many outputs there are using encode_varint
+        s += encode_varint(len(self.tx_outs))
+        # add the serialization of each output
+        for tx_out in self.tx_outs:
+            s += tx_out.serialize()
+        # add the locktime using int_to_little_endian in 4 bytes
+        s += int_to_little_endian(self.locktime, 4)
+        # add SIGHASH_ALL using int_to_little_endian in 4 bytes
+        s += int_to_little_endian(SIGHASH_ALL, 4)
+        # hash256 the serialization
+        h256 = hash256(s)
+        # convert the result to an integer using int.from_bytes(x, 'big')
         return int.from_bytes(h256, 'big')
 
     def verify_input(self, input_index):
@@ -202,16 +207,20 @@ class Tx:
         tx_in = self.tx_ins[input_index]
         # grab the previous ScriptPubKey
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-        # check to see if the ScriptPubkey is a p2sh
+        # check to see if the ScriptPubkey is a p2sh using
+        # Script.is_p2sh_script_pubkey()
         if script_pubkey.is_p2sh_script_pubkey():
-            # the last instruction has to be the RedeemScript to trigger
+            # the last instruction in a p2sh is the RedeemScript
             instruction = tx_in.script_sig.instructions[-1]
+            # prepend the length of the RedeemScript using encode_varint
+            raw_redeem = encode_varint(len(instruction)) + instruction
             # parse the RedeemScript
-            raw_redeem = int_to_little_endian(len(instruction), 1) + instruction
             redeem_script = Script.parse(BytesIO(raw_redeem))
+        # otherwise RedeemScript is None
         else:
             redeem_script = None
-        # get the sig_hash (z)
+        # get the signature hash (z)
+        # pass the RedeemScript to the sig_hash method
         z = self.sig_hash(input_index, redeem_script)
         # combine the current ScriptSig and the previous ScriptPubKey
         combined = tx_in.script_sig + script_pubkey
@@ -223,7 +232,7 @@ class Tx:
         # check that we're not creating money
         if self.fee() < 0:
             return False
-        # check that each input has a correct ScriptSig
+        # check that each input has a valid ScriptSig
         for i in range(len(self.tx_ins)):
             if not self.verify_input(i):
                 return False
@@ -231,7 +240,7 @@ class Tx:
 
     def sign_input(self, input_index, private_key):
         '''Signs the input using the private key'''
-        # get the sig_hash (z)
+        # get the signature hash (z)
         z = self.sig_hash(input_index)
         # get der signature of z from private key
         der = private_key.sign(z).der()
@@ -358,9 +367,9 @@ class TxOut:
         return a TxOut object
         '''
         # amount is an integer in 8 bytes, little endian
+        amount = little_endian_to_int(s.read(8))
         # use Script.parse to get the ScriptPubKey
         script_pubkey = Script.parse(s)
-        amount = little_endian_to_int(s.read(8))
         # return an instance of the class (see __init__ for args)
         return cls(amount, script_pubkey)
 

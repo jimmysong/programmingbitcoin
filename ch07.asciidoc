@@ -36,7 +36,7 @@ A full node can check the spentness of an input pretty easily, a light client ha
 
 The second part of the validation is making sure that the sum of the inputs is greater than or equal to the sum of the outputs. This ensures that the transaction does not create new coins. The one exception is a Coinbase transaction which we'll study more in Chapter 9. The inputs don't have an amount, so this must be looked up on the blockchain. Once again, full nodes will have access to the amounts associated with the unspent output, but light clients will have to depend on full nodes to supply this information.
 
-We covered how to calculate fees in Chapter 5. This validation step is essentially the same as checking that the fee is not negative (that is, creating money). Recall the last exercise in Chapter 5. The answer should have looked something like this:
+We covered how to calculate fees in Chapter 5. This validation step is essentially the same as checking that the fee is not negative (that is, creating money). Recall the last exercise in Chapter 5. The method `fee` looks like this:
 
 [source,python]
 ----
@@ -66,16 +66,16 @@ True
 <1> As with many other code samples, the ... is not literal, it's there to represent data that's too long to put into this book.
 <2> This only works because we're using Python. See Note.
 
-If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create money out of thin air.
+If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create Bitcoins out of the ether.
 
 [NOTE]
 .Value Overflow Incident
 ====
-Back in 2010, there was a transaction that created 184 Billion new bitcoins. This is due to the fact that in C++, the value field is actually an integer and not an unsigned integer. That is, the value could be negative!
+Back in 2010, there was a transaction that created 184 billion new Bitcoins. This is due to the fact that in C++, the value field is a _signed_ integer and not an _unsigned_ integer. That is, the value could be negative!
 
-The clever transaction passed all the checks with regard to fees and not creating new bitcoins, but only because the amount overflowed past the maximum number. Note 2^64^ is roughly 1.84 * 10^19^ satoshis, which is 184 Billion Bitcoins. The fee was negative by enough that the C++ code was essentially tricked into believing that the fee was actually positive by 0.1 BTC!
+The clever transaction passed all the checks including the one for not creating new bitcoins, but only because the output amounts overflowed past the maximum number. Note 2^64^ is roughly 1.84 * 10^19^ satoshis, which is 184 billion Bitcoins. The fee was negative by enough that the C++ code was tricked into believing that the fee was actually positive by 0.1 BTC!
 
-The vulnerability is detailed in CVE-2010-5139 and was patched via soft-fork in Bitcoin 0.3.11. The transaction and the extra bitcoins it created was invalidated retroactively by a block reorganization, which is another way of saying a new chain of blocks that's longer was mined to replace it.
+The vulnerability is detailed in CVE-2010-5139 and was patched via soft-fork in Bitcoin Core 0.3.11. The transaction and the extra Bitcoins it created was invalidated retroactively by a block reorganization, which is another way of saying a new chain of blocks that's longer was mined to replace it.
 ====
 
 === Checking the Signature
@@ -94,12 +94,12 @@ Perhaps the trickiest part of validating a transaction is the process of checkin
 True
 ----
 
-SEC public keys and DER signatures are in the stack when an instruction like `OP_CHECKSIG` is executed make getting the public key `P` and signature `(r,s)` pretty straightforward. The hard part is getting the actual signature hash `z`. You would think that this would be easy since you can just hash the transaction. But you can't do that since the signature is part of the ScriptSig and a signature can't sign itself.
+SEC public keys and DER signatures are in the stack when an instruction like `OP_CHECKSIG` is executed make getting the public key `P` and signature `(r,s)` pretty straightforward. The hard part is getting the actual signature hash `z`. A naive way to get the signature hash would be to hash the entire transaction. Unfortunately, we can't do that since the signature is part of the ScriptSig and a signature can't sign itself.
 
 .Validation Start
 image::validation1.png[Validation Start]
 
-Instead, what you need to do is to modify the transaction before actually signing it. That is, we have to compute a different `z` _for each input_. The procedure is as follows.
+Instead, what you need to do is to modify the transaction before actually signing it. That is, we have to compute a different signature hash, or `z`, _for each input_. The procedure is as follows.
 
 ==== Step 1: Empty all the ScriptSigs
 
@@ -156,13 +156,12 @@ We can now make this transaction validation process into a method for `Tx`. Than
 [NOTE]
 .Quadratic Hashing
 ====
-One of the reasons why this method of creating the signature hash is inefficient is because of the Quadratic Hashing problem. The Quadratic Hashing problem is the fact that calculating the signature hashes, or `z`'s varies quadratically with the number of inputs in a transaction. Specifically, the number of `hash256` operations for calculating the `z` will increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation as the entire signature hash will need to be calculated anew for each input.
+One of the reasons why this method of creating the signature hash is inefficient is because of the Quadratic Hashing problem. The Quadratic Hashing problem is the fact that calculating the signature hashes, or `z`'s increases quadratically with the number of inputs in a transaction. Specifically, the number of hash256 operations for calculating the `z` will increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation as the entire signature hash will need to be calculated anew for each input.
 
-This was particularly obvious with the biggest transaction ever mined: `bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2b4e3e08`. This transaction had 5569 inputs and 1 output and took many miners over a minute to validate as the signature hashes were so expensive to calculate.
+This was particularly obvious with the biggest transaction ever mined: `bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2b4e3e08`. This transaction had 5569 inputs and 1 output and took many miners over a minute to validate as the signature hashes for the transaction were so expensive to calculate.
 
 Segwit (Chapter 13) fixes this with a different way of calculating the signature hash, which is specified in BIP0143.
 ====
-
 
 ==== Exercise {counter:exercise}
 

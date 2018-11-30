@@ -62,44 +62,49 @@ def h160_to_p2sh_address(h160, testnet=False):
         prefix = b'\x05'
     return encode_base58_checksum(prefix + h160)
 
+
 def sig_hash(self, input_index, redeem_script=None):
-    alt_tx_ins = []
-    for tx_in in self.tx_ins:
-        alt_tx_ins.append(TxIn(
-            prev_tx=tx_in.prev_tx,
-            prev_index=tx_in.prev_index,
-            script_sig=Script([]),
-            sequence=tx_in.sequence,
-        ))
-    signing_input = alt_tx_ins[input_index]
-    if redeem_script:
-        print(redeem_script)
-        signing_input.script_sig = redeem_script
-    else:
-        signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-    for i in alt_tx_ins:
-        print(i.script_sig)
-    alt_tx = self.__class__(
-        version=self.version,
-        tx_ins=alt_tx_ins,
-        tx_outs=self.tx_outs,
-        locktime=self.locktime)
-    result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-    h256 = hash256(result)
+    s = int_to_little_endian(self.version, 4)
+    s += encode_varint(len(self.tx_ins))
+    for i, tx_in in enumerate(self.tx_ins):
+        if i == input_index:
+            if redeem_script:
+                script_sig = redeem_script
+            else:
+                script_sig = tx_in.script_pubkey(self.testnet)
+            s += TxIn(
+                prev_tx=tx_in.prev_tx,
+                prev_index=tx_in.prev_index,
+                script_sig=script_sig,
+                sequence=tx_in.sequence,
+            ).serialize()
+        else:
+            s += TxIn(
+                prev_tx=tx_in.prev_tx,
+                prev_index=tx_in.prev_index,
+                sequence=tx_in.sequence,
+            ).serialize()
+    s += encode_varint(len(self.tx_outs))
+    for tx_out in self.tx_outs:
+        s += tx_out.serialize()
+    s += int_to_little_endian(self.locktime, 4)
+    s += int_to_little_endian(SIGHASH_ALL, 4)
+    h256 = hash256(s)
     return int.from_bytes(h256, 'big')
+
 
 def verify_input(self, input_index):
     tx_in = self.tx_ins[input_index]
     script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
     if script_pubkey.is_p2sh_script_pubkey():
-        element = tx_in.script_sig.instructions[-1]
-        raw_redeem = encode_varint(len(element)) + element
+        instruction = tx_in.script_sig.instructions[-1]
+        raw_redeem = encode_varint(len(instruction)) + instruction
         redeem_script = Script.parse(BytesIO(raw_redeem))
     else:
         redeem_script = None
     z = self.sig_hash(input_index, redeem_script)
-    script = tx_in.script_sig + script_pubkey
-    return script.evaluate(z)
+    combined = tx_in.script_sig + script_pubkey
+    return combined.evaluate(z)
 
 
 class Chapter8Test(TestCase):
@@ -144,8 +149,15 @@ class Chapter8Test(TestCase):
         redeem_script = Script.parse(BytesIO(bytes.fromhex(hex_redeem_script)))
         stream = BytesIO(bytes.fromhex(hex_tx))
         tx_obj = Tx.parse(stream)
-        tx_obj.tx_ins[0].script_sig = redeem_script
-        s = tx_obj.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
+        s = int_to_little_endian(tx_obj.version, 4)
+        s += encode_varint(len(tx_obj.tx_ins))
+        i = tx_obj.tx_ins[0]
+        s += TxIn(i.prev_tx, i.prev_index, redeem_script, i.sequence).serialize()
+        s += encode_varint(len(tx_obj.tx_outs))
+        for tx_out in tx_obj.tx_outs:
+           s += tx_out.serialize()
+        s += int_to_little_endian(tx_obj.locktime, 4)
+        s += int_to_little_endian(SIGHASH_ALL, 4)
         z = int.from_bytes(hash256(s), 'big')
         point = S256Point.parse(sec)
         sig = Signature.parse(der)

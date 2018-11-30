@@ -22,14 +22,31 @@ class Block:
     @classmethod
     def parse(cls, s):
         '''Takes a byte stream and parses a block. Returns a Block object'''
+        # s.read(n) will read n bytes from the stream
+        # version - 4 bytes, little endian, interpret as int
+        # prev_block - 32 bytes, little endian (use [::-1] to reverse)
+        # merkle_root - 32 bytes, little endian (use [::-1] to reverse)
+        # timestamp - 4 bytes, little endian, interpret as int
+        # bits - 4 bytes
+        # nonce - 4 bytes
+        # initialize class
         raise NotImplementedError
 
     def serialize(self):
         '''Returns the 80 byte block header'''
+        # version - 4 bytes, little endian
+        # prev_block - 32 bytes, little endian
+        # merkle_root - 32 bytes, little endian
+        # timestamp - 4 bytes, little endian
+        # bits - 4 bytes
+        # nonce - 4 bytes
         raise NotImplementedError
 
     def hash(self):
         '''Returns the hash256 interpreted little endian of the block'''
+        # serialize
+        # hash256
+        # reverse
         raise NotImplementedError
 
     def bip9(self):
@@ -57,10 +74,15 @@ class Block:
 
     def difficulty(self):
         '''Returns the block difficulty based on the bits'''
+        # note difficulty is (target of lowest difficulty) / (self's target)
+        # lowest difficulty has bits that equal 0xffff001d
         raise NotImplementedError
 
     def check_pow(self):
         '''Returns whether this block satisfies proof of work'''
+        # get the hash256 of the serialization of this block
+        # interpret this hash as a little-endian number
+        # return whether this integer is less than the target
         raise NotImplementedError
 
 

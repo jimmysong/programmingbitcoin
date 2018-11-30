@@ -4,6 +4,7 @@ from unittest import TestCase
 from ecc import PrivateKey, S256Point, Signature
 from helper import (
     decode_base58,
+    encode_varint,
     hash256,
     int_to_little_endian,
     SIGHASH_ALL,
@@ -13,25 +14,30 @@ from tx import Tx, TxIn, TxOut
 
 
 def sig_hash(self, input_index):
-    alt_tx_ins = []
-    for tx_in in self.tx_ins:
-        alt_tx_ins.append(TxIn(
-            prev_tx=tx_in.prev_tx,
-            prev_index=tx_in.prev_index,
-            script_sig=Script([]),
-            sequence=tx_in.sequence,
-        ))
-    signing_input = alt_tx_ins[input_index]
-    signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-    alt_tx = self.__class__(
-        version=self.version,
-        tx_ins=alt_tx_ins,
-        tx_outs=self.tx_outs,
-        locktime=self.locktime,
-    )
-    result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-    h256 = hash256(result)
+    s = int_to_little_endian(self.version, 4)
+    s += encode_varint(len(self.tx_ins))
+    for i, tx_in in enumerate(self.tx_ins):
+        if i == input_index:
+            s += TxIn(
+                prev_tx=tx_in.prev_tx,
+                prev_index=tx_in.prev_index,
+                script_sig=tx_in.script_pubkey(self.testnet),
+                sequence=tx_in.sequence,
+            ).serialize()
+        else:
+            s += TxIn(
+                prev_tx=tx_in.prev_tx,
+                prev_index=tx_in.prev_index,
+                sequence=tx_in.sequence,
+            ).serialize()
+    s += encode_varint(len(self.tx_outs))
+    for tx_out in self.tx_outs:
+        s += tx_out.serialize()
+    s += int_to_little_endian(self.locktime, 4)
+    s += int_to_little_endian(SIGHASH_ALL, 4)
+    h256 = hash256(s)
     return int.from_bytes(h256, 'big')
+
 
 def verify_input(self, input_index):
     tx_in = self.tx_ins[input_index]

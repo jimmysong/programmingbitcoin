@@ -62,6 +62,7 @@ class NetworkEnvelope:
         calculated_checksum = hash256(payload)[:4]
         if calculated_checksum != checksum:
             raise RuntimeError('checksum does not match')
+        # return an instance of the class
         return cls(command, payload, testnet=testnet)
 
     def serialize(self):
