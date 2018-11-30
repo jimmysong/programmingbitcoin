@@ -9,34 +9,35 @@ from op import encode_num
 from script import Script
 
 
+def op_hash160(stack):
+    if len(stack) < 1:
+        return False
+    element = stack.pop()
+    h160 = hash160(element)
+    stack.append(h160)
+    return True
+
+def op_checksig(stack, z):
+    if len(stack) < 2:
+        return False
+    sec_pubkey = stack.pop()
+    der_signature = stack.pop()[:-1]
+    try:
+        point = S256Point.parse(sec_pubkey)
+        sig = Signature.parse(der_signature)
+    except (ValueError, SyntaxError) as e:
+        print(e)
+        return False
+    if point.verify(z, sig):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+    return True
+
+
 class Chapter6Test(TestCase):
 
     def test_apply(self):
-
-        def op_hash160(stack):
-            if len(stack) < 1:
-                return False
-            element = stack.pop()
-            h160 = hash160(element)
-            stack.append(h160)
-            return True
-
-        def op_checksig(stack, z):
-            if len(stack) < 2:
-                return False
-            sec_pubkey = stack.pop()
-            der_signature = stack.pop()[:-1]
-            try:
-                point = S256Point.parse(sec_pubkey)
-                sig = Signature.parse(der_signature)
-            except (ValueError, SyntaxError) as e:
-                print(e)
-                return False
-            if point.verify(z, sig):
-                stack.append(encode_num(1))
-            else:
-                stack.append(encode_num(0))
-            return True
 
         op.op_hash160 = op_hash160
         op.op_checksig = op_checksig

@@ -12,46 +12,46 @@ from script import p2pkh_script, Script
 from tx import Tx, TxIn, TxOut
 
 
+def sig_hash(self, input_index):
+    alt_tx_ins = []
+    for tx_in in self.tx_ins:
+        alt_tx_ins.append(TxIn(
+            prev_tx=tx_in.prev_tx,
+            prev_index=tx_in.prev_index,
+            script_sig=Script([]),
+            sequence=tx_in.sequence,
+        ))
+    signing_input = alt_tx_ins[input_index]
+    signing_input.script_sig = signing_input.script_pubkey(self.testnet)
+    alt_tx = self.__class__(
+        version=self.version,
+        tx_ins=alt_tx_ins,
+        tx_outs=self.tx_outs,
+        locktime=self.locktime,
+    )
+    result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
+    h256 = hash256(result)
+    return int.from_bytes(h256, 'big')
+
+def verify_input(self, input_index):
+    tx_in = self.tx_ins[input_index]
+    script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
+    z = self.sig_hash(input_index)
+    combined = tx_in.script_sig + script_pubkey
+    return combined.evaluate(z)
+
+def sign_input(self, input_index, private_key):
+    z = self.sig_hash(input_index)
+    der = private_key.sign(z).der()
+    sig = der + SIGHASH_ALL.to_bytes(1, 'big')
+    sec = private_key.point.sec()
+    self.tx_ins[input_index].script_sig = Script([sig, sec])
+    return self.verify_input(input_index)
+
+
 class Chapter7Test(TestCase):
 
     def test_apply(self):
-
-        def sig_hash(self, input_index):
-            alt_tx_ins = []
-            for tx_in in self.tx_ins:
-                alt_tx_ins.append(TxIn(
-                    prev_tx=tx_in.prev_tx,
-                    prev_index=tx_in.prev_index,
-                    script_sig=Script([]),
-                    sequence=tx_in.sequence,
-                ))
-            signing_input = alt_tx_ins[input_index]
-            signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-            alt_tx = self.__class__(
-                version=self.version,
-                tx_ins=alt_tx_ins,
-                tx_outs=self.tx_outs,
-                locktime=self.locktime,
-            )
-            result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-            h256 = hash256(result)
-            return int.from_bytes(h256, 'big')
-
-        def verify_input(self, input_index):
-            tx_in = self.tx_ins[input_index]
-            script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-            z = self.sig_hash(input_index)
-            combined = tx_in.script_sig + script_pubkey
-            return combined.evaluate(z)
-
-        def sign_input(self, input_index, private_key):
-            z = self.sig_hash(input_index)
-            der = private_key.sign(z).der()
-            sig = der + SIGHASH_ALL.to_bytes(1, 'big')
-            sec = private_key.point.sec()
-            self.tx_ins[input_index].script_sig = Script([sig, sec])
-            return self.verify_input(input_index)
-
         Tx.sig_hash = sig_hash
         Tx.verify_input = verify_input
         Tx.sign_input = sign_input

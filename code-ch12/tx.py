@@ -70,6 +70,7 @@ class TxFetcher:
 
 
 class Tx:
+    command = b'tx'
 
     def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
         self.version = version
@@ -335,7 +336,7 @@ class TxIn:
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        '''Get the scriptPubKey by looking up the tx hash
+        '''Get the ScriptPubKey by looking up the tx hash
         Returns a Script object
         '''
         # use self.fetch_tx to get the transaction

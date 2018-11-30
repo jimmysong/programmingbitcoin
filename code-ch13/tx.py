@@ -31,6 +31,7 @@ class TxFetcher:
     def fetch(cls, tx_id, testnet=False, fresh=False):
         if fresh or (tx_id not in cls.cache):
             url = '{}/rest/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
+            print(url)
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
@@ -52,14 +53,7 @@ class TxFetcher:
     def load_cache(cls, filename):
         disk_cache = json.loads(open(filename, 'r').read())
         for k, raw_hex in disk_cache.items():
-            raw = bytes.fromhex(raw_hex)
-            if raw[4] == 0:
-                raw = raw[:4] + raw[6:]
-                tx = Tx.parse(BytesIO(raw))
-                tx.locktime = little_endian_to_int(raw[-4:])
-            else:
-                tx = Tx.parse(BytesIO(raw))
-            cls.cache[k] = tx
+            cls.cache[k] = Tx.parse(BytesIO(bytes.fromhex(raw_hex)))
 
     @classmethod
     def dump_cache(cls, filename):
@@ -70,6 +64,7 @@ class TxFetcher:
 
 
 class Tx:
+    command = b'tx'
 
     def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False, segwit=False):
         self.version = version
@@ -164,7 +159,7 @@ class Tx:
         outputs = []
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(s))
-        # now parse the witness program
+        # now parse the witness
         for tx_in in inputs:
             num_items = read_varint(s)
             items = []
@@ -494,7 +489,7 @@ class TxIn:
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        '''Get the scriptPubKey by looking up the tx hash
+        '''Get the ScriptPubKey by looking up the tx hash
         Returns a Script object
         '''
         # use self.fetch_tx to get the transaction
@@ -638,6 +633,7 @@ class TxTest(TestCase):
 
     def test_verify_p2sh_p2wpkh(self):
         tx = TxFetcher.fetch('c586389e5e4b3acb9d6c8be1c19ae8ab2795397633176f5a6442a261bbdefc3a')
+        print(tx.serialize().hex())
         self.assertTrue(tx.verify())
 
     def test_verify_p2wsh(self):

@@ -59,12 +59,14 @@ def decode_base58(s):
 def little_endian_to_int(b):
     '''little_endian_to_int takes byte sequence as a little-endian number.
     Returns an integer'''
+    # use int.from_bytes()
     raise NotImplementedError
 
 
 def int_to_little_endian(n, length):
     '''endian_to_little_endian takes an integer and returns the little-endian
     byte sequence of length'''
+    # use n.to_bytes()
     raise NotImplementedError
 
 

@@ -15,84 +15,84 @@ from script import Script
 from tx import Tx
 
 
+def is_coinbase(self):
+    if len(self.tx_ins) != 1:
+        return False
+    first_input = self.tx_ins[0]
+    if first_input.prev_tx != b'\x00' * 32:
+        return False
+    if first_input.prev_index != 0xffffffff:
+        return False
+    return True
+
+def coinbase_height(self):
+    if not self.is_coinbase():
+        return None
+    element = self.tx_ins[0].script_sig.instructions[0]
+    return little_endian_to_int(element)
+
+@classmethod
+def parse(cls, s):
+    version = little_endian_to_int(s.read(4))
+    prev_block = s.read(32)[::-1]
+    merkle_root = s.read(32)[::-1]
+    timestamp = little_endian_to_int(s.read(4))
+    bits = s.read(4)
+    nonce = s.read(4)
+    return cls(version, prev_block, merkle_root, timestamp, bits, nonce)
+
+def serialize(self):
+    result = int_to_little_endian(self.version, 4)
+    result += self.prev_block[::-1]
+    result += self.merkle_root[::-1]
+    result += int_to_little_endian(self.timestamp, 4)
+    result += self.bits
+    result += self.nonce
+    return result
+
+def hash(self):
+    s = self.serialize()
+    sha = hash256(s)
+    return sha[::-1]
+
+def bip9(self):
+    return self.version >> 29 == 0b001
+
+def bip91(self):
+    return self.version >> 4 & 1 == 1
+
+def bip141(self):
+    return self.version >> 1 & 1 == 1
+
+def bits_to_target(bits):
+    exponent = bits[-1]
+    coefficient = little_endian_to_int(bits[:-1])
+    return coefficient * 256**(exponent - 3)
+
+def target(self):
+    return bits_to_target(self.bits)
+
+def difficulty(self):
+    lowest = 0xffff * 256**(0x1d - 3)
+    return lowest / self.target()
+
+def check_pow(self):
+    sha = hash256(self.serialize())
+    proof = little_endian_to_int(sha)
+    return proof < self.target()
+
+def calculate_new_bits(previous_bits, time_differential):
+    if time_differential > TWO_WEEKS * 4:
+        time_differential = TWO_WEEKS * 4
+    if time_differential < TWO_WEEKS // 4:
+        time_differential = TWO_WEEKS // 4
+    new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
+    return target_to_bits(new_target)
+
+
 class Chapter9Test(TestCase):
 
     def test_apply(self):
-
-        def is_coinbase(self):
-            if len(self.tx_ins) != 1:
-                return False
-            first_input = self.tx_ins[0]
-            if first_input.prev_tx != b'\x00' * 32:
-                return False
-            if first_input.prev_index != 0xffffffff:
-                return False
-            return True
-
-        def coinbase_height(self):
-            if not self.is_coinbase():
-                return None
-            element = self.tx_ins[0].script_sig.instructions[0]
-            return little_endian_to_int(element)
-
-        @classmethod
-        def parse(cls, s):
-            version = little_endian_to_int(s.read(4))
-            prev_block = s.read(32)[::-1]
-            merkle_root = s.read(32)[::-1]
-            timestamp = little_endian_to_int(s.read(4))
-            bits = s.read(4)
-            nonce = s.read(4)
-            return cls(version, prev_block, merkle_root, timestamp, bits, nonce)
-
-        def serialize(self):
-            result = int_to_little_endian(self.version, 4)
-            result += self.prev_block[::-1]
-            result += self.merkle_root[::-1]
-            result += int_to_little_endian(self.timestamp, 4)
-            result += self.bits
-            result += self.nonce
-            return result
-
-        def hash(self):
-            s = self.serialize()
-            sha = hash256(s)
-            return sha[::-1]
-
-        def bip9(self):
-            return self.version >> 29 == 0b001
-
-        def bip91(self):
-            return self.version >> 4 & 1 == 1
-
-        def bip141(self):
-            return self.version >> 1 & 1 == 1
-
-        def bits_to_target(bits):
-            exponent = bits[-1]
-            coefficient = little_endian_to_int(bits[:-1])
-            return coefficient * 256**(exponent - 3)
-
-        def target(self):
-            return bits_to_target(self.bits)
-
-        def difficulty(self):
-            lowest = 0xffff * 256**(0x1d - 3)
-            return lowest / self.target()
-
-        def check_pow(self):
-            sha = hash256(self.serialize())
-            proof = little_endian_to_int(sha)
-            return proof < self.target()
-
-        def calculate_new_bits(previous_bits, time_differential):
-            if time_differential > TWO_WEEKS * 4:
-                time_differential = TWO_WEEKS * 4
-            if time_differential < TWO_WEEKS // 4:
-                time_differential = TWO_WEEKS // 4
-            new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
-            return target_to_bits(new_target)
-
         Tx.is_coinbase = is_coinbase
         Tx.coinbase_height = coinbase_height
         Block.parse = parse

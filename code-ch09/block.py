@@ -29,7 +29,7 @@ class Block:
         raise NotImplementedError
 
     def hash(self):
-        '''Returns the double-sha256 interpreted little endian of the block'''
+        '''Returns the hash256 interpreted little endian of the block'''
         raise NotImplementedError
 
     def bip9(self):

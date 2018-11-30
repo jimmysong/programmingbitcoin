@@ -6,45 +6,46 @@ from script import Script
 from tx import Tx, TxIn, TxOut
 
 
+@classmethod
+def tx_parse(cls, s, testnet=False):
+    version = little_endian_to_int(s.read(4))
+    num_inputs = read_varint(s)
+    inputs = []
+    for _ in range(num_inputs):
+        inputs.append(TxIn.parse(s))
+    num_outputs = read_varint(s)
+    outputs = []
+    for _ in range(num_outputs):
+        outputs.append(TxOut.parse(s))
+    locktime = little_endian_to_int(s.read(4))
+    return cls(version, inputs, outputs, locktime, testnet=testnet)
+
+@classmethod
+def tx_in_parse(cls, s):
+    prev_tx = s.read(32)[::-1]
+    prev_index = little_endian_to_int(s.read(4))
+    script_sig = Script.parse(s)
+    sequence = little_endian_to_int(s.read(4))
+    return cls(prev_tx, prev_index, script_sig, sequence)
+
+@classmethod
+def tx_out_parse(cls, s):
+    amount = little_endian_to_int(s.read(8))
+    script_pubkey = Script.parse(s)
+    return cls(amount, script_pubkey)
+
+def fee(self, testnet=False):
+    input_sum, output_sum = 0, 0
+    for tx_in in self.tx_ins:
+        input_sum += tx_in.value(testnet=testnet)
+    for tx_out in self.tx_outs:
+        output_sum += tx_out.amount
+    return input_sum - output_sum
+
+
 class Chapter5Test(TestCase):
 
     def test_apply(self):
-
-        @classmethod
-        def tx_parse(cls, s, testnet=False):
-            version = little_endian_to_int(s.read(4))
-            num_inputs = read_varint(s)
-            inputs = []
-            for _ in range(num_inputs):
-                inputs.append(TxIn.parse(s))
-            num_outputs = read_varint(s)
-            outputs = []
-            for _ in range(num_outputs):
-                outputs.append(TxOut.parse(s))
-            locktime = little_endian_to_int(s.read(4))
-            return cls(version, inputs, outputs, locktime, testnet=testnet)
-
-        @classmethod
-        def tx_in_parse(cls, s):
-            prev_tx = s.read(32)[::-1]
-            prev_index = little_endian_to_int(s.read(4))
-            script_sig = Script.parse(s)
-            sequence = little_endian_to_int(s.read(4))
-            return cls(prev_tx, prev_index, script_sig, sequence)
-
-        @classmethod
-        def tx_out_parse(cls, s):
-            amount = little_endian_to_int(s.read(8))
-            script_pubkey = Script.parse(s)
-            return cls(amount, script_pubkey)
-
-        def fee(self, testnet=False):
-            input_sum, output_sum = 0, 0
-            for tx_in in self.tx_ins:
-                input_sum += tx_in.value(testnet=testnet)
-            for tx_out in self.tx_outs:
-                output_sum += tx_out.amount
-            return input_sum - output_sum
 
         Tx.parse = tx_parse
         Tx.fee = fee

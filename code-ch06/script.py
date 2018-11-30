@@ -72,7 +72,7 @@ class Script:
                 instructions.append(s.read(data_length))
                 count += data_length + 2
             else:
-                # we have an op code. set the current byte to op_code
+                # we have an opcode. set the current byte to op_code
                 op_code = current_byte
                 # add the op_code to the list of instructions
                 instructions.append(op_code)
@@ -85,7 +85,7 @@ class Script:
         result = b''
         # go through each instruction
         for instruction in self.instructions:
-            # if the instruction is an integer, it's an op code
+            # if the instruction is an integer, it's an opcode
             if type(instruction) == int:
                 # turn the instruction into a single byte integer using int_to_little_endian
                 result += int_to_little_endian(instruction, 1)
@@ -93,7 +93,7 @@ class Script:
                 # otherwise, this is an element
                 # get the length in bytes
                 length = len(instruction)
-                # for large lengths, we have to use a pushdata op code
+                # for large lengths, we have to use a pushdata opcode
                 if length < 75:
                     # turn the length into a single byte integer
                     result += int_to_little_endian(length, 1)
@@ -127,7 +127,7 @@ class Script:
         while len(instructions) > 0:
             instruction = instructions.pop(0)
             if type(instruction) == int:
-                # do what the op code says
+                # do what the opcode says
                 operation = OP_CODE_FUNCTIONS[instruction]
                 if instruction in (99, 100):
                     # op_if/op_notif require the instructions array
