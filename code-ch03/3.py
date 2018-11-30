@@ -217,8 +217,9 @@ class Chapter3Test(TestCase):
         r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
         s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
         point = S256Point(0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574, 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4)
-        u = z * pow(s, N - 2, N) % N
-        v = r * pow(s, N - 2, N) % N
+        s_inv = pow(s, N-2, N)
+        u = z * s_inv % N
+        v = r * s_inv % N
         self.assertEqual((u * G + v * point).x.num, r)
 
     def test_exercise_6(self):
