@@ -260,7 +260,7 @@ Now that we have a node, we can now handshake with another node.
 >>> node.send(version)  # <2>
 >>> verack_received = False
 >>> version_received = False
->>> while not verack_received and not version_received:  # <3>
+>>> while not verack_received or not version_received:  # <3>
 ...     message = node.wait_for(VersionMessage, VerAckMessage)  # <4>
 ...     if message.command == VerAckMessage.command:
 ...         verack_received = True
