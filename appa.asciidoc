@@ -6,58 +6,35 @@
 
 === Chapter 1: Finite Fields
 
-==== Exercise {counter:ch1exercise}
-
-Write the $$__ne__$$ method for +FieldElement+.
+include::code-ch01/exercises.asciidoc[tag=exercise1]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise1,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
-
-. 44+33
-. 9-29
-. 17+42+49
-. 52-30-38
+include::code-ch01/exercises.asciidoc[tag=exercise2]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise2,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Write the corresponding $$__sub__$$ method which defines the subtraction of two field elements.
+include::code-ch01/exercises.asciidoc[tag=exercise3]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise3,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are field versions):
-
-. 95⋅45⋅31
-. 17⋅13⋅19⋅44
-. 12^7^⋅77^49^
+include::code-ch01/exercises.asciidoc[tag=exercise4]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise4,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-For k = 1, 3, 7, 13, 18, what is this set in F~19~?
-
-{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
-
-Do you notice anything about these sets?
+include::code-ch01/exercises.asciidoc[tag=exercise5]
 
 [source,python]
 ----
@@ -66,48 +43,33 @@ include::code-ch01/answers.py[tag=exercise5,indent=0]
 
 When sorted, the results are always the same set.
 
-==== Exercise {counter:ch1exercise}
-
-Write the corresponding $$__mul__$$ method which defines the multiplication of two field elements.
+include::code-ch01/exercises.asciidoc[tag=exercise6]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise6,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-For p = 7, 11, 17, 31, 43, what is this set in F~p~?
-
-{1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
+include::code-ch01/exercises.asciidoc[tag=exercise7]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise7,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Solve the following equations in F~31~:
-
-* 3 / 24
-* 17^-3^
-* 4^-4^⋅11
+include::code-ch01/exercises.asciidoc[tag=exercise8]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise8,indent=0]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
+include::code-ch01/exercises.asciidoc[tag=exercise9]
 
 [source,python]
 ----
 include::code-ch01/answers.py[tag=exercise9,indent=0]
 ----
-
 
 === Chapter 2: Elliptic Curves
 
