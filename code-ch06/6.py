@@ -27,7 +27,6 @@ def op_checksig(stack, z):
         point = S256Point.parse(sec_pubkey)
         sig = Signature.parse(der_signature)
     except (ValueError, SyntaxError) as e:
-        print(e)
         return False
     if point.verify(z, sig):
         stack.append(encode_num(1))

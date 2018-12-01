@@ -1,4 +1,5 @@
 from io import BytesIO
+from logging import getLogger
 from unittest import TestCase
 
 from helper import (
@@ -11,6 +12,9 @@ from op import (
     OP_CODE_FUNCTIONS,
     OP_CODE_NAMES,
 )
+
+
+LOGGER = getLogger(__name__)
 
 
 class Script:
@@ -129,22 +133,22 @@ class Script:
                 if instruction in (99, 100):
                     # op_if/op_notif require the instructions array
                     if not operation(stack, instructions):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (107, 108):
                     # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (172, 173, 174, 175):
                     # these are signing operations, they need a sig_hash
                     # to check against
                     if not operation(stack, z):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 else:
                     if not operation(stack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
             else:
                 # add the instruction to the stack

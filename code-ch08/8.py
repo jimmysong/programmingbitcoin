@@ -37,7 +37,6 @@ def op_checkmultisig(stack, z):
         sigs = [Signature.parse(der) for der in der_signatures]
         for sig in sigs:
             if len(points) == 0:
-                print("signatures no good or not in right order")
                 return False
             while points:
                 point = points.pop(0)

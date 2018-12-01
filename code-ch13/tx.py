@@ -31,7 +31,6 @@ class TxFetcher:
     def fetch(cls, tx_id, testnet=False, fresh=False):
         if fresh or (tx_id not in cls.cache):
             url = '{}/rest/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
-            print(url)
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
@@ -634,7 +633,6 @@ class TxTest(TestCase):
 
     def test_verify_p2sh_p2wpkh(self):
         tx = TxFetcher.fetch('c586389e5e4b3acb9d6c8be1c19ae8ab2795397633176f5a6442a261bbdefc3a')
-        print(tx.serialize().hex())
         self.assertTrue(tx.verify())
 
     def test_verify_p2wsh(self):

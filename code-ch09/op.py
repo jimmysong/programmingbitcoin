@@ -1,5 +1,6 @@
 import hashlib
 
+from logging import getLogger
 from unittest import TestCase
 
 from ecc import (
@@ -11,6 +12,9 @@ from helper import (
     hash160,
     hash256,
 )
+
+
+LOGGER = getLogger(__name__)
 
 
 def encode_num(num):
@@ -669,7 +673,7 @@ def op_checksig(stack, z):
         point = S256Point.parse(sec_pubkey)
         sig = Signature.parse(der_signature)
     except (ValueError, SyntaxError) as e:
-        print(e)
+        LOGGER.info(e)
         return False
     # verify the signature using S256Point.verify()
     # push an encoded 1 or 0 depending on whether the signature verified
@@ -711,7 +715,7 @@ def op_checkmultisig(stack, z):
         for sig in sigs:
             # if we have no more points, signatures are no good
             if len(points) == 0:
-                print("signatures no good or not in right order")
+                LOGGER.info("signatures no good or not in right order")
                 return False
             # we loop until we find the point which works with this signature
             while points:
