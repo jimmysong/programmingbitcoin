@@ -96,9 +96,7 @@ Python allows us to override the $$==$$ operator with the $$__eq__$$ method, whi
 
 You can see this in action in the code that accompanies this book. Once you've set up Jupyter Notebook (see Preface), you can navigate to code-ch01/Chapter1.ipynb and run the code to see the results. For the next exercise, you'll want to open up ecc.py by clicking the link in the Exercise 1 box. Note that the answers to every exercise are in the Appendix.
 
-==== Exercise {counter:exercise}
-
-Write the corresponding method $$__ne__$$ which checks if two `FieldElement` objects are _not equal_ to each other.
+include::code-ch01/exercises.asciidoc[tag=exercise1]
 
 === Modulo Arithmetic
 
@@ -243,14 +241,7 @@ In F~19~:
 
 and so on.
 
-==== Exercise {counter:exercise}
-
-Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
-
-. 44+33
-. 9-29
-. 17+42+49
-. 52-30-38
+include::code-ch01/exercises.asciidoc[tag=exercise2]
 
 ==== Coding Addition and Subtraction in Python
 
@@ -273,9 +264,7 @@ include::code-ch01/ecc.py[lines=26..30]
 
 Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily subclassable. We will be subclassing `FieldElement` later, so we are not restricting ourselves.
 
-==== Exercise {counter:exercise}
-
-Write the corresponding $$__sub__$$ method which defines the subtraction of two field elements.
+include::code-ch01/exercises.asciidoc[tag=exercise3]
 
 === Finite Field Multiplication and Exponentiation
 
@@ -315,21 +304,9 @@ In F~19~:
 
 Exponentiation again gives us counter-intuitive results. We don't normally think 7^3^=1 or 9^12^=7. Again, part of why Finite Fields work is because the operations *always* result in a number within the field.
 
-==== Exercise {counter:exercise}
+include::code-ch01/exercises.asciidoc[tag=exercise4]
 
-Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are field versions):
-
-. 95⋅45⋅31
-. 17⋅13⋅19⋅44
-. 12^7^⋅77^49^
-
-==== Exercise {counter:exercise}
-
-For k = 1, 3, 7, 13, 18, what is this set in F~19~?
-
-{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
-
-Do you notice anything about these sets?
+include::code-ch01/exercises.asciidoc[tag=exercise5]
 
 [NOTE]
 ====
@@ -349,9 +326,7 @@ include::code-ch01/examples.py[tag=example5,indent=0]
 
 As we did with addition and subtraction above, we can define what multiplication means for our class with the $$__mul__$$ method.
 
-==== Exercise {counter:exercise}
-
-Write the corresponding $$__mul__$$ method which defines the multiplication of two field elements.
+include::code-ch01/exercises.asciidoc[tag=exercise6]
 
 ==== Coding Exponentiation in Python
 
@@ -377,11 +352,7 @@ Why don't we force the exponent to be a `FieldElement` object? It turns out that
 
 Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
 
-==== Exercise {counter:exercise}
-
-For p = 7, 11, 17, 31, 43, what is this set in F~p~?
-
-{1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
+include::code-ch01/exercises.py[tag=exercise7]
 
 === Finite Field Division 
 
@@ -461,19 +432,9 @@ So in other words, we can calculate the inverse using the exponent function. In 
 
 This is a relatively expensive calculation as exponentiating grows very fast. Division is the most expensive operation for that reason. To lessen the expensiveness, we can utilize the `pow` function in Python. `pow` is a function that will exponentiate. Thus something like `pow(7,17)` does the same thing as $$7**17$$. The `pow` function, however, has an optional third argument which makes our calculation more efficient. Specifically, `pow` will modulo by the third argument. Thus, `pow(7,17,19)` will give the same result as $$7**17%19$$ but do so faster because the modulo function is done after each round of multiplication.
 
-==== Exercise {counter:exercise}
+include::code-ch01/exercises.py[tag=exercise8]
 
-Solve the following equations in F~31~:
-
-* 3 / 24
-* 17^-3^
-* 4^-4^⋅11
-
-==== Exercise {counter:exercise}
-
-Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
-
-Note that in Python3, division is separated into $$__truediv__$$ and $$__floordiv__$$. The first does normal division, the second does integer division.
+include::code-ch01/exercises.py[tag=exercise9]
 
 === Redefining Exponentiation
 

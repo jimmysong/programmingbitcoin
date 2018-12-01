@@ -5,7 +5,7 @@ class FieldElement:
     def __ne__(self, other):
         # this should be the inverse of the == operator
 	return not (self == other)
-# tag::exercise1[]
+# end::exercise1[]
 # tag::exercise2[]
     >>> prime = 57
     >>> print((44+33)%prime)
