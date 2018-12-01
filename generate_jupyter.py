@@ -1,7 +1,7 @@
 import nbformat
 
 
-for chapter in range(1, 2):
+for chapter in range(1, 3):
     notebook = nbformat.v4.new_notebook()
     if chapter < 10:
         path = 'code-ch0{}'.format(chapter)
@@ -31,5 +31,5 @@ for chapter in range(1, 2):
         else:
             cell = nbformat.v4.new_code_cell(raw_cell.strip())
         notebook['cells'].append(cell)
-    nbformat.write(notebook, '{}/Chapter1.ipynb'.format(path))
+    nbformat.write(notebook, '{}/Chapter{}.ipynb'.format(path, chapter))
     

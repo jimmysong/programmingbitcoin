@@ -73,109 +73,33 @@ include::code-ch01/answers.py[tag=exercise9,indent=0]
 
 === Chapter 2: Elliptic Curves
 
-==== Exercise {counter:ch2exercise}
+include::code-ch02/exercises.asciidoc[tag=exercise1]
 
-Determine which of these points are on the curve y^2^=x^3^+5x+7:
+include::code-ch02/answers.py[tag=exercise1,indent=0]
 
-(2,4), (-1,-1), (18,77), (5,7)
+include::code-ch02/exercises.asciidoc[tag=exercise2]
 
-[source,python]
-----
->>> def on_curve(x, y):
-...     return y**2 == x**3 + 5*x + 7
->>> print(on_curve(2,4))
-False
->>> print(on_curve(-1,-1))
-True
->>> print(on_curve(18,77))
-True
->>> print(on_curve(5,7))
-False
-----
+include::code-ch02/answers.py[tag=exercise2,indent=0]
 
-==== Exercise {counter:ch2exercise}
+include::code-ch02/exercises.asciidoc[tag=exercise3]
 
-Write the $$__ne__$$ method for `Point`.
+include::code-ch02/answers.py[tag=exercise3,indent=0]
 
-[source,python]
-----
-class Point:
-...
-    def __ne__(self, other):
-        # this should be the inverse of the == operator
-	return not (self == other)
-----
+include::code-ch02/exercises.asciidoc[tag=exercise4]
 
-==== Exercise {counter:ch2exercise}
+include::code-ch02/answers.py[tag=exercise4,indent=0]
 
-Handle the case where the two points are negatives of each other. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
+include::code-ch02/exercises.asciidoc[tag=exercise5]
 
-[source,python]
-----
-    def __add__(self, other):
-        ...
-	if self.x == other.x and self.y != other.y:
-	    return self.__class__(None, None, self.a, self.b)
-----
+include::code-ch02/answers.py[tag=exercise5,indent=0]
 
-==== Exercise {counter:ch2exercise}
+include::code-ch02/exercises.asciidoc[tag=exercise6]
 
-For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+include::code-ch02/answers.py[tag=exercise6,indent=0]
 
-[source,python]
-----
->>> x1, y1 = 2, 5
->>> x2, y2 = -1, -1
->>> s = (y2 - y1) / (x2 - x1)
->>> x3 = s**2 - x1 - x2
->>> y3 = s * (x1 - x3) - y1
->>> print(x3, y3)
-3.0 -7.0
-----
+include::code-ch02/exercises.asciidoc[tag=exercise7]
 
-==== Exercise {counter:ch2exercise}
-
-Write the $$__add__$$ method where x~1~≠x~2~
-
-[source,python]
-----
-    def __add__(self, other):
-        ...
-	if self.x != other.x:
-	    s = (other.y - self.y) / (other.x - self.x)
-	    x3 = s**2 - self.x - other.x
-	    y3 = s*(self.x - x3) - self.y
-	    return self.__class__(x3, y3, self.a, self.b)
-----
-
-==== Exercise {counter:ch2exercise}
-
-For the curve y^2^=x^3^+5x+7, what is (-1,1) + (-1,1)?
-
-[source,python]
-----
->>> a, x1, y1 = 5, -1, 1
->>> s = (3 * x1**2 + a) / (2 * y1)
->>> x3 = s**2 - 2*x1
->>> y3 = s*(x1-x3)-y1
->>> print(x3,y3)
-18.0 -77.0
-----
-
-==== Exercise {counter:ch2exercise}
-
-Write the $$__add__$$ method where x~1~=x~2~ and y~1~=y~2~
-
-[source,python]
-----
-    def __add__(self, other):
-        ...
-	if self == other:
-	    s = (3*self.x**2+self.a)/(2*self.y)
-	    x3 = s**2 - 2*self.x
-	    y3 = s*(self.x - x3) - self.y
-	    return self.__class__(x3, y3, self.a, self.b)
-----
+include::code-ch02/answers.py[tag=exercise7,indent=0]
 
 === Chapter 3: Elliptic Curve Cryptography
 

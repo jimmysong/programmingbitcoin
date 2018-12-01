@@ -1,0 +1,101 @@
+############## PLEASE RUN THIS CELL FIRST! ###################
+
+# import everything and define a test runner function
+from importlib import reload
+from helper import run
+
+import ecc
+import helper
+
+from ecc import Point
+---
+example1
+---
+### Exercise 1
+
+#### For the curve \\(y^2 = x^3 + 5x + 7\\), which of these are on the curve?
+
+\\((2,4), (-1,-1), (18,77), (5,7)\\)
+---
+# Exercise 1
+
+# (2,4), (-1,-1), (18,77), (5,7)
+# equation in python is: y**2 == x**3 + 5*x + 7
+---
+### Exercise 2
+
+#### Make [this test](/edit/code-ch02/ecc.py) pass
+```
+ecc.py:PointTest:test_ne
+```
+---
+# Exercise 2
+
+reload(ecc)
+run(ecc.PointTest('test_ne'))
+---
+example2
+---
+### Exercise 3
+
+#### Make [this test](/edit/code-ch02/ecc.py) pass
+```
+ecc.py:PointTest:test_add0
+```
+---
+# Exercise 3
+
+reload(ecc)
+run(ecc.PointTest('test_add0'))
+---
+### Exercise 4
+
+#### For the curve \\(y^2=x^3+5x+7\\), what is \\((2,5)+(-1,-1)\\)?
+---
+# Exercise 4
+
+from ecc import Point
+
+a = 5
+b = 7
+x1, y1 = 2, 5
+x2, y2 = -1, -1
+
+# (x1,y1) + (x2,y2)
+---
+### Exercise 5
+
+#### Make [this test](/edit/code-ch02/ecc.py) pass
+```
+ecc.py:PointTest:test_add1
+```
+---
+# Exercise 5
+
+reload(ecc)
+run(ecc.PointTest('test_add1'))
+---
+### Exercise 6
+
+#### For the curve \\(y^2=x^3+5x+7\\), what is \\((-1,1)+(-1,1)\\)?
+---
+# Exercise 6
+
+from ecc import Point
+
+a = 5
+b = 7
+x1, y1 = -1, 1
+# (-1,1) + (-1,1)
+---
+### Exercise 7
+
+#### Make [this test](/edit/code-ch02/ecc.py) pass
+```
+ecc.py:PointTest:test_add2
+```
+---
+# Exercise 7
+
+reload(ecc)
+run(ecc.PointTest('test_add2'))

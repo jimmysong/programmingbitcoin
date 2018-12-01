@@ -79,13 +79,7 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-        if self.y**2 != self.x**3+self.a*self.x + self.b:  # <1>
-	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
-
-    def __eq__(self, other):  # <2>
-        return self.a == other.a and self.b == other.b \
-            and self.x == other.x and self.y == other.y
-
+include::code-ch02/ecc.py[lines=130..135]
 ----
 <1> We check here that the point is actually on the curve.
 <2> Points are equal if and only if they are on the same curve and have the same coordinates
@@ -94,28 +88,14 @@ This allows us to do something like this:
 
 [source,python]
 ----
->>> from ecc import Point
->>> p1 = Point(-1, -1, 5, 7)
->>> p2 = Point(-1, -2, 5, 7)
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "ecc.py", line 143, in __init__
-    raise ValueError('({}, {}) is not on the curve'.format(self.x, self.y))
-ValueError: (-1, -2) is not on the curve
+include::code-ch02/examples.py[tag=example1]
 ----
 
 We want the $$__init__$$ method to throw an error when the point is not on the curve.
 
-==== Exercise {counter:exercise}
+include::code-ch02/exercises.asciidoc[tag=exercise1]
 
-Determine which of these points are on the curve y^2^=x^3^+5x+7:
-
-(2,4), (-1,-1), (18,77), (5,7)
-
-
-==== Exercise {counter:exercise}
-
-Write the $$__ne__$$ method for `Point`.
+include::code-ch02/exercises.asciidoc[tag=exercise2]
 
 === Point Addition
 
@@ -202,16 +182,7 @@ We first handle the identity, or the point at infinity. Since we don't have the 
 
 [source,python]
 ----
->>> from ecc import Point
->>> p1 = Point(-1, -1, 5, 7)
->>> p2 = Point(-1, 1, 5, 7)
->>> inf = Point(None, None, 5, 7)
->>> p1 + inf
-Point(-1, -1)
->>> inf + p2
-Point(-1, 1)
->>> p1 + p2
-Point(infinity)
+include::code-ch02/examples.py[tag=example2]
 ----
 
 In order to make this work, we have to do two things:
@@ -220,53 +191,31 @@ First, we have to adjust the $$__init__$$ method slightly so it doesn't check th
 
 [source,python]
 ----
-class Point:
-
-    def __init__(self, x, y, a, b):
-        self.a = a
-        self.b = b
-        self.x = x
-        self.y = y
-	if self.x is None and self.y is None:  # <1>
-	    return
+include::code-ch02/ecc.py[lines=121..129]
         if self.y**2 != self.x**3 + self.a*self.x + self.b:
 	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
     ...
-
-    def __add__(self, other):  # <2>
-        if self.a != other.a or self.b != other.b:
-            raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
-
-    	if self.x is None:  # <3>
-	    return other
-	if other.x is None:  # <4>
-	    return self
+include::code-ch02/ecc.py[lines=147..154]
 ----
 <1> x-coordinate and y-coordinate being `None` is how we signify the point at infinity. Note that the next if statement will fail if we don't return here.
 <2> We overload the `+` operator here
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity. Thus, we return `other`
 <4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity. Thus, we return `self`
 
-
-==== Exercise {counter:exercise}
-
-Handle the case where the two points are additive inverses. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
+include::code-ch02/exercises.asciidoc[tag=exercise3]
 
 === Point Addition for when x~1~≠x~2~
 
 Now that we've covered the vertical line, we're now proceeding to when the points are different. When we have points where the x's differ, we can add using a fairly simple formula. To help with intuition, it helps first to find the slope created by the two points. You can figure this out using a formula from pre-Algebra:
 
-P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-
-P~1~+P~2~=P~3~
-
-s=(y~2~-y~1~)/(x~2~-x~1~)
+* P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
+* P~1~+P~2~=P~3~
+* s=(y~2~-y~1~)/(x~2~-x~1~)
 
 This is the slope and we can use the slope to calculate x~3~. Once we know x~3~, we can calculate y~3~. P~3~ can be derived using this formula:
 
-x~3~=s^2^-x~1~-x~2~
-
-y~3~=s(x~1~-x~3~)-y~1~
+* x~3~=s^2^-x~1~-x~2~
+* y~3~=s(x~1~-x~3~)-y~1~
 
 Remember that y~3~ is the reflection over the x-axis.
 
@@ -322,9 +271,7 @@ y~3~=-(s(x~3~-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
 QED
 ****
 
-==== Exercise {counter:exercise}
-
-For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+include::code-ch02/exercises.asciidoc[tag=exercise4]
 
 === Coding Point Addition for when x~1~≠x~2~
 
@@ -336,9 +283,7 @@ We now code this into our library. That means we have to adjust the $$__add__$$ 
 
 At the end of the method, we return an instance of the class `Point`.
 
-==== Exercise {counter:exercise}
-
-Write the $$__add__$$ method where x~1~≠x~2~
+include::code-ch02/exercises.asciidoc[tag=exercise5]
 
 === Point Addition for when P~1~=P~2~
 
@@ -386,9 +331,7 @@ dy/dx=(3x^2^+a)/(2y)
 That's how we arrive at the slope formula. The rest of the results from the point addition formula derivation hold.
 ====
 
-==== Exercise {counter:exercise}
-
-For the curve y^2^=x^3^+5x+7, what is (-1,1) + (-1,1)?
+include::code-ch02/exercises.asciidoc[tag=exercise6]
 
 === Coding Point Addition for when P~1~=P~2~
 
@@ -398,9 +341,7 @@ We adjust the $$__add__$$ method to account for this particular case. We have th
 * x~3~=s^2^-2x~1~
 * y~3~=s(x~1~-x~3~)-y~1~
 
-==== Exercise {counter:exercise}
-
-Write the $$__add__$$ method where x~1~=x~2~ and y~1~=y~2~
+include::code-ch02/exercises.asciidoc[tag=exercise7]
 
 === Coding One More Exception
 
