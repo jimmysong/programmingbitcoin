@@ -4,11 +4,11 @@ from unittest import TestCase
 class FieldElement:
 
     def __init__(self, num, prime):
-        if num >= prime or num < 0:
+        if num >= prime or num < 0:  # <1>
             error = 'Num {} not in field range 0 to {}'.format(
                 num, prime - 1)
             raise ValueError(error)
-        self.num = num
+        self.num = num  # <2>
         self.prime = prime
 
     def __repr__(self):
@@ -17,17 +17,17 @@ class FieldElement:
     def __eq__(self, other):
         if other is None:
             return False
-        return self.num == other.num and self.prime == other.prime
+        return self.num == other.num and self.prime == other.prime  # <3>
 
     def __ne__(self, other):
         # this should be the inverse of the == operator
         raise NotImplementedError
 
     def __add__(self, other):
-        if self.prime != other.prime:
+        if self.prime != other.prime:  # <1>
             raise TypeError('Cannot add two numbers in different Fields')
-        num = (self.num + other.num) % self.prime
-        return self.__class__(num, self.prime)
+        num = (self.num + other.num) % self.prime  # <2>
+        return self.__class__(num, self.prime)  # <3>
 
     def __sub__(self, other):
         if self.prime != other.prime:

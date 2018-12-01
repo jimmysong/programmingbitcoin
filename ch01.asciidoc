@@ -1,6 +1,7 @@
 = Programming Bitcoin
 :imagesdir: images
 :sourcedir: code-ch01
+:source-highlighter: pygments
 
 [[chapter_finite_fields]]
 == Finite Fields
