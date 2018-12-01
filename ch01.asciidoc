@@ -1,5 +1,6 @@
 = Programming Bitcoin
 :imagesdir: images
+:sourcedir: code-ch01
 
 [[chapter_finite_fields]]
 == Finite Fields
@@ -79,22 +80,7 @@ The class represents an element in a field F~prime~. The bare bones of the class
 
 [source,python]
 ----
-class FieldElement:
-
-    def __init__(self, num, prime):
-        if num >= prime or num < 0:  # <1>
-	    error = 'Num {} not in field range 0 to {}'.format(num, prime-1)
-	    raise ValueError(error)
-        self.num = num  # <2>
-        self.prime = prime
-
-    def __repr__(self):
-        return 'FieldElement_{}({})'.format(self.prime, self.num)
-
-    def __eq__(self, other):  # <3>
-        if other is None:
-            return False
-        return self.num == other.num and self.prime == other.prime
+include::{sourcedir}/ecc.py[lines=4..20]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive. If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method assigns the initialization values to the object.
