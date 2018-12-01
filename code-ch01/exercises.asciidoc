@@ -58,7 +58,7 @@ Solve the following equations in F~31~:
 * 4^-4^⋅11
 # end::exercise8[]
 # tag::exercise9[]
-==== Exercise {counter:exercise}
+==== Exercise 9
 
 Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
 

@@ -75,31 +75,52 @@ include::code-ch01/answers.py[tag=exercise9,indent=0]
 
 include::code-ch02/exercises.asciidoc[tag=exercise1]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise1,indent=0]
+----
 
 include::code-ch02/exercises.asciidoc[tag=exercise2]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise2,indent=0]
+----
 
 include::code-ch02/exercises.asciidoc[tag=exercise3]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise3,indent=0]
+----
 
 include::code-ch02/exercises.asciidoc[tag=exercise4]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise4,indent=0]
+----
 
 include::code-ch02/exercises.asciidoc[tag=exercise5]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise5,indent=0]
+----
 
 include::code-ch02/exercises.asciidoc[tag=exercise6]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise6,indent=0]
+----
 
 include::code-ch02/exercises.asciidoc[tag=exercise7]
 
+[source,python]
+----
 include::code-ch02/answers.py[tag=exercise7,indent=0]
+----
 
 === Chapter 3: Elliptic Curve Cryptography
 
