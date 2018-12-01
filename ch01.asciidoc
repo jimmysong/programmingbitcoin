@@ -89,13 +89,7 @@ What we've defined already allows us to do this:
 
 [source,python]
 ----
->>> from ecc import FieldElement
->>> a = FieldElement(7, 13)
->>> b = FieldElement(6, 13)
->>> print(a == b)
-False
->>> print(a == a)
-True
+include::code-ch01/examples.py[tag=example1]
 ----
 
 Python allows us to override the $$==$$ operator with the $$__eq__$$ method, which is something we'll be taking advantage of going forward.
@@ -175,8 +169,7 @@ Python uses the `%` operator for modulo arithmetic. It looks like this:
 
 [code,python]
 ----
->>> print(7 % 3)
-1
+include::code-ch01/examples.py[tag=example2]
 ----
 
 We can also use the modulo operator on negative numbers like this:
