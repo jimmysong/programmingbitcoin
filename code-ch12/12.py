@@ -34,15 +34,10 @@ def add(self, item):
 
         
 def filterload(self, flag=1):
-    # encode_varint self.size
     payload = encode_varint(self.size)
-    # next is the self.filter_bytes()
     payload += self.filter_bytes()
-    # function count is 4 bytes little endian
     payload += int_to_little_endian(self.function_count, 4)
-    # tweak is 4 bytes little endian
     payload += int_to_little_endian(self.tweak, 4)
-    # flag is 1 byte little endian
     payload += int_to_little_endian(flag, 1)
     return GenericMessage(b'filterload', payload)
 
@@ -192,7 +187,7 @@ class Chapter12Test(TestCase):
             getdata.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
             last_block = b.hash()
         node.send(getdata)
-        prev_tx, prev_index, prev_tx_obj = None, None, None
+        prev_tx, prev_index = None, None
         while prev_tx is None:
             message = node.wait_for(MerkleBlock, Tx)
             if message.command == b'merkleblock':

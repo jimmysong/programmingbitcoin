@@ -186,22 +186,22 @@ def merkle_parent(hash1, hash2):
 def merkle_parent_level(hashes):
     '''Takes a list of binary hashes and returns a list that's half
     the length'''
-    # Exercise 2.2: if the list has exactly 1 element raise an error
+    # if the list has exactly 1 element raise an error
     if len(hashes) == 1:
         raise RuntimeError('Cannot take a parent level with only 1 item')
-    # Exercise 3.2: if the list has an odd number of elements, duplicate the last one
-    #               and put it at the end so it has an even number of elements
+    # if the list has an odd number of elements, duplicate the last one
+    # and put it at the end so it has an even number of elements
     if len(hashes) % 2 == 1:
         hashes.append(hashes[-1])
-    # Exercise 2.2: initialize next level
+    # initialize next level
     parent_level = []
-    # Exercise 2.2: loop over every pair (use: for i in range(0, len(hashes), 2))
+    # loop over every pair (use: for i in range(0, len(hashes), 2))
     for i in range(0, len(hashes), 2):
-        # Exercise 2.2: get the merkle parent of i and i+1 hashes
+        # get the merkle parent of the hashes at index i and i+1
         parent = merkle_parent(hashes[i], hashes[i + 1])
-        # Exercise 2.2: append parent to parent level
+        # append parent to parent level
         parent_level.append(parent)
-    # Exercise 2.2: return parent level
+    # return parent level
     return parent_level
 
 
@@ -214,7 +214,7 @@ def merkle_root(hashes):
     while len(current_level) > 1:
         # current level becomes the merkle parent level
         current_level = merkle_parent_level(current_level)
-    # return the 1st item of current_level
+    # return the 1st item of the current level
     return current_level[0]
 
 

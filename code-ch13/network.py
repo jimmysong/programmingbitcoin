@@ -312,10 +312,11 @@ class GetDataMessage:
     def serialize(self):
         # start with the number of items as a varint
         result = encode_varint(len(self.data))
+        # loop through each tuple (data_type, identifier) in self.data
         for data_type, identifier in self.data:
-            # data type is 4 bytes little endian
+            # data type is 4 bytes Little-Endian
             result += int_to_little_endian(data_type, 4)
-            # identifier needs to be in little endian
+            # identifier needs to be in Little-Endian
             result += identifier[::-1]
         return result
 
@@ -358,7 +359,8 @@ class SimpleNode:
         self.stream = self.socket.makefile('rb', None)
 
     def handshake(self):
-        '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
+        '''Do a handshake with the other node.
+        Handshake is sending a version message and getting a verack back.'''
         # create a version message
         version = VersionMessage()
         # send the command

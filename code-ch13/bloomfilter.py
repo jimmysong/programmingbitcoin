@@ -1,6 +1,12 @@
 from unittest import TestCase
 
-from helper import bit_field_to_bytes, encode_varint, int_to_little_endian, murmur3
+from helper import (
+    bit_field_to_bytes,
+    encode_varint,
+    int_to_little_endian,
+    murmur3,
+)
+from network import GenericMessage
 
 
 BIP37_CONSTANT = 0xfba4c795
@@ -31,10 +37,10 @@ class BloomFilter:
         return bit_field_to_bytes(self.bit_field)
 
     def filterload(self, flag=1):
-        '''Return the payload that goes in a filterload message'''
-        # start with the size of the filter in bytes
+        '''Return the filterload message'''
+        # start the payload with the size of the filter in bytes
         payload = encode_varint(self.size)
-        # next cast the filter to bytes
+        # next add the bit field using self.filter_bytes()
         payload += self.filter_bytes()
         # function count is 4 bytes little endian
         payload += int_to_little_endian(self.function_count, 4)
@@ -42,7 +48,9 @@ class BloomFilter:
         payload += int_to_little_endian(self.tweak, 4)
         # flag is 1 byte little endian
         payload += int_to_little_endian(flag, 1)
-        return payload
+        # return a GenericMessage whose command is b'filterload'
+        # and payload is what we've calculated
+        return GenericMessage(b'filterload', payload)
 
 
 class BloomFilterTest(TestCase):
@@ -65,4 +73,4 @@ class BloomFilterTest(TestCase):
         item = b'Goodbye!'
         bf.add(item)
         expected = '0a4000600a080000010940050000006300000001'
-        self.assertEqual(bf.filterload().hex(), expected)
+        self.assertEqual(bf.filterload().serialize().hex(), expected)

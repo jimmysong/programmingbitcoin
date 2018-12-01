@@ -215,10 +215,27 @@ class MerkleBlock:
     @classmethod
     def parse(cls, s):
         '''Takes a byte stream and parses a merkle block. Returns a Merkle Block object'''
+        # version - 4 bytes, Little-Endian integer
+        # prev_block - 32 bytes, Little-Endian (use [::-1])
+        # merkle_root - 32 bytes, Little-Endian (use [::-1])
+        # timestamp - 4 bytes, Little-Endian integer
+        # bits - 4 bytes
+        # nonce - 4 bytes
+        # total transactions in block - 4 bytes, Little-Endian integer
+        # number of transaction hashes - varint
+        # each transaction is 32 bytes, Little-Endian
+        # length of flags field - varint
+        # read the flags field
+        # initialize class
         raise NotImplementedError
 
     def is_valid(self):
         '''Verifies whether the merkle tree information validates to the merkle root'''
+        # convert the flags field to a bit field
+        # reverse self.hashes for the merkle root calculation
+        # initialize the merkle tree
+        # populate the tree with flag bits and hashes
+        # check if the computed root reversed is the same as the merkle root
         raise NotImplementedError
 
 

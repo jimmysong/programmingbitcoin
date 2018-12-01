@@ -1556,8 +1556,8 @@ class SimpleNode:
         '''Do a handshake with the other node.
 	Handshake is sending a version message and getting a verack back.'''
         version = VersionMessage()
-        self.send(version.command, version.serialize())
-        self.wait_for_commands({b'verack'})
+        self.send(version)
+        self.wait_for(VerAckMessage)
 ----
 
 ==== Exercise {counter:ch10exercise}
@@ -1784,13 +1784,13 @@ Write the  `filterload` payload from the `BloomFilter` class.
 class BloomFilter:
 ...
     def filterload(self, flag=1):
-        '''Return the payload that goes in a filterload message'''
+        '''Return the filterload message'''
         payload = encode_varint(self.size)
         payload += self.filter_bytes()
         payload += int_to_little_endian(self.function_count, 4)
         payload += int_to_little_endian(self.tweak, 4)
         payload += int_to_little_endian(flag, 1)
-        return payload
+        return GenericMessage(b'filterload', payload)
 ----
 
 ==== Exercise {counter:ch12exercise}
@@ -1847,7 +1847,6 @@ last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e
 secret = little_endian_to_int(hash256(b''))
 private_key = PrivateKey(secret=secret)
 addr = private_key.point.address(testnet=True)
-print(addr)
 h160 = decode_base58(addr)
 
 target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
@@ -1866,25 +1865,20 @@ bf.add(h160)
 # complete the handshake
 node.handshake()
 # load the bloom filter with the filterload command
-node.send(b'filterload', bf.filterload())
+node.send(bf.filterload())
 
 # set start block to last_block from above
 start_block = bytes.fromhex(last_block_hex)
 # send a getheaders message with the starting block
-getheaders_message = GetHeadersMessage(start_block=start_block)
-node.send(getheaders_message.command, getheaders_message.serialize())
+getheaders = GetHeadersMessage(start_block=start_block)
+node.send(getheaders)
 
 # wait for the headers message
-headers_envelope = node.wait_for_commands({HeadersMessage.command})
-
-# get the stream from the headers
-stream = headers_envelope.stream()
-# parse the headers message
-headers = HeadersMessage.parse(stream)
+headers = node.wait_for(HeadersMessage)
 # store the last block as None
 last_block = None
 # initialize the GetDataMessage
-get_data_message = GetDataMessage()
+getdata = GetDataMessage()
 # loop through the blocks in the headers
 for b in headers.blocks:
     # check that the proof of work on the block is valid
@@ -1899,66 +1893,57 @@ for b in headers.blocks:
     # set the last block to the current hash
     last_block = b.hash()
 # send the getdata message
-node.send(get_data_message.command, get_data_message.serialize())
+node.send(getdata)
 
-# initialize prev_tx, prev_index and pt to None
-prev_tx, prev_index, prev_tx_obj = None, None, None
+# initialize prev_tx and prev_index to None
+prev_tx, prev_index = None, None
 # loop while prev_tx is None 
 while prev_tx is None:
     # wait for the merkleblock or tx commands
-    envelope = node.wait_for_commands({b'merkleblock', b'tx'})
-    # initialize the stream from the envelope
-    stream = envelope.stream()
+    message = node.wait_for(MerkleBlock, Tx)
     # if we have the merkleblock command
-    if envelope.command == b'merkleblock':
-        # parse the MerkleBlock
-        mb = MerkleBlock.parse(stream)
+    if message.command == b'merkleblock':
         # check that the MerkleBlock is valid
-        if not mb.is_valid():
+        if not message.is_valid():
             raise RuntimeError('invalid merkle proof')
     # else we have the tx command
     else:
-        # parse the tx
-        prev_tx_obj = Tx.parse(stream, testnet=True)
+        # set the tx's testnet to be True
+        message.testnet = True
         # loop through the tx outs
-        for i, tx_out in enumerate(prev_tx_obj.tx_outs):
+        for i, tx_out in enumerate(message.tx_outs):
             # if our output has the same address as our address we found it
             if tx_out.script_pubkey.address(testnet=True) == addr:
                 # we found our utxo. set prev_tx, prev_index, and transaction
-                prev_tx = prev_tx_obj.hash()
+                prev_tx = message.hash()
                 prev_index = i
                 print('found: {}:{}'.format(prev_tx.hex(), prev_index))
-# create tx_in
-tx_in = TxIn(prev_tx, prev_index, Script([]), 0xffffff)
-# set the cache of the previous tx to prev_tx_obj
-TxFetcher.cache[prev_tx] = prev_tx_obj
-# create the tx_ins array
-tx_ins = [tx_in]
-# calculate how much is in this UTXO
-total = prev_tx_obj.tx_outs[prev_index].amount
-# create a new transaction out to the right address with the right amount (subtract fee)
-tx_outs = [TxOut(total-fee, target_script)]
-# create a new transaction
-tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-# sign the transaction
+# create the TxIn
+tx_in = TxIn(prev_tx, prev_index)
+# calculate the output amount (previous amount minus the fee)
+output_amount = prev_amount - fee
+# create a new TxOut to the target script with the output amount
+tx_outs = TxOut(output_amount, target_script)
+# create a new transaction with the one input and one output
+tx_obj = Tx(1, [tx_in], [tx_out], 0, testnet=True)
+# sign the only input of the transaction
 tx_obj.sign_input(0, private_key)
 # serialize and hex to see what it looks like
 print(tx_obj.serialize().hex())
 # send this signed transaction on the network
-node.send(b'tx', tx_obj.serialize())
-# wait a sec so this message goes through to the other node time.sleep(1) 
+node.send(tx_obj)
+# wait a sec so this message goes through with time.sleep(1)
 time.sleep(1)
 # now ask for this transaction from the other node
 # create a GetDataMessage
-get_data_message = GetDataMessage()
+getdata = GetDataMessage()
 # ask for our transaction by adding it to the message
-get_data_message.add_data(TX_DATA_TYPE, tx_obj.hash())
+getdata.add_data(TX_DATA_TYPE, tx_obj.hash())
 # send the message
-node.send(get_data_message.command, get_data_message.serialize())
-# now wait for a response
-envelope = node.wait_for_commands({b'tx', b'reject'})
-if envelope.command == b'tx':
-    print(envelope.payload.hex())
-else:
-    print(envelope.payload)
+node.send(getdata)
+# now wait for a Tx response
+received_tx = node.wait_for(Tx)
+# if the received tx has the same id as our tx, we are done!
+if received_tx.id() == tx_obj.id():
+    print('success!')
 ----

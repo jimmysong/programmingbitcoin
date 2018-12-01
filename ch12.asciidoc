@@ -234,56 +234,50 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 >>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
 >>> h160 = decode_base58(address)
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
+>>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=False)
 >>> bf = BloomFilter(size=30, function_count=5, tweak=90210)  # <1>
 >>> bf.add(h160)  # <2>
 >>> node.handshake()
->>> node.send(b'filterload', bf.filterload())  # <3>
+>>> node.send(bf.filterload())  # <3>
 >>> start_block = bytes.fromhex(last_block_hex)
->>> getheaders_message = GetHeadersMessage(start_block=start_block)
->>> node.send(b'getheaders', getheaders_message.serialize())  # <4>
->>> headers_envelope = node.wait_for_commands({b'headers'})
->>> stream = headers_envelope.stream()
->>> headers = HeadersMessage.parse(stream)
->>> get_data_message = GetDataMessage()  # <5>
+>>> getheaders = GetHeadersMessage(start_block=start_block)
+>>> node.send(getheaders)  # <4>
+>>> headers = node.wait_for(HeadersMessage)
+>>> getdata = GetDataMessage()  # <5>
 >>> for b in headers.blocks:
 ...     if not b.check_pow():
 ...         raise RuntimeError('proof of work is invalid')
-...     get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
-... node.send(b'getdata', get_data_message.serialize())  # <7>
+...     getdata.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
+>>> node.send(getdata)  # <7>
 >>> found = False
 >>> while not found:
-...     envelope = node.wait_for_commands({b'merkleblock', b'tx'})  # <8>
-...     stream = envelope.stream()
-...     if envelope.command == b'merkleblock':
-...         mb = MerkleBlock.parse(stream)
-...         if not mb.is_valid():  # <9>
+...     message = node.wait_for(MerkleBlock, Tx)  # <8>
+...     if message.command == b'merkleblock':
+...         if not message.is_valid():  # <9>
 ...             raise RuntimeError('invalid merkle proof')
-...     else:  # <10>
-...         prev_tx_obj = Tx.parse(stream, testnet=True)
-...         for i, tx_out in enumerate(prev_tx_obj.tx_outs):
-...             if tx_out.script_pubkey.address(testnet=True) == address:  # <11>
-...                 print('found: {}:{}'.format(prev_tx_obj.hash().hex(), i))
+...     else:
+...         for i, tx_out in enumerate(message.tx_outs):
+...             if tx_out.script_pubkey.address(testnet=True) == address:  # <10>
+...                 print('found: {}:{}'.format(message.id(), i))
 ...                 found = True
 ...                 break
 ----
 <1> We are creating a Bloom Filter that's 30 bytes, 5 hash functions using a particularly popular 90's tweak.
 <2> The only thing we'll filter for is the address above.
-<3> We send the `filterload` command using the parameters from the Bloom Filter above.
+<3> We send the `filterload` command from the Bloom Filter we made.
 <4> We get all the headers after `last_block_hex`.
 <5> We are creating a `getdata` message for Merkle Blocks that we think will have transactions interesting to us.
 <6> We are specifically asking for the Merkle Block for this Block header. Most of them will probably be complete misses.
 <7> We send the `getdata` message asking for Merkle Blocks for 2000 blocks after the block id at the top.
 <8> The only two commands that interest us are the `merkleblock` command, which proves inclusion andn the `tx` command which will give us the details of the possibly interesting transaction.
 <9> We check that the Merkle Block is valid.
-<10> Transactions may or may not be interesting. We have to parse to find out.
-<11> We're looking for UTXOs that correspond to the address at the top, and we print them to screen if we have one.
+<10> We're looking for UTXOs that correspond to the address at the top, and we print to screen if we have one.
 
-What we've done in the above is look at 2000 blocks after a particular block for utxos of a particular address. This is without the use of any block explorer, which preserves, to some degree, our privacy.
+What we've done in the above is look at 2000 blocks after a particular block for UTXOs corresponding to a particular address. This is without the use of any block explorer, which preserves, to some degree, our privacy.
 
 ==== Exercise {counter:exercise}
 
-Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
+Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input and broadcast that message on the network.
 
 === Conclusion
 

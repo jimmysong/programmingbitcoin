@@ -1,6 +1,12 @@
 from unittest import TestCase
 
-from helper import bit_field_to_bytes, encode_varint, int_to_little_endian, murmur3
+from helper import (
+    bit_field_to_bytes,
+    encode_varint,
+    int_to_little_endian,
+    murmur3,
+)
+from network import GenericMessage
 
 
 BIP37_CONSTANT = 0xfba4c795
@@ -16,13 +22,25 @@ class BloomFilter:
 
     def add(self, item):
         '''Add an item to the filter'''
+        # iterate self.function_count number of times
+            # BIP0037 spec seed is i*BIP37_CONSTANT + self.tweak
+            # get the murmur3 hash given that seed
+            # set the bit at the hash mod the bitfield size (self.size*8)
+            # set the bit field at bit to be 1
         raise NotImplementedError
 
     def filter_bytes(self):
         return bit_field_to_bytes(self.bit_field)
 
     def filterload(self, flag=1):
-        '''Return the payload that goes in a filterload message'''
+        '''Return the filterload message'''
+        # start the payload with the size of the filter in bytes
+        # next add the bit field using self.filter_bytes()
+        # function count is 4 bytes little endian
+        # tweak is 4 bytes little endian
+        # flag is 1 byte little endian
+        # return a GenericMessage whose command is b'filterload'
+        # and payload is what we've calculated
         raise NotImplementedError
 
 

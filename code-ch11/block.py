@@ -112,6 +112,9 @@ class Block:
         '''Gets the merkle root of the tx_hashes and checks that it's
         the same as the merkle root of this block.
         '''
+        # reverse each item in self.tx_hashes
+        # compute the Merkle Root and reverse
+        # return whether self.merkle_root is the same
         raise NotImplementedError
 
 

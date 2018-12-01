@@ -44,7 +44,7 @@ We'll go through each part of this process below.
 [WARNING]
 .Be Careful With Merkle Trees!
 ====
-There was a vulnerability that Bitcoin 0.4-0.6 was susceptible to. CVE-2012-2459 details the mechanics of the Denial of Service vector. The ultimate reason for this vulnerability was because of the duplication of the last item, which caused some nodes to invalidate blocks even if they were valid.
+There was a vulnerability in Bitcoin 0.4-0.6 which is detailed in CVE-2012-2459. There was a Denial of Service vector due to the duplication of the last item in merkle trees, which caused some nodes to invalidate blocks even if they were valid.
 ====
 
 === Merkle Parent
@@ -258,7 +258,7 @@ The first thing we need to do is create the general structure of the Merkle Tree
 [None, None]
 [None, None, None, None]
 [None, None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, ..., None]
 ----
 <1> Since we halve at every level, log~2~ of the number of leaves gives us how many levels there will be in the Merkle Tree. Note we have to round up using `math.ceil` as we round up for halving at each level. We could also be clever and use `len(bin(total))-2`.
 <2> The merkle tree will hold the root level at index 0, the level below at index 1 and so on. In other words, the index is the "depth" from the top.
@@ -515,7 +515,7 @@ There should also be 7 hashes included in the list of hashes:
 * H~N~
 * H~OP~
 
-This is sufficient information to prove that the green boxes, H~K~ and H~N~ are included in the block with the Merkle Root from the block header.
+Notice that every letter is represented in the hashes above, A-P. This is sufficient information to prove that the green boxes, H~K~ and H~N~ are included in the block with the Merkle Root from the block header.
 
 As you can see in the diagram, the flags apply in depth-first order. Anytime we're given a hash, as with H~ABCDEFGH~, we don't need to visit any of its children or descendants and go straight to H~IJKLMNOP~ instead of H~ABCD~. Flags are a clever mechanism to show us which nodes have which hash.
 

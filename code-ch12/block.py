@@ -112,14 +112,12 @@ class Block:
         '''Gets the merkle root of the tx_hashes and checks that it's
         the same as the merkle root of this block.
         '''
-        # reverse all the transaction hashes (self.tx_hashes)
+        # reverse each item in self.tx_hashes
         hashes = [h[::-1] for h in self.tx_hashes]
-        # get the Merkle Root
-        root = merkle_root(hashes)
-        # reverse the Merkle Root
-        # return whether self.merkle root is the same as
-        # the reverse of the calculated merkle root
-        return root[::-1] == self.merkle_root
+        # compute the Merkle Root and reverse
+        root = merkle_root(hashes)[::-1]
+        # return whether self.merkle_root is the same
+        return root == self.merkle_root
 
 
 class BlockTest(TestCase):
