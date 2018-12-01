@@ -89,7 +89,7 @@ What we've defined already allows us to do this:
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example1]
+include::code-ch01/examples.py[tag=example1,indent=0]
 ----
 
 Python allows us to override the $$==$$ operator with the $$__eq__$$ method, which is something we'll be taking advantage of going forward.
@@ -167,17 +167,16 @@ We'll be using modulo as we define field arithmetic. Most operations in Finite F
 
 Python uses the `%` operator for modulo arithmetic. It looks like this:
 
-[code,python]
+[source,python]
 ----
-include::code-ch01/examples.py[tag=example2]
+include::code-ch01/examples.py[tag=example2,indent=0]
 ----
 
 We can also use the modulo operator on negative numbers like this:
 
-[code,python]
+[source,python]
 ----
->>> print(-27 % 13)
-12
+include::code-ch01/examples.py[tag=example3,indent=0]
 ----
 
 === Finite Field Addition and Subtraction
@@ -259,12 +258,7 @@ In the class `FieldElement` we can now define $$__add__$$ and $$__sub__$$ method
 
 [source,python]
 ----
->>> from ecc import FieldElement
->>> a = FieldElement(7, 13)
->>> b = FieldElement(12, 13)
->>> c = FieldElement(6, 13)
->>> print(a+b==c)
-True
+include::code-ch01/examples.py[tag=example4,indent=0]
 ----
 
 In Python we can define what addition means for our class with the $$__add__$$ method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
@@ -350,12 +344,7 @@ In the class `FieldElement` we can now define the $$__mul__$$ method. We want th
 
 [source,python]
 ----
->>> from ecc import FieldElement
->>> a = FieldElement(3, 13)
->>> b = FieldElement(12, 13)
->>> c = FieldElement(10, 13)
->>> print(a*b==c)
-True
+include::code-ch01/examples.py[tag=example5,indent=0]
 ----
 
 As we did with addition and subtraction above, we can define what multiplication means for our class with the $$__mul__$$ method.
@@ -370,11 +359,7 @@ We can do the same for exponentiation, which in Python can be defined with the $
 
 [source,python]
 ----
->>> from ecc import FieldElement
->>> a = FieldElement(3, 13)
->>> b = FieldElement(1, 13)
->>> print(a**3==b)
-True
+include::code-ch01/examples.py[tag=example6,indent=0]
 ----
 
 Note that because the exponent is an integer, instead of another instance of `FieldElement`, we receive the variable `exponent` as an integer. We can code it this way.
@@ -471,9 +456,8 @@ b^-1^=b^(p-2)^
 
 So in other words, we can calculate the inverse using the exponent function. In F~19~:
 
-2/7=2⋅7^(19-2)^=2⋅7^17^=465261027974414%19=3
-
-7/5=7⋅5^(19-2)^=7⋅5^17^=5340576171875%19=9
+* 2/7=2⋅7^(19-2)^=2⋅7^17^=465261027974414%19=3
+* 7/5=7⋅5^(19-2)^=7⋅5^17^=5340576171875%19=9
 
 This is a relatively expensive calculation as exponentiating grows very fast. Division is the most expensive operation for that reason. To lessen the expensiveness, we can utilize the `pow` function in Python. `pow` is a function that will exponentiate. Thus something like `pow(7,17)` does the same thing as $$7**17$$. The `pow` function, however, has an optional third argument which makes our calculation more efficient. Specifically, `pow` will modulo by the third argument. Thus, `pow(7,17,19)` will give the same result as $$7**17%19$$ but do so faster because the modulo function is done after each round of multiplication.
 
@@ -497,11 +481,7 @@ One last thing that we need to take care of before we leave this chapter is the 
 
 [source,python]
 ----
->>> from ecc import FieldElement
->>> a = FieldElement(7, 13)
->>> b = FieldElement(8, 13)
->>> print(a**-3==b)
-True
+include::code-ch01/examples.py[tag=example7,indent=0]
 ----
 
 Unfortunately, the way we've defined $$__pow__$$ simply doesn't handle negative exponents as the second parameter of the built-in Python method `pow` needs to be positive.
@@ -532,10 +512,7 @@ Thankfully, we can do even better. We already know how to force a number out of 
 
 [source,python]
 ----
-    def __pow__(self, exponent):
-    	n = exponent % (self.prime - 1) # <1>
-        num = pow(self.num, n, self.prime)
-        return self.__class__(num, self.prime)
+include::code-ch01/ecc.py[lines=48..51]
 ----
 <1> Make the exponent into something within the 0 to p-1 range
 

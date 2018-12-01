@@ -46,7 +46,7 @@ class FieldElement:
         raise NotImplementedError
 
     def __pow__(self, exponent):
-        n = exponent % (self.prime - 1)
+        n = exponent % (self.prime - 1)  # <1>
         num = pow(self.num, n, self.prime)
         return self.__class__(num, self.prime)
 
