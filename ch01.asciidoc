@@ -1,6 +1,5 @@
 = Programming Bitcoin
 :imagesdir: images
-:sourcedir: code-ch01
 
 [[chapter_finite_fields]]
 == Finite Fields
@@ -80,7 +79,7 @@ The class represents an element in a field F~prime~. The bare bones of the class
 
 [source,python]
 ----
-include::{sourcedir}/ecc.py[lines=4..20]
+include::code-ch01/ecc.py[lines=4..20]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive. If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method assigns the initialization values to the object.
@@ -279,7 +278,7 @@ In Python we can define what addition means for our class with the $$__add__$$ m
 
 [source,python]
 ----
-include::{sourcedir}/ecc.py[lines=26..30]
+include::code-ch01/ecc.py[lines=26..30]
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't make any sense.
 <2> Addition in a Finite Field is defined with the modulo operator, which we use here.
