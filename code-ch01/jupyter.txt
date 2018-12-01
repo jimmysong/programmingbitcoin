@@ -1,0 +1,149 @@
+############## PLEASE RUN THIS CELL FIRST! ###################
+
+# import everything and define a test runner function
+from importlib import reload
+from helper import run
+
+import ecc
+import helper
+
+from ecc import FieldElement
+---
+example1
+---
+### Exercise 1
+
+#### Make [this test](/edit/code-ch01/ecc.py) pass:
+```
+ecc.py:FieldElementTest:test_ne
+```
+---
+# Exercise 1
+
+reload(ecc)
+run(ecc.FieldElementTest('test_ne'))
+---
+example2
+---
+example3
+---
+### Exercise 2
+
+#### Solve these equations in \\(F_{57}\\):
+
+* \\(44+33\\)
+* \\(9-29\\)
+* \\(17+42+49\\)
+* \\(52-30-38\\)
+---
+# Exercise 2
+
+# remember that % is the modulo operator
+prime = 57
+# 44+33
+# 9-29
+# 17+42+49
+# 52-30-38
+---
+example4
+---
+### Exercise 3
+
+#### Make [this tests](/edit/code-ch01/ecc.py) pass:
+```
+ecc.py:FieldElementTest:test_sub
+```
+---
+# Exercise 3
+
+reload(ecc)
+run(ecc.FieldElementTest('test_sub'))
+---
+### Exercise 4
+
+#### Solve these equations in \\(F_{97}\\):
+
+\\(95\cdot45\cdot31\\)
+
+\\(17\cdot13\cdot19\cdot44\\)
+
+\\(12^7\cdot77^{49}\\)
+---
+# Exercise 4
+
+prime = 97
+
+# 95*45*31
+# 17*13*19*44
+# 12**7*77**49
+---
+### Exercise 5
+
+#### For k = 1, 3, 7, 13 and 18, what is this set in \\(F_{97}\\)?
+
+\\(\{k\cdot0,k\cdot1,k\cdot2,...,k\cdot18\}\\)
+---
+# Exercise 5
+
+prime = 19
+k = 1  # 3, 7, 13 and 18 are the other possibilities
+# loop through all possible k's 0 up to prime-1
+# calculate k*iterator % prime
+
+# Hint: sort!
+---
+example5
+---
+### Exercise 6
+
+#### Make [this test](/edit/code-ch01/ecc.py) pass:
+```
+ecc.py:FieldElementTest:test_mul
+```
+---
+# Exercise 6
+
+reload(ecc)
+run(ecc.FieldElementTest('test_mul'))
+---
+example6
+---
+### Exercise 7
+
+#### For p = 7, 11, 17, 31, 43, what is this set in \\(F_p\\)?
+
+\\(\{1^{p-1},2^{p-1},3^{p-1},4^{p-1},...,(p-1)^{p-1}\}\\)
+---
+# Exercise 7
+
+primes = [7, 11, 17, 31, 43]
+---
+### Exercise 8
+
+#### Solve the following equations in \\(F_{31}\\):
+
+\\(\frac{3}{24}\\)
+
+\\(17^{-3}\\)
+
+\\(4^{-4}\cdot11\\)
+---
+# Exercise 8
+
+# 3/24
+# 17**-3
+# 4**-4*11
+---
+### Exercise 9
+
+#### Make [this test](/edit/code-ch01/ecc.py) pass:
+```
+ecc.py:FieldElementTest:test_div
+```
+---
+# Exercise 9
+
+reload(ecc)
+run(ecc.FieldElementTest('test_div'))
+---
+example7

@@ -8,5 +8,5 @@ for chapter in range(1, 13):
     else:
         ch = '{}'.format(chapter)
     chdir('code-ch{}'.format(ch))
-    call('nosetests *.py', shell=True)
+    call('nosetests --with-doctest *.py', shell=True)
     chdir('..')
