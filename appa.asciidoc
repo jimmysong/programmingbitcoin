@@ -4,7 +4,7 @@
 [appendix]
 == Solutions
 
-=== Chapter 1: Finite Fields
+=== <<chapter_finite_fields>>: Finite Fields
 
 include::code-ch01/exercises.asciidoc[tag=exercise1]
 
@@ -71,7 +71,7 @@ include::code-ch01/exercises.asciidoc[tag=exercise9]
 include::code-ch01/answers.py[tag=exercise9,indent=0]
 ----
 
-=== Chapter 2: Elliptic Curves
+=== <<chapter_elliptic_curves>>: Elliptic Curves
 
 include::code-ch02/exercises.asciidoc[tag=exercise1]
 
@@ -122,7 +122,7 @@ include::code-ch02/exercises.asciidoc[tag=exercise7]
 include::code-ch02/answers.py[tag=exercise7]
 ----
 
-=== Chapter 3: Elliptic Curve Cryptography
+=== <<chapter_elliptic_curve_cryptography>>: Elliptic Curve Cryptography
 
 ==== Exercise {counter:ch3exercise}
 
@@ -340,7 +340,7 @@ S256Point(f01d6b9018ab421dd410404cb869072065522bf85734008f105cf385a023a80f,
 0xef43fcd07f59fbae063529b2ab76717c2a796726e9aef99b687e8293e0e02137
 ----
 
-=== Chapter 4: Serialization
+=== <<chapter_serialization>>: Serialization
 
 ==== Exercise {counter:ch4exercise}
 
@@ -512,7 +512,7 @@ Create a testnet address for yourself using a secret that only you know. Go to a
 mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
 ----
 
-=== Chapter 5: Transactions
+=== <<chapter_tx_parsing>>: Transactions
 
 ==== Exercise {counter:ch5exercise}
 
@@ -687,7 +687,7 @@ class Tx:
         return input_sum - output_sum
 ----
 
-=== Chapter 6: Script
+=== <<chapter_script>>: Script
 
 ==== Exercise {counter:ch6exercise}
 
@@ -794,7 +794,7 @@ f5a0a82be331fea48037b8b5d71f0e332edf93ac3500eb4ddc0decc1a864790c782c76215660
 dd309791d06bd0af3f98cda4bc4629b1
 ```
 
-=== Chapter 7: Transaction Creation and Validation
+=== <<chapter_tx>>: Transaction Creation and Validation
 
 ==== Exercise {counter:ch7exercise}
 
@@ -935,7 +935,7 @@ Advanced: get some more testnet coins from a testnet faucet and create a 2 input
 01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011010000006b483045022100dddbb9f2ae014631a80265b133369ff2aa9e429cf2188e66f4256cab60062caa02200889b7494b5343dadcdfdab335c585f0ebd600a0ac8792ea06c8a3c00420eea1012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153db0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b483045022100bb3ad8379b0729fe23b867b7ad49e72ddf5d040bafcf6479463c9b4ea0e7f07b02202ba53fa490602b41b0f37ac0aaf20dfe909d761868e5721739ce392f9c6dd268012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d0754100000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
 ----
 
-=== Chapter 8: Pay To Script Hash
+=== <<chapter_p2sh>>: Pay To Script Hash
 
 ==== Exercise {counter:exercise}
 
@@ -1093,7 +1093,7 @@ class Tx:
         return combined.evaluate(z)
 ----
 
-=== Chapter 9: Blocks
+=== <<chapter_blocks>>: Blocks
 
 ==== Exercise {counter:ch9exercise}
 
@@ -1288,7 +1288,7 @@ def calculate_new_bits(previous_bits, time_differential):
     return target_to_bits(new_target)
 ----
 
-=== Chapter 10: Networking
+=== <<chapter_networking>>: Networking
 
 Determine what this network message is:
 
@@ -1412,7 +1412,7 @@ class GetHeadersMessage:
         return result
 ----
 
-=== Chapter 11: SPV
+=== <<chapter_spv>>: SPV
 
 ==== Exercise {counter:ch11exercise}
 
@@ -1547,7 +1547,7 @@ class MerkleBlock:
         return merkle_tree.root()[::-1] == self.merkle_root
 ----
 
-=== Chapter 12: Bloom Filters
+=== <<chapter_bloom_filters>>: Bloom Filters
 
 ==== Exercise {counter:ch12exercise}
 

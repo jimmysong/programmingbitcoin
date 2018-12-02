@@ -479,4 +479,4 @@ include::code-ch01/ecc.py[lines=48..51]
 
 === Conclusion
 
-In this chapter we learned about Finite Fields and how to implement it in Python. We'll be using Finite Fields in Chapter 3 for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need for Elliptic Curve Cryptography and That's Elliptic Curves.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be using Finite Fields in <<chapter_elliptic_curve_cryptography>> for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need for Elliptic Curve Cryptography and That's Elliptic Curves.

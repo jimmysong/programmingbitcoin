@@ -77,7 +77,7 @@ IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's `.onion` addresse
 
 Nonce is a number used only once for reply messages. User Agent identifies the software being run. The height or latest block field helps the other node know which block a node is synced up to.
 
-Relay is used for Bloom Filters, which we'll get to in Chapter 12.
+Relay is used for Bloom Filters, which we'll get to in <<chapter_bloom_filters>>.
 
 Setting some reasonable defaults, our VersionMessage class looks like this:
 
@@ -280,7 +280,7 @@ Write the `handshake` method for `SimpleNode`
 
 === Getting Block Headers
 
-Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading the Block headers allows us to asynchronously ask for various blocks. For light clients, downloading headers allows us to verify the proof-of-work in each block and give us an idea of which chain has the most proof-of-work. As we'll see in Chapter 11, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
+Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading the Block headers allows us to asynchronously ask for various blocks. For light clients, downloading headers allows us to verify the proof-of-work in each block and give us an idea of which chain has the most proof-of-work. As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
 
 Nodes can give us the block headers without taking up too much bandwidth. The command to get the block headers is called `getheaders` and it looks like this:
 
@@ -331,7 +331,7 @@ At this point, we can now create a node, handshake, and then ask for some header
 >>> node.send(getheaders)
 ----
 
-Now we need a way to receive the actual headers from our connected node. The other node will send back the `headers` command. The nice thing about the headers command is that it's a bunch of block headers which we already learned how to parse from Chapter 9. The actual HeadersMessage class can take advantage. The message looks like this:
+Now we need a way to receive the actual headers from our connected node. The other node will send back the `headers` command. The nice thing about the headers command is that it's a bunch of block headers which we already learned how to parse from <<chapter_blocks>>. The actual HeadersMessage class can take advantage. The message looks like this:
 
 .Parsed `headers`
 image::headers.png[headers payload]

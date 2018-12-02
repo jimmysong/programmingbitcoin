@@ -12,7 +12,7 @@ Creating a wallet is a difficult task because securing private keys turns out to
 
 ==== Heirarchical Deterministic Wallets
 
-For privacy purposes, reusing addresses is very bad (see Chapter 7). That means we need to create lots of addresses. Unfortunately, storing a different secret for each address generated can become a security and backup problem. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
+For privacy purposes, reusing addresses is very bad (see <<chapter_tx>>). That means we need to create lots of addresses. Unfortunately, storing a different secret for each address generated can become a security and backup problem. How do you back them all up in a secure way? Do you generate a ton of secrets and then back them up? What if you run out of secrets? How do you back them up again? What system can you use to ensure that the backups are current?
 
 To combat this problem, Armory, an early Bitcoin wallet, first implemented deterministic wallets. The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed. The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical Deterministic wallet standard or BIP0032 was born. This lets you have multiple layers and keys, each with a unique derivation path. The specifications and test vectors are defined in the standard, so implementing your own HD wallet on testnet is a great way to practice Bitcoin development.
 

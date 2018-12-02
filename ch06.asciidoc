@@ -8,7 +8,7 @@
 [.lead]
 The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin. Locking is leaving some Bitcoins to someone else. Unlocking is spending some Bitcoins that have been left for you.
 
-In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what allows the elliptic curve cryptography (Chapter 3) to be evaluated within the transaction (Chapter 5). Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
+In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what allows the elliptic curve cryptography (<<chapter_elliptic_curve_cryptography>>) to be evaluated within the transaction (<<chapter_tx_parsing>>). Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
 
 === Mechanics of Script
 
@@ -26,9 +26,9 @@ There are a lot of reasons for this, but let's start with program execution. Any
 There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus it's easy to create unintended behavior, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract participants could lose money. Such bugs are not just theoretical, this was the major problem in the DAO (Decentralized Autonomous Organization) which caused the Ethereum Classic hard fork.
 ====
 
-What you are required to do as part of a transaction is to assign Bitcoins to a *locking* Script. The locking Script is what's specified in ScriptPubKey (see chapter 5). Think of this as the lockbox where some money is deposited which only a particular key can open. The money inside, of course, can only be accessed by someone with that key.
+What you are required to do as part of a transaction is to assign Bitcoins to a *locking* Script. The locking Script is what's specified in ScriptPubKey (see <<chapter_tx_parsing>>). Think of this as the lockbox where some money is deposited which only a particular key can open. The money inside, of course, can only be accessed by someone with that key.
 
-The actual unlocking of bitcoin is done in the ScriptSig field (see chapter 5) and proves ownership of the locked box in order to spend the funds.
+The actual unlocking of bitcoin is done in the ScriptSig field (see <<chapter_tx_parsing>>) and proves ownership of the locked box in order to spend the funds.
 
 === How Script works
 
@@ -223,7 +223,7 @@ class Script:
 <5> Any element longer than 520 bytes cannot be serialized.
 <6> We prepend with the length of the entire Script.
 
-Note that both the parser and serializer were used in Chapter 5 for Transaction parsing/serializing. The Script object represents the instruction set that requires validation.
+Note that both the parser and serializer were used in <<chapter_tx_parsing>> for Transaction parsing/serializing. The Script object represents the instruction set that requires validation.
 
 === Combining the Script fields
 
@@ -267,14 +267,14 @@ To show exactly how all this works, we'll now take a look at one of the original
 
 Pay-to-pubkey (p2pk) was used largely during the early days of bitcoin. Most coins thought to belong to Satoshi are in p2pk outputs. There are some limitations that we'll discuss below, but first, we focus on how p2pk works.
 
-Back in Chapter 3, we learned both ECDSA signing and verification. Specifically, we need the message, `z`, the public key, `P` and the signature, `r` and `s` to verify. In p2pk, bitcoins are sent to a public key and the owner of the private key can unlock the bitcoins by creating a signature. Effectively, the ScriptPubKey puts those bitcoins under the control of the private key owner.
+Back in <<chapter_elliptic_curve_cryptography>>, we learned both ECDSA signing and verification. Specifically, we need the message, `z`, the public key, `P` and the signature, `r` and `s` to verify. In p2pk, bitcoins are sent to a public key and the owner of the private key can unlock the bitcoins by creating a signature. Effectively, the ScriptPubKey puts those bitcoins under the control of the private key owner.
 
 Specifying where the bitcoins go is the job of the ScriptPubKey. As stated above, this is the lockbox that receive the bitcoins. The actual ScriptPubKey looks like this:
 
 .Pay-to-pubkey (p2pk) ScriptPubKey
 image::p2pk1.png[P2PK ScriptPubKey]
 
-Note the `OP_CHECKSIG`, as that will be very important. The ScriptSig is the part that unlocks the received bitcoins. The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see Chapter 4).
+Note the `OP_CHECKSIG`, as that will be very important. The ScriptSig is the part that unlocks the received bitcoins. The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see <<chapter_serialization>>).
 
 In the case of p2pk, the ScriptSig is just the signature.
 
@@ -384,7 +384,7 @@ class Script:
 <3> The actual operation is in the `OP_CODE_FUNCTIONS` array (e.g. `OP_DUP`, `OP_CHECKSIG`, etc)
 <4> 99 and 100 are `OP_IF` and `OP_NOTIF` respectively. They require manipulation of the instructions array based on which branch we go towards.
 <5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK` respectively. They move stack elements to/from an "alternate" stack, which we call altstack.
-<6> 172, 173, 174 and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from Chapter 3 for signature validation.
+<6> 172, 173, 174 and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from <<chapter_elliptic_curve_cryptography>> for signature validation.
 <7> If the instruction is not an opcode, it's an element, so we put that directly on the stack.
 <8> If the stack is empty at the end of processing all the instructions, we fail the Script by returning `False`.
 <9> If the stack's top element is an empty byte string (which is how the stack stores a 0 or False), then we also fail the Script by returning `False`.
@@ -461,7 +461,7 @@ Write the `op_checksig` function in `op.py`
 
 Pay-to-pub-key is pretty intuitive in the sense that there is a public key that anyone can send some bitcoins and a signature that can be produced by the owner of the private key to spend that amount. This works well, but there are some problems.
 
-First, the public keys are long. We know from Chapter 4 that `SECP256K1` public points are 33 bytes in compressed SEC and 65 bytes in uncompressed SEC. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain byte ranges as they are control characters, newlines or similar. The SEC format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed SEC formats 66 and 130 characters respectively, which is bigger than most identifiers (your username on a website, for instance, is usually less than 20). To compound this, early Bitcoin transactions didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to transcribe, much less communicate by voice.
+First, the public keys are long. We know from <<chapter_serialization>> that `SECP256K1` public points are 33 bytes in compressed SEC and 65 bytes in uncompressed SEC. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain byte ranges as they are control characters, newlines or similar. The SEC format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed SEC formats 66 and 130 characters respectively, which is bigger than most identifiers (your username on a website, for instance, is usually less than 20). To compound this, early Bitcoin transactions didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to transcribe, much less communicate by voice.
 
 That said, the original use-case for p2pk was for IP-to-IP payments where IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that this wasn't necessarily a problem. Incidentally, this IP-to-IP payment system was phased out as it's not secure and prone to man-in-the-middle attacks.
 
@@ -612,7 +612,7 @@ image::ex9.png[Example 1 End]
 
 Note that this isn't particularly hard to figure out and requires no signature. As a result, this sort of Script is vulnerable to being taken by pretty much anyone. Think of this as a lockbox with a very flimsy lock that anyone can break into. It turns out that most transactions have some signature component in them as a Script without some signature component is very easily stolen.
 
-Of course, after it's been spent, included in a block and thus secured by proof-of-work, these coins are no longer as easily spendable. Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (Chapter 9).
+Of course, after it's been spent, included in a block and thus secured by proof-of-work, these coins are no longer as easily spendable. Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (<<chapter_blocks>>).
 
 ==== Exercise {counter:exercise}
 

@@ -6,7 +6,7 @@
 == Serialization
 
 [.lead]
-We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`. We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk. This is where serialization comes into play. We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`. Ideally, we want to do this efficiently for reasons we'll see in Chapter 10 (Networking).
+We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`. We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk. This is where serialization comes into play. We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`. Ideally, we want to do this efficiently for reasons we'll see in <<chapter_networking>> (Networking).
 
 === Uncompressed SEC format
 
@@ -36,7 +36,7 @@ Computers can sometimes be more efficient using the opposite order or Little-End
 
 Since Computers work in bytes, which have 8 bits, we have to think in Base-256. This means that a number like 500 looks like `01f4` in Big-Endian. That is, 500 = 1*256 + 244 (`f4` in hexadecimal). The same number looks like `f401` in Little-Endian.
 
-Unfortunately, some serializations in Bitcoin (like the SEC format x and y coordinates) are Big-Endian. Other serializations in Bitcoin (like the transaction version number in Chapter 5) are in Little-Endian. This book will let you know which ones are Big vs Little Endian.
+Unfortunately, some serializations in Bitcoin (like the SEC format x and y coordinates) are Big-Endian. Other serializations in Bitcoin (like the transaction version number in <<chapter_tx_parsing>>) are in Little-Endian. This book will let you know which ones are Big vs Little Endian.
 ====
 
 Creating the uncompressed SEC format serialization is pretty straightforward. The trickiest part being converting a 256-bit number into 32 bytes, Big-Endian. Here's how this is done in code:
@@ -265,7 +265,7 @@ Find the DER format for a signature whose `r` and `s` values are:
 
 === Base58
 
-In the early days of Bitcoin, Bitcoins were assigned to Public Keys specified in SEC format (uncompressed) and then were redeemed using DER signatures. For reasons we'll get to in Chapter 6 (Script), using this particular very simple Script turned to be both wasteful for storing UTXOs and a little less secure than what we use now. For now, we'll go through what addresses are and how they are encoded.
+In the early days of Bitcoin, Bitcoins were assigned to Public Keys specified in SEC format (uncompressed) and then were redeemed using DER signatures. For reasons we'll get to in <<chapter_script>> (Script), using this particular very simple Script turned to be both wasteful for storing UTXOs and a little less secure than what we use now. For now, we'll go through what addresses are and how they are encoded.
 
 === Transmitting your Public Key
 
@@ -305,7 +305,7 @@ def encode_base58(s):
 ----
 <1> The purpose of this loop is to determine how many of the bytes are 0 bytes. We want to add them back at the end.
 <2> This is the loop that figures out what Base58 digit to use.
-<3> Finally, we prepend all the zeros that we detected because otherwise, they wouldn't show up as prefixed 1's. This annoyingly happens with pay-to-pubkey-hash (p2pkh). More on that in Chapter 7 (Script)
+<3> Finally, we prepend all the zeros that we detected because otherwise, they wouldn't show up as prefixed 1's. This annoyingly happens with pay-to-pubkey-hash (p2pkh). More on that in <<chapter_tx>> (Script)
 
 This function will take any bytes in Python 3 and convert it to Base58.
 
@@ -314,7 +314,7 @@ This function will take any bytes in Python 3 and convert it to Base58.
 ====
 Base58 has been used for a long time and while it does make it somewhat easier than something like Base64 to communicate, it's not really that convenient. Most people prefer to copy and paste the addresses and if you've ever tried to communicate a Base58 address over voice, trust me, it's a nightmare.
 
-What's much better is the new Bech32 standard which is defined in BIP0173. Bech32 uses a 32-character alphabet that's just numbers and lower case letters except 1, b, i and o. These are thus far only used for Segwit (Chapter 14).
+What's much better is the new Bech32 standard which is defined in BIP0173. Bech32 uses a 32-character alphabet that's just numbers and lower case letters except 1, b, i and o. These are thus far only used for Segwit (<<chapter_segwit>>).
 ====
 
 ==== Exercise {counter:exercise}
@@ -327,7 +327,7 @@ Convert the following hex to binary and then to Base58:
 
 === Address Format
 
-The 260 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see Chapter 6). To both shorten and increase security, we can use the ripemd160 hash to compress the public key to a 20-byte hash.
+The 260 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see <<chapter_script>>). To both shorten and increase security, we can use the ripemd160 hash to compress the public key to a 20-byte hash.
 
 By not using the SEC format directly, we can go from 33 bytes to 20 bytes, we shortening the address significantly. Here is how a Bitcoin address is created:
 
@@ -426,7 +426,7 @@ Find the WIF for Private Key whose secrets are:
 
 === Big and Little Endian Redux
 
-It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will be parsing and serializing numbers to and from Big/Little Endian quite a bit. In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little-Endian was used and where Big-Endian was used. Recall that SEC format uses Big-Endian encoding as do addresses and WIF. From Chapter 5 onward, we will use Little-Endian encoding a lot more. For this reason, we turn to these two exercises.
+It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will be parsing and serializing numbers to and from Big/Little Endian quite a bit. In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little-Endian was used and where Big-Endian was used. Recall that SEC format uses Big-Endian encoding as do addresses and WIF. From <<chapter_tx_parsing>> onward, we will use Little-Endian encoding a lot more. For this reason, we turn to these two exercises.
 
 ==== Exercise {counter:exercise}
 
@@ -438,7 +438,7 @@ Write a function `int_to_little_endian` which does the reverse of the last exerc
 
 ==== Exercise {counter:exercise}
 
-Create a testnet address for yourself using a long secret that only you know. This is important as there are bots on testnet trying to steal testnet coins. Make sure you write this secret down somewhere! You will be using the secret in Chapter 7.
+Create a testnet address for yourself using a long secret that only you know. This is important as there are bots on testnet trying to steal testnet coins. Make sure you write this secret down somewhere! You will be using the secret in <<chapter_tx>>.
 
 Go to a testnet faucet (https://testnet.programmingbitcoin.com) and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
 

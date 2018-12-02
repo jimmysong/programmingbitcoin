@@ -21,12 +21,12 @@ What's interesting is that _real_ numbers are also a field. Note unlike a _finit
 
 Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse.
 
-Real numbers are easy to plot and see the whole thing visually as we did in Chapter 2. For example, y^2^=x^3^+7 can be plotted like this:
+Real numbers are easy to plot and see the whole thing visually as we did in <<chapter_elliptic_curves>>. For example, y^2^=x^3^+7 can be plotted like this:
 
 .secp256k1 over real numbers
 image::elliptic3.png[secp256k1 Curve]
 
-What's interesting is that we can use this equation over any field, including the Finite Fields we learned in Chapter 1. The only difference is that we have to use the addition/subtraction/multiplication/division as defined in Chapter 1, not the "normal" versions that the real numbers use.
+What's interesting is that we can use this equation over any field, including the Finite Fields we learned in <<chapter_finite_fields>>. The only difference is that we have to use the addition/subtraction/multiplication/division as defined in <<chapter_finite_fields>>, not the "normal" versions that the real numbers use.
 
 === Elliptic Curves over Finite Fields
 
@@ -798,7 +798,7 @@ class Signature:
 	self.s = s
 ----
 
-We will be doing more with this class in Chapter 4.
+We will be doing more with this class in <<chapter_serialization>>.
 
 We can write the `verify` method on `S256Point` based on the above.
 
@@ -977,7 +977,7 @@ class PrivateKey:
 
 Deterministic `k` will be unique with very high probability. This is because sha256 is collision-resistant and no collisions to date have been found.
 
-Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time. This makes debugging much easier and unit tests a lot easier to write. In addition, transactions which use deterministic `k` will create the same transaction every time as the signature will not change. This makes transactions less malleable (more on that in Chapter 13)
+Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time. This makes debugging much easier and unit tests a lot easier to write. In addition, transactions which use deterministic `k` will create the same transaction every time as the signature will not change. This makes transactions less malleable (more on that in <<chapter_segwit>>)
 
 ****
 

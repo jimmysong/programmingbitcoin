@@ -18,7 +18,7 @@ It is possible to "split" a key into multiple private keys and use an interactiv
 
 === Bare Multisig
 
-Bare Multisig was the first attempt at creating transaction outputs that require signatures from multiple parties. To understand Bare Multisig, one must first understand the `OP_CHECKMULTISIG` operator. As discussed in Chapter 6, Script has a lot of different opcodes. `OP_CHECKMULTISIG` is one of them at `0xae`. The operator consumes a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
+Bare Multisig was the first attempt at creating transaction outputs that require signatures from multiple parties. To understand Bare Multisig, one must first understand the `OP_CHECKMULTISIG` operator. As discussed in <<chapter_script>>, Script has a lot of different opcodes. `OP_CHECKMULTISIG` is one of them at `0xae`. The operator consumes a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
 
 The transaction output is called "bare" multisig because it's a really long ScriptPubKey. Here's what a ScriptPubKey for a 1-of-2 multisig looks like.
 
@@ -226,7 +226,7 @@ image::op_eval.png[`OP_EVAL`]
 
 `OP_EVAL` would consume the top element of the stack and interpret that as Script instructions to be put into the Script column.
 
-Unfortunately, this much more elegant solution comes with an unwanted side-effect, namely Turing-completeness. Turing completeness is undesirable as it not only makes the security of a smart contract much harder to guarantee (see Chapter 6). Thus, the more hacky, but less vulnerable option of special-casing was chosen in BIP0016. BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.
+Unfortunately, this much more elegant solution comes with an unwanted side-effect, namely Turing-completeness. Turing completeness is undesirable as it not only makes the security of a smart contract much harder to guarantee (see <<chapter_script>>). Thus, the more hacky, but less vulnerable option of special-casing was chosen in BIP0016. BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.
 
 === Coding p2sh
 
@@ -278,7 +278,7 @@ We now need to special case the particular sequence of redeem_script, `OP_HASH16
 
 The nice thing about p2sh is that the RedeemScript can be as long as the largest single element from `OP_PUSHDATA2`, which is 520 bytes. Multisig is just one possibility. You can have Scripts that define more complicated logic like "2 of 3 of these keys or 5 of 7 of these other keys". The main feature of p2sh is that it's very flexible and at the same time reduces the UTXO set size by pushing the burden of storing part of the Script back to the user.
 
-As we'll see in Chapter 13, p2sh is used to make Segwit backwards compatible.
+As we'll see in <<chapter_segwit>>, p2sh is used to make Segwit backwards compatible.
 
 ==== Addresses
 
@@ -302,7 +302,7 @@ Write two functions in `h160_to_p2pkh_address` and `h160_to_p2sh_address` that c
 
 ==== p2sh Signature Verification
 
-As with p2pkh, one of the tricky aspects of p2sh is verifying the signatures. You would think that the p2sh signature verification would be the same as the p2pkh process covered in Chapter 7, but unfortunately, that's not the case.
+As with p2pkh, one of the tricky aspects of p2sh is verifying the signatures. You would think that the p2sh signature verification would be the same as the p2pkh process covered in <<chapter_tx>>, but unfortunately, that's not the case.
 
 Unlike p2pkh where there's only 1 signature and 1 public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some equal or smaller number of signatures (in DER format in the ScriptSig). Thankfully, signatures have to be in the same order as the pubkeys or the signatures are not considered valid.
 

@@ -367,4 +367,4 @@ class Point:
 
 === Conclusion
 
-We've covered what Elliptic Curves are, how they work and how to do point addition. We now combine the concepts from Chapters 1 and 2 to learn Elliptic Curve Cryptography in the Chapter 3.
+We've covered what Elliptic Curves are, how they work and how to do point addition. We now combine the concepts from Chapters 1 and 2 to learn Elliptic Curve Cryptography in the <<chapter_elliptic_curve_cryptography>>.

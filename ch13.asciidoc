@@ -30,7 +30,7 @@ Malleability of the ID turns out to be an important consideration when creating 
 
 The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction. The ID of the transaction is simply the hash256 of the transaction itself. Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
 
-The one field that does allow for some manipulation without invalidating the Signature is the ScriptSig field on each input. The ScriptSig is emptied before creating the signature hash (see Chapter 7), so it's possible to change the ScriptSig without invalidating the signature. Also, as we learned in Chapter 3, signatures contain a random component. This means that two different ScriptSigs can essentially mean the same thing.
+The one field that does allow for some manipulation without invalidating the Signature is the ScriptSig field on each input. The ScriptSig is emptied before creating the signature hash (see <<chapter_tx>>), so it's possible to change the ScriptSig without invalidating the signature. Also, as we learned in <<chapter_elliptic_curve_cryptography>>, signatures contain a random component. This means that two different ScriptSigs can essentially mean the same thing.
 
 The fact that ScriptSig is _malleable_, that is, able to be changed without changing the meaning of the transaction, means that the Transaction ID is malleable. This means, among other things, that any _dependent_ transactions (that is, a transaction spending one of the malleable transaction's outputs), cannot be constructed in a way to guarantee validity. The previous transaction hash is uncertain, so the dependent transaction's transaction input field cannot be guaranteed to be valid.
 
@@ -38,7 +38,7 @@ The fact that ScriptSig is _malleable_, that is, able to be changed without chan
 
 Transaction malleabilty is fixed by simply emptying the ScriptSig field and putting that data elsewhere. For p2wpkh, the signature and pubkey got moved. This way, the transaction ID stays stable as the malleabilty vector disappears. So where do the signature and pubkey go? The signature and pubkey are now put into something called the Witness field, which, crucially, is only sent to nodes that ask for it. In other words, old nodes that haven't upgraded to Segwit simply don't receive the Witness field and don't verify the pubkey and signature.
 
-If this sounds familiar, it should. This is similar to how p2sh works (Chapter 8) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork (backwards-compatible upgrade) and not a hard fork (backwards-incompatible upgrade).
+If this sounds familiar, it should. This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do additional validation that older nodes do not and is the basis for why Segwit is a soft fork (backwards-compatible upgrade) and not a hard fork (backwards-incompatible upgrade).
 
 === Pay-to-Witness-Pubkey-Hash (p2wpkh)
 
@@ -74,14 +74,14 @@ The 20-byte hash is simply an element, so it goes straight to the stack:
 .p2wpkh Step 2
 image::p2wpkh6.png[p2wpkh Step 2]
 
-At this point, older nodes will stop as there are no more Script items to be processed. Since the top element is non-zero, this will be counted as a valid script. This is very similar to p2sh (Chapter 8) in that older nodes cannot validate further. Newer nodes, however, have a special rule much like p2sh. Recall that with p2sh, the exact Script sequence of <redeem script> OP_HASH160 <hash> OP_EQUAL trigger a special rule.
+At this point, older nodes will stop as there are no more Script items to be processed. Since the top element is non-zero, this will be counted as a valid script. This is very similar to p2sh (<<chapter_p2sh>>) in that older nodes cannot validate further. Newer nodes, however, have a special rule much like p2sh. Recall that with p2sh, the exact Script sequence of <redeem script> OP_HASH160 <hash> OP_EQUAL trigger a special rule.
 
 In the case of p2wpkh, the Script sequence is OP_0 <20-byte hash>. When that Script sequence is encountered, the pubkey and signature from the witness program and the 20-byte hash are combined to be processed exactly as would p2pkh. Namely: <signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG. This then is the state that is encountered next:
 
 .p2wpkh Step 3
 image::p2wpkh7.png[p2wpkh Step 3]
 
-The rest of the processing of p2wpkh is exactly the same as the processing of p2pkh as seen in Chapter 6. The end state is a single 1 on the stack if and only if the 20-byte hash is the HASH160 of the pubkey and the signature is valid:
+The rest of the processing of p2wpkh is exactly the same as the processing of p2pkh as seen in <<chapter_script>>. The end state is a single 1 on the stack if and only if the 20-byte hash is the HASH160 of the pubkey and the signature is valid:
 
 .p2wpkh Step 4
 image::p2wpkh13.png[p2wpkh Step 4]
@@ -144,7 +144,7 @@ At this point, pre-Segwit nodes will mark this input as valid as they are unawar
 .p2sh-p2wpkh Step 6
 image::p2sh-p2wpkh10.png[p2sh-p2wpkh Step 6]
 
-The rest of the processing is exactly the same as p2pkh (Chapter 6). Assuming the signature and pubkey are valid, we are left with:
+The rest of the processing is exactly the same as p2pkh (<<chapter_script>>). Assuming the signature and pubkey are valid, we are left with:
 
 .p2sh-p2wpkh End
 image::p2sh-p2wpkh11.png[p2sh-p2wpkh End]
@@ -445,7 +445,7 @@ The rest of the Witness is put on top to produce this Instruction set:
 .p2wsh Step 3
 image::p2wsh-12.png[p2wsh Step 3]
 
-As you can see, this is a 2-of-3 multisig much like what was explored in Chapter 7.
+As you can see, this is a 2-of-3 multisig much like what was explored in <<chapter_tx>>.
 
 .p2wsh Step 4
 image::p2wsh-13.png[p2wsh Step 4]
@@ -525,7 +525,7 @@ This is a 2-of-3 multisig:
 .p2sh-p2wsh Step 7
 image::p2wsh-12.png[p2sh-p2wsh Step 7]
 
-As you can see, this is a 2-of-3 multisig much like what was explored in Chapter 7. If the signatures are valid, we end like this:
+As you can see, this is a 2-of-3 multisig much like what was explored in <<chapter_tx>>. If the signatures are valid, we end like this:
 
 .p2sh-p2wsh End
 image::p2wsh-14.png[p2sh-p2wsh End]

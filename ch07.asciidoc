@@ -18,7 +18,7 @@ Every node, when receiving transactions makes sure that each transaction adheres
 
 (1) prevents double-spending. Any input that's already been spent cannot be spent again.
 
-(2) makes sure no new Bitcoins are created (except in a special transaction called the coinbase transaction. More on that in Chapter 9).
+(2) makes sure no new Bitcoins are created (except in a special transaction called the coinbase transaction. More on that in <<chapter_blocks>>).
 
 (3) makes sure that the combined Script resolves to True. In the vast majority of transactions, this means checking that the one or more signatures in the ScriptSig are valid.
 
@@ -26,7 +26,7 @@ Let's look at how each is checked.
 
 === Checking the spentness of inputs
 
-In order to prevent double-spending, each input has to be checked to see if it's previously been spent. In order to check that this input has _not_ been used in any other transaction, we actually need access to the entire blockchain or a verified unspent transaction output set (aka UTXOs, see Chapter 5). We cannot determine from the transaction itself whether it's double-spending, much like we cannot look at a personal check and determine whether it's overdrafting. The only way to know is to have looked at the entire set of transactions.
+In order to prevent double-spending, each input has to be checked to see if it's previously been spent. In order to check that this input has _not_ been used in any other transaction, we actually need access to the entire blockchain or a verified unspent transaction output set (aka UTXOs, see <<chapter_tx_parsing>>). We cannot determine from the transaction itself whether it's double-spending, much like we cannot look at a personal check and determine whether it's overdrafting. The only way to know is to have looked at the entire set of transactions.
 
 In Bitcoin, we can determine whether an input is being double spent by keeping track of the UTXOs. If an input is in the UTXO set, that transaction input is _not_ double-spending. If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set. Light clients that do not have access to the blockchain have to trust other nodes for a lot of the information, including whether an input has already been spent.
 
@@ -34,9 +34,9 @@ A full node can check the spentness of an input pretty easily, a light client ha
 
 === Checking the sum of the inputs vs the sum of the outputs
 
-The second part of the validation is making sure that the sum of the inputs is greater than or equal to the sum of the outputs. This ensures that the transaction does not create new coins. The one exception is a Coinbase transaction which we'll study more in Chapter 9. The inputs don't have an amount, so this must be looked up on the blockchain. Once again, full nodes will have access to the amounts associated with the unspent output, but light clients will have to depend on full nodes to supply this information.
+The second part of the validation is making sure that the sum of the inputs is greater than or equal to the sum of the outputs. This ensures that the transaction does not create new coins. The one exception is a Coinbase transaction which we'll study more in <<chapter_blocks>>. The inputs don't have an amount, so this must be looked up on the blockchain. Once again, full nodes will have access to the amounts associated with the unspent output, but light clients will have to depend on full nodes to supply this information.
 
-We covered how to calculate fees in Chapter 5. This validation step is essentially the same as checking that the fee is not negative (that is, creating money). Recall the last exercise in Chapter 5. The method `fee` looks like this:
+We covered how to calculate fees in <<chapter_tx_parsing>>. This validation step is essentially the same as checking that the fee is not negative (that is, creating money). Recall the last exercise in <<chapter_tx_parsing>>. The method `fee` looks like this:
 
 [source,python]
 ----
@@ -80,7 +80,7 @@ The vulnerability is detailed in CVE-2010-5139 and was patched via soft-fork in 
 
 === Checking the Signature
 
-Perhaps the trickiest part of validating a transaction is the process of checking its signatures. A transaction typically has at least one signature per input. If there are multisig outputs being spent, there may be more. As we learned in Chapter 3, the ECDSA signature algorithm requires the public key `P`, the signature hash `z`, and the signature `(r,s)`. Once these are defined, the process of verifying the signature is pretty simple as we already coded in Chapter 3:
+Perhaps the trickiest part of validating a transaction is the process of checking its signatures. A transaction typically has at least one signature per input. If there are multisig outputs being spent, there may be more. As we learned in <<chapter_elliptic_curve_cryptography>>, the ECDSA signature algorithm requires the public key `P`, the signature hash `z`, and the signature `(r,s)`. Once these are defined, the process of verifying the signature is pretty simple as we already coded in <<chapter_elliptic_curve_cryptography>>:
 
 [source,python]
 ----
@@ -151,7 +151,7 @@ True
 ----
 <1> z is from the code above
 
-We can now make this transaction validation process into a method for `Tx`. Thankfully, the Script engine can already handle point verification (see Chapter 6), so our task is to glue everything together. We need the `z`, or signature hash, to pass into the `evaluate` method and we need to combine the ScriptSig and ScriptPubKey.
+We can now make this transaction validation process into a method for `Tx`. Thankfully, the Script engine can already handle point verification (see <<chapter_script>>), so our task is to glue everything together. We need the `z`, or signature hash, to pass into the `evaluate` method and we need to combine the ScriptSig and ScriptPubKey.
 
 [NOTE]
 .Quadratic Hashing
@@ -160,7 +160,7 @@ One of the reasons why this method of creating the signature hash is inefficient
 
 This was particularly obvious with the biggest transaction ever mined: `bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2b4e3e08`. This transaction had 5569 inputs and 1 output and took many miners over a minute to validate as the signature hashes for the transaction were so expensive to calculate.
 
-Segwit (Chapter 13) fixes this with a different way of calculating the signature hash, which is specified in BIP0143.
+Segwit (<<chapter_segwit>>) fixes this with a different way of calculating the signature hash, which is specified in BIP0143.
 ====
 
 ==== Exercise {counter:exercise}
@@ -225,7 +225,7 @@ mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2
 .Why reusing addresses is a bad idea
 [WARNING]
 ====
-Back in Chapter 6, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA. p2pkh, on the other hand, is also protected by sha256 and ripemd160. However, because the blockchain is public, if you've already _spent from_ an address, you have already revealed your public key as part of the ScriptSig. Once you've revealed that public key, sha256 and ripemd160 no longer protect you as the attacker knows the public key and doesn't have to guess.
+Back in <<chapter_script>>, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA. p2pkh, on the other hand, is also protected by sha256 and ripemd160. However, because the blockchain is public, if you've already _spent from_ an address, you have already revealed your public key as part of the ScriptSig. Once you've revealed that public key, sha256 and ripemd160 no longer protect you as the attacker knows the public key and doesn't have to guess.
 
 That said, as of this writing, you are still protected by the Discrete Log problem, which is unlikely to be broken any time soon. It's important from a security perspective, however, to understand what you're protected by.
 
@@ -239,7 +239,7 @@ The third question is really about fees. If we want to get the transaction in a 
 .Fee Estimation
 [NOTE]
 ====
-Fee estimation is generally done on a per-byte basis. Roughly speaking, if your transaction is 600 bytes, you'll want to have double the fees as a transaction that's 300 bytes. This is because block space is limited and larger transactions take up more space. This calculation has changed a bit since Segregated Witness (See Chapter 13), but the general principle still applies. You want to pay enough on a per-byte basis so that miners are motivated to include your transaction as soon as possible.
+Fee estimation is generally done on a per-byte basis. Roughly speaking, if your transaction is 600 bytes, you'll want to have double the fees as a transaction that's 300 bytes. This is because block space is limited and larger transactions take up more space. This calculation has changed a bit since Segregated Witness (See <<chapter_segwit>>), but the general principle still applies. You want to pay enough on a per-byte basis so that miners are motivated to include your transaction as soon as possible.
 
 When blocks aren't full, almost any amount above the default relay limit (1 satoshi/byte) is enough to get your transaction included. However, when blocks are full, this is not an easy thing to estimate. There are multiple ways to estimate fees including:
 
@@ -282,7 +282,7 @@ def p2pkh_script(h160):
     return Script([0x76, 0xa9, h160, 0x88, 0xac])
 ----
 
-Note that `0x76` is `OP_DUP`, `0xa9` is `OP_HASH160`, `h160` is a 20-byte element, `0x88` is `OP_EQUALVERIFY` and `0xac` is `OP_CHECKSIG`. This is exactly the p2pkh ScriptPubKey from Chapter 6.
+Note that `0x76` is `OP_DUP`, `0xa9` is `OP_HASH160`, `h160` is a 20-byte element, `0x88` is `OP_EQUALVERIFY` and `0xac` is `OP_CHECKSIG`. This is exactly the p2pkh ScriptPubKey from <<chapter_script>>.
 
 We can now proceed to create the transaction.
 
@@ -340,7 +340,7 @@ The actual signing of the transaction is the trickiest part. Thankfully, we know
 ----
 <1> We only need to sign the first input as there's only one input. Multiple inputs would require us to sign each input with the right private key.
 <2> The signature is actually a combination of the DER signature and the hash type which is SIGHASH_ALL in our case.
-<3> The ScriptSig of a p2pkh from Chapter 6 is exactly two elements: signature and SEC format public key.
+<3> The ScriptSig of a p2pkh from <<chapter_script>> is exactly two elements: signature and SEC format public key.
 <4> Again, we only have that one input that we need to sign, but if there were more, this process of creating the ScriptSig would need to be done for each input.
 
 ==== Exercise {counter:exercise}
@@ -349,7 +349,7 @@ Write the `sign_input` method for the `Tx` class.
 
 ==== Creating your own transactions on testnet
 
-The first step to creating your own transactions is to get some coins for yourself. In order to do that you'll need an address. If you completed the exercises in Chapter 4, you should have your own testnet address and private key. If you don't remember, here's how:
+The first step to creating your own transactions is to get some coins for yourself. In order to do that you'll need an address. If you completed the exercises in <<chapter_serialization>>, you should have your own testnet address and private key. If you don't remember, here's how:
 
 [source,python]
 ----

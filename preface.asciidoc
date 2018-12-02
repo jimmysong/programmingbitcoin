@@ -32,17 +32,17 @@ This book is split into 14 chapters and built on top of one another. Each chapte
 
 Roughly speaking, Chapters 1-4 establish the mathematical tools that we need, Chapters 5-8 cover Transactions, which are the fundamental unit of Bitcoin and Chapters 9-12 cover Blocks and Networking. The last two chapters cover some advanced topics but don't actually require you to write code.
 
-Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in Chapter 3. After we've established the Public Key Cryptography at the end of Chapter 3, we move towards actually implementing how they appear to a computer through parsing and serializing all the different classes that we established in Chapter 4.
+Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>. After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, we move towards actually implementing how they appear to a computer through parsing and serializing all the different classes that we established in <<chapter_serialization>>.
 
-Chapter 5 covers the Transaction structure. Chapter 6 goes into the smart contract language behind Bitcoin called Script. Chapter 7 combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. Chapter 8 establishes how p2sh works, which is a way to make more powerful smart contracts.
+<<chapter_tx_parsing>> covers the Transaction structure. <<chapter_script>> goes into the smart contract language behind Bitcoin called Script. <<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. <<chapter_p2sh>> establishes how p2sh works, which is a way to make more powerful smart contracts.
 
-Chapter 9 covers Blocks, which are groups of Transactions. Chapter 10 covers how the network communication is done in Bitcoin. Chapter 11 and 12 go into how a light client, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
+<<chapter_blocks>> covers Blocks, which are groups of Transactions. <<chapter_networking>> covers how the network communication is done in Bitcoin. <<chapter_spv>> and 12 go into how a light client, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
 
-Chapter 13 covers Segwit and Chapter 14 covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things to learn.
+<<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things to learn.
 
 Chapters 1-12 have lots of exercises that require you to build up the library from scratch. You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
-The last exercise in Chapter 12 is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, the first 11 chapters are setting up toward being able to do this exercise.
+The last exercise in <<chapter_bloom_filters>> is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, the first 11 chapters are setting up toward being able to do this exercise.
 
 There will be a lot of unit tests that you will have to get to pass. The book has been designed this way so you can do the "fun" part of coding. We will be looking at a lot of code and diagrams throughout.
 
@@ -126,12 +126,12 @@ You should have a browser open up automatically to something that looks like thi
 .Jupyter
 image::jupyter1.png[Jupyter]
 
-You can navigate to various directories and if you wanted to do the exercises from Chapter 1, you would need to go navigate to the code from Chapter 1 in the code-ch01 directory:
+You can navigate to various directories and if you wanted to do the exercises from <<chapter_finite_fields>>, you would need to go navigate to the code from <<chapter_finite_fields>> in the code-ch01 directory:
 
 .Jupyter Directory View
 image::jupyter2.png[Chapter 1 Directory]
 
-From here you can open `Programming Bitcoin Chapter 1.ipynb`:
+From here you can open `Chapter1.ipynb`:
 
 .Jupyter Notebook
 image::jupyter3.png[Chapter 1 Notebook]
@@ -147,7 +147,7 @@ You can edit the file here and save in order to make the test pass.
 
 === Answers
 
-All the answers to the various exercises in this book are in the Appendix at the end.
+All the answers to the various exercises in this book are in the Appendix at the end. They are also available in the `code-chxx/answers.py` file.
 
 === Conventions Used in This Book
 
