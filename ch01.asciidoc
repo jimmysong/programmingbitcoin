@@ -79,7 +79,7 @@ The class represents an element in a field F~prime~. The bare bones of the class
 
 [source,python]
 ----
-include::code-ch01/ecc.py[lines=4..20]
+include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive. If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method assigns the initialization values to the object.
@@ -256,7 +256,7 @@ In Python we can define what addition means for our class with the $$__add__$$ m
 
 [source,python]
 ----
-include::code-ch01/ecc.py[lines=26..30]
+include::code-ch01/ecc.py[tag=source2]
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't make any sense.
 <2> Addition in a Finite Field is defined with the modulo operator, which we use here.
@@ -473,7 +473,7 @@ Thankfully, we can do even better. We already know how to force a number out of 
 
 [source,python]
 ----
-include::code-ch01/ecc.py[lines=48..51]
+include::code-ch01/ecc.py[tag=source3]
 ----
 <1> Make the exponent into something within the 0 to p-1 range
 
