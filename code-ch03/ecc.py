@@ -138,15 +138,9 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
-        # x being None and y being None represents the point at infinity
-        # Check for that here since the equation below won't make sense
-        # with None values for both.
         if self.x is None and self.y is None:
             return
-        # make sure that the elliptic curve equation is satisfied
-        # y**2 == x**3 + a*x + b
         if self.y**2 != self.x**3 + a * x + b:
-            # if not, throw a ValueError
             raise ValueError('({}, {}) is not on the curve'.format(x, y))
 
     def __eq__(self, other):
@@ -210,14 +204,14 @@ class Point:
 
     def __rmul__(self, coefficient):
         coef = coefficient
-        current = self
-        result = self.__class__(None, None, self.a, self.b)
+        current = self  # <1>
+        result = self.__class__(None, None, self.a, self.b)  # <2>
         while coef:
-            if coef & 1:
+            if coef & 1:  # <3>
                 result += current
-            current += current
+            current += current  # <4>
             coef >>= 1
-        return result
+        return result  # <5>
 
 
 class PointTest(TestCase):
@@ -256,30 +250,20 @@ class PointTest(TestCase):
 class ECCTest(TestCase):
 
     def test_on_curve(self):
-        # tests the following points whether they are on the curve or not
-        # on curve y^2=x^3-7 over F_223:
-        # (192,105) (17,56) (200,119) (1,193) (42,99)
-        # the ones that aren't should raise a ValueError
         prime = 223
         a = FieldElement(0, prime)
         b = FieldElement(7, prime)
-
         valid_points = ((192, 105), (17, 56), (1, 193))
         invalid_points = ((200, 119), (42, 99))
-
-        # iterate over valid points
         for x_raw, y_raw in valid_points:
             x = FieldElement(x_raw, prime)
             y = FieldElement(y_raw, prime)
-            # Creating the point should not result in an error
-            Point(x, y, a, b)
-
-        # iterate over invalid points
+            Point(x, y, a, b)  # <1>
         for x_raw, y_raw in invalid_points:
             x = FieldElement(x_raw, prime)
             y = FieldElement(y_raw, prime)
             with self.assertRaises(ValueError):
-                Point(x, y, a, b)
+                Point(x, y, a, b)  # <1>
 
     def test_add(self):
         # tests the following additions on curve y^2=x^3-7 over F_223:
@@ -364,24 +348,24 @@ class S256Point(Point):
         if type(x) == int:
             super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
         else:
-            super().__init__(x=x, y=y, a=a, b=b)
+            super().__init__(x=x, y=y, a=a, b=b)  # <1>
 
     def __repr__(self):
         if self.x is None:
             return 'S256Point(infinity)'
         else:
-            return 'S256Point({},{})'.format(self.x, self.y)
+            return 'S256Point({},\n{})'.format(self.x, self.y)
 
     def __rmul__(self, coefficient):
-        coef = coefficient % N
+        coef = coefficient % N  # <1>
         return super().__rmul__(coef)
 
     def verify(self, z, sig):
-        s_inv = pow(sig.s, N - 2, N)
-        u = z * s_inv % N
-        v = sig.r * s_inv % N
-        total = u * G + v * self
-        return total.x.num == sig.r
+        s_inv = pow(sig.s, N - 2, N)  # <1>
+        u = z * s_inv % N  # <2>
+        v = sig.r * s_inv % N  # <3>
+        total = u * G + v * self  # <4>
+        return total.x.num == sig.r  # <5>
 
 
 G = S256Point(
@@ -440,13 +424,13 @@ class PrivateKey:
 
     def __init__(self, secret):
         self.secret = secret
-        self.point = secret * G
+        self.point = secret * G  # <1>
 
     def hex(self):
         return '{:x}'.format(self.secret).zfill(64)
 
     def sign(self, z):
-        k = self.deterministic_k(z)
+        k = self.deterministic_k(z)  # <1>
         r = (k * G).x.num
         k_inv = pow(k, N - 2, N)
         s = (z + r * self.secret) * k_inv % N
@@ -470,7 +454,7 @@ class PrivateKey:
             v = hmac.new(k, v, s256).digest()
             candidate = int.from_bytes(v, 'big')
             if candidate >= 1 and candidate < N:
-                return candidate
+                return candidate  # <2>
             k = hmac.new(k, v + b'\x00', s256).digest()
             v = hmac.new(k, v, s256).digest()
 

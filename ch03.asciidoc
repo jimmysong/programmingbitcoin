@@ -46,11 +46,7 @@ As you can see, it's very much a scattershot of points and there's no smooth cur
 
 What's amazing is that we can use the same equations with the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works. This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
 
-==== Exercise {counter:exercise}
-
-Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
-
-(192,105), (17,56), (200,119), (1,193), (42,99)
+include::code-ch03/exercises.asciidoc[tag=exercise1]
 
 === Coding Elliptic Curves over Finite Fields
 
@@ -58,31 +54,14 @@ Because we defined an Elliptic Curve point and we defined the +,-,* and / operat
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> a = FieldElement(num=0, prime=223)
->>> b = FieldElement(num=7, prime=223)
->>> x = FieldElement(num=192, prime=223)
->>> y = FieldElement(num=105, prime=223)
->>> p1 = Point(x, y, a, b)
->>> print(p1)
-Point(FieldElement_223(192),FieldElement_223(105))_FieldElement_223(0)_FieldElement_223(7)
+include::code-ch03/examples.py[tag=example1,indent=0]
 ----
 
 When initializing `Point`, we will run through this part of the code:
 
 [source,python]
 ----
-class Point:
-
-    def __init__(self, x, y, a, b):
-        self.a = a
-        self.b = b
-        self.x = x
-        self.y = y
-	if self.x is None and self.y is None:
-	    return
-        if self.y**2 != self.x**3 + self.a * self.x + self.b:
-	    raise ValueError('Point ({},{}) is not on the curve'.format(x, y))
+include::code-ch03/ecc.py[lines=134..144]
 ----
 
 The addition (+), multiplication (*), exponentiation (**) and equality (!=) here use the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is how we will construct an Elliptic Curve Cryptography library.
@@ -91,32 +70,7 @@ We've already coded the two classes that we need to implement Elliptic Curve poi
 
 [source,python]
 ----
-from unittest import TestCase
-
-class ECCTest(TestCase):
-
-    def test_on_curve(self):
-        prime = 223
-        a = FieldElement(0, prime)
-        b = FieldElement(7, prime)
-        
-        valid_points = ((192,105), (17,56), (1,193))
-        invalid_points = ((200,119), (42,99))
-        
-        # iterate over valid points
-        for x_raw, y_raw in valid_points:
-            x = FieldElement(x_raw, prime)
-            y = FieldElement(y_raw, prime)
-            # Creating the point should not result in an error
-            Point(x, y, a, b) # <1>
-
-        # iterate over invalid points
-        for x_raw, y_raw in invalid_points:
-            x = FieldElement(x_raw, prime)
-            y = FieldElement(y_raw, prime)
-            # check that creating the point results in a ValueError
-            with self.assertRaises(ValueError):
-                Point(x, y, a, b) # <1>
+include::code-ch03/ecc.py[lines=250..266]
 ----
 <1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, use all the overloaded methods in `FieldElement`
 
@@ -174,31 +128,12 @@ Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> prime = 223
->>> a = FieldElement(num=0, prime=prime)
->>> b = FieldElement(num=7, prime=prime)
->>> x1 = FieldElement(num=192, prime=prime)
->>> y1 = FieldElement(num=105, prime=prime)
->>> x1 = FieldElement(num=17, prime=prime)
->>> y1 = FieldElement(num=56, prime=prime)
->>> p1 = Point(x1, y1, a, b)
->>> p2 = Point(x2, y2, a, b)
->>> print(p1+p2)
-Point(FieldElement_223(170),FieldElement_223(142))_FieldElement_223(0)_FieldElement_223(7)
+include::code-ch03/examples.py[tag=example3,indent=0]
 ----
 
-==== Exercise {counter:exercise}
+include::code-ch03/exercises.asciidoc[tag=exercise2]
 
-For the curve y^2^=x^3^+7 over F~223~, find:
-
-* (170,142) + (60,139)
-* (47,71) + (17,56)
-* (143,98) + (76,66)
-
-==== Exercise {counter:exercise}
-
-Extend `ECCTest` to test for the additions from the previous exercise call this `test_add`.
+include::code-ch03/exercises.asciidoc[tag=exercise3]
 
 === Scalar multiplication for Elliptic Curves
 
@@ -252,16 +187,8 @@ log~P~Q=7
 The log equation on the left is not analytically calculatable. That is, there is no known formula that you can plug in to get the answer generally. This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Point Division" problem instead of Discrete Log.
 ****
 
-==== Exercise {counter:exercise}
+include::code-ch03/exercises.asciidoc[tag=exercise4]
 
-For the curve y^2^=x^3^+7 over F~223~, find:
-
-* 2⋅(192,105)
-* 2⋅(143,98)
-* 2⋅(47,71)
-* 4⋅(47,71)
-* 8⋅(47,71)
-* 21⋅(47,71)
 
 === Scalar Multiplication Redux
 
@@ -269,36 +196,7 @@ Scalar Multiplication is adding the same point to itself some number of times. T
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> prime = 223
->>> a = FieldElement(0, prime)
->>> b = FieldElement(7, prime)
->>> x = FieldElement(47, prime)
->>> y = FieldElement(71, prime)
->>> p = Point(x, y, a, b)
->>> for s in range(1,21):
->>>     result = s*p
->>>     print('{}*(47,71)=({},{})'.format(s,result.x.num,result.y.num))
-1*(47,71)=(47,71)
-2*(47,71)=(36,111)
-3*(47,71)=(15,137)
-4*(47,71)=(194,51)
-5*(47,71)=(126,96)
-6*(47,71)=(139,137)
-7*(47,71)=(92,47)
-8*(47,71)=(116,55)
-9*(47,71)=(69,86)
-10*(47,71)=(154,150)
-11*(47,71)=(154,73)
-12*(47,71)=(69,137)
-13*(47,71)=(116,168)
-14*(47,71)=(92,176)
-15*(47,71)=(139,86)
-16*(47,71)=(126,127)
-17*(47,71)=(194,172)
-18*(47,71)=(15,86)
-19*(47,71)=(36,112)
-20*(47,71)=(47,152)
+include::code-ch03/examples.py[tag=example4,indent=0]
 ----
 
 If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication. The x-coordinates don't always increase or decrease and neither do the y-coordinates. About the only pattern is that between 10 and 11, the x-coordinates are equal (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
@@ -375,9 +273,7 @@ image::associativity2.png[Case 2]
 
 Thus, aG+(bG+cG)=(aG+bG)+cG proving associativity.
 
-==== Exercise {counter:exercise}
-
-For the curve y^2^=x^3^+7 over F~223~, find the order of the group generated by (15,86)
+include::code-ch03/exercises.asciidoc[tag=exercise5]
 
 === Coding Scalar Multiplication
 
@@ -385,15 +281,7 @@ What we're trying to do with the last exercise is something like this:
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> prime = 223
->>> a = FieldElement(0, prime)
->>> b = FieldElement(7, prime)
->>> x = FieldElement(15, prime)
->>> y = FieldElement(86, prime)
->>> p = Point(x, y, a, b)
->>> 7*p
-Point(infinity)
+include::code-ch03/examples.py[tag=example5,indent=0]
 ----
 
 We want to be able to scalar multiply the point with some number. Thankfully, there's a method in Python called $$__rmul__$$ that can be used to override the front multiplication. A naive implementation looks something like this:
@@ -419,15 +307,7 @@ There's a really cool technique called binary expansion that allows us to perfor
 ----
 class Point:
     ...
-    def __rmul__(self, coefficient):
-        current = self  # <1>
-        result = self.__class__(None, None, self.a, self.b)  # <2>
-        while coef:
-            if coef & 1:  # <3>
-                result += current
-            current += current  # <4>
-            coef >>= 1
-        return result  # <5>
+include::code-ch03/ecc.py[lines=205..214]
 ----
 <1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
 <2> We start the result at 0, or the point at infinity.
@@ -490,44 +370,23 @@ Since we know all of the parmeters for secp256k1, we can verify in Python whethe
 
 [source,python]
 ----
->>> gx = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
->>> gy = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
->>> p = 2**256 - 2**32 - 977
->>> gy**2 % p == (gx**3 + 7) % p
-True
+include::code-ch03/examples.py[tag=example6,indent=0]
 ----
 
 Furthermore, we can verify in Python whether the generator point, G, has the order N.
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> gx = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
->>> gy = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
->>> p = 2**256 - 2**32 - 977
->>> n = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
->>> x = FieldElement(gx, p)
->>> y = FieldElement(gy, p)
->>> seven = FieldElement(7, p)
->>> zero = FieldElement(0, p)
->>> G = Point(x, y, zero, seven)
->>> n*G
-Point(infinity)
+include::code-ch03/examples.py[tag=example7,indent=0]
 ----
 
 Since we know the curve we will work in, this is a good time to create a subclass in Python to work exclusively with the parameters for secp256k1. We'll define the equivalent `FieldElement` and `Point` objects, but specific to the secp256k1 curve. Let's start by defining the field we'll be working in.
 
 [source,python]
 ----
-P = 2**256 - 2**32 - 977
-
-class S256Field(FieldElement):
-
-    def __init__(self, num, prime=None):
-        super().__init__(num=num, prime=P)
-
-    def __repr__(self):
-        return '{:x}'.format(self.num).zfill(64)
+include::code-ch03/ecc.py[lines=331..331]
+...
+include::code-ch03/ecc.py[lines=335..341]
 ----
 
 We're really only just subclassing the FieldElement so we don't have to pass in `P` all the time. We also want to have a nice way to display a 256-bit number and we do this by using the hexadecimal representation and make sure it fills 64 characters so we can see any leading zeroes.
@@ -536,24 +395,9 @@ Similarly, we can define a point on the secp256k1 curve and call it `S256Point`.
 
 [source,python]
 ----
-
-A = 0
-B = 7
-
-class S256Point(Point):
-
-    def __init__(self, x, y, a=None, b=None):
-        a, b = S256Field(A), S256Field(B)
-        if type(x) == int:
-            super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
-        else:
-            super().__init__(x=x, y=y, a=a, b=b)  # <1>
-
-    def __repr__(self):
-        if self.x is None:
-            return 'Point(infinity)'
-        else:
-            return 'Point({},{})'.format(self.x, self.y)
+include::code-ch03/ecc.py[lines=329..330]
+...
+include::code-ch03/ecc.py[lines=341..357]
 ----
 <1> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
 
@@ -565,9 +409,7 @@ We can also define $$__rmul__$$ a bit more efficiently since we know the order o
 ----
 class S256Point(Point):
     ...
-    def __rmul__(self, coefficient):
-        coef = coefficient % N # <1>
-	return super().__rmul__(coef)
+include::code-ch03/ecc.py[lines=359..361]
 ----
 <1> We can mod by `N` because `N*G==Point(infinity)`. That is, every `N` times we add `G` to itself or any member of this group, we effectively go back to zero (Point at infinity).
 
@@ -575,22 +417,16 @@ We can also define `G` directly and keep it around since we'll be using it a lot
 
 [source,python]
 ----
-
-G = S256Point(
-    0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
-    0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8,
-)
-N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
-
+include::code-ch03/ecc.py[lines=332..332]
+...
+include::code-ch03/ecc.py[lines=371..373]
 ----
 
 Now checking that the order of G is N is trivial:
 
 [source,python]
 ----
->>> from ecc import G, N
->>> N*G
-Point(infinity)
+include::code-ch03/examples.py[tag=example7,indent=0]
 ----
 
 === Public Key Cryptography
@@ -748,42 +584,14 @@ We can now verify a signature using some of the primitives that we have.
 
 [source,python]
 ----
->>> from ecc import S256Point, G, N
->>> z = 0xbc62d4b80d9e36da29c16c5d4d9f11731f36052c72401a76c23c0fb5a9b74423
->>> r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
->>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
->>> px = 0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574
->>> py = 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4
->>> point = S256Point(px, py)
->>> s_inv = pow(s, N-2, N)  # <1>
->>> u = z * s_inv % N  # <2>
->>> v = r * s_inv % N  # <3>
->>> print((u*G + v*point).x.num == r)  # <4>
-True
+include::code-ch03/examples.py[tag=example9,indent=0]
 ----
 <1> Note that we use Fermat's Little Theorem for 1/s, since N is prime.
 <2> u = z/s
 <3> v = r/s
 <4> uG+vP = (r,y). We need to check that the x-coordinate is r
 
-==== Exercise {counter:exercise}
-
-Verify whether these signatures are valid:
-
-```
-P = (0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
-     0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
-
-# signature 1
-z, r, s = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60,
-          0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395,
-          0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
-
-# signature 2
-z, r, s = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d,
-          0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c,
-          0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
-```
+include::code-ch03/exercises.asciidoc[tag=exercise6]
 
 ==== Programming Signature Verification
 
@@ -791,11 +599,7 @@ We already have a class `S256Point` which is the public point for the private ke
 
 [source,python]
 ----
-class Signature:
-
-    def __init__(self, r, s):
-    	self.r = r
-	self.s = s
+include::code-ch03/ecc.py[lines=413..420]
 ----
 
 We will be doing more with this class in <<chapter_serialization>>.
@@ -806,13 +610,7 @@ We can write the `verify` method on `S256Point` based on the above.
 ----
 class S256Point(Point):
     ...
-    def verify(self, z, sig):
-        s_inv = pow(sig.s, N-2, N)  # <1>
-        u = z * s_inv % N  # <2>
-        v = sig.r * s_inv % N  # <3>
-        total = u*G + v*self  # <4>
-        return total.x.num == sig.r  # <5>
-
+include::code-ch03/ecc.py[lines=363..368]
 ----
 <1> `s_inv` (1/s) is calculated using Fermat's Little Theorem on the order of the group `N` which is prime.
 <2> u = z/s. Note that we can mod by N as that's the order of the group.
@@ -847,25 +645,7 @@ Note that using something like the `random` library from Python to do cryptograp
 
 [source,python]
 ----
->>> from ecc import S256Point, G, N
->>> from random import randint
->>> from helper import hash256
->>> e = int.from_bytes(hash256(b'my secret'), 'big')  # <1>
->>> z = int.from_bytes(hash256(b'my message'), 'big')  # <2>
->>> k = randint(0, N)  # <3>
->>> r = (k*G).x.num  # <4>
->>> k_inv = pow(k, N-2, N)
->>> s = (z+r*e) * k_inv % N  # <5>
->>> point = e*G  # <6>
->>> print(point)
-S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,
-0ae987b9ec6ea159c78cb2a937ed89096fb218d9e7594f02b547526d8cd309e2)
->>> print(hex(z))
-0x231c6f3d980a6b0fb7152f85cee7eb52bf92433d9919b9c5218cb08e79cce78
->>> print(hex(r))
-0x3b5847f623a77be3be544c00b8abb83540ad44c691a1e0df7f60fcedd912d311
->>> print(hex(s))
-0x40dbad2b4e539ffe797a6f41d414de5e38c5bd09aafe54b87a6dffe68c60f224
+include::code-ch03/examples.py[tag=example10,indent=0]
 ----
 <1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult. Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.
@@ -874,14 +654,7 @@ S256Point(028d003eab2e428d11983f3e97c3fa0addf3b42740df0d211795ffb3be2f6c52,
 <5> s = (z+re)/k. We can mod by `N` because we know this is a cyclical group of order `N`.
 <6> The public point needs to be known by the verifier
 
-==== Exercise {counter:exercise}
-
-Sign the following message with the secret
-
-```
-e = 12345
-z = int.from_bytes(hash256('Programming Bitcoin!'), 'big')
-```
+include::code-ch03/exercises.asciidoc[tag=exercise7]
 
 ==== Programming Message Signing
 
@@ -889,11 +662,7 @@ In order to program message signing, we now create a `PrivateKey` class which wi
 
 [source,python]
 ----
-class PrivateKey:
-
-    def __init__(self, secret):
-        self.secret = secret
-        self.point = secret * G  # <1>
+include::code-ch03/ecc.py[lines=423..427]
 ----
 <1> We keep around the public key, `self.point`, for convenience.
 
@@ -943,34 +712,7 @@ To combat this, there is a deterministic `k` generation standard which uses our 
 ----
 class PrivateKey:
 ...
-    def sign(self, z):
-        k = self.deterministic_k(z)  # <1>
-        r = (k*G).x.num
-        k_inv = pow(k, N-2, N)
-        s = (z + r*self.secret) * k_inv % N
-        if s > N/2:
-            s = N - s
-        return Signature(r, s)
-
-    def deterministic_k(self, z):
-        k = b'\x00' * 32
-        v = b'\x01' * 32
-        if z > N:
-            z -= N
-        z_bytes = z.to_bytes(32, 'big')
-        secret_bytes = self.secret.to_bytes(32, 'big')
-        s256 = hashlib.sha256
-        k = hmac.new(k, v + b'\x00' + secret_bytes + z_bytes, s256).digest()
-        v = hmac.new(k, v, s256).digest()
-        k = hmac.new(k, v + b'\x01' + secret_bytes + z_bytes, s256).digest()
-        v = hmac.new(k, v, s256).digest()
-        while True:
-            v = hmac.new(k, v, s256).digest()
-            candidate = int.from_bytes(v, 'big')
-            if candidate >= 1 and candidate < N:
-                return candidate  # <2>
-            k = hmac.new(k, v + b'\x00', s256).digest()
-            v = hmac.new(k, v, s256).digest()
+include::code-ch03/ecc.py[lines=432..459]
 ----
 <1> We are using the deterministic `k` instead of a random one. Everything else about `sign` remains the same.
 <2> This algorithm returns a candidate that's suitable.
