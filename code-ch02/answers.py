@@ -20,6 +20,8 @@ class Point:
 	return not (self == other)
 # end::exercise2[]
 # tag::exercise3[]
+class Point:
+...
     def __add__(self, other):
         ...
 	if self.x == other.x and self.y != other.y:
@@ -36,6 +38,8 @@ class Point:
 
 # end::exercise4[]
 # tag::exercise5[]
+class Point:
+...
     def __add__(self, other):
         ...
 	if self.x != other.x:

@@ -33,5 +33,5 @@ For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
 # tag::exercise7[]
 ==== Exercise 7
 
-For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+Write the $$__add__$$ method when P~1~=P~2~.
 # end::exercise7[]

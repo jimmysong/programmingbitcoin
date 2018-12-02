@@ -9,7 +9,7 @@ The previous two chapters covered some fundamental math. We learned how Finite F
 
 === Elliptic Curves over Reals
 
-We discussed in Chapter 2 what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers. Specifically, it's not just integers or even rational numbers, but all _real_ numbers. Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
+We discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers. Specifically, it's not just integers or even rational numbers, but all _real_ numbers. Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
 
 What's interesting is that _real_ numbers are also a field. Note unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
 
