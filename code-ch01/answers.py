@@ -1,11 +1,16 @@
-"""
+from unittest import TestCase
+
+from ecc import FieldElement
+
+
 # tag::exercise1[]
-class FieldElement:
-...
-    def __ne__(self, other):
-        # this should be the inverse of the == operator
-	return not (self == other)
+def __ne__(self, other):
+    # this should be the inverse of the == operator
+    return not (self == other)
 # end::exercise1[]
+
+
+"""
 # tag::exercise2[]
 >>> prime = 57
 >>> print((44+33)%prime)
@@ -18,18 +23,21 @@ class FieldElement:
 41
 
 # end::exercise2[]
+"""
+
 # tag::exercise3[]
-class FieldElement:
-...
-    def __sub__(self, other):
-        if self.prime != other.prime:
-            raise TypeError('Cannot subtract two numbers in different Fields')
-        # self.num and other.num are the actual values
-        # self.prime is what we need to mod against
-        num = (self.num - other.num) % self.prime
-        # We return an element of the same class
-        return self.__class__(num, self.prime)
+def __sub__(self, other):
+    if self.prime != other.prime:
+        raise TypeError('Cannot subtract two numbers in different Fields')
+    # self.num and other.num are the actual values
+    # self.prime is what we need to mod against
+    num = (self.num - other.num) % self.prime
+    # We return an element of the same class
+    return self.__class__(num, self.prime)
 # end::exercise3[]
+
+
+"""
 # tag::exercise4[]
 >>> prime = 97
 >>> print(95*45*31 % prime)
@@ -40,6 +48,10 @@ class FieldElement:
 63
 
 # end::exercise4[]
+"""
+
+
+"""
 # tag::exercise5[]
 >>> prime = 19
 >>> for k in (1,3,7,13,18):
@@ -58,18 +70,22 @@ class FieldElement:
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
 
 # end::exercise5[]
+"""
+
+
 # tag::exercise6[]
-class FieldElement:
-...
-    def __mul__(self, other):
-        if self.prime != other.prime:
-            raise TypeError('Cannot multiply two numbers in different Fields')
-        # self.num and other.num are the actual values
-        # self.prime is what we need to mod against
-        num = (self.num * other.num) % self.prime
-        # We return an element of the same class
-        return self.__class__(num, self.prime)
+def __mul__(self, other):
+    if self.prime != other.prime:
+        raise TypeError('Cannot multiply two numbers in different Fields')
+    # self.num and other.num are the actual values
+    # self.prime is what we need to mod against
+    num = (self.num * other.num) % self.prime
+    # We return an element of the same class
+    return self.__class__(num, self.prime)
 # end::exercise6[]
+
+
+"""
 # tag::exercise7[]
 >>> for prime in (7, 11, 17, 31):
 ...     print([pow(i, prime-1, prime) for i in range(1, prime)])
@@ -79,6 +95,10 @@ class FieldElement:
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 # end::exercise7[]
+"""
+
+
+"""
 # tag::exercise8[]
 >>> prime = 31
 >>> print(3*pow(24, prime-2, prime) % prime)
@@ -89,18 +109,28 @@ class FieldElement:
 13
 
 # end::exercise8[]
-# tag::exercise9[]
-class FieldElement:
-...
-    def __truediv__(self, other):
-        if self.prime != other.prime:
-            raise TypeError('Cannot divide two numbers in different Fields')
-        # use fermat's little theorem:
-        # self.num**(p-1) % p == 1
-        # this means:
-        # 1/n == pow(n, p-2, p)
-        # We return an element of the same class
-	num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
-	return self.__class__(num, self.prime)
-# end::exercise9[]
 """
+
+# tag::exercise9[]
+def __truediv__(self, other):
+    if self.prime != other.prime:
+        raise TypeError('Cannot divide two numbers in different Fields')
+    # use fermat's little theorem:
+    # self.num**(p-1) % p == 1
+    # this means:
+    # 1/n == pow(n, p-2, p)
+    # We return an element of the same class
+    num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
+    return self.__class__(num, self.prime)
+# end::exercise9[]
+
+
+class Chapter1Test(TestCase):
+
+    def test_apply(self):
+        FieldElement.__ne__ = __ne__
+        FieldElement.__sub__ = __sub__
+        FieldElement.__mul__ = __mul__
+        FieldElement.__truediv__ = __truediv__
+
+

@@ -54,7 +54,7 @@ Because we defined an Elliptic Curve point and we defined the +,-,* and / operat
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example1,indent=0]
+include::code-ch03/examples.py[tag=example1]
 ----
 
 When initializing `Point`, we will run through this part of the code:
@@ -128,7 +128,7 @@ Because we coded FieldElement in such a way as to define $$__add__$$, $$__sub__$
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example3,indent=0]
+include::code-ch03/examples.py[tag=example3]
 ----
 
 include::code-ch03/exercises.asciidoc[tag=exercise2]
@@ -196,7 +196,7 @@ Scalar Multiplication is adding the same point to itself some number of times. T
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example4,indent=0]
+include::code-ch03/examples.py[tag=example4]
 ----
 
 If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication. The x-coordinates don't always increase or decrease and neither do the y-coordinates. About the only pattern is that between 10 and 11, the x-coordinates are equal (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
@@ -281,7 +281,7 @@ What we're trying to do with the last exercise is something like this:
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example5,indent=0]
+include::code-ch03/examples.py[tag=example5]
 ----
 
 We want to be able to scalar multiply the point with some number. Thankfully, there's a method in Python called $$__rmul__$$ that can be used to override the front multiplication. A naive implementation looks something like this:
@@ -370,14 +370,14 @@ Since we know all of the parmeters for secp256k1, we can verify in Python whethe
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example6,indent=0]
+include::code-ch03/examples.py[tag=example6]
 ----
 
 Furthermore, we can verify in Python whether the generator point, G, has the order N.
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example7,indent=0]
+include::code-ch03/examples.py[tag=example7]
 ----
 
 Since we know the curve we will work in, this is a good time to create a subclass in Python to work exclusively with the parameters for secp256k1. We'll define the equivalent `FieldElement` and `Point` objects, but specific to the secp256k1 curve. Let's start by defining the field we'll be working in.
@@ -426,7 +426,7 @@ Now checking that the order of G is N is trivial:
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example7,indent=0]
+include::code-ch03/examples.py[tag=example7]
 ----
 
 === Public Key Cryptography
@@ -584,7 +584,7 @@ We can now verify a signature using some of the primitives that we have.
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example9,indent=0]
+include::code-ch03/examples.py[tag=example9]
 ----
 <1> Note that we use Fermat's Little Theorem for 1/s, since N is prime.
 <2> u = z/s
@@ -645,7 +645,7 @@ Note that using something like the `random` library from Python to do cryptograp
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example10,indent=0]
+include::code-ch03/examples.py[tag=example10]
 ----
 <1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult. Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.

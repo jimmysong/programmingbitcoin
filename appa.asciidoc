@@ -10,35 +10,39 @@ include::code-ch01/exercises.asciidoc[tag=exercise1]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise1,indent=0]
+class FieldElement:
+...
+include::code-ch01/answers.py[tag=exercise1,indent=4]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise2]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise2,indent=0]
+include::code-ch01/answers.py[tag=exercise2]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise3]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise3,indent=0]
+class FieldElement:
+...
+include::code-ch01/answers.py[tag=exercise3,indent=4]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise4]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise4,indent=0]
+include::code-ch01/answers.py[tag=exercise4]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise5]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise5,indent=0]
+include::code-ch01/answers.py[tag=exercise5]
 ----
 
 When sorted, the results are always the same set.
@@ -47,28 +51,32 @@ include::code-ch01/exercises.asciidoc[tag=exercise6]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise6,indent=0]
+class FieldElement:
+...
+include::code-ch01/answers.py[tag=exercise6,indent=4]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise7]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise7,indent=0]
+include::code-ch01/answers.py[tag=exercise7]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise8]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise8,indent=0]
+include::code-ch01/answers.py[tag=exercise8]
 ----
 
 include::code-ch01/exercises.asciidoc[tag=exercise9]
 
 [source,python]
 ----
-include::code-ch01/answers.py[tag=exercise9,indent=0]
+class FieldElement:
+...
+include::code-ch01/answers.py[tag=exercise9,indent=4]
 ----
 
 === <<chapter_elliptic_curves>>: Elliptic Curves
@@ -77,14 +85,14 @@ include::code-ch02/exercises.asciidoc[tag=exercise1]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise1,indent=0]
+include::code-ch02/answers.py[tag=exercise1]
 ----
 
 include::code-ch02/exercises.asciidoc[tag=exercise2]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise2,indent=0]
+include::code-ch02/answers.py[tag=exercise2]
 ----
 
 include::code-ch02/exercises.asciidoc[tag=exercise3]
@@ -98,7 +106,7 @@ include::code-ch02/exercises.asciidoc[tag=exercise4]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise4,indent=0]
+include::code-ch02/answers.py[tag=exercise4]
 ----
 
 include::code-ch02/exercises.asciidoc[tag=exercise5]
@@ -112,7 +120,7 @@ include::code-ch02/exercises.asciidoc[tag=exercise6]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise6,indent=0]
+include::code-ch02/answers.py[tag=exercise6]
 ----
 
 include::code-ch02/exercises.asciidoc[tag=exercise7]
@@ -128,14 +136,14 @@ include::code-ch03/exercises.asciidoc[tag=exercise1]
 
 [source,python]
 ----
-include::code-ch03/answers.py[tag=exercise1,indent=0]
+include::code-ch03/answers.py[tag=exercise1]
 ----
 
 include::code-ch03/exercises.asciidoc[tag=exercise2]
 
 [source,python]
 ----
-include::code-ch03/answers.py[tag=exercise2,indent=0]
+include::code-ch03/answers.py[tag=exercise2]
 ----
 
 include::code-ch03/exercises.asciidoc[tag=exercise3]
@@ -149,28 +157,28 @@ include::code-ch03/exercises.asciidoc[tag=exercise4]
 
 [source,python]
 ----
-include::code-ch03/answers.py[tag=exercise4,indent=0]
+include::code-ch03/answers.py[tag=exercise4]
 ----
 
 include::code-ch03/exercises.asciidoc[tag=exercise5]
 
 [source,python]
 ----
-include::code-ch03/answers.py[tag=exercise5,indent=0]
+include::code-ch03/answers.py[tag=exercise5]
 ----
 
 include::code-ch03/exercises.asciidoc[tag=exercise6]
 
 [source,python]
 ----
-include::code-ch03/answers.py[tag=exercise6,indent=0]
+include::code-ch03/answers.py[tag=exercise6]
 ----
 
 include::code-ch03/exercises.asciidoc[tag=exercise7]
 
 [source,python]
 ----
-include::code-ch03/answers.py[tag=exercise7,indent=0]
+include::code-ch03/answers.py[tag=exercise7]
 ----
 
 === <<chapter_serialization>>: Serialization

@@ -89,7 +89,7 @@ What we've defined already allows us to do this:
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example1,indent=0]
+include::code-ch01/examples.py[tag=example1]
 ----
 
 Python allows us to override the $$==$$ operator with the $$__eq__$$ method, which is something we'll be taking advantage of going forward.
@@ -167,14 +167,14 @@ Python uses the `%` operator for modulo arithmetic. It looks like this:
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example2,indent=0]
+include::code-ch01/examples.py[tag=example2]
 ----
 
 We can also use the modulo operator on negative numbers like this:
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example3,indent=0]
+include::code-ch01/examples.py[tag=example3]
 ----
 
 === Finite Field Addition and Subtraction
@@ -249,7 +249,7 @@ In the class `FieldElement` we can now define $$__add__$$ and $$__sub__$$ method
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example4,indent=0]
+include::code-ch01/examples.py[tag=example4]
 ----
 
 In Python we can define what addition means for our class with the $$__add__$$ method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
@@ -321,7 +321,7 @@ In the class `FieldElement` we can now define the $$__mul__$$ method. We want th
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example5,indent=0]
+include::code-ch01/examples.py[tag=example5]
 ----
 
 As we did with addition and subtraction above, we can define what multiplication means for our class with the $$__mul__$$ method.
@@ -334,7 +334,7 @@ We can do the same for exponentiation, which in Python can be defined with the $
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example6,indent=0]
+include::code-ch01/examples.py[tag=example6]
 ----
 
 Note that because the exponent is an integer, instead of another instance of `FieldElement`, we receive the variable `exponent` as an integer. We can code it this way.
@@ -442,7 +442,7 @@ One last thing that we need to take care of before we leave this chapter is the 
 
 [source,python]
 ----
-include::code-ch01/examples.py[tag=example7,indent=0]
+include::code-ch01/examples.py[tag=example7]
 ----
 
 Unfortunately, the way we've defined $$__pow__$$ simply doesn't handle negative exponents as the second parameter of the built-in Python method `pow` needs to be positive.

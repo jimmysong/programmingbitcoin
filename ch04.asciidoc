@@ -52,13 +52,7 @@ class S256Point(Point):
 ----
 <1> In Python 3, you can convert a number to `bytes` using the `to_bytes` method. The first argument is how many bytes it should take up and the second argument is the endianness (see _Big and Little Endian_).
 
-==== Exercise {counter:exercise}
-
-Get the uncompressed SEC format for the Public Key where the Private Key secrets are:
-
-* 5000
-* 2018^5^
-* 0xdeadbeef12345
+include::code-ch04/exercises.asciidoc[tag=exercise1]
 
 === Compressed SEC Format
 
@@ -197,13 +191,7 @@ class S256Point:
 <3> We take the square-root of the right side of the Elliptic Curve equation to get the y.
 <4> Determine parity and return the correct point.
 
-==== Exercise {counter:exercise}
-
-Find the Compressed SEC format for the Public Key where the Private Key secrets are:
-
-* 5001
-* 2019^5^
-* 0xdeadbeef54321
+include::code-ch04/exercises.asciidoc[tag=exercise2]
 
 === DER Signatures
 
@@ -256,12 +244,7 @@ class Signature:
 
 Overall, this is an inefficient way to encode `r` and `s` as there are at least 4 bytes that aren't strictly necessary.
 
-==== Exercise {counter:exercise}
-
-Find the DER format for a signature whose `r` and `s` values are:
-
-* `r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6`
-* `s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec`
+include::code-ch04/exercises.asciidoc[tag=exercise3]
 
 === Base58
 
@@ -317,13 +300,7 @@ Base58 has been used for a long time and while it does make it somewhat easier t
 What's much better is the new Bech32 standard which is defined in BIP0173. Bech32 uses a 32-character alphabet that's just numbers and lower case letters except 1, b, i and o. These are thus far only used for Segwit (<<chapter_segwit>>).
 ====
 
-==== Exercise {counter:exercise}
-
-Convert the following hex to binary and then to Base58:
-
-* 7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
-* eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
-* c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+include::code-ch04/exercises.asciidoc[tag=exercise4]
 
 === Address Format
 
@@ -374,13 +351,7 @@ class S256Point:
         return encode_base58_checksum(prefix + h160)
 ----
 
-==== Exercise {counter:exercise}
-
-Find the address corresponding to Public Keys whose Private Key secrets are:
-
-* 5002 (use uncompressed SEC, on testnet)
-* 2020^5^ (use compressed SEC, on testnet)
-* 0x12345deadbeef (use compressed SEC on mainnet)
+include::code-ch04/exercises.asciidoc[tag=exercise5]
 
 === WIF Format
 
@@ -416,29 +387,17 @@ class PrivateKey
         return encode_base58_checksum(prefix + secret_bytes + suffix)
 ----
 
-==== Exercise {counter:exercise}
-
-Find the WIF for Private Key whose secrets are:
-
-* 5003 (compressed, testnet)
-* 2021^5^ (uncompressed, testnet)
-* 0x54321deadbeef (compressed, mainnet)
+include::code-ch04/exercises.asciidoc[tag=exercise6]
 
 === Big and Little Endian Redux
 
 It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will be parsing and serializing numbers to and from Big/Little Endian quite a bit. In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little-Endian was used and where Big-Endian was used. Recall that SEC format uses Big-Endian encoding as do addresses and WIF. From <<chapter_tx_parsing>> onward, we will use Little-Endian encoding a lot more. For this reason, we turn to these two exercises.
 
-==== Exercise {counter:exercise}
+include::code-ch04/exercises.asciidoc[tag=exercise7]
 
-Write a function `little_endian_to_int` which takes Python bytes, interprets those bytes in Little-Endian and returns the number.
+include::code-ch04/exercises.asciidoc[tag=exercise8]
 
-==== Exercise {counter:exercise}
-
-Write a function `int_to_little_endian` which does the reverse of the last exercise.
-
-==== Exercise {counter:exercise}
-
-Create a testnet address for yourself using a long secret that only you know. This is important as there are bots on testnet trying to steal testnet coins. Make sure you write this secret down somewhere! You will be using the secret in <<chapter_tx>>.
+include::code-ch04/exercises.asciidoc[tag=exercise9]
 
 Go to a testnet faucet (https://testnet.programmingbitcoin.com) and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
 
