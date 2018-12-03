@@ -52,7 +52,7 @@ class S256Point(Point):
 ----
 <1> In Python 3, you can convert a number to `bytes` using the `to_bytes` method. The first argument is how many bytes it should take up and the second argument is the endianness (see _Big and Little Endian_).
 
-include::code-ch04/exercises.asciidoc[tag=exercise1]
+include::code-ch04/answers.py[tag=exercise1]
 
 === Compressed SEC Format
 

@@ -93,9 +93,9 @@ include::code-ch02/examples.py[tag=example1]
 
 We want the $$__init__$$ method to throw an error when the point is not on the curve.
 
-include::code-ch02/exercises.asciidoc[tag=exercise1]
+include::code-ch02/answers.py[tag=exercise1]
 
-include::code-ch02/exercises.asciidoc[tag=exercise2]
+include::code-ch02/answers.py[tag=exercise2]
 
 === Point Addition
 
@@ -202,7 +202,7 @@ include::code-ch02/ecc.py[lines=147..154]
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity. Thus, we return `other`
 <4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity. Thus, we return `self`
 
-include::code-ch02/exercises.asciidoc[tag=exercise3]
+include::code-ch02/answers.py[tag=exercise3]
 
 === Point Addition for when x~1~≠x~2~
 
@@ -271,7 +271,7 @@ y~3~=-(s(x~3~-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
 QED
 ****
 
-include::code-ch02/exercises.asciidoc[tag=exercise4]
+include::code-ch02/answers.py[tag=exercise4]
 
 === Coding Point Addition for when x~1~≠x~2~
 
@@ -283,7 +283,7 @@ We now code this into our library. That means we have to adjust the $$__add__$$ 
 
 At the end of the method, we return an instance of the class `Point`.
 
-include::code-ch02/exercises.asciidoc[tag=exercise5]
+include::code-ch02/answers.py[tag=exercise5]
 
 === Point Addition for when P~1~=P~2~
 
@@ -331,7 +331,7 @@ dy/dx=(3x^2^+a)/(2y)
 That's how we arrive at the slope formula. The rest of the results from the point addition formula derivation hold.
 ====
 
-include::code-ch02/exercises.asciidoc[tag=exercise6]
+include::code-ch02/answers.py[tag=exercise6]
 
 === Coding Point Addition for when P~1~=P~2~
 
@@ -341,7 +341,7 @@ We adjust the $$__add__$$ method to account for this particular case. We have th
 * x~3~=s^2^-2x~1~
 * y~3~=s(x~1~-x~3~)-y~1~
 
-include::code-ch02/exercises.asciidoc[tag=exercise7]
+include::code-ch02/answers.py[tag=exercise7]
 
 === Coding One More Exception
 

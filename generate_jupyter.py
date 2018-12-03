@@ -29,7 +29,7 @@ PRACTICE_TEMPLATE_2 = '''# Exercise {num}
 {hints}'''
 
 
-for chapter in range(1, 4):
+for chapter in range(1, 5):
     notebook = nbformat.v4.new_notebook()
     if chapter < 10:
         path = 'code-ch0{}'.format(chapter)
