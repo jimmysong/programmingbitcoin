@@ -85,7 +85,7 @@ include::code-ch02/answers.py[tag=exercise1]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise1]
+include::code-ch02/answers.py[tag=answer1]
 ----
 
 include::code-ch02/answers.py[tag=exercise2]
@@ -94,7 +94,7 @@ include::code-ch02/answers.py[tag=exercise2]
 ----
 class Point:
 ...
-include::code-ch02/answers.py[tag=exercise2,indent=4]
+include::code-ch02/answers.py[tag=answer2,indent=4]
 ----
 
 include::code-ch02/answers.py[tag=exercise3]
@@ -103,14 +103,14 @@ include::code-ch02/answers.py[tag=exercise3]
 ----
 class Point:
 ...
-include::code-ch02/answers.py[tag=exercise3,indent=4]
+include::code-ch02/answers.py[tag=answer3,indent=4]
 ----
 
 include::code-ch02/answers.py[tag=exercise4]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise4]
+include::code-ch02/answers.py[tag=answer4]
 ----
 
 include::code-ch02/answers.py[tag=exercise5]
@@ -121,14 +121,14 @@ class Point:
 ...
     def __add__(self, other):
     ...
-include::code-ch02/answers.py[tag=exercise5,indent=4]
+include::code-ch02/answers.py[tag=answer5,indent=4]
 ----
 
 include::code-ch02/answers.py[tag=exercise6]
 
 [source,python]
 ----
-include::code-ch02/answers.py[tag=exercise6]
+include::code-ch02/answers.py[tag=answer6]
 ----
 
 include::code-ch02/answers.py[tag=exercise7]
@@ -139,72 +139,58 @@ class Point:
 ...
     def __add__(self, other):
     ...
-include::code-ch02/answers.py[tag=exercise7,indent=4]
+include::code-ch02/answers.py[tag=answer7,indent=4]
 ----
 
 === <<chapter_elliptic_curve_cryptography>>: Elliptic Curve Cryptography
 
-include::code-ch04/answers.py[tag=exercise1]
+include::code-ch03/answers.py[tag=exercise1]
 
 [source,python]
 ----
-include::code-ch04/answers.py[tag=answer1]
+include::code-ch03/answers.py[tag=answer1]
 ----
 
-include::code-ch04/answers.py[tag=exercise2]
-
-[source,python]
-----
-include::code-ch04/answers.py[tag=answer2]
-----
-
-include::code-ch04/answers.py[tag=exercise3]
+include::code-ch03/answers.py[tag=exercise2]
 
 [source,python]
 ----
-include::code-ch04/answers.py[tag=answer3]
+include::code-ch03/answers.py[tag=answer2]
 ----
 
-include::code-ch04/answers.py[tag=exercise4]
-
-[source,python]
-----
-include::code-ch04/answers.py[tag=answer4]
-----
-
-include::code-ch04/answers.py[tag=exercise5]
+include::code-ch03/answers.py[tag=exercise3]
 
 [source,python]
 ----
-include::code-ch04/answers.py[tag=answer5]
+include::code-ch03/answers.py[tag=answer3]
 ----
 
-include::code-ch04/answers.py[tag=exercise6]
-
-[source,python]
-----
-include::code-ch04/answers.py[tag=answer6]
-----
-
-include::code-ch04/answers.py[tag=exercise7]
+include::code-ch03/answers.py[tag=exercise4]
 
 [source,python]
 ----
-include::code-ch04/answers.py[tag=answer7]
+include::code-ch03/answers.py[tag=answer4]
 ----
 
-include::code-ch04/answers.py[tag=exercise8]
-
-[source,python]
-----
-include::code-ch04/answers.py[tag=answer8]
-----
-
-include::code-ch04/answers.py[tag=exercise9]
+include::code-ch03/answers.py[tag=exercise5]
 
 [source,python]
 ----
-include::code-ch04/answers.py[tag=answer9]
+include::code-ch03/answers.py[tag=answer5]
+----
+
+include::code-ch03/answers.py[tag=exercise6]
+
+[source,python]
+----
+include::code-ch03/answers.py[tag=answer6]
+----
+
+include::code-ch03/answers.py[tag=exercise7]
+
+[source,python]
+----
+include::code-ch03/answers.py[tag=answer7]
 ----
 
 === <<chapter_serialization>>: Serialization
@@ -258,6 +244,20 @@ include::code-ch04/answers.py[tag=exercise7]
 [source,python]
 ----
 include::code-ch04/answers.py[tag=answer7]
+----
+
+include::code-ch04/answers.py[tag=exercise8]
+
+[source,python]
+----
+include::code-ch04/answers.py[tag=answer8]
+----
+
+include::code-ch04/answers.py[tag=exercise9]
+
+[source,python]
+----
+include::code-ch04/answers.py[tag=answer9]
 ----
 
 === <<chapter_tx_parsing>>: Transactions
