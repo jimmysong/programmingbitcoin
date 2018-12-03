@@ -254,7 +254,7 @@ Now that we have a node, we can now handshake with another node.
 
 [source,python]
 ----
->>> from network import SimpleNode, VersionMessage
+>>> from network import SimpleNode, VersionMessage, VerAckMessage
 >>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True)
 >>> version = VersionMessage()  # <1>
 >>> node.send(version)  # <2>
