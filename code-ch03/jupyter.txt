@@ -1,0 +1,98 @@
+from importlib import reload
+from helper import run
+
+import ecc
+import helper
+
+from ecc import FieldElement, Point
+---
+exercise1:
+prime = 223
+a = FieldElement(0, prime)
+b = FieldElement(7, prime)
+
+# (192,105), (17,56), (200,119), (1,193), (42,99)
+---
+example1
+---
+example3
+---
+exercise2:
+prime = 223
+a = FieldElement(0, prime)
+b = FieldElement(7, prime)
+
+# (170,142) + (60,139)
+# (47,71) + (17,56)
+# (143,98) + (76,66)
+---
+exercise3:ecc:ECCTest:test_add
+---
+exercise4:
+prime = 223
+a = FieldElement(0, prime)
+b = FieldElement(7, prime)
+
+# 2*(192, 105)
+# 2*(143, 98)
+# 2*(47, 71)
+# 4*(47, 71)
+# 8*(47, 71)
+# 21*(47, 71)
+
+# create a product variable
+# add the point to the product n times
+# print the product
+---
+example4
+---
+exercise5:
+prime = 223
+a = FieldElement(0, prime)
+b = FieldElement(7, prime)
+x = FieldElement(15, prime)
+y = FieldElement(86, prime)
+p = Point(x, y, a, b)
+inf = Point(None, None, a, b)
+
+# create a product variable
+# create a counter variable
+# loop until the product is the point at infinity
+# add the point to the product and increment counter
+# print the counter when exited from loop
+---
+example5
+---
+example6
+---
+example7
+---
+example8
+---
+example9
+---
+exercise6:
+point = S256Point(
+    0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
+    0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
+# signature 1
+z = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60
+r = 0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395
+s = 0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
+# signature 2
+z = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
+r = 0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
+s = 0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+---
+example10
+---
+exercise7:
+# Exercise 7
+
+e = 12345
+z = int.from_bytes(hash256(b'Programming Bitcoin!'), 'big')
+
+# choose a random k
+# calculate r (kG's x-coordinate)
+# calculate s ((z+re)/k)
+# print the point, z, r and s

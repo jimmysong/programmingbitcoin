@@ -66,7 +66,7 @@ Point(FieldElement_223(170),FieldElement_223(142))_FieldElement_223(0)_FieldElem
 >>> x = FieldElement(15, prime)
 >>> y = FieldElement(86, prime)
 >>> p = Point(x, y, a, b)
->>> 7*p
+>>> print(7*p)
 Point(infinity)
 
 # end::example5[]
@@ -74,7 +74,7 @@ Point(infinity)
 >>> gx = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
 >>> gy = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
 >>> p = 2**256 - 2**32 - 977
->>> gy**2 % p == (gx**3 + 7) % p
+>>> print(gy**2 % p == (gx**3 + 7) % p)
 True
 
 # end::example6[]
@@ -89,13 +89,13 @@ True
 >>> seven = FieldElement(7, p)
 >>> zero = FieldElement(0, p)
 >>> G = Point(x, y, zero, seven)
->>> n*G
+>>> print(n*G)
 Point(infinity)
 
 # end::example7[]
 # tag::example8[]
 >>> from ecc import G, N
->>> N*G
+>>> print(N*G)
 S256Point(infinity)
 
 # end::example8[]
