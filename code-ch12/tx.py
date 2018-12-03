@@ -22,14 +22,14 @@ class TxFetcher:
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://tbtc.programmingblockchain.com:18332'
+            return 'http://testnet.programmingbitcoin.com'
         else:
-            return 'http://btc.programmingblockchain.com:8332'
+            return 'http://mainnet.programmingbitcoin.com'
 
     @classmethod
     def fetch(cls, tx_id, testnet=False, fresh=False):
         if fresh or (tx_id not in cls.cache):
-            url = '{}/rest/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
+            url = '{}/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
