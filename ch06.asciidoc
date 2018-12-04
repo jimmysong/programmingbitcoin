@@ -37,12 +37,12 @@ Script, as a language, processes one instruction at a time on a stack of element
 Elements are just data. They are byte strings of length 1 to 520. A typical element might be a DER signature or a SEC pubkey.
 
 .Elements
-image::Script1.png[Script Elements]
+image::script1.png[Script Elements]
 
 Operations do something to the data. They consume zero or more elements from the processing stack and put zero or more elements back on the stack.
 
 .Operations
-image::Script2.png[Script Operations]
+image::script2.png[Script Operations]
 
 A typical operation might be something like OP_DUP, which will duplicate the top element (consuming 0) and putting a new element on top (pushing 1).
 
@@ -230,7 +230,7 @@ Note that both the parser and serializer were used in <<chapter_tx_parsing>> for
 To evaluate Script, we need to combine the ScriptPubKey and ScriptSig fields. The lockbox (ScriptPubKey) and the unlocking (ScriptSig) are in _different_ transactions. Specifically, the lockbox is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction _points to the receiving transaction_. Essentially, we have a situation like this:
 
 .ScriptPubKey and ScriptSig
-image::Script3.png[ScriptPubKey and ScriptSig]
+image::script3.png[ScriptPubKey and ScriptSig]
 
 Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two Scripts combine. What we do in Bitcoin is take the instructions from ScriptSig and ScriptPubKey and combine them as above. The instructions from the ScriptSig go on top of all the instructions from ScriptPubKey. Each instruction is processed one at a time until no instructions are left to be processed or if the Script exits early.
 

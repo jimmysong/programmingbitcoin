@@ -309,7 +309,7 @@ The rest of the formula goes through as before, except x~1~=x~2~, so we can comb
 * x~3~=s^2^-2x~1~
 * y~3~=s(x~1~-x~3~)-y~1~
 
-[Note]
+[NOTE]
 .Deriving the Tangent LIne
 ====
 We can derive the slope of the tangent line using some slightly more advanced math: calculus. We know that the slope at a given point is

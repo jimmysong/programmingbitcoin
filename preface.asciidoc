@@ -1,7 +1,8 @@
 = Programming Bitcoin
 Jimmy Song
-v1.0, 2018-06-21
+v2.0, 2018-12-03
 :imagesdir: images
+:doctype: book
 
 [preface]
 == Preface

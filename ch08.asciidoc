@@ -60,7 +60,7 @@ At this point, `OP_CHECKMULTISIG` will consume `m+n+3` elements (due to off-by-o
 .Bare Multisig End
 image::multisig8.png[Bare Multisig End]
 
-[Note]
+[NOTE]
 .`OP_CHECKMULTISIG` Off-by-one Bug
 ====
 The elements consumed by `OP_CHECKMULTISIG` are supposed to be:

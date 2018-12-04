@@ -352,7 +352,7 @@ Why don't we force the exponent to be a `FieldElement` object? It turns out that
 
 Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
 
-include::code-ch01/exercises.py[tag=exercise7]
+include::code-ch01/answers.py[tag=exercise7]
 
 === Finite Field Division 
 
@@ -432,9 +432,9 @@ So in other words, we can calculate the inverse using the exponent function. In 
 
 This is a relatively expensive calculation as exponentiating grows very fast. Division is the most expensive operation for that reason. To lessen the expensiveness, we can utilize the `pow` function in Python. `pow` is a function that will exponentiate. Thus something like `pow(7,17)` does the same thing as $$7**17$$. The `pow` function, however, has an optional third argument which makes our calculation more efficient. Specifically, `pow` will modulo by the third argument. Thus, `pow(7,17,19)` will give the same result as $$7**17%19$$ but do so faster because the modulo function is done after each round of multiplication.
 
-include::code-ch01/exercises.py[tag=exercise8]
+include::code-ch01/answers.py[tag=exercise8]
 
-include::code-ch01/exercises.py[tag=exercise9]
+include::code-ch01/answers.py[tag=exercise9]
 
 === Redefining Exponentiation
 

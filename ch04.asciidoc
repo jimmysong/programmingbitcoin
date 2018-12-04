@@ -191,7 +191,7 @@ class S256Point:
 <3> We take the square-root of the right side of the Elliptic Curve equation to get the y.
 <4> Determine parity and return the correct point.
 
-include::code-ch04/exercises.asciidoc[tag=exercise2]
+include::code-ch04/answers.py[tag=exercise2]
 
 === DER Signatures
 
@@ -244,7 +244,7 @@ class Signature:
 
 Overall, this is an inefficient way to encode `r` and `s` as there are at least 4 bytes that aren't strictly necessary.
 
-include::code-ch04/exercises.asciidoc[tag=exercise3]
+include::code-ch04/answers.py[tag=exercise3]
 
 === Base58
 
@@ -300,7 +300,7 @@ Base58 has been used for a long time and while it does make it somewhat easier t
 What's much better is the new Bech32 standard which is defined in BIP0173. Bech32 uses a 32-character alphabet that's just numbers and lower case letters except 1, b, i and o. These are thus far only used for Segwit (<<chapter_segwit>>).
 ====
 
-include::code-ch04/exercises.asciidoc[tag=exercise4]
+include::code-ch04/answers.py[tag=exercise4]
 
 === Address Format
 
@@ -351,7 +351,7 @@ class S256Point:
         return encode_base58_checksum(prefix + h160)
 ----
 
-include::code-ch04/exercises.asciidoc[tag=exercise5]
+include::code-ch04/answers.py[tag=exercise5]
 
 === WIF Format
 
@@ -387,17 +387,17 @@ class PrivateKey
         return encode_base58_checksum(prefix + secret_bytes + suffix)
 ----
 
-include::code-ch04/exercises.asciidoc[tag=exercise6]
+include::code-ch04/answers.py[tag=exercise6]
 
 === Big and Little Endian Redux
 
 It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will be parsing and serializing numbers to and from Big/Little Endian quite a bit. In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little-Endian was used and where Big-Endian was used. Recall that SEC format uses Big-Endian encoding as do addresses and WIF. From <<chapter_tx_parsing>> onward, we will use Little-Endian encoding a lot more. For this reason, we turn to these two exercises.
 
-include::code-ch04/exercises.asciidoc[tag=exercise7]
+include::code-ch04/answers.py[tag=exercise7]
 
-include::code-ch04/exercises.asciidoc[tag=exercise8]
+include::code-ch04/answers.py[tag=exercise8]
 
-include::code-ch04/exercises.asciidoc[tag=exercise9]
+include::code-ch04/answers.py[tag=exercise9]
 
 Go to a testnet faucet (https://testnet.programmingbitcoin.com) and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
 
