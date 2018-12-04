@@ -688,6 +688,7 @@ def op_checksigverify(stack, z):
     return op_checksig(stack, z) and op_verify(stack)
 
 
+# tag::source1[]
 def op_checkmultisig(stack, z):
     if len(stack) < 1:
         return False
@@ -702,11 +703,10 @@ def op_checkmultisig(stack, z):
         return False
     der_signatures = []
     for _ in range(m):
-        # signature is assumed to be using SIGHASH_ALL
-        der_signatures.append(stack.pop()[:-1])
-    # OP_CHECKMULTISIG bug
-    stack.pop()
+        der_signatures.append(stack.pop()[:-1])  # <1>
+    stack.pop()  # <2>
     try:
+        # end::source1[]
         # parse all the points
         # parse all the signatures
         # loop through the signatures
@@ -715,10 +715,12 @@ def op_checkmultisig(stack, z):
                 # get the current point from the list of points
                 # we check if this signature goes with the current point
         # the signatures are valid, so push a 1 to the stack
-        raise NotImplementedError
+        # tag::source1[]
+        raise NotImplementedError  # <3>
     except (ValueError, SyntaxError):
         return False
     return True
+# end::source1[]
 
 
 def op_checkmultisigverify(stack, z):

@@ -31,7 +31,7 @@ PRACTICE_TEMPLATE_2 = '''# Exercise {num}
 {hints}'''
 
 
-for chapter in range(1, 7):
+for chapter in range(1, 13):
     notebook = nbformat.v4.new_notebook()
     if chapter < 10:
         path = 'code-ch0{}'.format(chapter)
@@ -90,7 +90,7 @@ for chapter in range(1, 7):
                 contents_1 = UNITTEST_TEMPLATE_1.format(**template_dict)
                 contents_2 = UNITTEST_TEMPLATE_2.format(**template_dict)
             else:
-                hints = '\n'.join(components[1:]).strip()
+                hints = ':'.join(components[1:]).strip()
                 template_dict = {
                     'num': key[8:],
                     'exercise': exercises[key],

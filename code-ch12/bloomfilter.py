@@ -12,6 +12,7 @@ from network import GenericMessage
 BIP37_CONSTANT = 0xfba4c795
 
 
+# tag::source1[]
 class BloomFilter:
 
     def __init__(self, size, function_count, tweak):
@@ -19,6 +20,7 @@ class BloomFilter:
         self.bit_field = [0] * (size * 8)
         self.function_count = function_count
         self.tweak = tweak
+    # end::source1[]
 
     def add(self, item):
         '''Add an item to the filter'''

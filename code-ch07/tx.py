@@ -146,18 +146,16 @@ class Tx:
         result += int_to_little_endian(self.locktime, 4)
         return result
 
+    # tag::source1[]
     def fee(self):
         '''Returns the fee of this transaction in satoshi'''
-        # initialize input sum and output sum
         input_sum, output_sum = 0, 0
-        # use TxIn.value() to sum up the input amounts
         for tx_in in self.tx_ins:
             input_sum += tx_in.value(self.testnet)
-        # use TxOut.amount to sum up the output amounts
         for tx_out in self.tx_outs:
             output_sum += tx_out.amount
-        # fee is input sum - output sum
         return input_sum - output_sum
+    # end::source1[]
 
     def sig_hash(self, input_index):
         '''Returns the integer representation of the hash that needs to get
@@ -187,16 +185,16 @@ class Tx:
         # evaluate the combined script
         raise NotImplementedError
 
+    # tag::source2[]
     def verify(self):
         '''Verify this transaction'''
-        # check that we're not creating money
-        if self.fee() < 0:
+        if self.fee() < 0:  # <1>
             return False
-        # check that each input has a valid ScriptSig
         for i in range(len(self.tx_ins)):
-            if not self.verify_input(i):
+            if not self.verify_input(i):  # <2>
                 return False
         return True
+    # end::source2[]
 
     def sign_input(self, input_index, private_key):
         # get the signature hash (z)

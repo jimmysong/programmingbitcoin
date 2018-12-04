@@ -28,9 +28,7 @@ First, by rule, Coinbase Transactions must have exactly one input. Second, that 
 
 These three determine whether a transaction is a Coinbase transaction or not.
 
-==== Exercise {counter:exercise}
-
-Write the `is_coinbase` method of the `Tx` class.
+include::code-ch09/answers.py[tag=exercise1]
 
 ==== ScriptSig
 
@@ -47,12 +45,7 @@ This ScriptSig was composed by Satoshi and contains a message that we can take a
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from script import Script
->>> stream = BytesIO(bytes.fromhex('04ffff...6b73'))
->>> s = Script.parse(stream)
->>> print(s.instructions[2])
-b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
+include::code-ch09/examples.py[tag=example1]
 ----
 
 This was the headline from The Times newspaper on January 3, 2009. This proves that the Genesis Block was created some time _at or after_ that date, and not _before_. This may also have been commentary about why Satoshi Nakamoto created Bitcoin. As you can see, the Coinbase Transaction's ScriptSig can contain arbitrary data.
@@ -67,20 +60,12 @@ The height is interpreted as a Little-Endian integer and must equal the height o
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from script import Script
->>> from helper import little_endian_to_int
->>> stream = BytesIO(bytes.fromhex('5e03d71b0725...e00'))
->>> script_sig = Script.parse(stream)
->>> print(little_endian_to_int(script_sig.items[0]))
-465879
+include::code-ch09/examples.py[tag=example2]
 ----
 
 We now know which block the transaction was supposed to be in! This forces Coinbase Transactions to have a different ScriptSig and thus different Transaction IDs. This rule continues to be needed as optimizations like ASICBoost allow the possibility of the same Coinbase Transaction IDs across multiple blocks if BIP0034 wasn't a rule.
 
-==== Exercise {counter:exercise}
-
-Write the `coinbase_height` method for the `Tx` class.
+include::code-ch09/answers.py[tag=exercise2]
 
 === Headers vs Full Blocks
 
@@ -102,10 +87,7 @@ The ID of the block is once again the hash256 of just the header. The hash256 of
 
 [source,python]
 ----
->>> from helper import hash256
->>> block_id = hash256(bytes.fromhex('02000020...a4ffd71d'))
->>> print(block_id.hex())
-2375044d646ad73594dd0b37b113becdb03964584c9e7e000000000000000000
+include::code-ch09/examples.py[tag=example3]
 ----
 
 This ID is what gets put into prev_block for a block building on top of this one. For now, notice that the ID has a lot of 0's at the end. We'll come back to this in the proof-of-work section below.
@@ -114,24 +96,18 @@ We can start coding a `Block` class based on what we already know:
 
 [source,python]
 ----
-class Block:
-
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce):
-        self.version = version
-        self.prev_block = prev_block
-        self.merkle_root = merkle_root
-        self.timestamp = timestamp
-        self.bits = bits
-        self.nonce = nonce
+include::code-ch09/block.py[tag=source1]
 ----
 
-==== Exercise {counter:exercise}
+include::code-ch09/answers.py[tag=exercise3]
 
-Write the `parse`, `serialize` and `hash` methods for `Block`.
+include::code-ch09/answers.py[tag=exercise4]
+
+include::code-ch09/answers.py[tag=exercise5]
 
 === Version
 
-Version in normal software refers to a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for. In the past this was used as a way to indicate a single feature that was ready to be deployed by the miner who mined the block. Version 2 meant that the software was ready for BIP0034, the coinbase height feature described above. Version 3 meant that the software was ready for BIP0066, the enforcement of strict DER encoding. Version 4 meant that the software was ready for BIP0065, which specified OP_CHECKLOCKTIMEVERIFY.
+Version in normal software refers to a particular set of features. For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block is ready for. In the past this was used as a way to indicate a single feature that was ready to be deployed by the miner who mined the block. Version 2 meant that the software was ready for BIP0034, the coinbase height feature described above. Version 3 meant that the software was ready for BIP0066, the enforcement of strict DER encoding. Version 4 meant that the software was ready for BIP0065, which specified `OP_CHECKLOCKTIMEVERIFY`.
 
 Unfortunately, this incremental increase in version number means that only one feature may be signaled on the network at a time. To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time.
 
@@ -141,29 +117,23 @@ The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header t
 
 This means that in hexadecimal, the first character will always be 2 or 3. The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for. For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
 
-BIP9 requires that 95% of blocks signal readiness in a given 2016 block epoch before the soft fork feature gets activated on the network. Soft forks which used BIP9 as of this writing have been BIP68/BIP112/BIP113 (OP_CHECKSEQUENCEVERIFY and related changes), BIP141 (segwit) and BIP91 (reducing threshold for segwit). These BIPs used bits 0, 1 and 4 for signaling respectively. BIP91 was a little bit of a cheat in that it used an 80% threshold and used a smaller block period.
+BIP9 requires that 95% of blocks signal readiness in a given 2016 block epoch before the soft fork feature gets activated on the network. Soft forks which used BIP9 as of this writing have been BIP68/BIP112/BIP113 (`OP_CHECKSEQUENCEVERIFY` and related changes), BIP141 (segwit) and BIP91 (reducing threshold for segwit). These BIPs used bits 0, 1 and 4 for signaling respectively. BIP91 was a little bit of a cheat in that it used an 80% threshold and used a smaller block period.
 
 Checking for these features is relatively straightforward:
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from block import Block
->>> b = Block.parse(BytesIO(bytes.fromhex('0200...')))
->>> print('BIP9: {}'.format(b.version >> 29 == 0b001))  # <1>
-True
->>> print('BIP91: {}'.format(b.version >> 4 & 1 == 1))  # <2>
-False
->>> print('BIP141: {}'.format(b.version >> 1 & 1 == 1))  # <3>
-True
+include::code-ch09/examples.py[tag=example4]
 ----
 <1> The `>>` operator is the left bit-shift operator, which essentially throws away the rightmost 29 bits, leaving just the top 3 bits. The `0b001` is a way of writing a number in binary format in Python.
 <2> The `&` operator is the "bitwise and" operator. In our case, we right-shift by 4 bits first and then check that the rightmost bit is actually 1.
 <3> We shift 1 to the right because BIP141 was assigned to bit 1.
 
-==== Exercise {counter:exercise}
+include::code-ch09/answers.py[tag=exercise6]
 
-Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
+include::code-ch09/answers.py[tag=exercise7]
+
+include::code-ch09/answers.py[tag=exercise8]
 
 === Previous Block
 
@@ -205,16 +175,15 @@ Similarly, proof-of-work is a very rare number that provides an extraordinary re
 
 So what is the actual proof-of-work? Let's look at the hash256 of the block we saw before to find out:
 
-`020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd000000000000000000
+```
+020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd000000000000000000
 5b0750fce0a889502d40508d39576821155e9c9e3f5c3157f961db38fd8b25be1e77a759
-e93c0118a4ffd71d`
+e93c0118a4ffd71d
+```
 
 [source,python]
 ----
->>> from helper import hash256
->>> block_id = hash256(bytes.fromhex('02000020...a4ffd71d'))[::-1]
->>> print('{}'.format(block_id.hex()).zfill(64))  # <1>
-0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523
+include::code-ch09/examples.py[tag=example5]
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
 
@@ -244,13 +213,7 @@ Let's calculate the target given the bits field in Python:
 
 [source,python]
 ----
->>> from helper import little_endian_to_int
->>> bits = bytes.fromhex('e93c0118')
->>> exponent = bits[-1]
->>> coefficient = little_endian_to_int(bits[:-1])
->>> target = coefficient * 256**(exponent - 3)
->>> print('{:x}'.format(target).zfill(64))  # <1>
-0000000000000000013ce9000000000000000000000000000000000000000000
+include::code-ch09/examples.py[tag=example6]
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
 
@@ -260,10 +223,7 @@ We can check that this block's hash is indeed below the target:
 
 [source,python]
 ----
->>> from helper import little_endian_to_int
->>> proof = little_endian_to_int(hash256(bytes.fromhex('02000020...a4ffd71d')))
->>> print(proof < target)  # <1>
-True
+include::code-ch09/examples.py[tag=example7]
 ----
 <1> `target` is calculated above.
 
@@ -273,9 +233,7 @@ We can see that the proof-of-work is lower by lining up the numbers in 64 hex ch
 
 `ProofW: 0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523`
 
-==== Exercise {counter:exercise}
-
-Write the `bits_to_target` function in `helper.py`.
+include::code-ch09/answers.py[tag=exercise9]
 
 ==== Difficulty
 
@@ -289,31 +247,20 @@ We can code this in python like so:
 
 [source,python]
 ----
->>> from helper import little_endian_to_int
->>> bits = bytes.fromhex('e93c0118')
->>> exponent = bits[-1]
->>> coefficient = little_endian_to_int(bits[:-1])
->>> target = coefficient*256**(exponent-3)
->>> difficulty = 0xffff * 256**(0x1d-3) / target
->>> print(difficulty)
-888171856257.3206
+include::code-ch09/examples.py[tag=example8]
 ----
 
 The difficulty of Bitcoin at the Genesis Block was 1. This gives us context for how difficult mainnet currently is. The difficulty can be thought of as how much more difficult mining is now than it was at the start. The mining difficulty in the above code is roughly 888 billion times more difficult than when Bitcoin started.
 
 This is the number that gets shown in block explorers and Bitcoin price charting services. Difficulty is a much more intuitive way to understand what's going on in terms of effort required to create a new block.
 
-==== Exercise {counter:exercise}
-
-Write the `difficulty` method for `Block`
+include::code-ch09/answers.py[tag=exercise10]
 
 ==== Checking that the Proof-of-Work is Sufficient
 
 We already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a Little-Endian integer. If this number is lower than the target, we have a valid proof-of-work. If not, the block is not valid as it doesn't have proof-of-work.
 
-==== Exercise {counter:exercise}
-
-Write the `check_pow` method for `Block`.
+include::code-ch09/answers.py[tag=exercise11]
 
 === Difficulty Adjustment
 
@@ -332,18 +279,7 @@ We can code this formula like so:
 
 [source,python]
 ----
->>> from block import Block
->>> from helper import TWO_WEEKS  # <1>
->>> last_block = Block.parse(BytesIO(bytes.fromhex('00...f5')))
->>> first_block = Block.parse(BytesIO(bytes.fromhex('00...2e')))
->>> time_differential = last_block.timestamp - first_block.timestamp
->>> if time_differential > TWO_WEEKS * 4:  # <2>
-...     time_differential = TWO_WEEKS * 4
->>> if time_differential < TWO_WEEKS // 4:  # <3>
-...     time_differential = TWO_WEEKS // 4
->>> new_target = last_block.target() * time_differential // TWO_WEEKS
->>> print('{:x}'.format(new_target).zfill(64))
-0000000000000000007615000000000000000000000000000000000000000000
+include::code-ch09/examples.py[tag=example9]
 ----
 <1> Note that `TWO_WEEKS = 60*60*24*14` is the number of seconds in 2 weeks. 60 seconds times 60 minutes times 24 hours times 14 days.
 <2> This makes sure that if it took more than 8 weeks to find the last 2015 blocks, we don't decrease the difficulty too much.
@@ -353,17 +289,7 @@ Note that you only need the headers to calculate what the next block's target sh
 
 [source,python]
 ----
-def target_to_bits(target):
-    raw_bytes = target.to_bytes(32, 'big')
-    raw_bytes = raw_bytes.lstrip(b'\x00')  # <1>
-    if raw_bytes[0] > 0x7f:  # <2>
-        exponent = len(raw_bytes) + 1
-        coefficient = b'\x00' + raw_bytes[:2]
-    else:
-        exponent = len(raw_bytes)  # <3>
-        coefficient = raw_bytes[:3]  # <4>
-    new_bits_big_endian = bytes([exponent]) + coefficient
-    return new_bits_big_endian[::-1]  # <5>
+include::code-ch09/helper.py[tag=source1]
 ----
 <1> Get rid of all the leading 0's.
 <2> The bits format is a way to express really large numbers succinctly and can be used with both negative and positive numbers. If the first bit in the coefficient is a 1, the bits field is interpreted as a negative number. Since target is always positive for us, we shift everything over by 1 byte if the first bit is 1.
@@ -373,29 +299,9 @@ def target_to_bits(target):
 
 If the block doesn't have the correct bits calculated using the difficulty adjustment formula, then we can safely reject that block.
 
-==== Exercise {counter:exercise}
+include::code-ch09/answers.py[tag=exercise12]
 
-Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
-
-Block 471744:
-
-```
-000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd88000000000000000000
-10c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb84559
-7e8b0118e43a81d3
-```
-
-Block 473759:
-
-```
-02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000
-b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e126425859
-7e8b0118e5f00474
-```
-
-==== Exercise {counter:exercise}
-
-Write the `calculate_new_bits` function.
+include::code-ch09/answers.py[tag=exercise13]
 
 === Conclusion
 

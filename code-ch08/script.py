@@ -136,29 +136,22 @@ class Script:
         return encode_varint(total) + result
 
     def evaluate(self, z):
-        # create a copy as we may need to add to this list if we have a
-        # RedeemScript
         instructions = self.instructions[:]
         stack = []
         altstack = []
         while len(instructions) > 0:
             instruction = instructions.pop(0)
             if type(instruction) == int:
-                # do what the opcode says
                 operation = OP_CODE_FUNCTIONS[instruction]
                 if instruction in (99, 100):
-                    # op_if/op_notif require the instructions array
                     if not operation(stack, instructions):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (107, 108):
-                    # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (172, 173, 174, 175):
-                    # these are signing operations, they need a sig_hash
-                    # to check against
                     if not operation(stack, z):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
@@ -166,29 +159,27 @@ class Script:
                     if not operation(stack):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
+            # tag::source1[]
             else:
-                # add the instruction to the stack
                 stack.append(instruction)
                 if len(instructions) == 3 and instructions[0] == 0xa9 \
                     and type(instructions[1]) == bytes and len(instructions[1]) == 20 \
-                    and instructions[2] == 0x87:
-                    # we execute the next three opcodes
-                    instructions.pop()
+                    and instructions[2] == 0x87:  # <1>
+                    instructions.pop()  # <2>
                     h160 = instructions.pop()
                     instructions.pop()
-                    if not op_hash160(stack):
+                    if not op_hash160(stack):  # <3>
                         return False
                     stack.append(h160)
                     if not op_equal(stack):
                         return False
-                    # final result should be a 1
-                    if not op_verify(stack):
+                    if not op_verify(stack):  # <4>
                         LOGGER.info('bad p2sh h160')
                         return False
-                    # hashes match! now add the RedeemScript
-                    redeem_script = encode_varint(len(instruction)) + instruction
+                    redeem_script = encode_varint(len(instruction)) + instruction  # <5>
                     stream = BytesIO(redeem_script)
-                    instructions.extend(Script.parse(stream).instructions)
+                    instructions.extend(Script.parse(stream).instructions)  # <6>
+                    # end::source1[]
         if len(stack) == 0:
             return False
         if stack.pop() == b'':

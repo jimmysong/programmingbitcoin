@@ -15,6 +15,7 @@ from helper import (
 )
 
 
+# tag::source1[]
 NETWORK_MAGIC = b'\xf9\xbe\xb4\xd9'
 TESTNET_NETWORK_MAGIC = b'\x0b\x11\x09\x07'
 
@@ -34,6 +35,7 @@ class NetworkEnvelope:
             self.command.decode('ascii'),
             self.payload.hex(),
         )
+    # end::source1[]
 
     @classmethod
     def parse(cls, s, testnet=False):
@@ -97,6 +99,7 @@ class NetworkEnvelopeTest(TestCase):
         self.assertEqual(envelope.serialize(), msg)
 
 
+# tag::source2[]
 class VersionMessage:
     command = b'version'
 
@@ -126,6 +129,7 @@ class VersionMessage:
         self.user_agent = user_agent
         self.latest_block = latest_block
         self.relay = relay
+    # end::source2[]
 
     def serialize(self):
         '''Serialize this message to send over the network'''
@@ -152,6 +156,7 @@ class VersionMessageTest(TestCase):
         self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d2000000000000000001b2f70726f6772616d6d696e67626c6f636b636861696e3a302e312f0000000001')
 
 
+# tag::source3[]
 class VerAckMessage:
     command = b'verack'
 
@@ -164,7 +169,7 @@ class VerAckMessage:
 
     def serialize(self):
         return b''
-
+# end::source3[]
 
 class PingMessage:
     command = b'ping'
@@ -195,19 +200,21 @@ class PongMessage:
         return self.nonce
 
 
+# tag::source5[]
 class GetHeadersMessage:
     command = b'getheaders'
-
+    
     def __init__(self, version=70015, num_hashes=1, start_block=None, end_block=None):
         self.version = version
-        self.num_hashes = num_hashes
-        if start_block is None:
-            raise RuntimeError('a start block is required')
+        self.num_hashes = num_hashes  # <1>
+        if start_block is None:  # <2>
+            raise RuntimeError('a starting block is required')
         self.start_block = start_block
         if end_block is None:
-            self.end_block = b'\x00' * 32
+            self.end_block = b'\x00' * 32  # <3>
         else:
             self.end_block = end_block
+    # end::source5[]
 
     def serialize(self):
         '''Serialize this message to send over the network'''
@@ -226,6 +233,7 @@ class GetHeadersMessageTest(TestCase):
         self.assertEqual(gh.serialize().hex(), '7f11010001a35bd0ca2f4a88c4eda6d213e2378a5758dfcd6af437120000000000000000000000000000000000000000000000000000000000000000000000000000000000')
 
 
+# tag::source6[]
 class HeadersMessage:
     command = b'headers'
 
@@ -234,21 +242,15 @@ class HeadersMessage:
 
     @classmethod
     def parse(cls, stream):
-        # number of headers is in a varint
         num_headers = read_varint(stream)
-        # initialize the blocks array
         blocks = []
-        # loop through number of headers times
         for _ in range(num_headers):
-            # add a block to the blocks array by parsing the stream
-            blocks.append(Block.parse(stream))
-            # read the next varint (num_txs)
-            num_txs = read_varint(stream)
-            # num_txs should be 0 or raise a RuntimeError
-            if num_txs != 0:
+            blocks.append(Block.parse(stream))  # <1>
+            num_txs = read_varint(stream)  # <2>
+            if num_txs != 0:  # <3>
                 raise RuntimeError('number of txs not 0')
-        # return a class instance
         return cls(blocks)
+    # end::source6[]
 
 
 class HeadersMessageTest(TestCase):
@@ -262,6 +264,7 @@ class HeadersMessageTest(TestCase):
             self.assertEqual(b.__class__, Block)
 
 
+# tag::source4[]
 class SimpleNode:
 
     def __init__(self, host, port=None, testnet=False, logging=False):
@@ -272,11 +275,10 @@ class SimpleNode:
                 port = 8333
         self.testnet = testnet
         self.logging = logging
-        # connect to socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
-        # create a stream that we can use with the rest of the library
         self.stream = self.socket.makefile('rb', None)
+    # end::source4[]
 
     def handshake(self):
         '''Do a handshake with the other node.
@@ -285,44 +287,36 @@ class SimpleNode:
         # send the command
         # wait for a verack message
         raise NotImplementedError
+    # tag::source4[]
 
-    def send(self, message):
+    def send(self, message):  # <1>
         '''Send a message to the connected node'''
-        # create a network envelope
         envelope = NetworkEnvelope(
             message.command, message.serialize(), testnet=self.testnet)
         if self.logging:
             print('sending: {}'.format(envelope))
-        # send the serialized envelope over the socket using sendall
         self.socket.sendall(envelope.serialize())
 
-    def read(self):
+    def read(self):  # <2>
         '''Read a message from the socket'''
         envelope = NetworkEnvelope.parse(self.stream, testnet=self.testnet)
         if self.logging:
             print('receiving: {}'.format(envelope))
         return envelope
 
-    def wait_for(self, *message_classes):
+    def wait_for(self, *message_classes):  # <3>
         '''Wait for one of the messages in the list'''
-        # initialize the command we have, which should be None
         command = None
         command_to_class = {m.command: m for m in message_classes}
-        # loop until the command is in the commands we want
         while command not in command_to_class.keys():
-            # get the next network message
             envelope = self.read()
-            # set the command to be evaluated
             command = envelope.command
-            # we know how to respond to version and ping, handle that here
             if command == VersionMessage.command:
-                # send verack
                 self.send(VerAckMessage())
             elif command == PingMessage.command:
-                # send pong
                 self.send(PongMessage(envelope.payload))
-        # return the envelope parsed as a member of the right message class
         return command_to_class[command].parse(envelope.stream())
+# end::source4[]
 
 
 class SimpleNodeTest(TestCase):

@@ -32,35 +32,14 @@ The code to handle network messages requires us to create a new class:
 
 [source,python]
 ----
-NETWORK_MAGIC = b'\xf9\xbe\xb4\xd9'
-TESTNET_NETWORK_MAGIC = b'\x0b\x11\x09\x07'
-
-class NetworkEnvelope:
-
-    def __init__(self, command, payload, testnet=False):
-        self.command = command
-        self.payload = payload
-	if testnet:
-	    self.magic = TESTNET_NETWORK_MAGIC
-	else:
-	    self.magic = NETWORK_MAGIC
-
-    def __repr__(self):
-        return '{}: {}'.format(
-            self.command.decode('ascii'),
-            self.payload.hex(),
-        )
+include::code-ch10/network.py[tag=source1]
 ----
 
-==== Exercise {counter:exercise}
+include::code-ch10/answers.py[tag=exercise1]
 
-Determine what this network message is:
+include::code-ch10/answers.py[tag=exercise2]
 
-`f9beb4d976657261636b000000000000000000005df6e0e2`
-
-==== Exercise {counter:exercise}
-
-Write the `parse` and `serialize` methods for `NetworkEnvelope`.
+include::code-ch10/answers.py[tag=exercise3]
 
 === Parsing the payload
 
@@ -83,51 +62,12 @@ Setting some reasonable defaults, our VersionMessage class looks like this:
 
 [source,python]
 ----
-class VersionMessage:
-    command = b'version'
-
-    def __init__(
-            self,
-            version=70015,
-            services=0,
-            timestamp=None,
-            receiver_services=0,
-            receiver_ip=b'\x00\x00\x00\x00',
-            receiver_port=8333,
-            sender_services=0,
-            sender_ip=b'\x00\x00\x00\x00',
-            sender_port=8333,
-            nonce=None,
-            user_agent=b'/programming-bitcoin:0.1/',
-            latest_block=0,
-            relay=True,
-    ):
-        self.version = version
-        self.services = services
-        if timestamp is None:
-            self.timestamp = int(time.time())
-        else:
-            self.timestamp = timestamp
-        self.receiver_services = receiver_services
-        self.receiver_ip = receiver_ip
-        self.receiver_port = receiver_port
-        self.sender_services = sender_services
-        self.sender_ip = sender_ip
-        self.sender_port = sender_port
-        if nonce is None:
-            self.nonce = int_to_little_endian(randint(0, 2**64), 8)
-        else:
-            self.nonce = nonce
-        self.user_agent = user_agent
-        self.latest_block = latest_block
-        self.relay = relay
+include::code-ch10/network.py[tag=source2]
 ----
 
 At this point, we need a way to serialize this message.
 
-==== Exercise {counter:exercise}
-
-Write the `serialize` method for `VersionMessage`.
+include::code-ch10/answers.py[tag=exercise4]
 
 === Network handshake
 
@@ -148,7 +88,7 @@ Network communication is tricky due to its asynchronous nature. To experiment, w
 ----
 >>> import socket
 >>> from network import NetworkEnvelope, VersionMessage
->>> host = 'tbtc.programmingblockchain.com'  # <1>
+>>> host = 'testnet.programmingbitcoin.com'  # <1>
 >>> port = 18333
 >>> socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 >>> socket.connect((host, port))
@@ -172,18 +112,7 @@ We also need a Verack message class which we'll create here:
 
 [source,python]
 ----
-class VerAckMessage:
-    command = b'verack'
-
-    def __init__(self):
-        pass
-
-    @classmethod
-    def parse(cls, s):
-        return cls()
-
-    def serialize(self):
-        return b''
+include::code-ch10/network.py[tag=source3]
 ----
 
 Note this is the minimum to create a network message.
@@ -192,59 +121,7 @@ Let's now automate this by creating a class that will handle a lot of the sendin
 
 [source,python]
 ----
-class SimpleNode:
-    
-    def __init__(self, host, port=None, testnet=False, logging=False):
-        if port is None:
-            if testnet:
-                port = 18333
-            else:
-                port = 8333
-        self.testnet= testnet
-        self.logging = logging
-        # connect to socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((host, port))
-        # create a stream that we can use with the rest of the library
-        self.stream = self.socket.makefile('rb', None)
-        
-    def send(self, message):  # <1>
-        '''Send a message to the connected node'''
-        # create a network envelope
-        envelope = NetworkEnvelope(
-            message.command, message.serialize(), testnet=self.testnet)
-        if self.logging:
-            print('sending: {}'.format(envelope))
-        # send the serialized envelope over the socket using sendall
-        self.socket.sendall(envelope.serialize())
-        
-    def read(self):  # <2>
-        '''Read a message from the socket'''
-        envelope = NetworkEnvelope.parse(self.stream, testnet=self.testnet)
-        if self.logging:
-            print('receiving: {}'.format(envelope))
-        return envelope
-
-    def wait_for(self, *message_classes):  # <3>
-        '''Wait for one of the messages in the list'''
-        # initialize the command we have, which should be None
-        command = None
-        command_to_class = {m.command: m for m in message_classes}
-        # loop until the command is in the commands we want
-        while command not in command_to_class.keys():
-            # get the next network message
-            envelope = self.read()
-            # set the command to be evaluated
-            command = envelope.command
-            # we know how to respond to version and ping, handle that here
-            if command == VersionMessage.command:
-                # send verack
-                self.send(VerAckMessage())
-            elif command == PingMessage.command:
-                # send pong
-                self.send(PongMessage(envelope.payload))
-        # return the envelope parsed as a member of the right message class
-        return command_to_class[command].parse(envelope.stream())
+include::code-ch10/network.py[tag=source4]
 ----
 <1> The `send` method sends a message over the socket. The `command` property and `serialize` methods are expected to exist in the `message` object.
 <2> The `read` method reads a new message from the socket. This method could potentially detect the message and route to the right parser and send back not the envelope but the correctly parsed expected object.
@@ -267,16 +144,13 @@ Now that we have a node, we can now handshake with another node.
 ...     else:
 ...         version_received = True
 ...         node.send(VerAckMessage())
-...
 ----
 <1> It turns out most nodes don't care about the fields like IP address and port number all that much. We can connect with the defaults and everything will be just fine.
 <2> We start the handshake by sending the Version message
 <3> We only finish when we've received both Verack and Version.
 <4> We expect to receive a Verack for our Version and the other node's Version. We don't know which order, though.
 
-==== Exercise {counter:exercise}
-
-Write the `handshake` method for `SimpleNode`
+include::code-ch10/answers.py[tag=exercise5]
 
 === Getting Block Headers
 
@@ -293,29 +167,13 @@ Here's what the class looks like:
 
 [source,python]
 ----
-
-class GetHeadersMessage:
-    command = b'getheaders'
-    
-    def __init__(self, version=70015, num_hashes=1, start_block=None, end_block=None):
-        self.version = version
-        self.num_hashes = num_hashes  # <1>
-        if start_block is None:  # <2>
-            raise RuntimeError('a starting block is required')
-        self.start_block = start_block
-        if end_block is None:
-            self.end_block = b'\x00' * 32  # <3>
-        else:
-            self.end_block = end_block
-
+include::code-ch10/network.py[tag=source5]
 ----
 <1> For the purposes of this chapter, we're going to assume that the number of hashes we'll get is 1. A more robust implementation would handle more than a single hash, but we can download the block headers using a single hash.
 <2> A starting block is needed, otherwise we can't create a proper message.
 <3> The ending block we assume to be null, or as many as the server will send to us if not defined.
 
-==== Exercise {counter:exercise}
-
-Write the `serialize` method for `GetHeadersMessage`.
+include::code-ch10/answers.py[tag=exercise6]
 
 === Headers response
 
@@ -342,22 +200,7 @@ We can proceed to the actual parsing.
 
 [source,python]
 ----
-class HeadersMessage:
-    command = b'headers'
-    
-    def __init__(self, blocks):
-        self.blocks = blocks
-        
-    @classmethod
-    def parse(cls, stream):
-        num_headers = read_varint(stream)
-        blocks = []
-        for _ in range(num_headers):
-            blocks.append(Block.parse(stream))  # <1>
-            num_txs = read_varint(stream)  # <2>
-            if num_txs != 0:  # <3>
-                raise RuntimeError('number of txs not 0')
-        return cls(blocks)
+include::code-ch10/network.py[tag=source6]
 ----
 <1> Each block gets parsed using the `Block` class's `parse` method using the same stream that we have.
 <2> The number of transactions is always 0 and is a remnant of block parsing.
@@ -367,38 +210,7 @@ We can now do something useful with the network connection that we've set up. We
 
 [source,python]
 ----
->>> from network import SimpleNode, GetHeadersMessage, HeadersMessage
->>> from block import GENESIS_BLOCK_HASH
->>> from helper import calculate_new_bits
->>> node = SimpleNode('btc.programmingblockchain.com', testnet=False)
->>> node.handshake()
->>> last_block_hash = GENESIS_BLOCK_HASH
->>> first_epoch_block = None
->>> expected_bits = None
->>> count = 1
->>> while True:
-...     getheaders = GetHeadersMessage(start_block=last_block_hash)
-...     node.send(getheaders)
-...     headers = node.wait_for(HeadersMessage)
-...     for b in headers.blocks:
-...         if not b.check_pow():  # <1>
-...             raise RuntimeError('bad proof of work at block {}'.format(count))
-...         if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_block_hash:  # <2>
-...             raise RuntimeError('discontinuous block at {}'.format(count))
-...         if expected_bits and b.bits != expected_bits:  # <3>
-...             raise RuntimeError('bad bits at block {} {} vs {}'.format(count, b.bits.hex(), expected_bits.hex()))
-...         if first_epoch_block and count % 2016 == 2015:  # <4>
-...             expected_bits = calculate_new_bits(
-...                 expected_bits, b.timestamp - first_epoch_block.timestamp)
-...             print(expected_bits.hex())
-...         elif first_epoch_block is None:  # <5>
-...             expected_bits = b.bits
-...         if count % 2016 == 0 or not first_epoch_block:  # <6>
-...             first_epoch_block = b
-...         count += 1
-...         last_block_hash = b.hash()
-...     if len(headers_message.blocks) < 2000:
-...         break
+include::code-ch10/examples.py[tag=example1]
 ----
 <1> We are checking the proof-of-work being correct
 <2> We are checking that the current block is following the previous one we checked

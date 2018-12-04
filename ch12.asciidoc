@@ -24,14 +24,7 @@ A Bloom Filter is a computer science structure that can be used on any data in a
 
 [source,python]
 ----
->>> from helper import hash256
->>> bit_field_size = 10  # <1>
->>> bit_field = [0] * bit_field_size
->>> h = hash256(b'hello world')  # <2>
->>> bit = int.from_bytes(h, 'big') % bit_field_size  # <3>
->>> bit_field[bit] = 1  # <4>
->>> print(bit_field)
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+include::code-ch12/examples.py[tag=example1]
 ----
 <1> Our bit field is 10 bits long, or has 10 "buckets"
 <2> We take the item and hash it with our hash function.
@@ -55,15 +48,7 @@ We can run a second item through the same exact filter and set that bit to 1 as 
 
 [source,python]
 ----
->>> from helper import hash256
->>> bit_field_size = 10
->>> bit_field = [0] * bit_field_size
->>> for item in (b'hello world', b'goodbye'):  # <1>
-...     h = hash256(item)
-...     bit = int.from_bytes(h, 'big') % bit_field_size
-...     bit_field[bit] = 1
->>> print(bit_field)
-[0, 0, 1, 0, 0, 0, 0, 0, 0, 1]
+include::code-ch12/examples.py[tag=example2]
 ----
 <1> We create a filter for two different items here, but this can easily be extended to many more.
 
@@ -72,9 +57,7 @@ If the other node has 50 items, this filter will send back on average 10 items i
 .10-bit Bloom Filter with 2 elements
 image::bloomfilter2.png[Two Item Bloom Filter]
 
-==== Exercise {counter:exercise}
-
-Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
+include::code-ch12/answers.py[tag=exercise1]
 
 === Going a step further
 
@@ -86,16 +69,7 @@ Here's what that would look like. For simplicity, we stick to the same 10-bit fi
 
 [source,python]
 ----
->>> from helper import hash256, hash160
->>> bit_field_size = 10
->>> bit_field = [0] * bit_field_size
->>> for item in (b'hello world', b'goodbye'):
-...     for hash_function in (hash256, hash160):  # <1>
-...         h = hash_function(item)
-...         bit = int.from_bytes(h, 'big') % bit_field_size
-...         bit_field[bit] = 1
->>> print(bit_field)
-[1, 1, 1, 0, 0, 0, 0, 0, 0, 1]
+include::code-ch12/examples.py[tag=example3]
 ----
 <1> We iterate over 2 different hash functions here (`hash256` and `hash160`), but we could just as easily have more.
 
@@ -124,21 +98,7 @@ The `fba4c795` number is a constant utilized for Bitcoin Bloom Filters and is us
 
 [source,python]
 ----
->>> from helper import murmur3  # <1>
->>> from bloomfilter import BIP37_CONSTANT  # <2>
->>> field_size = 2
->>> num_functions = 2
->>> tweak = 42
->>> bit_field_size = field_size * 8
->>> bit_field = [0] * bit_field_size
->>> for phrase in (b'hello world', b'goodbye'):  # <3>
-...     for i in range(num_functions):  # <4>
-...         seed = i * BIP37_CONSTANT + tweak  # <5>
-...         h = murmur3(phrase, seed=seed)  # <6>
-...         bit = h % bit_field_size
-...         bit_field[bit] = 1
->>> print(bit_field)
-[0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0]
+include::code-ch12/examples.py[tag=example4]
 ----
 <1> `murmur3` can be implemented in pure Python
 <2> `BIP37_CONSTANT` is the `fba4c795` number defined in BIP0037
@@ -153,25 +113,12 @@ We can now start creating a `BloomFilter` class.
 
 [source,python]
 ----
-class BloomFilter:
-
-    def __init__(self, size, function_count, tweak):
-        self.size = size
-        self.bit_field = [0] * (size * 8)
-        self.function_count = function_count
-        self.tweak = tweak
+include::code-ch12/bloomfilter.py[tag=source1]
 ----
 
-==== Exercise {counter:exercise}
+include::code-ch12/answers.py[tag=exercise2]
 
-Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use `bit_field_to_bytes` to convert to bytes)
-
-* b'Hello World'
-* b'Goodbye!'
-
-==== Exercise {counter:exercise}
-
-Write the `add` method for `BloomFilter`
+include::code-ch12/answers.py[tag=exercise3]
 
 === Loading a Bloom Filter
 
@@ -184,9 +131,7 @@ image::filterload.png[filterload Command]
 
 The bit field is the bit field to match against. We also send along how many hash functions and the value of the tweak. The matched item flag is a way of asking the node to add any matched transactions to the Bloom Filter.
 
-==== Exercise {counter:exercise}
-
-Write the  `filterload` payload from the `BloomFilter` class.
+include::code-ch12/answers.py[tag=exercise4]
 
 === Getting Merkle Blocks
 
@@ -203,21 +148,12 @@ We can now create this message.
 
 [source,python]
 ----
-class GetDataMessage:
-    command = b'getdata'
-    
-    def __init__(self):
-        self.data = []  # <1>
-        
-    def add_data(self, data_type, identifier):  # <2>
-        self.data.append((data_type, identifier))
+include::code-ch12/network.py[tag=source1]
 ----        
 <1> We store what data we want from the other node.
 <2> Whatever we want to query, we add here to the message.
 
-==== Exercise {counter:exercise}
-
-Write the `serialize` method for the `GetDataMessage` class.
+include::code-ch12/answers.py[tag=exercise5]
 
 === Getting Transactions of Interest
 
@@ -226,41 +162,7 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 (For the sake of brevity, the imports are omitted)
 [source,python]
 ----
->>> from bloomfilter import BloomFilter
->>> from helper import decode_base58
->>> from merkleblock import MerkleBlock
->>> from network import FILTERED_BLOCK_DATA_TYPE, GetHeadersMessage, GetDataMessage, HeadersMessage, SimpleNode
->>> from tx import Tx
->>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
->>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
->>> h160 = decode_base58(address)
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=False)
->>> bf = BloomFilter(size=30, function_count=5, tweak=90210)  # <1>
->>> bf.add(h160)  # <2>
->>> node.handshake()
->>> node.send(bf.filterload())  # <3>
->>> start_block = bytes.fromhex(last_block_hex)
->>> getheaders = GetHeadersMessage(start_block=start_block)
->>> node.send(getheaders)  # <4>
->>> headers = node.wait_for(HeadersMessage)
->>> getdata = GetDataMessage()  # <5>
->>> for b in headers.blocks:
-...     if not b.check_pow():
-...         raise RuntimeError('proof of work is invalid')
-...     getdata.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())  # <6>
->>> node.send(getdata)  # <7>
->>> found = False
->>> while not found:
-...     message = node.wait_for(MerkleBlock, Tx)  # <8>
-...     if message.command == b'merkleblock':
-...         if not message.is_valid():  # <9>
-...             raise RuntimeError('invalid merkle proof')
-...     else:
-...         for i, tx_out in enumerate(message.tx_outs):
-...             if tx_out.script_pubkey.address(testnet=True) == address:  # <10>
-...                 print('found: {}:{}'.format(message.id(), i))
-...                 found = True
-...                 break
+include::code-ch12/examples.py[tag=example5]
 ----
 <1> We are creating a Bloom Filter that's 30 bytes, 5 hash functions using a particularly popular 90's tweak.
 <2> The only thing we'll filter for is the address above.
@@ -275,9 +177,7 @@ We can now set a Bloom Filter with a peer node and get all the information we ne
 
 What we've done in the above is look at 2000 blocks after a particular block for UTXOs corresponding to a particular address. This is without the use of any block explorer, which preserves, to some degree, our privacy.
 
-==== Exercise {counter:exercise}
-
-Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input and broadcast that message on the network.
+include::code-ch12/answers.py[tag=exercise6]
 
 === Conclusion
 

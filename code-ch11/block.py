@@ -14,9 +14,11 @@ GENESIS_BLOCK_HASH = bytes.fromhex('000000000019d6689c085ae165831e934ff763ae46a2
 TESTNET_GENESIS_BLOCK_HASH = bytes.fromhex('000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943')
 
 
+# tag::source1[]
 class Block:
 
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):
+    def __init__(self, version, prev_block, merkle_root,
+                 timestamp, bits, nonce, tx_hashes=None):  # <1>
         self.version = version
         self.prev_block = prev_block
         self.merkle_root = merkle_root
@@ -24,6 +26,7 @@ class Block:
         self.bits = bits
         self.nonce = nonce
         self.tx_hashes = tx_hashes
+    # end::source1[]
 
     @classmethod
     def parse(cls, s):

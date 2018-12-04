@@ -130,10 +130,9 @@ Use the `Script.parse` method and look up what various opcodes do at https://en.
 >>> print(combined_script.evaluate(0))
 True
 
-----
-
-
+# end::answer4[]
 """
+
 
 class Chapter6Test(TestCase):
 

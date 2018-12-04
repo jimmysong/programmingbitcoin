@@ -21,8 +21,38 @@ from network import (
 )
 
 
+methods = []
+
+"""
+# tag::exercise1[]
+==== Exercise 1
+
+Determine what this network message is:
+
+`f9beb4d976657261636b000000000000000000005df6e0e2`
+# end::exercise1[]
+# tag::answer1[]
+>>> from network import NetworkEnvelope
+>>> from io import BytesIO
+>>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
+>>> stream = BytesIO(bytes.fromhex(message_hex))
+>>> envelope = NetworkEnvelope.parse(stream)
+>>> print(envelope.command)
+b'verack'
+>>> print(envelope.payload)
+b''
+
+# end::answer1[]
+# tag::exercise2[]
+==== Exercise 2
+
+Write the `parse` method for `NetworkEnvelope`.
+# end::exercise2[]
+"""
+
+# tag::answer2[]
 @classmethod
-def parse_ne(cls, s, testnet=False):
+def parse(cls, s, testnet=False):
     magic = s.read(4)
     if magic == b'':
         raise IOError('Connection reset!')
@@ -41,18 +71,37 @@ def parse_ne(cls, s, testnet=False):
     if calculated_checksum != checksum:
         raise IOError('checksum does not match')
     return cls(command, payload, testnet=testnet)
+# end::answer2[]
 
+"""
+# tag::exercise3[]
+==== Exercise 3
 
-def serialize_ne(self):
+Write the `serialize` method for `NetworkEnvelope`.
+# end::exercise3[]
+"""
+
+# tag::answer3[]
+def serialize(self):
     result = self.magic
     result += self.command + b'\x00' * (12 - len(self.command))
     result += int_to_little_endian(len(self.payload), 4)
     result += hash256(self.payload)[:4]
     result += self.payload
     return result
+# end::answer3[]
+methods.append(serialize)
 
+"""
+# tag::exercise4[]
+==== Exercise 4
 
-def serialize_version(self):
+Write the `serialize` method for `VersionMessage`.
+# end::exercise4[]
+"""
+
+# tag::answer4[]
+def serialize(self):
     result = int_to_little_endian(self.version, 4)
     result += int_to_little_endian(self.services, 8)
     result += int_to_little_endian(self.timestamp, 8)
@@ -71,64 +120,48 @@ def serialize_version(self):
     else:
         result += b'\x00'
     return result
+# end::answer4[]
+methods.append(serialize)
 
+"""
+# tag::exercise5[]
+==== Exercise 5
 
+Write the `handshake` method for `SimpleNode`
+# end::exercise5[]
+"""
+
+# tag::answer5[]
 def handshake(self):
     version = VersionMessage()
     self.send(version)
     self.wait_for(VerAckMessage)
+# end::answer5[]
 
+"""
+# tag::exercise6[]
+==== Exercise 6
 
-def serialize_getheaders(self):
+Write the `serialize` method for `GetHeadersMessage`.
+# end::exercise6[]
+"""
+
+# tag::answer6[]
+def serialize(self):
     result = int_to_little_endian(self.version, 4)
     result += encode_varint(self.num_hashes)
     result += self.start_block[::-1]
     result += self.end_block[::-1]
     return result
+# end::answer6[]
+methods.append(serialize)
 
 
 class Chapter10Test(TestCase):
 
     def test_apply(self):
-        NetworkEnvelope.parse = parse_ne
-        NetworkEnvelope.serialize = serialize_ne
-        VersionMessage.serialize = serialize_version
+        NetworkEnvelope.parse = parse
+        NetworkEnvelope.serialize = methods[0]
+        VersionMessage.serialize = methods[1]
         SimpleNode.handshake = handshake
-        GetHeadersMessage.serialize = serialize_getheaders
-
-    def test_exercise_1(self):
-        message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
-        stream = BytesIO(bytes.fromhex(message_hex))
-        envelope = NetworkEnvelope.parse(stream)
-        self.assertEqual(envelope.command, b'verack')
-        self.assertEqual(envelope.payload, b'')
-
-    def test_example_1(self):
-        node = SimpleNode('btc.programmingblockchain.com', testnet=False)
-        node.handshake()
-        last_block_hash = GENESIS_BLOCK_HASH
-        first_epoch_block = None
-        expected_bits = None
-        count = 1
-        want = ('ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', 'ffff001d', '6ad8001d', '28c4001d')
-        for bits in want:
-            getheaders = GetHeadersMessage(start_block=last_block_hash)
-            node.send(getheaders)
-            headers = node.wait_for(HeadersMessage)
-            for b in headers.blocks:
-                if not b.check_pow():
-                    raise RuntimeError('bad proof of work at block {}'.format(count))
-                if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_block_hash:
-                    raise RuntimeError('discontinuous block at {}'.format(count))
-                if expected_bits and b.bits != expected_bits:
-                    raise RuntimeError('bad bits at block {} {} vs {}'.format(count, b.bits.hex(), expected_bits.hex()))
-                if first_epoch_block and count % 2016 == 2015:
-                    expected_bits = calculate_new_bits(
-                        expected_bits, b.timestamp - first_epoch_block.timestamp)
-                    self.assertEqual(expected_bits.hex(), bits)
-                elif first_epoch_block is None:
-                    expected_bits = b.bits
-                if count % 2016 == 0 or not first_epoch_block:
-                    first_epoch_block = b
-                count += 1
-                last_block_hash = b.hash()
+        GetHeadersMessage.serialize = methods[2]

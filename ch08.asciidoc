@@ -78,35 +78,13 @@ In an m-of-n signature multisig, the stack contains `n` as the top element, then
 
 [source,python]
 ----
-def op_checkmultisig(stack, z):
-    if len(stack) < 1:
-        return False
-    n = decode_num(stack.pop())
-    if len(stack) < n + 1:
-        return False
-    sec_pubkeys = []
-    for _ in range(n):
-        sec_pubkeys.append(stack.pop())
-    m = decode_num(stack.pop())
-    if len(stack) < m + 1:
-        return False
-    der_signatures = []
-    for _ in range(m):
-        der_signatures.append(stack.pop()[:-1])  # <1>
-    stack.pop()  # <2>
-    try:
-	raise NotImplementedError  # <3>
-    except (ValueError, SyntaxError):
-        return False
-    return True
+include::code-ch08/op.py[tag=source1]
 ----
 <1> Each DER signature is assumed to be using SIGHASH_ALL. This isn't required, but is generally the case on the network as of this writing.
 <2> We have to take care of the off-by-one error by popping off the stack and not doing anything with the element.
 <3> This is the part that you will need to code for the next exercise.
 
-==== Exercise {counter:exercise}
-
-Write the `op_checkmultisig` function of `op.py`.
+include::code-ch08/answers.py[tag=exercise1]
 
 === Problems with Bare Multisig
 
@@ -234,38 +212,15 @@ We now need to special case the particular sequence of redeem_script, `OP_HASH16
 
 [source,python]
 ----
-    def evaluate(self, z):
-        insts = self.instructions[:]
-        stack = []
-        altstack = []
-        while len(insts) > 0:
-            inst = insts.pop(0)
-            if type(inst) == int:
+class Script:
 ...
-            else:
-                stack.append(inst)
-                if len(insts) == 3 and insts[0] == 0xa9 \
-                    and type(insts[1]) == bytes and len(insts[1]) == 20 \
-                    and insts[2] == 0x87:  # <1>
-                    insts.pop()  #  <2>
-                    h160 = insts.pop()
-                    insts.pop()
-                    if not op_hash160(stack):  #  <3>
-                        return False
-                    stack.append(h160)
-                    if not op_equal(stack):
-                        return False
-                    if not op_verify(stack):  # <4>
-                        print('bad p2sh h160')
-                        return False
-                    redeem_script = encode_varint(len(inst)) + inst  # <5>
-                    stream = BytesIO(redeem_script)
-                    insts.extend(Script.parse(stream).instructions)  # <6>
-        if len(stack) == 0:
-            return False
-        if stack.pop() == b'':
-            return False
-        return True
+    def evaluate(self, z):
+...
+        while len(instructions) > 0:
+            instruction = instructions.pop(0)
+            if type(instruction) == int:
+...
+include::code-ch08/script.py[tag=source1]
 ----
 <1> `0xa9` is `OP_HASH160`, `0x87` is `OP_EQUAL`. We're checking here that the next 3 instructions are exactly the pattern we're looking for.
 <2> We know that this is `OP_HASH160`, so we just pop it off. Similarly, we know the next one is the 20-byte hash value and the third item is `OP_EQUAL`, which is what we tested for in the if statement above it.
@@ -288,17 +243,14 @@ Specifically, p2sh uses the `0x05` byte on mainnet which translates to addresses
 
 [source,python]
 ----
->>> from helper import encode_base58_checksum
->>> h160 = bytes.fromhex('74d691da1574e6b3c192ecfb52cc8984ee7b6c56')
->>> print(encode_base58_checksum(b'\x05' + h160))
-3CLoMMyuoDQTPRD3XYZtCvgvkadrAdvdXh
+include::code-ch08/examples.py[tag=example1]
 ----
 
 The testnet prefix is the `0xc4` byte which creates addresses that start with a 2 in base58.
 
-==== Exercise {counter:exercise}
+include::code-ch08/answers.py[tag=exercise2]
 
-Write two functions in `h160_to_p2pkh_address` and `h160_to_p2sh_address` that convert a 20-byte hash160 into a p2pkh and p2sh address respectively.
+include::code-ch08/answers.py[tag=exercise3]
 
 ==== p2sh Signature Verification
 
@@ -340,12 +292,7 @@ The hash256 of this interpreted as a Big-Endian integer is our `z`. The code for
 
 [source,python]
 ----
->>> from helper import hash256
->>> modified_tx = bytes.fromhex('01000000...01000000')
->>> s256 = hash256(modified_tx)
->>> z = int.from_bytes(s256, 'big')
->>> print(hex(z))
-0xe71bfa115715d6fd33796948126f40a8cdd39f187e4afb03896795189fe1423c
+include::code-ch08/examples.py[tag=example2]
 ----
 
 Now that we have our `z`, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript:
@@ -355,28 +302,15 @@ image::p2sh-sigelements.png[DER and SEC]
 
 [source,python]
 ----
->>> from ecc import S256Point, Signature
->>> from helper import hash256
->>> modified_tx = bytes.fromhex('01000000...01000000')
->>> d256 = hash256(modified_tx)
->>> z = int.from_bytes(d256, 'big')  # <1>
->>> sec = bytes.fromhex('0226...70')
->>> der = bytes.fromhex('3045....37')
->>> point = S256Point.parse(sec)
->>> sig = Signature.parse(der)
-True
+include::code-ch08/examples.py[tag=example3]
 ----
 <1> `z` is from the code above
 
 We've validated 1 of the 2 signatures that are needed to unlock this p2sh multisig.
 
-==== Exercise {counter:exercise}
+include::code-ch08/answers.py[tag=exercise4]
 
-Validate the second signature from the transaction above.
-
-==== Exercise {counter:exercise}
-
-Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh transactions.
+include::code-ch08/answers.py[tag=exercise5]
 
 === Conclusion
 

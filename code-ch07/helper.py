@@ -47,16 +47,18 @@ def encode_base58_checksum(s):
     return encode_base58(s + hash256(s)[:4]).decode('ascii')
 
 
+# tag::source1[]
 def decode_base58(s):
     num = 0
-    for c in s.encode('ascii'):
+    for c in s.encode('ascii'):  # <1>
         num *= 58
         num += BASE58_ALPHABET.index(c)
-    combined = num.to_bytes(25, byteorder='big')
+    combined = num.to_bytes(25, byteorder='big')  # <2>
     checksum = combined[-4:]
     if hash256(combined[:-4])[:4] != checksum:
-        raise ValueError('bad address: {} {}'.format(checksum, hash256(combined)[:4]))
-    return combined[1:-4]
+        raise RuntimeError('bad address: {} {}'.format(checksum, hash256(combined[:-4])[:4]))
+    return combined[1:-4]  # <3>
+# end::source1[]
 
 
 def little_endian_to_int(b):

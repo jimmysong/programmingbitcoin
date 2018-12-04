@@ -9,6 +9,7 @@ from helper import (
 )
 
 
+# tag::source1[]
 class Block:
 
     def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce):
@@ -18,6 +19,7 @@ class Block:
         self.timestamp = timestamp
         self.bits = bits
         self.nonce = nonce
+    # end::source1[]
 
     @classmethod
     def parse(cls, s):

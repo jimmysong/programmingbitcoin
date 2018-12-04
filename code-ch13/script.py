@@ -31,14 +31,18 @@ def p2sh_script(h160):
     return Script([0xa9, h160, 0x87])
 
 
+# tag::source1[]
 def p2wpkh_script(h160):
     '''Takes a hash160 and returns the p2wpkh ScriptPubKey'''
-    return Script([0x00, h160])
+    return Script([0x00, h160])  # <1>
+# end::source1[]
 
 
+# tag::source4[]
 def p2wsh_script(h256):
     '''Takes a hash160 and returns the p2wsh ScriptPubKey'''
-    return Script([0x00, h256])
+    return Script([0x00, h256])  # <1>
+# end::source4[]
 
 
 LOGGER = getLogger(__name__)
@@ -209,25 +213,28 @@ class Script:
                     instructions.extend(Script.parse(stream).instructions)
                 # witness program version 0 rule. if stack instructions are:
                 # 0 <20 byte hash> this is p2wpkh
-                if len(stack) == 2 and stack[0] == b'' and len(stack[1]) == 20:
+                # tag::source3[]
+                if len(stack) == 2 and stack[0] == b'' and len(stack[1]) == 20:  # <1>
                     h160 = stack.pop()
                     stack.pop()
                     instructions.extend(witness)
                     instructions.extend(p2pkh_script(h160).instructions)
+                # end::source3[]
                 # witness program version 0 rule. if stack instructions are:
                 # 0 <32 byte hash> this is p2wsh
+                # tag::source6[]
                 if len(stack) == 2 and stack[0] == b'' and len(stack[1]) == 32:
-                    h256 = stack.pop()
-                    stack.pop()
-                    instructions.extend(witness[:-1])
-                    witness_script = witness[-1]
-                    if h256 != sha256(witness_script):
-                        LOGGER.info('bad sha256 {} vs {}'.format(h256.hex(), sha256(witness_script).hex()))
+                    s256 = stack.pop()  # <1>
+                    stack.pop()  # <2>
+                    instructions.extend(witness[:-1])  # <3>
+                    witness_script = witness[-1]  # <4>
+                    if s256 != sha256(witness_script):  # <5>
+                        print('bad sha256 {} vs {}'.format(s256.hex(), sha256(witness_script).hex()))
                         return False
-                    # hashes match! now add the Witness Script
                     stream = BytesIO(encode_varint(len(witness_script)) + witness_script)
-                    witness_script_instructions = Script.parse(stream).instructions
+                    witness_script_instructions = Script.parse(stream).instructions  # <6>
                     instructions.extend(witness_script_instructions)
+                # end::source6[]
         if len(stack) == 0:
             return False
         if stack.pop() == b'':
@@ -254,17 +261,18 @@ class Script:
             and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 20 \
             and self.instructions[2] == 0x87
 
-    def is_p2wpkh_script_pubkey(self):
-        '''Returns whether this follows the
-        OP_0 <20 byte hash> pattern.'''
+    # tag::source2[]
+    def is_p2wpkh_script_pubkey(self):  # <2>
         return len(self.instructions) == 2 and self.instructions[0] == 0x00 \
             and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 20
+    # end::source2[]
 
+    # tag::source5[]
     def is_p2wsh_script_pubkey(self):
-        '''Returns whether this follows the
-        OP_0 <20 byte hash> pattern.'''
         return len(self.instructions) == 2 and self.instructions[0] == 0x00 \
             and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 32
+    # end::source5[]
+
 
     def address(self, testnet=False):
         '''Returns the address corresponding to the script'''

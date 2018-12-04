@@ -266,6 +266,8 @@ include::code-ch05/answers.py[tag=exercise1]
 
 [source,python]
 ----
+class Tx:
+...
 include::code-ch05/answers.py[tag=answer1]
 ----
 
@@ -319,7 +321,7 @@ include::code-ch05/answers.py[tag=exercise6]
 ----
 class Tx:
 ...
-include::code-ch05/answers.py[tag=answer6]
+include::code-ch05/answers.py[tag=answer6,indent=4]
 ----
 
 === <<chapter_script>>: Script
@@ -347,11 +349,11 @@ include::code-ch06/answers.py[tag=answer3]
 
 OP_2 or `52` will satisfy the equation x^2^+x-6=0.
 
-include::code-ch06/answers.py[tag=exercise3]
+include::code-ch06/answers.py[tag=exercise4]
 
 [source,python]
 ----
-include::code-ch06/answers.py[tag=answer3]
+include::code-ch06/answers.py[tag=answer4]
 ----
 <1> `collision1` and `collision2` are from the sha1 preimages that were found to collide from Google. (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html)
 
@@ -359,989 +361,358 @@ This is looking for a sha1 Collision. The only way to satisfy this script is to 
 
 === <<chapter_tx>>: Transaction Creation and Validation
 
-==== Exercise {counter:ch7exercise}
-
-Write the `sig_hash` method for the `Tx` class.
+include::code-ch07/answers.py[tag=exercise1]
 
 [source,python]
 ----
 class Tx:
 ...
-    def sig_hash(self, input_index):
-        '''Returns the integer representation of the hash that needs to get
-        signed for index input_index'''
-	s = int_to_little_endian(self.version, 4)
-	s += encode_varint(len(self.tx_ins))
-	for i, tx_in in enumerate(self.tx_ins):
-	    if i == input_index:
-		s += TxIn(
-		    prev_tx=tx_in.prev_tx,
-		    prev_index=tx_in.prev_index,
-		    script_sig=tx_in.script_pubkey(self.testnet),
-		    sequence=tx_in.sequence,
-		).serialize()
-	    else:
-		s += TxIn(
-		    prev_tx=tx_in.prev_tx,
-		    prev_index=tx_in.prev_index,
-		    sequence=tx_in.sequence,
-		).serialize()
-	s += encode_varint(len(self.tx_outs))
-	for tx_out in self.tx_outs:
-	    s += tx_out.serialize()
-	s += int_to_little_endian(self.locktime, 4)
-	s += int_to_little_endian(SIGHASH_ALL, 4)
-	h256 = hash256(s)
-	return int.from_bytes(h256, 'big')
+include::code-ch07/answers.py[tag=answer1,indent=4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Write the `verify_input` method for the `Tx` class. You will want to use the TxIn.script_pubkey(), Script.evaluate() methods and the SIGHASH_ALL constant to make this work.
+include::code-ch07/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Tx:
 ...
-    def verify_input(self, input_index):
-        '''Returns whether the input has a valid signature'''
-        tx_in = self.tx_ins[input_index]
-	script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-        z = self.sig_hash(input_index)
-	combined = tx_in.script_sig + script_pubkey
-        return combined.evaluate(z)
+include::code-ch07/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Write the `sign_input` method for the `Tx` class, which does the above.
+include::code-ch07/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class Tx:
 ...
-    def sign_input(self, input_index, private_key):
-        '''Signs the input using the private key'''
-        z = self.sig_hash(input_index, hash_type)
-        der = private_key.sign(z).der()
-        sig = der + SIGHASH_ALL.to_bytes(1, 'big')
-        sec = private_key.point.sec()
-        self.tx_ins[input_index].script_sig = Script([sig, sec])
-        return self.verify_input(input_index)
+include::code-ch07/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
+include::code-ch07/answers.py[tag=exercise4]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> from helper import decode_base58, SIGHASH_ALL
->>> from script import p2pkh_script, Script
->>> from tx import TxIn, TxOut, Tx
->>> prev_tx = bytes.fromhex('75a1c4bc671f55f626dda1074c7725991e6f68b8fcefcfca7b64405ca3b45f1c')
->>> prev_index = 1
->>> target_address = 'miKegze5FQNCnGw6PKyqUbYUeBa4x2hFeM'
->>> target_amount = 0.01
->>> change_address = 'mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2'
->>> change_amount = 0.009
->>> secret = 8675309
->>> priv = PrivateKey(secret=secret)
->>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx, prev_index))
->>> tx_outs = []
->>> h160 = decode_base58(target_address)
->>> script_pubkey = p2pkh_script(h160)
->>> target_satoshis = int(target_amount*100000000)
->>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
->>> h160 = decode_base58(change_address)
->>> script_pubkey = p2pkh_script(h160)
->>> change_satoshis = int(change_amount*100000000)
->>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
->>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
->>> tx_obj.sign_input(0, priv)
->>> print(tx_obj.serialize().hex())
-01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175010000006b483045022100b610b6df76364e1fcad579a862152623cb364d6409fe59e1922da69f32a8520b022059007da287d10088b39f487764f9d04160ece1ae551d5c7b4b2cb5f03cd44f55012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff0240420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d00000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000
+include::code-ch07/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
+include::code-ch07/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> from helper import decode_base58, SIGHASH_ALL
->>> from script import p2pkh_script, Script
->>> from tx import TxIn, TxOut, Tx
->>> prev_tx_1 = bytes.fromhex('11d05ce707c1120248370d1cbf5561d22c4f83aeba0436792c82e0bd57fe2a2f')
->>> prev_index_1 = 1
->>> prev_tx_2 = bytes.fromhex('51f61f77bd061b9a0da60d4bedaaf1b1fad0c11e65fdc744797ee22d20b03d15')
->>> prev_index_2 = 1
->>> target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
->>> target_amount = 0.0429
->>> secret = 8675309
->>> priv = PrivateKey(secret=secret)
->>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx_1, prev_index_1))
->>> tx_ins.append(TxIn(prev_tx_2, prev_index_2))
->>> tx_outs = []
->>> h160 = decode_base58(target_address)
->>> script_pubkey = p2pkh_script(h160)
->>> target_satoshis = int(target_amount*100000000)
->>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
->>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
->>> tx_obj.sign_input(0, priv)
->>> tx_obj.sign_input(1, priv)
->>> print(tx_obj.serialize().hex())
-01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011010000006b483045022100dddbb9f2ae014631a80265b133369ff2aa9e429cf2188e66f4256cab60062caa02200889b7494b5343dadcdfdab335c585f0ebd600a0ac8792ea06c8a3c00420eea1012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153db0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b483045022100bb3ad8379b0729fe23b867b7ad49e72ddf5d040bafcf6479463c9b4ea0e7f07b02202ba53fa490602b41b0f37ac0aaf20dfe909d761868e5721739ce392f9c6dd268012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d0754100000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+include::code-ch07/answers.py[tag=answer5]
 ----
 
 === <<chapter_p2sh>>: Pay To Script Hash
 
-==== Exercise {counter:exercise}
-
-Write the `op_checkmultisig` function of `op.py`.
+include::code-ch08/answers.py[tag=exercise1]
 
 [source,python]
 ----
-def op_checkmultisig(stack, z):
-    if len(stack) < 1:
-        return False
-    n = decode_num(stack.pop())
-    if len(stack) < n + 1:
-        return False
-    sec_pubkeys = []
-    for _ in range(n):
-        sec_pubkeys.append(stack.pop())
-    m = decode_num(stack.pop())
-    if len(stack) < m + 1:
-        return False
-    der_signatures = []
-    for _ in range(m):
-        der_signatures.append(stack.pop()[:-1])
-    stack.pop()
-    try:
-        points = [S256Point.parse(sec) for sec in sec_pubkeys]
-        sigs = [Signature.parse(der) for der in der_signatures]
-        for sig in sigs:
-            if len(points) == 0:
-                print("signatures no good or not in right order")
-                return False
-            while points:
-                point = points.pop(0)
-                if point.verify(z, sig):
-                    break
-        stack.append(encode_num(1))
-    except (ValueError, SyntaxError):
-        return False
-    return True
+include::code-ch08/answers.py[tag=answer1]
 ----
 
-
-==== Exercise {counter:ch8exercise}
-
-Write two functions in `h160_to_p2pkh_address` and `h160_to_p2sh_address` that convert a 20-byte hash160 into a p2pkh and p2sh address respectively.
+include::code-ch08/answers.py[tag=exercise2]
 
 [source,python]
 ----
-
-def h160_to_p2pkh_address(h160, testnet=False):
-    '''Takes a byte sequence hash160 and returns a p2pkh address string'''
-    if testnet:
-        prefix = b'\x6f'
-    else:
-        prefix = b'\x00'
-    return encode_base58_checksum(prefix + h160)
-
-
-def h160_to_p2sh_address(h160, testnet=False):
-    '''Takes a byte sequence hash160 and returns a p2sh address string'''
-    if testnet:
-        prefix = b'\xc4'
-    else:
-        prefix = b'\x05'
-    return encode_base58_checksum(prefix + h160)
+include::code-ch08/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch8exercise}
-
-Validate the second signature from the transaction above.
+include::code-ch08/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from ecc import S256Point, Signature
->>> from helper import hash256, int_to_little_endian
->>> from script import Script
->>> from tx import Tx, SIGHASH_ALL
->>> hex_tx = '0100...0000'
->>> hex_sec = '03b2...71'
->>> hex_der = '3045...22'
->>> hex_redeem_script = '475221...ae'
->>> sec = bytes.fromhex(hex_sec)
->>> der = bytes.fromhex(hex_der)
->>> redeem_script = Script.parse(BytesIO(bytes.fromhex(hex_redeem_script)))
->>> stream = BytesIO(bytes.fromhex(hex_tx))
->>> tx_obj = Tx.parse(stream)
->>> s = int_to_little_endian(tx_obj.version, 4)
->>> s += encode_varint(len(tx_obj.tx_ins))
->>> i = tx_obj.tx_ins[0]
->>> s += TxIn(i.prev_tx, i.prev_index, redeem_script, i.sequence).serialize()
->>> s += encode_varint(len(tx_obj.tx_outs))
->>> for tx_out in tx_obj.tx_outs:
-...    s += tx_out.serialize()
->>> s += int_to_little_endian(tx_obj.locktime, 4)
->>> s += int_to_little_endian(SIGHASH_ALL, 4)
->>> z = int.from_bytes(hash256(s), 'big')
->>> point = S256Point.parse(sec)
->>> sig = Signature.parse(der)
->>> print(point.verify(z, sig))
-True
+include::code-ch08/answers.py[tag=answer3]
 ----
 
-==== Exercise {counter:ch8exercise}
+include::code-ch08/answers.py[tag=exercise4]
 
-Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh transactions.
+[source,python]
+----
+include::code-ch08/answers.py[tag=answer4]
+----
+
+include::code-ch08/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class Tx:
 ...
-
-    def sig_hash(self, input_index, redeem_script=None):
-        '''Returns the integer representation of the hash that needs to get
-        signed for index input_index'''
-        s = int_to_little_endian(self.version, 4)
-        s += encode_varint(len(self.tx_ins))
-        for i, tx_in in enumerate(self.tx_ins):
-            if i == input_index:
-                if redeem_script:
-                    script_sig = redeem_script
-                else:
-                    script_sig = tx_in.script_pubkey(self.testnet)
-                s += TxIn(
-                    prev_tx=tx_in.prev_tx,
-                    prev_index=tx_in.prev_index,
-                    script_sig=script_sig,
-                    sequence=tx_in.sequence,
-                ).serialize()
-            else:
-                s += TxIn(
-                    prev_tx=tx_in.prev_tx,
-                    prev_index=tx_in.prev_index,
-                    sequence=tx_in.sequence,
-                ).serialize()
-        s += encode_varint(len(self.tx_outs))
-        for tx_out in self.tx_outs:
-            s += tx_out.serialize()
-        s += int_to_little_endian(self.locktime, 4)
-        s += int_to_little_endian(SIGHASH_ALL, 4)
-        h256 = hash256(s)
-        return int.from_bytes(h256, 'big')
-
-    def verify_input(self, input_index):
-        '''Returns whether the input has a valid signature'''
-        tx_in = self.tx_ins[input_index]
-        script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-        if script_pubkey.is_p2sh_script_pubkey():
-            instruction = tx_in.script_sig.instructions[-1]
-            raw_redeem = encode_varint(len(instruction)) + instruction
-            redeem_script = Script.parse(BytesIO(raw_redeem))
-        else:
-            redeem_script = None
-        z = self.sig_hash(input_index, redeem_script)
-        combined = tx_in.script_sig + script_pubkey
-        return combined.evaluate(z)
+include::code-ch08/answers.py[tag=answer5,indent=4]
 ----
 
 === <<chapter_blocks>>: Blocks
 
-==== Exercise {counter:ch9exercise}
-
-Write the `is_coinbase` method of the `Tx` class.
+include::code-ch09/answers.py[tag=exercise1]
 
 [source,python]
 ----
 class Tx:
 ...
-    def is_coinbase(self):
-        '''Returns whether this transaction is a coinbase transaction or not'''
-        if len(self.tx_ins) != 1:
-            return False
-        first_input = self.tx_ins[0]
-        if first_input.prev_tx != b'\x00' * 32:
-            return False
-        if first_input.prev_index != 0xffffffff:
-            return False
-        return True
+include::code-ch09/answers.py[tag=answer1,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the `coinbase_height` method for the `Tx` class.
+include::code-ch09/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Tx:
 ...
-    def coinbase_height(self):
-        '''Returns the height of the block this coinbase transaction is in
-        Returns None if this transaction is not a coinbase transaction
-        '''
-        if not self.is_coinbase():
-            return None
-        element = self.tx_ins[0].script_sig.instructions[0]
-        return little_endian_to_int(element)
+include::code-ch09/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the parse, serialize and hash methods for block.
+include::code-ch09/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class Block:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses a block. Returns a Block object'''
-        version = little_endian_to_int(s.read(4))
-        prev_block = s.read(32)[::-1]
-        merkle_root = s.read(32)[::-1]
-        timestamp = little_endian_to_int(s.read(4))
-        bits = s.read(4)
-        nonce = s.read(4)
-        return cls(version, prev_block, merkle_root, timestamp, bits, nonce)
-
-    def serialize(self):
-        '''Returns the 80 byte block header'''
-        result = int_to_little_endian(self.version, 4)
-        result += self.prev_block[::-1]
-        result += self.merkle_root[::-1]
-        result += int_to_little_endian(self.timestamp, 4)
-        result += self.bits
-        result += self.nonce
-        return result
-
-    def hash(self):
-        '''Returns the hash256 interpreted little endian of the block'''
-        s = self.serialize()
-        h256 = hash256(s)
-        return h256[::-1]
+include::code-ch09/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
+include::code-ch09/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class Block:
 ...
-    def bip9(self):
-        '''Returns whether this block is signaling readiness for BIP9'''
-        return self.version >> 29 == 0b001
-
-    def bip91(self):
-        '''Returns whether this block is signaling readiness for BIP91'''
-        return self.version >> 4 & 1 == 1
-
-    def bip141(self):
-        '''Returns whether this block is signaling readiness for BIP141'''
-        return self.version >> 1 & 1 == 1
+include::code-ch09/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the bits_to_target function in helper.py.
-
-[source,python]
-----
-def bits_to_target(bits):
-    '''Turns bits into a target (large 256-bit integer)'''
-    exponent = bits[-1]
-    coefficient = little_endian_to_int(bits[:-1])
-    return coefficient * 256**(exponent-3)
-----
-
-==== Exercise {counter:ch9exercise}
-
-Write the difficulty method for the Block class
+include::code-ch09/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class Block:
 ...
-    def difficulty(self):
-        '''Returns the block difficulty based on the bits'''
-        lowest = 0xffff * 256**(0x1d - 3)
-        return lowest / self.target()
+include::code-ch09/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the check_pow method for the Block class.
+include::code-ch09/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class Block:
 ...
-    def check_pow(self):
-        '''Returns whether this block satisfies proof of work'''
-        h256 = hash256(self.serialize())
-        proof = little_endian_to_int(h256)
-        return proof < self.target()
+include::code-ch09/answers.py[tag=answer6,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
-
-Block 471744:
-
-```
-000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd88000000000000000000
-10c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb84559
-7e8b0118e43a81d3
-```
-
-Block 473759:
-
-```
-02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000
-b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e126425859
-7e8b0118e5f00474
-```
+include::code-ch09/answers.py[tag=exercise7]
 
 [source,python]
 ----
->>> from block import Block, TWO_WEEKS
->>> from helper import target_to_bits
->>> block1_hex = '0000...d3'
->>> block2_hex = '0200...74'
->>> last_block = Block.parse(BytesIO(bytes.fromhex(block1_hex)))
->>> first_block = Block.parse(BytesIO(bytes.fromhex(block2_hex)))
->>> time_differential = last_block.timestamp - first_block.timestamp
->>> if time_differential > TWO_WEEKS * 4:
-...     time_differential = TWO_WEEKS * 4
->>> if time_differential < TWO_WEEKS // 4:
-...     time_differential = TWO_WEEKS // 4
->>> new_target = last_block.target() * time_differential // TWO_WEEKS
->>> new_bits = target_to_bits(new_target)
->>> print(new_bits.hex())
-80df6217
+class Block:
+...
+include::code-ch09/answers.py[tag=answer7,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the calculate_new_bits function.
+include::code-ch09/answers.py[tag=exercise8]
 
 [source,python]
 ----
-def calculate_new_bits(previous_bits, time_differential):
-    '''calculates the new bits given the bits of a difficulty
-    adjustment period and the time differential between the start and end blocks'''
-    if time_differential > TWO_WEEKS * 4:
-        time_differential = TWO_WEEKS * 4
-    if time_differential < TWO_WEEKS // 4:
-        time_differential = TWO_WEEKS // 4
-    new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
-    return target_to_bits(new_target)
+class Block:
+...
+include::code-ch09/answers.py[tag=answer8,indent=4]
+----
+
+include::code-ch09/answers.py[tag=exercise9]
+
+[source,python]
+----
+include::code-ch09/answers.py[tag=answer9]
+----
+
+include::code-ch09/answers.py[tag=exercise10]
+
+[source,python]
+----
+class Block:
+...
+include::code-ch09/answers.py[tag=answer10,indent=4]
+----
+
+include::code-ch09/answers.py[tag=exercise11]
+
+[source,python]
+----
+class Block:
+...
+include::code-ch09/answers.py[tag=answer11,indent=4]
+----
+
+include::code-ch09/answers.py[tag=exercise12]
+
+[source,python]
+----
+include::code-ch09/answers.py[tag=answer12]
+----
+
+include::code-ch09/answers.py[tag=exercise13]
+
+[source,python]
+----
+include::code-ch09/answers.py[tag=answer13]
 ----
 
 === <<chapter_networking>>: Networking
 
-Determine what this network message is:
+include::code-ch10/answers.py[tag=exercise1]
 
-`f9beb4d976657261636b000000000000000000005df6e0e2`
-
-==== Exercise {counter:ch10exercise}
 [source,python]
 ----
->>> from network import NetworkEnvelope
->>> from io import BytesIO
->>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
->>> stream = BytesIO(bytes.fromhex(message_hex))
->>> envelope = NetworkEnvelope.parse(stream)
->>> print(envelope.command)
-b'verack'
->>> print(envelope.payload)
-b''
+include::code-ch10/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch10exercise}
-
-Write the `parse` and `serialize` methods for `NetworkEnvelope`.
+include::code-ch10/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class NetworkEnvelope:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a stream and creates a NetworkEnvelope'''
-        magic = s.read(4)
-        if magic == b'':
-            raise IOError('Connection reset!')
-        if testnet:
-            expected_magic = TESTNET_NETWORK_MAGIC
-        else:
-            expected_magic = NETWORK_MAGIC
-        if magic != expected_magic:
-            raise SyntaxError('magic is not right {} vs {}'.format(
-                magic.hex(), expected_magic.hex()))
-        command = s.read(12)
-        command = command.strip(b'\x00')
-        payload_length = little_endian_to_int(s.read(4))
-        checksum = s.read(4)
-        payload = s.read(payload_length)
-        calculated_checksum = hash256(payload)[:4]
-        if calculated_checksum != checksum:
-            raise IOError('checksum does not match')
-        return cls(command, payload, testnet=testnet)
-
-    def serialize(self):
-        '''Returns the byte serialization of the entire network message'''
-        result = self.magic
-        result += self.command + b'\x00' * (12 - len(self.command))
-        result += int_to_little_endian(len(self.payload), 4)
-        result += hash256(self.payload)[:4]
-        result += self.payload
-        return result
+include::code-ch10/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch10exercise}
+include::code-ch10/answers.py[tag=exercise3]
 
-Write the `serialize` method for `VersionMessage`.
+[source,python]
+----
+class NetworkEnvelope:
+...
+include::code-ch10/answers.py[tag=answer3,indent=4]
+----
+
+include::code-ch10/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class VersionMessage:
 ...
-    def serialize(self):
-        '''Serialize this message to send over the network'''
-        result = int_to_little_endian(self.version, 4)
-        result += int_to_little_endian(self.services, 8)
-        result += int_to_little_endian(self.timestamp, 8)
-        result += int_to_little_endian(self.receiver_services, 8)
-        result += b'\x00' * 10 + b'\xff\xff' + self.receiver_ip
-        result += int_to_little_endian(self.receiver_port, 2)
-        result += int_to_little_endian(self.sender_services, 8)
-        result += b'\x00' * 10 + b'\xff\xff' + self.sender_ip
-        result += int_to_little_endian(self.sender_port, 2)
-        result += self.nonce
-        result += encode_varint(len(self.user_agent))
-        result += self.user_agent
-        result += int_to_little_endian(self.latest_block, 4)
-        if self.relay:
-            result += b'\x01'
-        else:
-            result += b'\x00'
-        return result
+include::code-ch10/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch10exercise}
-
-Write the `handshake` method for `SimpleNode`
+include::code-ch10/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class SimpleNode:
 ...
-    def handshake(self):
-        '''Do a handshake with the other node.
-	Handshake is sending a version message and getting a verack back.'''
-        version = VersionMessage()
-        self.send(version)
-        self.wait_for(VerAckMessage)
+include::code-ch10/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch10exercise}
-
-Write the `serialize` method for `GetHeadersMessage`.
+include::code-ch10/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class GetHeadersMessage:
 ...
-    def serialize(self):
-        '''Serialize this message to send over the network'''
-        result = int_to_little_endian(self.version, 4)
-        result += encode_varint(self.num_hashes)
-        result += self.start_block[::-1]
-        result += self.end_block[::-1]
-        return result
+include::code-ch10/answers.py[tag=answer6,indent=4]
 ----
 
 === <<chapter_spv>>: SPV
 
-==== Exercise {counter:ch11exercise}
-
-Write the merkle_parent function.
+include::code-ch11/answers.py[tag=exercise1]
 
 [source,python]
 ----
-def merkle_parent(hash1, hash2):
-    '''Takes the binary hashes and calculates the hash256'''
-    return hash256(hash1 + hash2)
+include::code-ch11/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `merkle_parent_level` function.
+include::code-ch11/answers.py[tag=exercise2]
 
 [source,python]
 ----
-def merkle_parent_level(hashes):
-    '''Takes a list of binary hashes and returns a list that's half
-    the length'''
-    if len(hashes) == 1:
-        raise RuntimeError('Cannot take a parent level with only 1 item')
-    if len(hashes) % 2 == 1:
-        hashes.append(hashes[-1])
-    parent_level = []
-    for i in range(0, len(hashes), 2):
-        parent = merkle_parent(hashes[i], hashes[i + 1])
-        parent_level.append(parent)
-    return parent_level
+include::code-ch11/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `merkle_root` function.
+include::code-ch11/answers.py[tag=exercise3]
 
 [source,python]
 ----
-def merkle_root(hashes):
-    '''Takes a list of binary hashes and returns the merkle root
-    '''
-    current_level = hashes
-    while len(current_level) > 1:
-        current_level = merkle_parent_level(current_level)        
-    return current_level[0]
+include::code-ch11/answers.py[tag=answer3]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `validate_merkle_root` method for `Block`.
+include::code-ch11/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class Block:
 ...
-    def validate_merkle_root(self):
-        '''Gets the merkle root of the tx_hashes and checks that it's
-        the same as the merkle root of this block.
-        '''
-        hashes = [h[::-1] for h in self.tx_hashes]
-        root = merkle_root(hashes)
-        return root[::-1] == self.merkle_root
+include::code-ch11/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Create an empty Merkle Tree with 27 items and print each level.
+include::code-ch11/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> import math
->>> total = 27
->>> max_depth = math.ceil(math.log(total, 2))
->>> merkle_tree = []
->>> for depth in range(max_depth + 1): 
-...     num_items = math.ceil(total / 2**(max_depth - depth))
-...     level_hashes = [None] * num_items
-...     merkle_tree.append(level_hashes)
->>> for level in merkle_tree:
-...     print(level)
-[None]
-[None, None]
-[None, None, None, None]
-[None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ..., None]
+include::code-ch11/answers.py[tag=answer5]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the parse method for `MerkleBlock`.
+include::code-ch11/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class MerkleBlock:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses a merkle block. Returns a Merkle Block object'''
-        version = little_endian_to_int(s.read(4))
-        prev_block = s.read(32)[::-1]
-        merkle_root = s.read(32)[::-1]
-        timestamp = little_endian_to_int(s.read(4))
-        bits = s.read(4)
-        nonce = s.read(4)
-        total = little_endian_to_int(s.read(4))
-        num_txs = read_varint(s)
-        hashes = []
-        for _ in range(num_txs):
-            hashes.append(s.read(32)[::-1])
-        flags_length = read_varint(s)
-        flags = s.read(flags_length)
-        return cls(version, prev_block, merkle_root, timestamp, bits, nonce,
-                   total, hashes, flags)
-
+include::code-ch11/answers.py[tag=answer6,indent=4]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `is_valid` method for `MerkleBlock`
+include::code-ch11/answers.py[tag=exercise7]
 
 [source,python]
 ----
 class MerkleBlock:
 ...
-    def is_valid(self):
-        '''Verifies whether the merkle tree information validates to the merkle root'''
-        flag_bits = bytes_to_bit_field(self.flags)
-        hashes = [h[::-1] for h in self.hashes]
-        merkle_tree = MerkleTree(self.total)
-        merkle_tree.populate_tree(flag_bits, hashes)
-        return merkle_tree.root()[::-1] == self.merkle_root
+include::code-ch11/answers.py[tag=answer7,indent=4]
 ----
 
 === <<chapter_bloom_filters>>: Bloom Filters
 
-==== Exercise {counter:ch12exercise}
-
-Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
+include::code-ch12/answers.py[tag=exercise1]
 
 [source,python]
 ----
->>> from helper import hash160
->>> bit_field_size = 10
->>> bit_field = [0] * bit_field_size
->>> for item in (b'hello world', b'goodbye'):
-...     h = hash160(item)
-...     bit = int.from_bytes(h, 'big') % bit_field_size
-...     bit_field[bit] = 1
->>> print(bit_field)
-[1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+include::code-ch12/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use bit_field_to_bytes to convert to bytes)
-
-* b'Hello World'
-* b'Goodbye!'
+include::code-ch12/answers.py[tag=exercise2]
 
 [source,python]
 ----
->>> from bloomfilter import BloomFilter, BIP37_CONSTANT
->>> from helper import bit_field_to_bytes, murmur3
->>> field_size = 10
->>> function_count = 5
->>> tweak = 99
->>> items = (b'Hello World',  b'Goodbye!')
->>> bit_field_size = field_size * 8
->>> bit_field = [0] * bit_field_size
->>> for item in items:
-...     for i in range(function_count):
-...         seed = i * BIP37_CONSTANT + tweak
-...         h = murmur3(item, seed=seed)
-...         bit = h % bit_field_size
-...         bit_field[bit] = 1
->>> print(bit_field_to_bytes(bit_field).hex())
-4000600a080000010940
+include::code-ch12/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Write the `add` method for `BloomFilter`
+include::code-ch12/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class BloomFilter:
 ...
-    def add(self, item):
-        '''Add an item to the filter'''
-        for i in range(self.function_count):
-            seed = i * BIP37_CONSTANT + self.tweak
-            h = murmur3(item, seed=seed)
-            bit = h % (self.size * 8)
-            self.bit_field[bit] = 1
+include::code-ch12/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Write the  `filterload` payload from the `BloomFilter` class.
+include::code-ch12/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class BloomFilter:
 ...
-    def filterload(self, flag=1):
-        '''Return the filterload message'''
-        payload = encode_varint(self.size)
-        payload += self.filter_bytes()
-        payload += int_to_little_endian(self.function_count, 4)
-        payload += int_to_little_endian(self.tweak, 4)
-        payload += int_to_little_endian(flag, 1)
-        return GenericMessage(b'filterload', payload)
+include::code-ch12/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Write the `serialize` method for the `GetDataMessage` class.
+include::code-ch12/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class GetDataMessage:
 ...
-    def serialize(self):
-        result = encode_varint(len(self.data))
-        for data_type, identifier in self.data:
-            result += int_to_little_endian(data_type, 4)
-            result += identifier[::-1]
-        return result
+include::code-ch12/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
-
-*As this is a very difficult problem, it's suggested that you run this as a separate file. Comments are included in the code below to help aid you in understanding the steps.*
+include::code-ch12/answers.py[tag=exercise6]
 
 [source,python]
 ----
-import time
-from block import Block
-from bloomfilter import BloomFilter
-from ecc import PrivateKey
-from helper import (
-    decode_base58,
-    encode_varint,
-    hash256,
-    little_endian_to_int,
-    read_varint,
-    SIGHASH_ALL,
-)
-from merkleblock import MerkleBlock
-from network import (
-    GetDataMessage,
-    GetHeadersMessage,
-    HeadersMessage,
-    NetworkEnvelope,
-    SimpleNode,
-    TX_DATA_TYPE,
-    FILTERED_BLOCK_DATA_TYPE,
-)
-from script import p2pkh_script, Script
-from tx import Tx, TxIn, TxOut, TxFetcher
-
-last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
-
-secret = little_endian_to_int(hash256(b''))
-private_key = PrivateKey(secret=secret)
-addr = private_key.point.address(testnet=True)
-h160 = decode_base58(addr)
-
-target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
-target_h160 = decode_base58(target_address)
-target_script = p2pkh_script(target_h160)
-fee = 5000  # fee in satoshis
-
-# connect to tbtc.programmingblockchain.com in testnet mode
-node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
-
-# create a bloom filter of size 30 and 5 functions. Add a tweak that you like
-bf = BloomFilter(30, 5, 90210)
-# add the h160 to the bloom filter
-bf.add(h160)
-
-# complete the handshake
-node.handshake()
-# load the bloom filter with the filterload command
-node.send(bf.filterload())
-
-# set start block to last_block from above
-start_block = bytes.fromhex(last_block_hex)
-# send a getheaders message with the starting block
-getheaders = GetHeadersMessage(start_block=start_block)
-node.send(getheaders)
-
-# wait for the headers message
-headers = node.wait_for(HeadersMessage)
-# store the last block as None
-last_block = None
-# initialize the GetDataMessage
-getdata = GetDataMessage()
-# loop through the blocks in the headers
-for b in headers.blocks:
-    # check that the proof of work on the block is valid
-    if not b.check_pow():
-        raise RuntimeError('proof of work is invalid')
-    # check that this block's prev_block is the last block
-    if last_block is not None and b.prev_block != last_block:
-        raise RuntimeError('chain broken')
-    # add a new item to the get_data_message
-    # should be FILTERED_BLOCK_DATA_TYPE and block hash
-    get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
-    # set the last block to the current hash
-    last_block = b.hash()
-# send the getdata message
-node.send(getdata)
-
-# initialize prev_tx and prev_index to None
-prev_tx, prev_index = None, None
-# loop while prev_tx is None 
-while prev_tx is None:
-    # wait for the merkleblock or tx commands
-    message = node.wait_for(MerkleBlock, Tx)
-    # if we have the merkleblock command
-    if message.command == b'merkleblock':
-        # check that the MerkleBlock is valid
-        if not message.is_valid():
-            raise RuntimeError('invalid merkle proof')
-    # else we have the tx command
-    else:
-        # set the tx's testnet to be True
-        message.testnet = True
-        # loop through the tx outs
-        for i, tx_out in enumerate(message.tx_outs):
-            # if our output has the same address as our address we found it
-            if tx_out.script_pubkey.address(testnet=True) == addr:
-                # we found our utxo. set prev_tx, prev_index, and transaction
-                prev_tx = message.hash()
-                prev_index = i
-                print('found: {}:{}'.format(prev_tx.hex(), prev_index))
-# create the TxIn
-tx_in = TxIn(prev_tx, prev_index)
-# calculate the output amount (previous amount minus the fee)
-output_amount = prev_amount - fee
-# create a new TxOut to the target script with the output amount
-tx_outs = TxOut(output_amount, target_script)
-# create a new transaction with the one input and one output
-tx_obj = Tx(1, [tx_in], [tx_out], 0, testnet=True)
-# sign the only input of the transaction
-tx_obj.sign_input(0, private_key)
-# serialize and hex to see what it looks like
-print(tx_obj.serialize().hex())
-# send this signed transaction on the network
-node.send(tx_obj)
-# wait a sec so this message goes through with time.sleep(1)
-time.sleep(1)
-# now ask for this transaction from the other node
-# create a GetDataMessage
-getdata = GetDataMessage()
-# ask for our transaction by adding it to the message
-getdata.add_data(TX_DATA_TYPE, tx_obj.hash())
-# send the message
-node.send(getdata)
-# now wait for a Tx response
-received_tx = node.wait_for(Tx)
-# if the received tx has the same id as our tx, we are done!
-if received_tx.id() == tx_obj.id():
-    print('success!')
+include::code-ch12/answers.py[tag=answer6]
 ----
+
+A more thoroughly commented answer is in `code-ch12/broadcast.py`

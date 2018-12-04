@@ -132,25 +132,20 @@ def bits_to_target(bits):
     raise NotImplementedError
 
 
+# tag::source1[]
 def target_to_bits(target):
     '''Turns a target integer back into bits, which is 4 bytes'''
     raw_bytes = target.to_bytes(32, 'big')
-    # get rid of leading 0's
-    raw_bytes = raw_bytes.lstrip(b'\x00')
-    if raw_bytes[0] > 0x7f:
-        # if the first bit is 1, we have to start with 00
+    raw_bytes = raw_bytes.lstrip(b'\x00')  # <1>
+    if raw_bytes[0] > 0x7f:  # <2>
         exponent = len(raw_bytes) + 1
         coefficient = b'\x00' + raw_bytes[:2]
     else:
-        # otherwise, we can show the first 3 bytes
-        # exponent is the number of digits in base-256
-        exponent = len(raw_bytes)
-        # coefficient is the first 3 digits of the base-256 number
-        coefficient = raw_bytes[:3]
+        exponent = len(raw_bytes)  # <3>
+        coefficient = raw_bytes[:3]  # <4>
     new_bits_big_endian = bytes([exponent]) + coefficient
-    # we've truncated the number after the first 3 digits of base-256
-    return new_bits_big_endian[::-1]
-
+    return new_bits_big_endian[::-1]  # <5>
+# end::source1[]
 
 def calculate_new_bits(previous_bits, time_differential):
     '''Calculates the new bits given

@@ -62,6 +62,7 @@ class TxFetcher:
             f.write(s)
 
 
+# tag::source1[]
 class Tx:
     command = b'tx'
 
@@ -75,6 +76,7 @@ class Tx:
         self._hash_prevouts = None
         self._hash_sequence = None
         self._hash_outputs = None
+    # end::source1[]
 
     def __repr__(self):
         tx_ins = ''
@@ -95,71 +97,54 @@ class Tx:
         '''Human-readable hexadecimal of the transaction hash'''
         return self.hash().hex()
 
+    # tag::source5[]
     def hash(self):
         '''Binary hash of the legacy serialization'''
         return hash256(self.serialize_legacy())[::-1]
+    # end::source5[]
 
+    # tag::source2[]
     @classmethod
     def parse(cls, s, testnet=False):
-        '''Parses a transaction from stream'''
-        # we can determine whether something is segwit or legacy by looking
-        # at byte 5
-        s.read(4)
-        if s.read(1) == b'\x00':
+        s.read(4)  # <1>
+        if s.read(1) == b'\x00':  # <2>
             parse_method = cls.parse_segwit
         else:
             parse_method = cls.parse_legacy
-        # reset the seek to the beginning so everything can go through
-        s.seek(-5, 1)
+        s.seek(-5, 1)  # <3>
         return parse_method(s, testnet=testnet)
 
     @classmethod
     def parse_legacy(cls, s, testnet=False):
-        '''Takes a byte stream and parses a legacy transaction'''
-        # s.read(n) will return n bytes
-        # version is an integer in 4 bytes, little-endian
         version = little_endian_to_int(s.read(4))
-        # num_inputs is a varint, use read_varint(s)
         num_inputs = read_varint(s)
-        # parse num_inputs number of TxIns
         inputs = []
         for _ in range(num_inputs):
             inputs.append(TxIn.parse(s))
-        # num_outputs is a varint, use read_varint(s)
         num_outputs = read_varint(s)
-        # parse num_outputs number of TxOuts
         outputs = []
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(s))
-        # locktime is an integer in 4 bytes, little-endian
         locktime = little_endian_to_int(s.read(4))
-        # return an instance of the class (see __init__ for args)
         return cls(version, inputs, outputs, locktime, testnet=testnet, segwit=False)
+    # end::source2[]
 
+    # tag::source3[]
     @classmethod
     def parse_segwit(cls, s, testnet=False):
-        '''Takes a byte stream and parses a segwit transaction'''
-        # s.read(n) will return n bytes
-        # version has 4 bytes, little-endian, interpret as int
         version = little_endian_to_int(s.read(4))
-        # next two bytes need to be 0x00 and 0x01
         marker = s.read(2)
-        if marker != b'\x00\x01':
+        if marker != b'\x00\x01':  # <1>
             raise RuntimeError('Not a segwit transaction {}'.format(marker))
-        # num_inputs is a varint, use read_varint(s)
         num_inputs = read_varint(s)
-        # each input needs parsing
         inputs = []
         for _ in range(num_inputs):
             inputs.append(TxIn.parse(s))
-        # num_outputs is a varint, use read_varint(s)
         num_outputs = read_varint(s)
-        # each output needs parsing
         outputs = []
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(s))
-        # now parse the witness
-        for tx_in in inputs:
+        for tx_in in inputs:  # <2>
             num_items = read_varint(s)
             items = []
             for _ in range(num_items):
@@ -169,66 +154,47 @@ class Tx:
                 else:
                     items.append(s.read(item_len))
             tx_in.witness = items
-        # locktime is 4 bytes, little-endian
         locktime = little_endian_to_int(s.read(4))
-        # return an instance of the class (cls(...))
         return cls(version, inputs, outputs, locktime, testnet=testnet, segwit=True)
+    # end::source3[]
 
+    # tag::source4[]
     def serialize(self):
         if self.segwit:
             return self.serialize_segwit()
         else:
             return self.serialize_legacy()
 
-    def serialize_legacy(self):
-        '''Returns the byte serialization of the transaction'''
-        # serialize version (4 bytes, little endian)
+    def serialize_legacy(self):  # <1>
         result = int_to_little_endian(self.version, 4)
-        # encode_varint on the number of inputs
         result += encode_varint(len(self.tx_ins))
-        # iterate inputs
         for tx_in in self.tx_ins:
-            # serialize each input
             result += tx_in.serialize()
-        # encode_varint on the number of outputs
         result += encode_varint(len(self.tx_outs))
-        # iterate outputs
         for tx_out in self.tx_outs:
-            # serialize each output
             result += tx_out.serialize()
-        # serialize locktime (4 bytes, little endian)
         result += int_to_little_endian(self.locktime, 4)
         return result
 
     def serialize_segwit(self):
-        '''Returns the byte serialization of the transaction'''
-        # serialize version (4 bytes, little endian)
         result = int_to_little_endian(self.version, 4)
-        # segwit marker '0001'
-        result += b'\x00\x01'
-        # encode_varint on the number of inputs
+        result += b'\x00\x01'  # <2>
         result += encode_varint(len(self.tx_ins))
-        # iterate inputs
         for tx_in in self.tx_ins:
-            # serialize each input
             result += tx_in.serialize()
-        # encode_varint on the number of inputs
         result += encode_varint(len(self.tx_outs))
-        # iterate outputs
         for tx_out in self.tx_outs:
-            # serialize each output
             result += tx_out.serialize()
-        # add the witness data
-        for tx_in in self.tx_ins:
+        for tx_in in self.tx_ins:  # <3>
             result += int_to_little_endian(len(tx_in.witness), 1)
             for item in tx_in.witness:
                 if type(item) == int:
                     result += int_to_little_endian(item, 1)
                 else:
                     result += encode_varint(len(item)) + item
-        # serialize locktime (4 bytes, little endian)
         result += int_to_little_endian(self.locktime, 4)
         return result
+    # end::source4[]
 
     def fee(self):
         '''Returns the fee of this transaction in satoshi'''

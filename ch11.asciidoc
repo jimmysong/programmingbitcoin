@@ -61,19 +61,12 @@ The actual calculation in Python is relatively straightforward:
 
 [source,python]
 ----
->>> from helper import hash256
->>> hash1 = bytes.fromhex('c117...')
->>> hash2 = bytes.fromhex('c131...')
->>> parent = hash256(hash1 + hash2)
->>> print(parent.hex())
-8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd
+include::code-ch11/examples.py[tag=example1]
 ----
 
 At this point, we can show that `L` is included in the parent, `P`, by revealing `R`. That is, if someone wanted to prove to us that L was used to produce `P`, they would show us `R` and let us know that `L` is the left child of `P`. We can then combine `L` and `R` to produce `P` and have proof that `L` was used to produce `P`. This is the most basic Proof of Inclusion.
 
-==== Exercise {counter:exercise}
-
-Write the `merkle_parent` function.
+include::code-ch11/answers.py[tag=exercise1]
 
 === Merkle Parent Level
 
@@ -87,29 +80,14 @@ Note that since the Merkle Parent always consists of two hashes, we end up with 
 
 [source,python]
 ----
->>> from helper import merkle_parent
->>> hashes = [...]
->>> if len(hashes) % 2 == 1:
-...     hashes.append(hashes[-1])  # <1>
-...
->>> parent_level = []
->>> for i in range(0, len(hashes), 2):  # <2>
-...     parent = merkle_parent(hashes[i], hashes[i+1])
-...     parent_level.append(parent)
->>> for item in parent_level:
-...     print(item.hex())
-8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd
-7f4e6f9e224e20fda0ae4c44114237f97cd35aca38d83081c9bfd41feb907800
-3ecf6115380c77e8aae56660f5634982ee897351ba906a6837d15ebc3a225df0
+include::code-ch11/examples.py[tag=example2]
 ----
 <1> This will add the last hash on the list, `hashes[-1]`, to the end of `hashes`. This makes the length of `hashes` even.
 <2> This is how we skip by two in Python. `i` will be 0 the first time through the loop, 2 the second, 4 the third and so on.
 
 This code will give us a new list of hashes that correspond to the Merkle Parent Level
 
-==== Exercise {counter:exercise}
-
-Write the `merkle_parent_level` function.
+include::code-ch11/answers.py[tag=exercise2]
 
 === Merkle Root
 
@@ -129,21 +107,12 @@ The final hash is called the *Merkle Root*. Each level will halve the number of 
 
 [source,python]
 ----
->>> from helper import merkle_parent_level
->>> hashes = [...]
->>> current_hashes = hashes
->>> while len(current_hashes) > 1:  # <1>
-...     current_hashes = merkle_parent_level(current_hashes)
-...
->>> print(current_hashes[0].hex())  # <2>
-acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
+include::code-ch11/examples.py[tag=example3]
 ----
 <1> We loop until there's 1 hash left.
 <2> We've exited the loop so there should only be 1 item
 
-==== Exercise {counter:exercise}
-
-Write the `merkle_root` function.
+include::code-ch11/answers.py[tag=exercise3]
 
 === Merkle Root in Blocks
 
@@ -153,11 +122,7 @@ In practice, this simply means reversing the hash before we start and reversing 
 
 [source,python]
 ----
->>> from helper import merkle_root
->>> tx_hashes = [...]
->>> hashes = [h[::-1] for h in tx_hashes]  # <1>
->>> print(merkle_root(hashes)[::-1].hex())  # <2>
-654d6181e18e4ac4368383fdc5eead11bf138f9b7ac1e15334e4411b3c4797d9
+include::code-ch11/examples.py[tag=example4]
 ----
 <1> This reverses each hash before we begin using a *list comprehension*
 <2> This reverses the root at the end
@@ -166,26 +131,13 @@ To make this calculatable for a `Block`, we have to adjust the class a bit:
 
 [source,python]
 ----
-    
-class Block:
-
-    def __init__(self, version, prev_block, merkle_root,
-                 timestamp, bits, nonce, tx_hashes=None):  # <1>
-        self.version = version
-        self.prev_block = prev_block
-        self.merkle_root = merkle_root
-        self.timestamp = timestamp
-        self.bits = bits
-        self.nonce = nonce
-        self.tx_hashes = tx_hashes
+include::code-ch11/block.py[tag=source1]
 ----
 <1> We now allow the transaction hashes to be set as part of the initialization of the block. The hashes have to be ordered.
 
 As a full node, if we are given all of the transactions, we can now calculate the Merkle Root and check that the Merkle Root is what we expect.
 
-==== Exercise {counter:exercise}
-
-Write the `validate_merkle_root` method for `Block`.
+include::code-ch11/answers.py[tag=exercise4]
 
 === Using a Merkle Tree 
 
@@ -244,21 +196,7 @@ The first thing we need to do is create the general structure of the Merkle Tree
 
 [source,python]
 ----
->>> import math
->>> total = 16
->>> max_depth = math.ceil(math.log(total, 2))  # <1>
->>> merkle_tree = []  # <2>
->>> for depth in range(max_depth + 1):  # <3>
-...     num_items = math.ceil(total / 2**(max_depth - depth))  # <4>
-...     level_hashes = [None] * num_items  # <5>
-...     merkle_tree.append(level_hashes)  # <6>
->>> for level in merkle_tree:
-...     print(level)
-[None]
-[None, None]
-[None, None, None, None]
-[None, None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, ..., None]
+include::code-ch11/examples.py[tag=example5]
 ----
 <1> Since we halve at every level, log~2~ of the number of leaves gives us how many levels there will be in the Merkle Tree. Note we have to round up using `math.ceil` as we round up for halving at each level. We could also be clever and use `len(bin(total))-2`.
 <2> The merkle tree will hold the root level at index 0, the level below at index 1 and so on. In other words, the index is the "depth" from the top.
@@ -267,9 +205,7 @@ The first thing we need to do is create the general structure of the Merkle Tree
 <5> We don't know yet what any of the hashes are, so we set them to `None`
 <6> Note again that `merkle_tree` is a list of lists of hashes, or a 2-dimensional array.
 
-==== Exercise {counter:exercise}
-
-Create an empty Merkle Tree with 27 items and print each level.
+include::code-ch11/answers.py[tag=exercise5]
 
 ==== Coding a Merkle Tree
 
@@ -277,29 +213,7 @@ We can now create a `MerkleTree` class.
 
 [source,python]
 ----
-class MerkleTree:
-    def __init__(self, total):
-        self.total = total
-        self.max_depth = math.ceil(math.log(self.total, 2))
-        self.nodes = []
-        for depth in range(self.max_depth+1):
-            num_items = math.ceil(self.total / 2**(self.max_depth - depth))
-            level_hashes = [None] * num_items
-            self.nodes.append(level_hashes)
-        self.current_depth = 0  # <1>
-        self.current_index = 0
-        
-    def __repr__(self):  # <2>
-        result = ''
-        for depth, level in enumerate(self.nodes):
-            for index, h in enumerate(level):
-                short = '{}...'.format(h.hex()[:8])
-                if depth == self.current_depth and index == self.current_index:
-                    result += '*{}*, '.format(short[:-2])
-                else:
-                    result += '{}, '.format(short)
-            result += '\n'
-        return result
+include::code-ch11/merkleblock.py[tag=source1]
 ----
 <1> We keep a pointer to a particular node in the tree, which will come in handy later.
 <2> We print a representation of the tree.
@@ -308,21 +222,7 @@ Given the leaves, we can use this structure to fill in the rest of the tree. If 
 
 [source,python]
 ----
->>> from merkleblock import MerkleTree
->>> from helper import merkle_parent_level
->>> hex_hashes = [...]
->>> tree = MerkleTree(len(hex_hashes))
->>> tree.nodes[4] = [bytes.fromhex(h) for h in hex_hashes]
->>> tree.nodes[3] = merkle_parent_level(tree.nodes[4])
->>> tree.nodes[2] = merkle_parent_level(tree.nodes[3])
->>> tree.nodes[1] = merkle_parent_level(tree.nodes[2])
->>> tree.nodes[0] = merkle_parent_level(tree.nodes[1])
->>> print(tree)
-*597c4baf.*, 
-6382df3f..., 87cf8fa3..., 
-3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 
-272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., 
-9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc...,
+include::code-ch11/examples.py[tag=example6]
 ----
 
 This fills the tree and allows us to get the Merkle Root. However, the message from the network may not be giving us all of the leaves. The message might contain some internal nodes as well. We need a more clever way to fill up the tree.
@@ -335,39 +235,7 @@ We now need methods to navigate the tree. We'll also include some other useful m
 ----
 class MerkleTree:
 ...
-    def up(self):
-        self.current_depth -= 1
-        self.current_index //= 2
-        
-    def left(self):
-        self.current_depth += 1
-        self.current_index *= 2
-        
-    def right(self):
-        self.current_depth += 1
-        self.current_index = self.current_index * 2 + 1
-
-    def root(self):
-        return self.nodes[0][0]
-
-    def set_current_node(self, value):  # <1>
-        self.nodes[self.current_depth][self.current_index] = value
-
-    def get_current_node(self):
-        return self.nodes[self.current_depth][self.current_index]
-    
-    def get_left_node(self):
-        return self.nodes[self.current_depth + 1][self.current_index * 2]
-
-    def get_right_node(self):
-        return self.nodes[self.current_depth + 1][self.current_index * 2 + 1]
-
-    def is_leaf(self):  # <2>
-        return self.current_depth == self.max_depth
-
-    def right_exists(self):  # <3>
-        return len(self.nodes[self.current_depth + 1]) > self.current_index * 2 + 1
-
+include::code-ch11/merkleblock.py[tag=source2]
 ----
 <1> We want the ability to set the current node in the tree to some value.
 <2> We will want to know if we are a leaf node
@@ -377,30 +245,7 @@ We can now traverse the tree using the `left`, `right` and `up` methods. Let's u
 
 [source,python]
 ----
->>> from merkleblock import MerkleTree
->>> from helper import merkle_parent
->>> hex_hashes = [...]
->>> tree = MerkleTree(len(hex_hashes))
->>> tree.nodes[4] = [bytes.fromhex(h) for h in hex_hashes]
->>> while tree.root() is None:  # <1>
-...     if tree.is_leaf():  # <2>
-...         tree.up()
-...     else:
-...         left_hash = tree.get_left_node()
-...         right_hash = tree.get_right_node()
-...         if left_hash is None:  # <3>
-...             tree.left()
-...         elif right_hash is None:  # <4>
-...             tree.right()
-...         else:  # <5>
-...             tree.set_current_node(merkle_parent(left_hash, right_hash))
-...             tree.up()
->>> print(tree)
-597c4baf..., 
-6382df3f..., 87cf8fa3..., 
-3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 
-272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., 
-9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc..., 
+include::code-ch11/examples.py[tag=example7]
 ----
 <1> We are looking to calculate the Merkle Root. As long as we don't have the root, we continue to loop until we do. Each time through the loop is traversing a particular node.
 <2> If we are in a leaf node, we already have that hash, so we don't need to do anything but go back up.
@@ -414,35 +259,7 @@ To do something a little more robust and allow for the possibility that the pare
 
 [source,python]
 ----
->>> from merkleblock import MerkleTree
->>> from helper import merkle_parent_level
->>> hex_hashes = [...]
->>> tree = MerkleTree(len(hex_hashes))
->>> tree.nodes[5] = [bytes.fromhex(h) for h in hex_hashes]
->>> while tree.root() is None:
-...     if tree.is_leaf():
-...         tree.up()
-...     else:
-...         left_hash = tree.get_left_node()
-...         if left_hash is None:  # <1>
-...             tree.left()
-...         elif tree.right_exists():  # <2>
-...             right_hash = tree.get_right_node()
-...             if right_hash is None:  # <3>
-...                 tree.right()
-...             else:  # <4>
-...                 tree.set_current_node(merkle_parent(left_hash, right_hash))
-...                 tree.up()
-...         else:  # <5>
-...             tree.set_current_node(merkle_parent(left_hash, left_hash))
-...             tree.up()
->>> print(tree)
-0a313864..., 
-597c4baf..., 6f8a8190..., 
-6382df3f..., 87cf8fa3..., 5647f416..., 
-3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 28e93b98..., 
-272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., ce26d40b..., 
-9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc..., 38faf8c8...,
+include::code-ch11/examples.py[tag=example8]
 ----
 <1> We start by checking to see if the left hash is defined. If not, we go to the left node since all internal nodes are guaranteed a left child.
 <2> We check here if this node has a right child. This is true unless this node happens to be the right-most node of the level and the child level has an odd number of nodes.
@@ -465,24 +282,12 @@ The number of transactions is how many leaves this particular Merkle Tree will h
 
 [source,python]
 ----
-def bytes_to_bit_field(some_bytes):
-    flag_bits = []
-    # iterate over each byte of flags
-    for byte in some_bytes:
-        # iterate over each bit, right-to-left
-        for _ in range(8):
-            # add the current bit (byte & 1)
-            flag_bits.append(byte & 1)
-            # rightshift the byte 1
-            byte >>= 1
-    return flag_bits
+include::code-ch11/helper.py[tag=source1]
 ----
 
 The ordering for the bytes are a bit strange, but meant to be easy to convert into the bits we need.
 
-==== Exercise {counter:exercise}
-
-Write the `parse` method for `MerkleBlock`.
+include::code-ch11/answers.py[tag=exercise6]
 
 ==== Using Flags and Hashes
 
@@ -525,35 +330,7 @@ We can now code a way to populate the Merkle Tree and specifically, the root, gi
 ----
 class MerkleTree:
 ...
-    def populate_tree(self, flag_bits, hashes):
-        while self.root() is None:  # <1>
-            if self.is_leaf():  # <2>
-                flag_bits.pop(0)  # <3>
-                self.set_current_node(hashes.pop(0))  # <4>
-                self.up()
-            else:
-                left_hash = self.get_left_node()
-                if left_hash is None:  # <5>
-                    if flag_bits.pop(0) == 0:  # <6>
-                        self.set_current_node(hashes.pop(0))
-                        self.up()
-                    else:
-                        self.left()  # <7>
-                elif self.right_exists():  # <8>
-                    right_hash = self.get_right_node()
-                    if right_hash is None:  # <9>
-                        self.right()
-                    else:  # <10>
-                        self.set_current_node(merkle_parent(left_hash, right_hash))
-                        self.up()
-                else:  # <11>
-                    self.set_current_node(merkle_parent(left_hash, left_hash))
-                    self.up()
-        if len(hashes) != 0:  # <12>
-            raise RuntimeError('hashes not all consumed {}'.format(len(hashes)))
-        for flag_bit in flag_bits:  # <13>
-            if flag_bit != 0:
-                raise RuntimeError('flag bits not all consumed')
+include::code-ch11/merkleblock.py[tag=source3]
 ----
 <1> As before, the point of creating this Merkle Tree is to validate the root. Each loop iteration is looking at one node and we go until the root is calculated.
 <2> For leaf nodes, we are always given the hash.
@@ -569,9 +346,7 @@ class MerkleTree:
 <12> All hashes must be consumed or we got bad data.
 <13> All flag bits must be consumed or we got bad data.
 
-==== Exercise {counter:exercise}
-
-Write the `is_valid` method for `MerkleBlock`
+include::code-ch11/answers.py[tag=exercise7]
 
 === Conclusion
 

@@ -300,14 +300,16 @@ class HeadersMessageTest(TestCase):
             self.assertEqual(b.__class__, Block)
 
 
+# tag::source1[]
 class GetDataMessage:
     command = b'getdata'
 
     def __init__(self):
-        self.data = []
+        self.data = []  # <1>
 
     def add_data(self, data_type, identifier):
-        self.data.append((data_type, identifier))
+        self.data.append((data_type, identifier))  # <2>
+    # end::source1[]
 
     def serialize(self):
         # start with the number of items as a varint

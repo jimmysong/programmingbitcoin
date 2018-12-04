@@ -1,0 +1,47 @@
+import block
+import ecc
+import helper
+import network
+import script
+import tx
+---
+example1
+---
+exercise1:helper:HelperTest:test_merkle_parent
+---
+example2
+---
+exercise2:helper:HelperTest:test_merkle_parent_level
+---
+example3
+---
+exercise3:helper:HelperTest:test_merkle_root
+---
+example4
+---
+exercise4:block:BlockTest:test_validate_merkle_root
+---
+example5
+---
+exercise5:
+import math
+
+total = 27
+# use math.ceil(math.log(total, 2)) to get the max depth
+# create an array of arrays for the tree
+# loop through all possible depths
+    # get how many items at this depth
+    # use math.ceil(total / 2**(max depth - current depth))
+    # create an empty array for this level
+    # append the level to the tree
+# print the tree
+---
+example6
+---
+example7
+---
+example8
+---
+exercise6:merkleblock:MerkleBlockTest:test_parse
+---
+exercise7:merkleblock:MerkleBlockTest:test_is_valid

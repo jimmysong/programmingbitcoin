@@ -1,0 +1,27 @@
+import network
+
+from block import GENESIS_BLOCK_HASH
+from helper import calculate_new_bits
+from network import (
+    NetworkEnvelope,
+    VersionMessage,
+)
+---
+exercise1:
+message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
+
+# convert to binary
+# see what the bytes 4 through 16 aregi
+---
+exercise2:network:NetworkEnvelopeTest:test_parse
+---
+exercise3:network:NetworkEnvelopeTest:test_serialize
+---
+exercise4:network:VersionMessageTest:test_serialize
+---
+exercise5:network:SimpleNodeTest:test_handshake
+---
+exercise6:network:GetHeadersMessageTest:test_serialize
+---
+example1
+
