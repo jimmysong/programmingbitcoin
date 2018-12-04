@@ -262,285 +262,100 @@ include::code-ch04/answers.py[tag=answer9]
 
 === <<chapter_tx_parsing>>: Transactions
 
-==== Exercise {counter:ch5exercise}
+include::code-ch05/answers.py[tag=exercise1]
 
-Write the version parsing part of the parse method that we've defined. To do this properly, you'll have to convert 4 bytes into a Little-Endian integer.
+[source,python]
+----
+include::code-ch05/answers.py[tag=answer1]
+----
+
+include::code-ch05/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        return cls(version, None, None, None, testnet=testnet)
-----
-
-==== Exercise {counter:ch5exercise}
-
-Write the inputs parsing part of the parse method in `Tx` and the parse method for `TxIn`.
-
-[source,python]
-----
-class Tx:
-...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        num_inputs = read_varint(s)
-        inputs = []
-        for _ in range(num_inputs):
-            inputs.append(TxIn.parse(s))
-        return cls(version, inputs, None, None, testnet=testnet)
+include::code-ch05/answers.py[tag=answer2.1]
 ...
 
 class TxIn:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the tx_input at the start
-        return a TxIn object
-        '''
-        prev_tx = s.read(32)[::-1]
-        prev_index = little_endian_to_int(s.read(4))
-        script_sig = Script.parse(s)
-        sequence = little_endian_to_int(s.read(4))
-        return cls(prev_tx, prev_index, script_sig, sequence)
+include::code-ch05/answers.py[tag=answer2.2, indent=4]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the outputs parsing part of the parse method in `Tx` and the parse method for `TxOut`.
+include::code-ch05/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        num_inputs = read_varint(s)
-        inputs = []
-        for _ in range(num_inputs):
-            inputs.append(TxIn.parse(s))
-        num_outputs = read_varint(s)
-        outputs = []
-        for _ in range(num_outputs):
-            outputs.append(TxOut.parse(s))
-        return cls(version, inputs, outputs, None, testnet=testnet)
+include::code-ch05/answers.py[tag=answer3.1]
 ...
 
 class TxOut:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the tx_output at the start
-        return a TxOut object
-        '''
-        amount = little_endian_to_int(s.read(8))
-        script_pubkey = Script.parse(s)
-        return cls(amount, script_pubkey)
+include::code-ch05/answers.py[tag=answer3.2, indent=4]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the locktime parsing part of the parse method in `Tx`.
+include::code-ch05/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        num_inputs = read_varint(s)
-        inputs = []
-        for _ in range(num_inputs):
-            inputs.append(TxIn.parse(s))
-        num_outputs = read_varint(s)
-        outputs = []
-        for _ in range(num_outputs):
-            outputs.append(TxOut.parse(s))
-        locktime = little_endian_to_int(s.read(4))
-        return cls(version, inputs, outputs, locktime, testnet=testnet)
+include::code-ch05/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-What is the ScriptSig from the second input, ScriptPubKey from the first output and the amount of the second output for this transaction?
-
-```
-010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e
-010000006a47304402204585bcdef85e6b1c6af5c2669d4830ff86e42dd205c0e089bc2a82
-1657e951c002201024a10366077f87d6bce1f7100ad8cfa8a064b39d4e8fe4ea13a7b71aa8
-180f012102f0da57e85eec2934a82a585ea337ce2f4998b50ae699dd79f5880e253dafafb7
-feffffffeb8f51f4038dc17e6313cf831d4f02281c2a468bde0fafd37f1bf882729e7fd300
-0000006a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1
-cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7
-160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937fe
-ffffff567bf40595119d1bb8a3037c356efd56170b64cbcc160fb028fa10704b45d7750000
-00006a47304402204c7c7818424c7f7911da6cddc59655a70af1cb5eaf17c69dadbfc74ffa
-0b662f02207599e08bc8023693ad4e9527dc42c34210f7a7d1d1ddfc8492b654a11e7620a0
-012102158b46fbdff65d0172b7989aec8850aa0dae49abfb84c81ae6e5b251a58ace5cfeff
-ffffd63a5e6c16e620f86f375925b21cabaf736c779f88fd04dcad51d26690f7f345010000
-006a47304402200633ea0d3314bea0d95b3cd8dadb2ef79ea8331ffe1e61f762c0f6daea0f
-abde022029f23b3e9c30f080446150b23852028751635dcee2be669c2a1686a4b5edf30401
-2103ffd6f4a67e94aba353a00882e563ff2722eb4cff0ad6006e86ee20dfe7520d55feffff
-ff0251430f00000000001976a914ab0c0b2e98b1ab6dbf67d4750b0a56244948a87988ac00
-5a6202000000001976a9143c82d7df364eb6c75be8c80df2b3eda8db57397088ac46430600
-```
+include::code-ch05/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from tx import Tx
->>> hex_transaction = '0100...00'
->>> stream = BytesIO(bytes.fromhex(hex_transaction))
->>> tx_obj = Tx.parse(stream)
->>> print(tx_obj.tx_ins[1].script_sig)
-304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601 035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937
->>> print(tx_obj.tx_outs[0].script_pubkey)
-OP_DUP OP_HASH160 ab0c0b2e98b1ab6dbf67d4750b0a56244948a879 OP_EQUALVERIFY OP_CHECKSIG
->>> print(tx_obj.tx_outs[1].amount)
-40000000
+include::code-ch05/answers.py[tag=answer5]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the fee method for the `Tx` class.
+include::code-ch05/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class Tx:
 ...
-    def fee(self, testnet=False):
-        '''Returns the fee of this transaction in satoshi'''
-        input_sum, output_sum = 0, 0
-        for tx_in in self.tx_ins:
-            input_sum += tx_in.value(testnet=testnet)
-        for tx_out in self.tx_outs:
-            output_sum += tx_out.amount
-        return input_sum - output_sum
+include::code-ch05/answers.py[tag=answer6]
 ----
 
 === <<chapter_script>>: Script
 
-==== Exercise {counter:ch6exercise}
-
-Write the `op_hash160` function.
+include::code-ch06/answers.py[tag=exercise1]
 
 [source,python]
 ----
-def op_hash160(stack):
-    if len(stack) < 1:
-        return False
-    element = stack.pop()
-    h160 = hash160(element)
-    stack.append(h160)
-    return True
+include::code-ch06/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch6exercise}
-
-Write the `op_checksig` function in op.py
+include::code-ch06/answers.py[tag=exercise2]
 
 [source,python]
 ----
-def op_checksig(stack, z):
-    if len(stack) < 2:
-        return False
-    sec_pubkey = stack.pop()
-    der_signature = stack.pop()[:-1]
-    try:
-        point = S256Point.parse(sec_pubkey)
-        sig = Signature.parse(der_signature)
-    except (ValueError, SyntaxError) as e:
-        print(e)
-        return False
-    if point.verify(z, sig):
-        stack.append(encode_num(1))
-    else:
-        stack.append(encode_num(0))
-    return True
+include::code-ch06/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch6exercise}
-
-Create a ScriptSig that can unlock this ScriptPubKey
-
-.Exercise 6.3
-image::exercise1.png[Exercise 3]
+include::code-ch06/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> from script import Script
->>> hex_script_pubkey = '06767695935687'
->>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
->>> script_sig = Script([0x52])
->>> combined_script = script_sig + script_pubkey
->>> print(combined_script.evaluate(0))
-True
+include::code-ch06/answers.py[tag=answer3]
 ----
 
 OP_2 or `52` will satisfy the equation x^2^+x-6=0.
 
-==== Exercise {counter:ch6exercise}
-
-Figure out what this script is doing:
-
-.Exercise 6.4
-image::exercise2.png[Exercise 4]
+include::code-ch06/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> hex_script_pubkey = '086e879169a77ca787'
->>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
->>> collision1 = bytes.fromhex('2550...a1')  # <1>
->>> collision2 = bytes.fromhex('2550...b1')
->>> script_sig = Script([collision1, collision2])
->>> combined_script = script_sig + script_pubkey
->>> print(combined_script.evaluate(0))
-True
+include::code-ch06/answers.py[tag=answer3]
 ----
 <1> `collision1` and `collision2` are from the sha1 preimages that were found to collide from Google. (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html)
 
 This is looking for a sha1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
-
-The hexadecimals of the two collisions are here for reference:
-
-```
-255044462d312e330a25e2e3cfd30a0a0a312030206f626a0a3c3c2f57696474682032203020
-522f4865696768742033203020522f547970652034203020522f537562747970652035203020
-522f46696c7465722036203020522f436f6c6f7253706163652037203020522f4c656e677468
-2038203020522f42697473506572436f6d706f6e656e7420383e3e0a73747265616d0affd8ff
-fe00245348412d3120697320646561642121212121852fec092339759c39b1a1c63c4c97e1ff
-fe017f46dc93a6b67e013b029aaa1db2560b45ca67d688c7f84b8c4c791fe02b3df614f86db1
-690901c56b45c1530afedfb76038e972722fe7ad728f0e4904e046c230570fe9d41398abe12e
-f5bc942be33542a4802d98b5d70f2a332ec37fac3514e74ddc0f2cc1a874cd0c78305a215664
-61309789606bd0bf3f98cda8044629a1
-
-255044462d312e330a25e2e3cfd30a0a0a312030206f626a0a3c3c2f57696474682032203020
-522f4865696768742033203020522f547970652034203020522f537562747970652035203020
-522f46696c7465722036203020522f436f6c6f7253706163652037203020522f4c656e677468
-2038203020522f42697473506572436f6d706f6e656e7420383e3e0a73747265616d0affd8ff
-fe00245348412d3120697320646561642121212121852fec092339759c39b1a1c63c4c97e1ff
-fe017346dc9166b67e118f029ab621b2560ff9ca67cca8c7f85ba84c79030c2b3de218f86db3
-a90901d5df45c14f26fedfb3dc38e96ac22fe7bd728f0e45bce046d23c570feb141398bb552e
-f5a0a82be331fea48037b8b5d71f0e332edf93ac3500eb4ddc0decc1a864790c782c76215660
-dd309791d06bd0af3f98cda4bc4629b1
-```
 
 === <<chapter_tx>>: Transaction Creation and Validation
 

@@ -5,6 +5,8 @@ import re
 FIRST_CELL = """############## PLEASE RUN THIS CELL FIRST! ###################
 
 # import everything and define a test runner function
+from importlib import reload
+from helper import run
 """
 
 UNITTEST_TEMPLATE_1 = '''### Exercise {num}
@@ -29,7 +31,7 @@ PRACTICE_TEMPLATE_2 = '''# Exercise {num}
 {hints}'''
 
 
-for chapter in range(1, 5):
+for chapter in range(1, 7):
     notebook = nbformat.v4.new_notebook()
     if chapter < 10:
         path = 'code-ch0{}'.format(chapter)

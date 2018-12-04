@@ -64,7 +64,7 @@ When initializing `Point`, we will run through this part of the code:
 include::code-ch03/ecc.py[lines=134..144]
 ----
 
-The addition (+), multiplication (*), exponentiation (**) and equality (!=) here use the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is how we will construct an Elliptic Curve Cryptography library.
+The addition (+), multiplication ($$*$$), exponentiation ($$**$$) and equality (!=) here use the $$__add__$$, $$__mul__$$, $$__pow__$$ and $$__ne__$$ methods from `FiniteField` respectively and _not_ the integer equivalents. As we will see, being able to do the same equation but with different definitions for the basic arithemtic operators is how we will construct an Elliptic Curve Cryptography library.
 
 We've already coded the two classes that we need to implement Elliptic Curve points over a Finite Field. However, to check our work, it will be useful to create a test suite. We will do this using the results of Exercise 2.
 
@@ -296,7 +296,7 @@ class Point:
             product += self
         return product
 ----
-<1> We start the `product` at 0, which in case of Point Addition is the point at infinity.
+<1> We start the `product` at 0, which in the case of Point Addition is the point at infinity.
 <2> We loop `coefficient` times and add the point each time
 
 This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? For example, a coefficient of 1 trillion is going to take a really long time.

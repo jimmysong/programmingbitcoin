@@ -30,36 +30,7 @@ With this in mind, we can start constructing the Transaction class, which we'll 
 
 [source,python]
 ----
-class Tx:
-
-    def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
-        self.version = version
-        self.tx_ins = tx_ins  # <1>
-        self.tx_outs = tx_outs
-        self.locktime = locktime
-	self.testnet = testnet  # <2>
-
-    def __repr__(self):
-        tx_ins = ''
-        for tx_in in self.tx_ins:
-            tx_ins += tx_in.__repr__() + '\n'
-        tx_outs = ''
-        for tx_out in self.tx_outs:
-            tx_outs += tx_out.__repr__() + '\n'
-        return 'version: {}\ntx_ins:\n{}\ntx_outs:\n{}\nlocktime: {}\n'.format(
-            self.version,
-            tx_ins,
-            tx_outs,
-            self.locktime,
-        )
-
-    def id(self):  # <3>
-        '''Human-readable hexadecimal of the transaction hash'''
-        return self.hash().hex()
-
-    def hash(self):  # <4>
-        '''Binary hash of the legacy serialization'''
-        return hash256(self.serialize())[::-1]
+include::code-ch05/tx.py[tag=source1]
 ----
 <1> Input and Output are very generic terms so we specify what kind of inputs they are. We'll define the specific object types they are later.
 <2> We need to know which network this transaction is on in order to be able to validate it fully.
@@ -108,9 +79,7 @@ Similarly, Bitcoin transactions have version numbers. In Bitcoin's case, the tra
 
 You may notice here that the actual value in hexadecimal is `01000000`, which doesn't look like 1. Interpreted as a Little-Endian integer, this number is actually 1 (recall the discussion from <<chapter_serialization>>).
 
-==== Exercise {counter:exercise}
-
-Write the version parsing part of the `parse` method that we've defined. To do this properly, you'll have to convert 4 bytes into a Little-Endian integer.
+include::code-ch05/answers.py[tag=exercise1]
 
 === Inputs
 
@@ -137,9 +106,8 @@ We can see that the byte is actually `01`, which means that this transaction has
 
 This is where *varint* comes in. Varint is shorthand for _variable integer_ which is a way to encode an integer into bytes that range from 0 to 2^64^-1. We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be a relatively small number (say under 200). This is the case with the number of inputs in a normal transaction, so using varint helps to save space. You can see how they work in the `Varint` note.
 
-[NOTE]
 .Varint
-====
+****
 Variable integers work by these rules:
 
 * If the number is below 253, encode that number as a single byte (e.g. 100 -> `64`)
@@ -151,37 +119,11 @@ Two functions are very helpful here as we'll be using this more as we keep parsi
 
 [source,python]
 ----
-def read_varint(s):
-    '''read_varint reads a variable integer from a stream'''
-    i = s.read(1)[0]
-    if i == 0xfd:
-        return little_endian_to_int(s.read(2))
-    elif i == 0xfe:
-        return little_endian_to_int(s.read(4))
-    elif i == 0xff:
-        return little_endian_to_int(s.read(8))
-    else:
-        return i
-
-
-def encode_varint(i):
-    '''encodes an integer as a varint'''
-    if i < 0xfd:
-        return bytes([i])
-    elif i < 0x10000:
-        return b'\xfd' + int_to_little_endian(i, 2)
-    elif i < 0x100000000:
-        return b'\xfe' + int_to_little_endian(i, 4)
-    elif i < 0x10000000000000000:
-        return b'\xff' + int_to_little_endian(i, 8)
-    else:
-        raise RuntimeError('integer too large: {}'.format(i))
+include::code-ch05/helper.py[tag=source1]
 ----
 
-
 `read_varint` will read from a stream and return the integer that was encoded. `encode_varint` will do the opposite, which is take an integer and return the varint representation.
-
-====
+****
 
 Each input contains 4 fields. The first two fields point to the previous transaction output and the last two fields define how the previous transaction output can be spent. The fields are as follows:
 
@@ -220,21 +162,7 @@ Now that we know what the fields are, we can start creating a `TxIn` class in Py
 
 [source,python]
 ----
-class TxIn:
-    def __init__(self, prev_tx, prev_index, script_sig=None, sequence=0xffffffff):
-        self.prev_tx = prev_tx
-        self.prev_index = prev_index
-        if script_sig is None:  # <1>
-            self.script_sig = Script()
-        else:
-            self.script_sig = script_sig
-        self.sequence = sequence
-
-    def __repr__(self):  # <1>
-        return '{}:{}'.format(
-            self.prev_tx.hex(),
-            self.prev_index,
-        )
+include::code-ch05/tx.py[tag=source2]
 ----
 <1> We default to an empty ScriptSig.
 
@@ -246,21 +174,13 @@ We'll delve more deeply into how Script is parsed in the next chapter, but for n
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from script import Script  # <1>
->>> script_hex = '6b483045..8a'
->>> stream = BytesIO(bytes.fromhex(script_hex))
->>> script_sig = Script.parse(stream)
->>> print(script_sig)
-3045...01 0349...8a
+include::code-ch05/examples.py[tag=example1]
 ----
-<1> Note that the Script module will be more thoroughly explored in <<chapter_script>>. For now, please trust that the `Script.parse` method will create the object that we need.
+<1> Note that the `Script` class will be more thoroughly explored in <<chapter_script>>. For now, please trust that the `Script.parse` method will create the object that we need.
 
-==== Exercise {counter:exercise}
+include::code-ch05/answers.py[tag=exercise2]
 
-Write the inputs parsing part of the `parse` method in `Tx` and the `parse` method for `TxIn`.
-
-==== Outputs
+=== Outputs
 
 As hinted in the previous section, outputs define where the Bitcoins are actually going. We must have at least one output and can have lots of outputs. An exchange may batch transactions, for example, and pay out a lot of people at once instead of generating a single transaction for every single person that requests Bitcoins.
 
@@ -289,21 +209,10 @@ We can now start coding the `TxOut` class given what we know.
 
 [source,python]
 ----
-class TxOut:
-
-    def __init__(self, amount, script_pubkey):
-        self.amount = amount
-        self.script_pubkey = script_pubkey
-
-    def __repr__(self):
-        return '{}:{}'.format(self.amount, self.script_pubkey)
+include::code-ch05/tx.py[tag=source3]
 ----
 
-==== Exercise {counter:exercise}
-
-Write the outputs parsing part of the `parse` method in `Tx` and the `parse` method for `TxOut`.
-
-==== Locktime
+=== Locktime
 
 Locktime is a way to time-delay a transaction. A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,000. this was originally construed as a way to do payment channels (see _Sequence and Locktime_). The rule with Locktime is that if the Locktime is greater or equal to 500,000,000, locktime is a unix time stamp. If Locktime is less than 500,000,000, it is a block number. This way, transactions can be signed, but unspendable until a certain point in time or block.
 
@@ -318,50 +227,17 @@ The uses before BIP0065 came along was for anti-fee sniping and creating a trans
 
 BIP0065 introduced something called OP_CHECKLOCKTIMEVERIFY which makes locktime more useful by making an output unspendable until a certain locktime.
 
-==== Exercise {counter:exercise}
+include::code-ch05/answers.py[tag=exercise5]
 
-Write the locktime parsing part of the `parse` method in `Tx`.
-
-==== Exercise {counter:exercise}
-
-What is the ScriptSig from the second input, ScriptPubKey from the first output and the amount of the second output for this transaction?
-
-```
-010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e
-010000006a47304402204585bcdef85e6b1c6af5c2669d4830ff86e42dd205c0e089bc2a82
-1657e951c002201024a10366077f87d6bce1f7100ad8cfa8a064b39d4e8fe4ea13a7b71aa8
-180f012102f0da57e85eec2934a82a585ea337ce2f4998b50ae699dd79f5880e253dafafb7
-feffffffeb8f51f4038dc17e6313cf831d4f02281c2a468bde0fafd37f1bf882729e7fd300
-0000006a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1
-cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7
-160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937fe
-ffffff567bf40595119d1bb8a3037c356efd56170b64cbcc160fb028fa10704b45d7750000
-00006a47304402204c7c7818424c7f7911da6cddc59655a70af1cb5eaf17c69dadbfc74ffa
-0b662f02207599e08bc8023693ad4e9527dc42c34210f7a7d1d1ddfc8492b654a11e7620a0
-012102158b46fbdff65d0172b7989aec8850aa0dae49abfb84c81ae6e5b251a58ace5cfeff
-ffffd63a5e6c16e620f86f375925b21cabaf736c779f88fd04dcad51d26690f7f345010000
-006a47304402200633ea0d3314bea0d95b3cd8dadb2ef79ea8331ffe1e61f762c0f6daea0f
-abde022029f23b3e9c30f080446150b23852028751635dcee2be669c2a1686a4b5edf30401
-2103ffd6f4a67e94aba353a00882e563ff2722eb4cff0ad6006e86ee20dfe7520d55feffff
-ff0251430f00000000001976a914ab0c0b2e98b1ab6dbf67d4750b0a56244948a87988ac00
-5a6202000000001976a9143c82d7df364eb6c75be8c80df2b3eda8db57397088ac46430600
-```
-
-==== Coding Transactions
+=== Coding Transactions
 
 We've already parsed the transactions, now we want to do the opposite, which is serializing the transactions.
 
 [source,python]
 ----
 class TxOut:
-    ...
-
-    def serialize(self):  # <1>
-        '''Returns the byte serialization of the transaction output'''
-        result = int_to_little_endian(self.amount, 8)
-        result += self.script_pubkey.serialize()
-        return result
-
+...
+include::code-ch05/tx.py[tag=source4]
 ----
 <1> We're going to serialize the TxOut object to a bunch of bytes.
 
@@ -370,15 +246,8 @@ We can proceed to make the TxIn class which is similar.
 [source,python]
 ----
 class TxIn:
-    ...
-
-    def serialize(self):
-        '''Returns the byte serialization of the transaction input'''
-        result = self.prev_tx[::-1]
-        result += int_to_little_endian(self.prev_index, 4)
-        result += self.script_sig.serialize()
-        result += int_to_little_endian(self.sequence, 4)
-        return result
+...
+include::code-ch05/tx.py[tag=source5]
 ----
 
 Lastly, we can serialize the transaction object:
@@ -386,26 +255,15 @@ Lastly, we can serialize the transaction object:
 [source,python]
 ----
 class Tx:
-    ...
-
-    def serialize(self):
-        '''Returns the byte serialization of the transaction'''
-        result = int_to_little_endian(self.version, 4)
-        result += encode_varint(len(self.tx_ins))
-        for tx_in in self.tx_ins:
-            result += tx_in.serialize()
-        result += encode_varint(len(self.tx_outs))
-        for tx_out in self.tx_outs:
-            result += tx_out.serialize()
-        result += int_to_little_endian(self.locktime, 4)
-        return result
+...
+include::code-ch05/tx.py[tag=source6]
 ----
 
 We've used the `serialize` methods of both `TxIn` and `TxOut` to serialize `Tx`.
 
 One interesting note is that the transaction fee is not specified anywhere! This is because the fee is an implied amount. Fee is the total of the inputs amounts minus the total of the output amounts.
 
-==== Transaction Fee
+=== Transaction Fee
 
 One of the consensus rules of Bitcoin is that for any non-Coinbase transactions (more on Coinbase transactions in <<chapter_p2sh>>), the sum of the inputs have to be greater than or equal to the sum of the outputs. You may be wondering why the inputs and outputs can't just be forced to be equal. This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks (see <<chapter_blocks>>). Fees are a way to incentivize miners to include transactions in blocks. Transactions that are not in blocks are not part of the blockchain and are not final.
 
@@ -415,48 +273,9 @@ We are creating a new class to handle this, called TxFetcher:
 
 [source,python]
 ----
-class TxFetcher:
-    cache = {}
-
-    @classmethod
-    def get_url(cls, testnet=False):
-        if testnet:
-            return 'http://tbtc.programmingblockchain.com:18332'  # <1>
-        else:
-            return 'http://btc.programmingblockchain.com:8332'  # <2>
-
-    @classmethod
-    def fetch(cls, tx_id, testnet=False, fresh=False):
-        if fresh or (tx_id not in cls.cache):
-            url = '{}/rest/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
-            response = requests.get(url)
-            try:
-                raw = bytes.fromhex(response.text.strip())
-            except ValueError:
-                raise ValueError('unexpected response: {}'.format(response.text))            # make sure the tx we got matches to the hash we requested
-            tx = Tx.parse(BytesIO(raw), testnet=testnet)
-            if tx.id() != tx_id:  # <3>
-                raise ValueError('not the same id: {} vs {}'.format(tx.id(), tx_id))
-            cls.cache[tx_id] = tx
-        cls.cache[tx_id].testnet = testnet
-        return cls.cache[tx_id]
-
-    @classmethod
-    def load_cache(cls, filename):
-        disk_cache = json.loads(open(filename, 'r').read())
-        for k, raw_hex in disk_cache.items():
-            cls.cache[k] = Tx.parse(BytesIO(bytes.fromhex(raw_hex)))
-
-    @classmethod
-    def dump_cache(cls, filename):
-        with open(filename, 'w') as f:
-            to_dump = {k: tx.serialize().hex() for k, tx in cls.cache.items()}
-            s = json.dumps(to_dump, sort_keys=True, indent=4)
-            f.write(s)
+include::code-ch05/tx.py[tag=source7]
 ----
-<1> Port 18332 is the default port for RPC on testnet
-<2> Port 8332 is the default port for RPC on mainnet
-<3> We check that the ID is what we expect it to be
+<1> We check that the ID is what we expect it to be
 
 You may be wondering why we don't get the specific output for the transaction and instead get the entire transaction. This is because we don't want to be trusting a third party! By getting the entire transaction, we can verify the transaction ID (hash256 of its contents) and be sure that we are indeed getting the transaction we asked for. This is impossible unless we receive the entire transaction.
 
@@ -472,31 +291,14 @@ We can now create the appropriate method in `TxIn` to fetch the previous transac
 ----
 class TxIn:
 ...
-    def fetch_tx(self, testnet=False):
-        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
-
-    def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash on libbitcoin server
-        Returns the amount in satoshi
-        '''
-        tx = self.fetch_tx(testnet=testnet)
-        return tx.tx_outs[self.prev_index].amount
-
-    def script_pubkey(self, testnet=False):
-        '''Get the ScriptPubKey by looking up the tx hash on libbitcoin server
-        Returns the binary scriptpubkey
-        '''
-        tx = self.fetch_tx(testnet=testnet)
-        return tx.tx_outs[self.prev_index].script_pubkey
+include::code-ch05/tx.py[tag=source8]
 ----
 
 ==== Calculating the fee
 
 Now that we have the `amount` method in `TxIn` which lets us access how many Bitcoins are in each transaction input, we can calculate the fee for a transaction.
 
-==== Exercise {counter:exercise}
-
-Write the `fee` method for the `Tx` class.
+include::code-ch05/answers.py[tag=exercise6]
 
 === Conclusion
 
