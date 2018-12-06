@@ -1,5 +1,6 @@
 import hashlib
 
+from logging import getLogger
 from unittest import TestCase
 
 from ecc import (
@@ -11,6 +12,9 @@ from helper import (
     hash160,
     hash256,
 )
+
+
+LOGGER = getLogger(__name__)
 
 
 def encode_num(num):
@@ -636,9 +640,12 @@ def op_sha256(stack):
 
 
 def op_hash160(stack):
+    # check that there's at least 1 element on the stack
     if len(stack) < 1:
         return False
+    # pop off the top element from the stack
     element = stack.pop()
+    # push a hash160 of the popped off element to the stack
     h160 = hash160(element)
     stack.append(h160)
     return True
@@ -653,16 +660,23 @@ def op_hash256(stack):
 
 
 def op_checksig(stack, z):
+    # check that there are at least 2 elements on the stack
     if len(stack) < 2:
         return False
+    # the top element of the stack is the SEC pubkey
     sec_pubkey = stack.pop()
+    # the next element of the stack is the DER signature
+    # take off the last byte of the signature as that's the hash_type
     der_signature = stack.pop()[:-1]
+    # parse the serialized pubkey and signature into objects
     try:
         point = S256Point.parse(sec_pubkey)
         sig = Signature.parse(der_signature)
     except (ValueError, SyntaxError) as e:
-        print(e)
+        LOGGER.info(e)
         return False
+    # verify the signature using S256Point.verify()
+    # push an encoded 1 or 0 depending on whether the signature verified
     if point.verify(z, sig):
         stack.append(encode_num(1))
     else:
@@ -674,6 +688,7 @@ def op_checksigverify(stack, z):
     return op_checksig(stack, z) and op_verify(stack)
 
 
+# tag::source1[]
 def op_checkmultisig(stack, z):
     if len(stack) < 1:
         return False
@@ -688,15 +703,24 @@ def op_checkmultisig(stack, z):
         return False
     der_signatures = []
     for _ in range(m):
-        # signature is assumed to be using SIGHASH_ALL
-        der_signatures.append(stack.pop()[:-1])
-    # OP_CHECKMULTISIG bug
-    stack.pop()
+        der_signatures.append(stack.pop()[:-1])  # <1>
+    stack.pop()  # <2>
     try:
-        raise NotImplementedError
+        # end::source1[]
+        # parse all the points
+        # parse all the signatures
+        # loop through the signatures
+            # if we have no more points, signatures are no good
+            # we loop until we find the point which works with this signature
+                # get the current point from the list of points
+                # we check if this signature goes with the current point
+        # the signatures are valid, so push a 1 to the stack
+        # tag::source1[]
+        raise NotImplementedError  # <3>
     except (ValueError, SyntaxError):
         return False
     return True
+# end::source1[]
 
 
 def op_checkmultisigverify(stack, z):

@@ -1,0 +1,85 @@
+import ecc
+import helper
+import tx
+import script
+---
+example1
+---
+example2
+---
+example3
+---
+example4
+---
+exercise1:tx:TxTest:test_sig_hash
+---
+exercise2:tx:TxTest:test_verify_p2pkh
+---
+example5
+---
+example6
+---
+example7
+---
+exercise3:tx:TxTest:test_sign_input
+---
+exercise4:
+from ecc import PrivateKey
+from helper import decode_base58, SIGHASH_ALL
+from script import p2pkh_script, Script
+from tx import TxIn, TxOut, Tx
+
+# create 1 TxIn and 2 TxOuts
+# 1 of the TxOuts should be back to your address
+# the other TxOut should be to this address
+target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
+
+# get the private key from the exercise in Chapter 4
+# change address should be the address generated from Chapter 4
+
+# get the prev_tx and prev_index from the transaction where you got
+# some testnet coins
+# create a transaction input for the previous transaction with
+# the default ScriptSig and sequence
+
+# target amount should be 60% of the output amount
+# set the fee to some reasonable amount
+# change amount = amount from the prev tx - target amount - fee
+
+# create a transaction output for the target amount and address
+# create a transaction output for the change amount and address
+# create the transaction object
+
+# sign the one input in the transaction object using the private key
+# print the transaction's serialization in hex
+# broadcast at http://testnet.blockchain.info/pushtx
+---
+exercise5:
+from ecc import PrivateKey
+from helper import decode_base58, SIGHASH_ALL
+from script import p2pkh_script, Script
+from tx import TxIn, TxOut, Tx
+
+# Create 2 TxIns, 1 from the Exercise 4 and 1 from a testnet faucet
+# Creat 1 TxOut to the address above
+target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
+
+# get the private key from the exercise in Chapter 4
+
+# get the prev_tx and prev_index from the transaction where you got
+# some testnet coins
+# create the first transaction input with the default ScriptSig and
+# sequence
+# get the prev_tx and prev_index from the transaction in Exercise 4
+# create the second transaction input with the default ScriptSig and
+# sequence
+
+# set the fee to some reasonable amount
+# target amount should be the sum of the inputs - fee
+
+# create a transaction output for the amount and address
+
+# sign the first input using the private key
+# sign the second input using the private key 
+# print the transaction's serialization in hex
+# broadcast at http://testnet.blockchain.info/pushtx

@@ -1,1879 +1,718 @@
+= Programming Bitcoin
+:imagesdir: images
+
 [appendix]
 == Solutions
 
-=== Chapter 1: Finite Fields
+=== <<chapter_finite_fields>>: Finite Fields
 
-==== Exercise {counter:ch1exercise}
-
-Write the $$__ne__$$ method for +FieldElement+.
+include::code-ch01/answers.py[tag=exercise1]
 
 [source,python]
 ----
 class FieldElement:
 ...
-    def __ne__(self, other):
-        # this should be the inverse of the == operator
-	return not (self == other)
+include::code-ch01/answers.py[tag=answer1,indent=4]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
-
-. 44+33
-. 9-29
-. 17+42+49
-. 52-30-38
+include::code-ch01/answers.py[tag=exercise2]
 
 [source,python]
 ----
->>> prime = 57
->>> print((44+33)%prime)
-20
->>> print((9-29)%prime)
-37
->>> print((17+42+49)%prime)
-51
->>> print((52-30-38)%prime)
-41
+include::code-ch01/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Write the corresponding $$__sub__$$ method which defines the subtraction of two field elements.
+include::code-ch01/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class FieldElement:
 ...
-    def __sub__(self, other):
-        if self.prime != other.prime:
-            raise TypeError('Cannot subtract two numbers in different Fields')
-        num = (self.num - other.num) % self.prime
-        return self.__class__(num, self.prime)
+include::code-ch01/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are field versions):
-
-. 95⋅45⋅31
-. 17⋅13⋅19⋅44
-. 12^7^⋅77^49^
+include::code-ch01/answers.py[tag=exercise4]
 
 [source,python]
 ----
->>> prime = 97
->>> print(95*45*31 % prime)
-23
->>> print(17*13*19*44 % prime)
-68
->>> print(12**7*77**49 % prime)
-63
+include::code-ch01/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-For k = 1, 3, 7, 13, 18, what is this set in F~19~?
-
-{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
-
-Do you notice anything about these sets?
+include::code-ch01/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> prime = 19
->>> for k in (1,3,7,13,18):
-...     print([k*i % prime for i in range(prime)])
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-[0, 3, 6, 9, 12, 15, 18, 2, 5, 8, 11, 14, 17, 1, 4, 7, 10, 13, 16]
-[0, 7, 14, 2, 9, 16, 4, 11, 18, 6, 13, 1, 8, 15, 3, 10, 17, 5, 12]
-[0, 13, 7, 1, 14, 8, 2, 15, 9, 3, 16, 10, 4, 17, 11, 5, 18, 12, 6]
-[0, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
->>> for k in (1,3,7,13,18):
-...     print(sorted([k*i % prime for i in range(prime)]))
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+include::code-ch01/answers.py[tag=answer5]
 ----
 
 When sorted, the results are always the same set.
 
-==== Exercise {counter:ch1exercise}
-
-Write the corresponding $$__mul__$$ method which defines the multiplication of two field elements.
+include::code-ch01/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class FieldElement:
 ...
-    def __mul__(self, other):
-        if self.prime != other.prime:
-            raise TypeError('Cannot multiply two numbers in different Fields')
-	num = self.num * other.num % self.prime
-	return self.__class__(num, self.prime)
+include::code-ch01/answers.py[tag=answer6,indent=4]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-For p = 7, 11, 17, 31, 43, what is this set in F~p~?
-
-{1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
+include::code-ch01/answers.py[tag=exercise7]
 
 [source,python]
 ----
->>> for prime in (7, 11, 17, 31, 43):
-...     print([pow(i, prime-1, prime) for i in range(1, prime)])
-[1, 1, 1, 1, 1, 1]
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+include::code-ch01/answers.py[tag=answer7]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Solve the following equations in F~31~:
-
-* 3 / 24
-* 17^-3^
-* 4^-4^⋅11
+include::code-ch01/answers.py[tag=exercise8]
 
 [source,python]
 ----
->>> prime = 31
->>> print(3*pow(24, prime-2, prime) % prime)
-4
->>> print(pow(17, prime-4, prime))
-29
->>> print(pow(4, prime-5, prime)*11 % prime)
-13
+include::code-ch01/answers.py[tag=answer8]
 ----
 
-==== Exercise {counter:ch1exercise}
-
-Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
+include::code-ch01/answers.py[tag=exercise9]
 
 [source,python]
 ----
 class FieldElement:
 ...
-
-    def __truediv__(self, other):
-        if self.prime != other.prime:
-            raise TypeError('Cannot divide two numbers in different Fields')
-	num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
-	return self.__class__(num, self.prime)
+include::code-ch01/answers.py[tag=answer9,indent=4]
 ----
 
+=== <<chapter_elliptic_curves>>: Elliptic Curves
 
-=== Chapter 2: Elliptic Curves
-
-==== Exercise {counter:ch2exercise}
-
-Determine which of these points are on the curve y^2^=x^3^+5x+7:
-
-(2,4), (-1,-1), (18,77), (5,7)
+include::code-ch02/answers.py[tag=exercise1]
 
 [source,python]
 ----
->>> def on_curve(x, y):
-...     return y**2 == x**3 + 5*x + 7
->>> print(on_curve(2,4))
-False
->>> print(on_curve(-1,-1))
-True
->>> print(on_curve(18,77))
-True
->>> print(on_curve(5,7))
-False
+include::code-ch02/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch2exercise}
-
-Write the $$__ne__$$ method for `Point`.
+include::code-ch02/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Point:
 ...
-    def __ne__(self, other):
-        # this should be the inverse of the == operator
-	return not (self == other)
+include::code-ch02/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch2exercise}
-
-Handle the case where the two points are negatives of each other. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
+include::code-ch02/answers.py[tag=exercise3]
 
 [source,python]
 ----
+class Point:
+...
+include::code-ch02/answers.py[tag=answer3,indent=4]
+----
+
+include::code-ch02/answers.py[tag=exercise4]
+
+[source,python]
+----
+include::code-ch02/answers.py[tag=answer4]
+----
+
+include::code-ch02/answers.py[tag=exercise5]
+
+[source,python]
+----
+class Point:
+...
     def __add__(self, other):
-        ...
-	if self.x == other.x and self.y != other.y:
-	    return self.__class__(None, None, self.a, self.b)
+    ...
+include::code-ch02/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch2exercise}
-
-For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+include::code-ch02/answers.py[tag=exercise6]
 
 [source,python]
 ----
->>> x1, y1 = 2, 5
->>> x2, y2 = -1, -1
->>> s = (y2 - y1) / (x2 - x1)
->>> x3 = s**2 - x1 - x2
->>> y3 = s * (x1 - x3) - y1
->>> print(x3, y3)
-3.0 -7.0
+include::code-ch02/answers.py[tag=answer6]
 ----
 
-==== Exercise {counter:ch2exercise}
-
-Write the $$__add__$$ method where x~1~≠x~2~
+include::code-ch02/answers.py[tag=exercise7]
 
 [source,python]
 ----
+class Point:
+...
     def __add__(self, other):
-        ...
-	if self.x != other.x:
-	    s = (other.y - self.y) / (other.x - self.x)
-	    x3 = s**2 - self.x - other.x
-	    y3 = s*(self.x - x3) - self.y
-	    return self.__class__(x3, y3, self.a, self.b)
+    ...
+include::code-ch02/answers.py[tag=answer7,indent=4]
 ----
 
-==== Exercise {counter:ch2exercise}
+=== <<chapter_elliptic_curve_cryptography>>: Elliptic Curve Cryptography
 
-For the curve y^2^=x^3^+5x+7, what is (-1,1) + (-1,1)?
+include::code-ch03/answers.py[tag=exercise1]
 
 [source,python]
 ----
->>> a, x1, y1 = 5, -1, 1
->>> s = (3 * x1**2 + a) / (2 * y1)
->>> x3 = s**2 - 2*x1
->>> y3 = s*(x1-x3)-y1
->>> print(x3,y3)
-18.0 -77.0
+include::code-ch03/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch2exercise}
-
-Write the $$__add__$$ method where x~1~=x~2~ and y~1~=y~2~
+include::code-ch03/answers.py[tag=exercise2]
 
 [source,python]
 ----
-    def __add__(self, other):
-        ...
-	if self == other:
-	    s = (3*self.x**2+self.a)/(2*self.y)
-	    x3 = s**2 - 2*self.x
-	    y3 = s*(self.x - x3) - self.y
-	    return self.__class__(x3, y3, self.a, self.b)
+include::code-ch03/answers.py[tag=answer2]
 ----
 
-=== Chapter 3: Elliptic Curve Cryptography
-
-==== Exercise {counter:ch3exercise}
-
-Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
-
-(192,105), (17,56), (200,119), (1,193), (42,99)
+include::code-ch03/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> from ecc import FieldElement
->>> prime = 223
->>> a = FieldElement(0, prime)
->>> b = FieldElement(7, prime)
->>> def on_curve(x,y):
-...     return y**2 == x**3 + a*x + b
->>> print(on_curve(FieldElement(192, prime), FieldElement(105, prime)))
-True
->>> print(on_curve(FieldElement(17, prime), FieldElement(56, prime)))
-True
->>> print(on_curve(FieldElement(200, prime), FieldElement(119, prime)))
-False
->>> print(on_curve(FieldElement(1, prime), FieldElement(193, prime)))
-True
->>> print(on_curve(FieldElement(42, prime), FieldElement(99, prime)))
-False
+include::code-ch03/answers.py[tag=answer3]
 ----
 
-==== Exercise {counter:ch3exercise}
-
-For the curve y^2^=x^3^+7 over F~223~, find:
-
-* (170,142) + (60,139)
-* (47,71) + (17,56)
-* (143,98) + (76,66)
+include::code-ch03/answers.py[tag=exercise4]
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> prime = 223
->>> a = FieldElement(0, prime)
->>> b = FieldElement(7, prime)
->>> p1 = Point(FieldElement(170, prime), FieldElement(142, prime), a, b)
->>> p2 = Point(FieldElement(60, prime), FieldElement(139, prime), a, b)
->>> print(p1+p2)
-Point(220,181)_223
->>> p1 = Point(FieldElement(47, prime), FieldElement(71, prime), a, b)
->>> p2 = Point(FieldElement(17, prime), FieldElement(56, prime), a, b)
->>> print(p1+p2)
-Point(215,68)_223
->>> p1 = Point(FieldElement(143, prime), FieldElement(98, prime), a, b)
->>> p2 = Point(FieldElement(76, prime), FieldElement(66, prime), a, b)
->>> print(p1+p2)
-Point(47,71)_223
+include::code-ch03/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch3exercise}
-
-Extend `ECCTest` to test for the additions from the previous exercise call this `test_add`.
+include::code-ch03/answers.py[tag=exercise5]
 
 [source,python]
 ----
-    def test_add(self):
-        prime = 223
-        a = FieldElement(0, prime)
-        b = FieldElement(7, prime)
-        additions = (
-            (192, 105, 17, 56, 170, 142),
-            (47, 71, 117, 141, 60, 139),
-            (143, 98, 76, 66, 47, 71),
-        )
-        for x1_raw, y1_raw, x2_raw, y2_raw, x3_raw, y3_raw in additions:
-            x1 = FieldElement(x1_raw, prime)
-            y1 = FieldElement(y1_raw, prime)
-            p1 = Point(x1, y1, a, b)
-            x2 = FieldElement(x2_raw, prime)
-            y2 = FieldElement(y2_raw, prime)
-            p2 = Point(x2, y2, a, b)
-            x3 = FieldElement(x3_raw, prime)
-            y3 = FieldElement(y3_raw, prime)
-            p3 = Point(x3, y3, a, b)
-            self.assertEqual(p1+p2, p3)
+include::code-ch03/answers.py[tag=answer5]
 ----
 
-==== Exercise {counter:ch3exercise}
-
-For the curve y^2^=x^3^+7 over F~223~, find:
-
-* 2⋅(192,105)
-* 2⋅(143,98)
-* 2⋅(47,71)
-* 4⋅(47,71)
-* 8⋅(47,71)
-* 21⋅(47,71)
+include::code-ch03/answers.py[tag=exercise6]
 
 [source,python]
 ----
->>> from ecc import FieldElement, Point
->>> prime = 223
->>> a = FieldElement(0, prime)
->>> b = FieldElement(7, prime)
->>> x1 = FieldElement(num=192, prime=prime)
->>> y1 = FieldElement(num=105, prime=prime)
->>> p = Point(x1,y1,a,b)
->>> print(p+p)
-Point(49,71)_223
->>> x1 = FieldElement(num=143, prime=prime)
->>> y1 = FieldElement(num=98, prime=prime)
->>> p = Point(x1,y1,a,b)
->>> print(p+p)
-Point(64,168)_223
->>> x1 = FieldElement(num=47, prime=prime)
->>> y1 = FieldElement(num=71, prime=prime)
->>> p = Point(x1,y1,a,b)
->>> print(p+p)
-Point(36,111)_223
->>> print(p+p+p+p)
-Point(194,51)_223
->>> print(p+p+p+p+p+p+p+p)
-Point(116,55)_223
->>> print(p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p)
-Point(infinity)
+include::code-ch03/answers.py[tag=answer6]
 ----
 
-==== Exercise {counter:ch3exercise}
-
-For the curve y^2^=x^3^+7 over F~223~, find the order of the group generated by (15,86)
+include::code-ch03/answers.py[tag=exercise7]
 
 [source,python]
 ----
->>> prime = 223
->>> a = FieldElement(0, prime)
->>> b = FieldElement(7, prime)
->>> x = FieldElement(15, prime)
->>> y = FieldElement(86, prime)
->>> p = Point(x, y, a, b)
->>> inf = Point(None, None, a, b)
->>> product = p
->>> count = 1
->>> while product != inf:
-...     product += p
-...     count += 1
->>> print(count)
-7
+include::code-ch03/answers.py[tag=answer7]
 ----
 
-==== Exercise {counter:ch3exercise}
+=== <<chapter_serialization>>: Serialization
 
-Verify whether these signatures are valid:
-
-```
-P = (0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
-     0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
-
-# signature 1
-z, r, s = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60,
-          0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395,
-          0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
-
-# signature 2
-z, r, s = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d,
-          0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c,
-          0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
-```
+include::code-ch04/answers.py[tag=exercise1]
 
 [source,python]
 ----
->>> from ecc import S256Point, N, G
->>> point = S256Point(
-...     0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
-...     0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34)
->>> z = 0xec208baa0fc1c19f708a9ca96fdeff3ac3f230bb4a7ba4aede4942ad003c0f60
->>> r = 0xac8d1c87e51d0d441be8b3dd5b05c8795b48875dffe00b7ffcfac23010d3a395
->>> s = 0x68342ceff8935ededd102dd876ffd6ba72d6a427a3edb13d26eb0781cb423c4
->>> u = z * pow(s, N-2, N) % N
->>> v = r * pow(s, N-2, N) % N
->>> print((u*G + v*point).x.num == r)
-True
->>> z = 0x7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
->>> r = 0xeff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
->>> s = 0xc7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
->>> u = z * pow(s, N-2, N) % N
->>> v = r * pow(s, N-2, N) % N
->>> print((u*G + v*point).x.num == r)
-True
+include::code-ch04/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch3exercise}
-
-Sign the following message with the secret
-
-```
-e = 12345
-z = int.from_bytes(hash256('Programming Bitcoin!'), 'big')
-```
+include::code-ch04/answers.py[tag=exercise2]
 
 [source,python]
 ----
->>> from ecc import S256Point, G, N
->>> from random import randint
->>> from helper import hash256
->>> e = 12345
->>> z = int.from_bytes(hash256(b'Programming Bitcoin!'), 'big')
->>> k = randint(0, N)
->>> r = (k*G).x.num
->>> k_inv = pow(k, N-2, N)
->>> s = (z+r*e) * k_inv % N
->>> print(e*G)
-S256Point(f01d6b9018ab421dd410404cb869072065522bf85734008f105cf385a023a80f,0eba29d0f0c5408ed681984dc525982abefccd9f7ff01dd26da4999cf3f6a295)
->>> print(hex(z))
-0x969f6056aa26f7d2795fd013fe88868d09c9f6aed96965016e1936ae47060d48
->>> print(hex(r))
-0x731e365289e2db339d25505196c82334f5f4f4b82331d86c6a177cdbad134688
->>> print(hex(s))
-0xef43fcd07f59fbae063529b2ab76717c2a796726e9aef99b687e8293e0e02137
+include::code-ch04/answers.py[tag=answer2]
 ----
 
-=== Chapter 4: Serialization
-
-==== Exercise {counter:ch4exercise}
-
-Find the uncompressed SEC format for the Public Key where the Private Key secrets are:
-
-* 5000
-* 2018^5^
-* 0xdeadbeef12345
+include::code-ch04/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> priv = PrivateKey(5000)
->>> print(priv.point.sec(compressed=False).hex())
-04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10
->>> priv = PrivateKey(2018**5)
->>> print(priv.point.sec(compressed=False).hex())
-04027f3da1918455e03c46f659266a1bb5204e959db7364d2f473bdf8f0a13cc9dff87647fd023c13b4a4994f17691895806e1b40b57f4fd22581a4f46851f3b06
->>> priv = PrivateKey(0xdeadbeef12345)
->>> print(priv.point.sec(compressed=False).hex())
-04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa762fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121
+class ECCTest(TestCase):
+...
+include::code-ch04/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch4exercise}
-
-Find the compressed SEC format for the Public Key where the Private Key secrets are:
-
-* 5001
-* 2019^5^
-* 0xdeadbeef54321
+include::code-ch04/answers.py[tag=exercise4]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> priv = PrivateKey(5001)
->>> print(priv.point.sec(compressed=True).hex())
-0357a4f368868a8a6d572991e484e664810ff14c05c0fa023275251151fe0e53d1
->>> priv = PrivateKey(2019**5)
->>> print(priv.point.sec(compressed=True).hex())
-02933ec2d2b111b92737ec12f1c5d20f3233a0ad21cd8b36d0bca7a0cfa5cb8701
->>> priv = PrivateKey(0xdeadbeef54321)
->>> print(priv.point.sec(compressed=True).hex())
-0296be5b1292f6c856b3c5654e886fc13511462059089cdf9c479623bfcbe77690
+include::code-ch04/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch4exercise}
-
-Find the DER format for a signature whose r and s values are:
-
-r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
-s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+include::code-ch04/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> from ecc import Signature
->>> r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
->>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
->>> sig = Signature(r,s)
->>> print(sig.der().hex())
-3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c60221008ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+include::code-ch04/answers.py[tag=answer5]
 ----
 
-==== Exercise {counter:ch4exercise}
-
-Convert the following hex to binary and then to Base58:
-
-* 7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
-* eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
-* c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+include::code-ch04/answers.py[tag=exercise6]
 
 [source,python]
 ----
->>> from helper import encode_base58
->>> h = '7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d'
->>> print(encode_base58(bytes.fromhex(h)).decode('ascii'))
-9MA8fRQrT4u8Zj8ZRd6MAiiyaxb2Y1CMpvVkHQu5hVM6
->>> h = 'eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c'
->>> print(encode_base58(bytes.fromhex(h)).decode('ascii'))
-4fE3H2E6XMp4SsxtwinF7w9a34ooUrwWe4WsW1458Pd
->>> h = 'c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6'
->>> print(encode_base58(bytes.fromhex(h)).decode('ascii'))
-EQJsjkd6JaGwxrjEhfeqPenqHwrBmPQZjJGNSCHBkcF7
+include::code-ch04/answers.py[tag=answer6]
 ----
 
-==== Exercise {counter:ch4exercise}
-
-Find the address corresponding to Public Keys whose Private Key secrets are:
-
-* 5002 (use uncompressed SEC, on testnet)
-* 2020^5^ (use compressed SEC, on testnet)
-* 0x12345deadbeef (use compressed SEC on mainnet)
+include::code-ch04/answers.py[tag=exercise7]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> priv = PrivateKey(5002)
->>> print(priv.point.address(compressed=False, testnet=True))
-mmTPbXQFxboEtNRkwfh6K51jvdtHLxGeMA
->>> priv = PrivateKey(2020**5)
->>> print(priv.point.address(compressed=True, testnet=True))
-mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH
->>> priv = PrivateKey(0x12345deadbeef)
->>> print(priv.point.address(compressed=True, testnet=False))
-1F1Pn2y6pDb68E5nYJJeba4TLg2U7B6KF1
+include::code-ch04/answers.py[tag=answer7]
 ----
 
-==== Exercise {counter:ch4exercise}
-
-Find the wif for Private Key whose secrets are:
-
-* 5003 (compressed, testnet)
-* 2021^5^ (uncompressed, testnet)
-* 0x54321deadbeef (compressed, mainnet)
+include::code-ch04/answers.py[tag=exercise8]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> priv = PrivateKey(5003)
->>> print(priv.wif(compressed=True, testnet=True))
-cMahea7zqjxrtgAbB7LSGbcQUr1uX1ojuat9jZodMN8rFTv2sfUK
->>> priv = PrivateKey(2021**5)
->>> print(priv.wif(compressed=False, testnet=True))
-91avARGdfge8E4tZfYLoxeJ5sGBdNJQH4kvjpWAxgzczjbCwxic
->>> priv = PrivateKey(0x54321deadbeef)
->>> print(priv.wif(compressed=True, testnet=False))
-KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgiuQJv1h8Ytr2S53a
+include::code-ch04/answers.py[tag=answer8]
 ----
 
-==== Exercise {counter:ch4exercise}
-
-Write a function `little_endian_to_int` which takes Python bytes, interprets those bytes in Little Endian and returns the number.
+include::code-ch04/answers.py[tag=exercise9]
 
 [source,python]
 ----
-def little_endian_to_int(b):
-    '''little_endian_to_int takes byte sequence as a little-endian number.
-    Returns an integer'''
-    return int.from_bytes(b, 'little')
+include::code-ch04/answers.py[tag=answer9]
 ----
 
-==== Exercise {counter:ch4exercise}
+=== <<chapter_tx_parsing>>: Transactions
 
-Write a function `int_to_little_endian` which does the reverse of the last exercise.
-
-[source,python]
-----
-def int_to_little_endian(n, length):
-    '''endian_to_little_endian takes an integer and returns the little-endian
-    byte sequence of length'''
-    return n.to_bytes(length, 'little')
-----
-
-==== Exercise {counter:ch4exercise}
-
-Create a testnet address for yourself using a secret that only you know. Go to a testnet faucet and send some testnet coins to that address. If you succeed, congrats! You're now the proud owner of some testnet coins!
-
-[source,python]
-----
->>> from ecc import PrivateKey
->>> from helper import hash256, little_endian_to_int
->>> passphrase = b'jimmy@programmingblockchain.com my secret'
->>> secret = little_endian_to_int(hash256(passphrase))
->>> priv = PrivateKey(secret)
->>> print(priv.point.address(testnet=True))
-mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
-----
-
-=== Chapter 5: Transactions
-
-==== Exercise {counter:ch5exercise}
-
-Write the version parsing part of the parse method that we've defined. To do this properly, you'll have to convert 4 bytes into a little-endian integer.
+include::code-ch05/answers.py[tag=exercise1]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        return cls(version, None, None, None, testnet=testnet)
+include::code-ch05/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the inputs parsing part of the parse method in `Tx` and the parse method for `TxIn`.
+include::code-ch05/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        num_inputs = read_varint(s)
-        inputs = []
-        for _ in range(num_inputs):
-            inputs.append(TxIn.parse(s))
-        return cls(version, inputs, None, None, testnet=testnet)
+include::code-ch05/answers.py[tag=answer2.1]
 ...
 
 class TxIn:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the tx_input at the start
-        return a TxIn object
-        '''
-        prev_tx = s.read(32)[::-1]
-        prev_index = little_endian_to_int(s.read(4))
-        script_sig = Script.parse(s)
-        sequence = little_endian_to_int(s.read(4))
-        return cls(prev_tx, prev_index, script_sig, sequence)
+include::code-ch05/answers.py[tag=answer2.2, indent=4]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the outputs parsing part of the parse method in `Tx` and the parse method for `TxOut`.
+include::code-ch05/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        num_inputs = read_varint(s)
-        inputs = []
-        for _ in range(num_inputs):
-            inputs.append(TxIn.parse(s))
-        num_outputs = read_varint(s)
-        outputs = []
-        for _ in range(num_outputs):
-            outputs.append(TxOut.parse(s))
-        return cls(version, inputs, outputs, None, testnet=testnet)
+include::code-ch05/answers.py[tag=answer3.1]
 ...
 
 class TxOut:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the tx_output at the start
-        return a TxOut object
-        '''
-        amount = little_endian_to_int(s.read(8))
-        script_pubkey = Script.parse(s)
-        return cls(amount, script_pubkey)
+include::code-ch05/answers.py[tag=answer3.2, indent=4]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the locktime parsing part of the parse method in `Tx`.
+include::code-ch05/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class Tx:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        version = little_endian_to_int(s.read(4))
-        num_inputs = read_varint(s)
-        inputs = []
-        for _ in range(num_inputs):
-            inputs.append(TxIn.parse(s))
-        num_outputs = read_varint(s)
-        outputs = []
-        for _ in range(num_outputs):
-            outputs.append(TxOut.parse(s))
-        locktime = little_endian_to_int(s.read(4))
-        return cls(version, inputs, outputs, locktime, testnet=testnet)
+include::code-ch05/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-What is the ScriptSig from the second input, scriptPubKey from the first output and the amount of the second output for this transaction?
-
-010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e010000006a47304402204585bcdef85e6b1c6af5c2669d4830ff86e42dd205c0e089bc2a821657e951c002201024a10366077f87d6bce1f7100ad8cfa8a064b39d4e8fe4ea13a7b71aa8180f012102f0da57e85eec2934a82a585ea337ce2f4998b50ae699dd79f5880e253dafafb7feffffffeb8f51f4038dc17e6313cf831d4f02281c2a468bde0fafd37f1bf882729e7fd3000000006a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937feffffff567bf40595119d1bb8a3037c356efd56170b64cbcc160fb028fa10704b45d775000000006a47304402204c7c7818424c7f7911da6cddc59655a70af1cb5eaf17c69dadbfc74ffa0b662f02207599e08bc8023693ad4e9527dc42c34210f7a7d1d1ddfc8492b654a11e7620a0012102158b46fbdff65d0172b7989aec8850aa0dae49abfb84c81ae6e5b251a58ace5cfeffffffd63a5e6c16e620f86f375925b21cabaf736c779f88fd04dcad51d26690f7f345010000006a47304402200633ea0d3314bea0d95b3cd8dadb2ef79ea8331ffe1e61f762c0f6daea0fabde022029f23b3e9c30f080446150b23852028751635dcee2be669c2a1686a4b5edf304012103ffd6f4a67e94aba353a00882e563ff2722eb4cff0ad6006e86ee20dfe7520d55feffffff0251430f00000000001976a914ab0c0b2e98b1ab6dbf67d4750b0a56244948a87988ac005a6202000000001976a9143c82d7df364eb6c75be8c80df2b3eda8db57397088ac46430600
+include::code-ch05/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from tx import Tx
->>> hex_transaction = '0100...00'
->>> stream = BytesIO(bytes.fromhex(hex_transaction))
->>> tx_obj = Tx.parse(stream)
->>> print(tx_obj.tx_ins[1].script_sig)
-304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601 035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937
->>> print(tx_obj.tx_outs[0].script_pubkey)
-OP_DUP OP_HASH160 ab0c0b2e98b1ab6dbf67d4750b0a56244948a879 OP_EQUALVERIFY OP_CHECKSIG
->>> print(tx_obj.tx_outs[1].amount)
-40000000
+include::code-ch05/answers.py[tag=answer5]
 ----
 
-==== Exercise {counter:ch5exercise}
-
-Write the fee method for the `Tx` class.
+include::code-ch05/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class Tx:
 ...
-    def fee(self, testnet=False):
-        '''Returns the fee of this transaction in satoshi'''
-        input_sum, output_sum = 0, 0
-        for tx_in in self.tx_ins:
-            input_sum += tx_in.value(testnet=testnet)
-        for tx_out in self.tx_outs:
-            output_sum += tx_out.amount
-        return input_sum - output_sum
+include::code-ch05/answers.py[tag=answer6,indent=4]
 ----
 
-=== Chapter 6: Script
+=== <<chapter_script>>: Script
 
-==== Exercise {counter:ch6exercise}
-
-Write the `op_hash160` function.
+include::code-ch06/answers.py[tag=exercise1]
 
 [source,python]
 ----
-def op_hash160(stack):
-    if len(stack) < 1:
-        return False
-    element = stack.pop()
-    h160 = hash160(element)
-    stack.append(h160)
-    return True
+include::code-ch06/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:exercise}
-
-Write the `op_checksig` function in op.py
+include::code-ch06/answers.py[tag=exercise2]
 
 [source,python]
 ----
-def op_checksig(stack, z):
-    if len(stack) < 2:
-        return False
-    sec_pubkey = stack.pop()
-    der_signature = stack.pop()[:-1]
-    try:
-        point = S256Point.parse(sec_pubkey)
-        sig = Signature.parse(der_signature)
-    except (ValueError, SyntaxError) as e:
-        print(e)
-        return False
-    if point.verify(z, sig):
-        stack.append(encode_num(1))
-    else:
-        stack.append(encode_num(0))
-    return True
+include::code-ch06/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch6exercise}
-
-Create a ScriptSig that can unlock this ScriptPubKey
-
-image::exercise1.png[Exercise 3]
+include::code-ch06/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> from script import Script
->>> hex_script_pubkey = '06767695935687'
->>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
->>> hex_script_sig = '0152'
->>> script_sig = Script.parse(BytesIO(bytes.fromhex(hex_script_sig)))
->>> combined_script = script_sig + script_pubkey
->>> print(combined_script.evaluate(0))
-True
+include::code-ch06/answers.py[tag=answer3]
 ----
 
 OP_2 or `52` will satisfy the equation x^2^+x-6=0.
 
-==== Exercise {counter:ch6exercise}
-
-Figure out what this script is doing:
-
-image::exercise2.png[Exercise 4]
+include::code-ch06/answers.py[tag=exercise4]
 
 [source,python]
 ----
->>> hex_script_pubkey = '086e879169a77ca787'
->>> script_pubkey = Script.parse(BytesIO(bytes.fromhex(hex_script_pubkey)))
->>> hex_script_sig = 'fd86...b1'
->>> script_sig = Script.parse(BytesIO(bytes.fromhex(hex_script_sig)))
->>> combined_script = script_sig + script_pubkey
->>> print(combined_script.evaluate(0))
-True
+include::code-ch06/answers.py[tag=answer4]
 ----
+<1> `collision1` and `collision2` are from the sha1 preimages that were found to collide from Google. (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html)
 
-This is looking for a SHA1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
+This is looking for a sha1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
 
-=== Chapter 7: Transaction Creation and Validation
+=== <<chapter_tx>>: Transaction Creation and Validation
 
-==== Exercise {counter:ch7exercise}
-
-Write the `sig_hash` method for the `Tx` class.
+include::code-ch07/answers.py[tag=exercise1]
 
 [source,python]
 ----
 class Tx:
 ...
-    def sig_hash(self, input_index):
-        '''Returns the integer representation of the hash that needs to get
-        signed for index input_index'''
-        alt_tx_ins = []
-        for tx_in in self.tx_ins:
-            alt_tx_ins.append(TxIn(
-                prev_tx=tx_in.prev_tx,
-                prev_index=tx_in.prev_index,
-                script_sig=Script([]),
-                sequence=tx_in.sequence,
-            ))
-        signing_input = alt_tx_ins[input_index]
-        signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-        alt_tx = self.__class__(
-            version=self.version,
-            tx_ins=alt_tx_ins,
-            tx_outs=self.tx_outs,
-            locktime=self.locktime,
-	)
-        result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-        h256 = hash256(result)
-        return int.from_bytes(h256, 'big')
+include::code-ch07/answers.py[tag=answer1,indent=4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Write the `verify_input` method for the `Tx` class. You will want to use the TxIn.script_pubkey(), Script.evaluate() methods and the SIGHASH_ALL constant to make this work.
+include::code-ch07/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Tx:
 ...
-    def verify_input(self, input_index):
-        '''Returns whether the input has a valid signature'''
-        tx_in = self.tx_ins[input_index]
-	script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-        z = self.sig_hash(input_index)
-	combined = tx_in.script_sig + script_pubkey
-        return combined.evaluate(z)
+include::code-ch07/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Write the `sign_input` method for the `Tx` class, which does the above.
+include::code-ch07/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class Tx:
 ...
-    def sign_input(self, input_index, private_key):
-        '''Signs the input using the private key'''
-        z = self.sig_hash(input_index, hash_type)
-        der = private_key.sign(z).der()
-        sig = der + SIGHASH_ALL.to_bytes(1, 'big')
-        sec = private_key.point.sec()
-        self.tx_ins[input_index].script_sig = Script([sig, sec])
-        return self.verify_input(input_index)
+include::code-ch07/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Create a testnet transaction that sends 60% of a single UTXO to mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
+include::code-ch07/answers.py[tag=exercise4]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> from helper import decode_base58, SIGHASH_ALL
->>> from script import p2pkh_script, Script
->>> from tx import TxIn, TxOut, Tx
->>> prev_tx = bytes.fromhex('75a1c4bc671f55f626dda1074c7725991e6f68b8fcefcfca7b64405ca3b45f1c')
->>> prev_index = 1
->>> target_address = 'miKegze5FQNCnGw6PKyqUbYUeBa4x2hFeM'
->>> target_amount = 0.01
->>> change_address = 'mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2'
->>> change_amount = 0.009
->>> secret = 8675309
->>> priv = PrivateKey(secret=secret)
->>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx, prev_index, Script([]), 0xffffffff))
->>> tx_outs = []
->>> h160 = decode_base58(target_address)
->>> script_pubkey = p2pkh_script(h160)
->>> target_satoshis = int(target_amount*100000000)
->>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
->>> h160 = decode_base58(change_address)
->>> script_pubkey = p2pkh_script(h160)
->>> change_satoshis = int(change_amount*100000000)
->>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
->>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
->>> tx_obj.sign_input(0, priv)
->>> if priv.point.address(testnet=True) != change_address:
-...     raise RuntimeError('Private Key does not correspond to Change Address, check priv_key and change_address')
->>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(change_address):
-...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
->>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
-...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
->>> print(tx_obj.serialize().hex())
-01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175010000006b483045022100b610b6df76364e1fcad579a862152623cb364d6409fe59e1922da69f32a8520b022059007da287d10088b39f487764f9d04160ece1ae551d5c7b4b2cb5f03cd44f55012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff0240420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d00000000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000
+include::code-ch07/answers.py[tag=answer4]
 ----
 
-==== Exercise {counter:ch7exercise}
-
-Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
+include::code-ch07/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> from ecc import PrivateKey
->>> from helper import decode_base58, SIGHASH_ALL
->>> from script import p2pkh_script, Script
->>> from tx import TxIn, TxOut, Tx
->>> prev_tx_1 = bytes.fromhex('11d05ce707c1120248370d1cbf5561d22c4f83aeba0436792c82e0bd57fe2a2f')
->>> prev_index_1 = 1
->>> prev_tx_2 = bytes.fromhex('51f61f77bd061b9a0da60d4bedaaf1b1fad0c11e65fdc744797ee22d20b03d15')
->>> prev_index_2 = 1
->>> target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
->>> target_amount = 0.0429
->>> secret = 8675309
->>> priv = PrivateKey(secret=secret)
->>> tx_ins = []
->>> tx_ins.append(TxIn(prev_tx_1, prev_index_1, Script([]), 0xffffffff))
->>> tx_ins.append(TxIn(prev_tx_2, prev_index_2, Script([]), 0xffffffff))
->>> tx_outs = []
->>> h160 = decode_base58(target_address)
->>> script_pubkey = p2pkh_script(h160)
->>> target_satoshis = int(target_amount*100000000)
->>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
->>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
->>> tx_obj.sign_input(0, priv)
->>> tx_obj.sign_input(1, priv)
->>> if tx_ins[0].script_pubkey(testnet=True).items[2] != decode_base58(priv.point.address(testnet=True)):
-...     raise RuntimeError('Output is not something you can spend with this private key. Check that the prev_tx and prev_index are correct')
->>> if tx_obj.fee(testnet=True) > 0.05*100000000 or tx_obj.fee(testnet=True) <= 0:
-...     raise RuntimeError('Check that the change amount is reasonable. Fee is {}'.format(tx_obj.fee()))
->>> print(tx_obj.serialize().hex())
-01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011010000006b483045022100dddbb9f2ae014631a80265b133369ff2aa9e429cf2188e66f4256cab60062caa02200889b7494b5343dadcdfdab335c585f0ebd600a0ac8792ea06c8a3c00420eea1012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153db0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b483045022100bb3ad8379b0729fe23b867b7ad49e72ddf5d040bafcf6479463c9b4ea0e7f07b02202ba53fa490602b41b0f37ac0aaf20dfe909d761868e5721739ce392f9c6dd268012103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d0754100000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+include::code-ch07/answers.py[tag=answer5]
 ----
 
-=== Chapter 8: Pay To Script Hash
+=== <<chapter_p2sh>>: Pay To Script Hash
 
-==== Exercise {counter:exercise}
-
-Write the `op_checkmultisig` function of `op.py`.
+include::code-ch08/answers.py[tag=exercise1]
 
 [source,python]
 ----
-def op_checkmultisig(stack, z):
-    if len(stack) < 1:
-        return False
-    n = decode_num(stack.pop())
-    if len(stack) < n + 1:
-        return False
-    sec_pubkeys = []
-    for _ in range(n):
-        sec_pubkeys.append(stack.pop())
-    m = decode_num(stack.pop())
-    if len(stack) < m + 1:
-        return False
-    der_signatures = []
-    for _ in range(m):
-        der_signatures.append(stack.pop()[:-1])
-    stack.pop()
-    try:
-        points = [S256Point.parse(sec) for sec in sec_pubkeys]
-        sigs = [Signature.parse(der) for der in der_signatures]
-        for sig in sigs:
-            if len(points) == 0:
-                print("signatures no good or not in right order")
-                return False
-            while points:
-                point = points.pop(0)
-                if point.verify(z, sig):
-                    break
-        stack.append(encode_num(1))
-    except (ValueError, SyntaxError):
-        return False
-    return True
+include::code-ch08/answers.py[tag=answer1]
 ----
 
-
-==== Exercise {counter:ch8exercise}
-
-Write two functions in `h160_to_p2pkh_address` and `h160_to_p2sh_address` that convert a 20-byte hash160 into a p2pkh and p2sh address respectively.
+include::code-ch08/answers.py[tag=exercise2]
 
 [source,python]
 ----
-
-def h160_to_p2pkh_address(h160, testnet=False):
-    '''Takes a byte sequence hash160 and returns a p2pkh address string'''
-    if testnet:
-        prefix = b'\x6f'
-    else:
-        prefix = b'\x00'
-    return encode_base58_checksum(prefix + h160)
-
-
-def h160_to_p2sh_address(h160, testnet=False):
-    '''Takes a byte sequence hash160 and returns a p2sh address string'''
-    if testnet:
-        prefix = b'\xc4'
-    else:
-        prefix = b'\x05'
-    return encode_base58_checksum(prefix + h160)
+include::code-ch08/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch8exercise}
-
-Validate the second signature from the transaction above.
+include::code-ch08/answers.py[tag=exercise3]
 
 [source,python]
 ----
->>> from io import BytesIO
->>> from ecc import S256Point, Signature
->>> from helper import hash256, int_to_little_endian
->>> from script import Script
->>> from tx import Tx, SIGHASH_ALL
->>> hex_tx = '0100...0000'
->>> hex_sec = '03b2...71'
->>> hex_der = '3045...22'
->>> hex_redeem_script = '5221...ae'
->>> sec = bytes.fromhex(hex_sec)
->>> der = bytes.fromhex(hex_der)
->>> redeem_script = Script.parse(BytesIO(bytes.fromhex(hex_redeem_script)))
->>> stream = BytesIO(bytes.fromhex(hex_tx))
->>> tx_obj = Tx.parse(stream)
->>> tx_obj.tx_ins[0].script_sig = Script.parse(redeem_script)
->>> s = tx_obj.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
->>> z = int.from_bytes(hash256(s), 'big')
->>> point = S256Point.parse(sec)
->>> sig = Signature.parse(der)
->>> print(point.verify(z, sig))
-True
+include::code-ch08/answers.py[tag=answer3]
 ----
 
-==== Exercise {counter:ch8exercise}
+include::code-ch08/answers.py[tag=exercise4]
 
-Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh transactions.
+[source,python]
+----
+include::code-ch08/answers.py[tag=answer4]
+----
+
+include::code-ch08/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class Tx:
 ...
-    def sig_hash(self, input_index, redeem_script=None):
-        alt_tx_ins = []
-        for tx_in in self.tx_ins:
-            alt_tx_ins.append(TxIn(
-                prev_tx=tx_in.prev_tx,
-                prev_index=tx_in.prev_index,
-                script_sig=Script([]),
-                sequence=tx_in.sequence,
-            ))
-        signing_input = alt_tx_ins[input_index]
-        if redeem_script:
-            print(redeem_script)
-            signing_input.script_sig = redeem_script
-        else:
-            signing_input.script_sig = signing_input.script_pubkey(self.testnet)
-        for i in alt_tx_ins:
-            print(i.script_sig)
-        alt_tx = self.__class__(
-            version=self.version,
-            tx_ins=alt_tx_ins,
-            tx_outs=self.tx_outs,
-            locktime=self.locktime)
-        result = alt_tx.serialize() + int_to_little_endian(SIGHASH_ALL, 4)
-        h256 = hash256(result)
-        return int.from_bytes(h256, 'big')
-
-    def verify_input(self, input_index):
-        tx_in = self.tx_ins[input_index]
-        script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
-        if script_pubkey.is_p2sh_script_pubkey():
-            element = tx_in.script_sig.instructions[-1]
-            raw_redeem = encode_varint(len(element)) + element
-            redeem_script = Script.parse(BytesIO(raw_redeem))
-        else:
-            redeem_script = None
-        z = self.sig_hash(input_index, redeem_script)
-        script = tx_in.script_sig + script_pubkey
-        return script.evaluate(z)
+include::code-ch08/answers.py[tag=answer5,indent=4]
 ----
 
-=== Chapter 9: Blocks
+=== <<chapter_blocks>>: Blocks
 
-==== Exercise {counter:ch9exercise}
-
-Write the `is_coinbase` method of the `Tx` class.
+include::code-ch09/answers.py[tag=exercise1]
 
 [source,python]
 ----
 class Tx:
 ...
-    def is_coinbase(self):
-        '''Returns whether this transaction is a coinbase transaction or not'''
-        if len(self.tx_ins) != 1:
-            return False
-        first_input = self.tx_ins[0]
-        if first_input.prev_tx != b'\x00' * 32:
-            return False
-        if first_input.prev_index != 0xffffffff:
-            return False
-        return True
+include::code-ch09/answers.py[tag=answer1,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the `coinbase_height` method for the `Tx` class.
+include::code-ch09/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class Tx:
 ...
-    def coinbase_height(self):
-        '''Returns the height of the block this coinbase transaction is in
-        Returns None if this transaction is not a coinbase transaction
-        '''
-        if not self.is_coinbase():
-            return None
-        element = self.tx_ins[0].script_sig.instructions[0]
-        return little_endian_to_int(element)
+include::code-ch09/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the parse, serialize and hash methods for block.
+include::code-ch09/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class Block:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses a block. Returns a Block object'''
-        version = little_endian_to_int(s.read(4))
-        prev_block = s.read(32)[::-1]
-        merkle_root = s.read(32)[::-1]
-        timestamp = little_endian_to_int(s.read(4))
-        bits = s.read(4)
-        nonce = s.read(4)
-        return cls(version, prev_block, merkle_root, timestamp, bits, nonce)
-
-    def serialize(self):
-        '''Returns the 80 byte block header'''
-        result = int_to_little_endian(self.version, 4)
-        result += self.prev_block[::-1]
-        result += self.merkle_root[::-1]
-        result += int_to_little_endian(self.timestamp, 4)
-        result += self.bits
-        result += self.nonce
-        return result
-
-    def hash(self):
-        '''Returns the double-sha256 interpreted little endian of the block'''
-        s = self.serialize()
-        sha = hash256(s)
-        return sha[::-1]
+include::code-ch09/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the `bip9`, `bip91` and `bip141` methods for the `Block` class.
+include::code-ch09/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class Block:
 ...
-    def bip9(self):
-        '''Returns whether this block is signaling readiness for BIP9'''
-        return self.version >> 29 == 0b001
-
-    def bip91(self):
-        '''Returns whether this block is signaling readiness for BIP91'''
-        return self.version >> 4 & 1 == 1
-
-    def bip141(self):
-        '''Returns whether this block is signaling readiness for BIP141'''
-        return self.version >> 1 & 1 == 1
+include::code-ch09/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the bits_to_target function in helper.py.
-
-[source,python]
-----
-def bits_to_target(bits):
-    '''Turns bits into a target (large 256-bit integer)'''
-    exponent = bits[-1]
-    coefficient = little_endian_to_int(bits[:-1])
-    return coefficient * 256**(exponent-3)
-----
-
-==== Exercise {counter:ch9exercise}
-
-Write the difficulty method for the Block class
+include::code-ch09/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class Block:
 ...
-    def difficulty(self):
-        '''Returns the block difficulty based on the bits'''
-        lowest = 0xffff * 256**(0x1d - 3)
-        return lowest / self.target()
+include::code-ch09/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the check_pow method for the Block class.
+include::code-ch09/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class Block:
 ...
-    def check_pow(self):
-        '''Returns whether this block satisfies proof of work'''
-        sha = hash256(self.serialize())
-        proof = little_endian_to_int(sha)
-        return proof < self.target()
+include::code-ch09/answers.py[tag=answer6,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
-
-Block 471744:
-
-```
-000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800000000000000000010c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb845597e8b0118e43a81d3
-```
-
-Block 473759:
-
-```
-02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e1264258597e8b0118e5f00474
-```
+include::code-ch09/answers.py[tag=exercise7]
 
 [source,python]
 ----
->>> from block import Block, TWO_WEEKS
->>> from helper import target_to_bits
->>> block1_hex = '0000...d3'
->>> block2_hex = '0200...74'
->>> last_block = Block.parse(BytesIO(bytes.fromhex(block1_hex)))
->>> first_block = Block.parse(BytesIO(bytes.fromhex(block2_hex)))
->>> time_differential = last_block.timestamp - first_block.timestamp
->>> if time_differential > TWO_WEEKS * 4:
-...     time_differential = TWO_WEEKS * 4
->>> if time_differential < TWO_WEEKS // 4:
-...     time_differential = TWO_WEEKS // 4
->>> new_target = last_block.target() * time_differential // TWO_WEEKS
->>> new_bits = target_to_bits(new_target)
->>> print(new_bits.hex())
-80df6217
+class Block:
+...
+include::code-ch09/answers.py[tag=answer7,indent=4]
 ----
 
-==== Exercise {counter:ch9exercise}
-
-Write the calculate_new_bits function.
+include::code-ch09/answers.py[tag=exercise8]
 
 [source,python]
 ----
-def calculate_new_bits(previous_bits, time_differential):
-    '''calculates the new bits given the bits of a difficulty
-    adjustment period and the time differential between the start and end blocks'''
-    if time_differential > TWO_WEEKS * 4:
-        time_differential = TWO_WEEKS * 4
-    if time_differential < TWO_WEEKS // 4:
-        time_differential = TWO_WEEKS // 4
-    new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
-    return target_to_bits(new_target)
+class Block:
+...
+include::code-ch09/answers.py[tag=answer8,indent=4]
 ----
 
-=== Chapter 10: Networking
+include::code-ch09/answers.py[tag=exercise9]
 
-Determine what this network message is:
-
-`f9beb4d976657261636b000000000000000000005df6e0e2`
-
-==== Exercise {counter:ch10exercise}
 [source,python]
 ----
->>> from network import NetworkEnvelope
->>> from io import BytesIO
->>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
->>> stream = BytesIO(bytes.fromhex(message_hex))
->>> envelope = NetworkEnvelope.parse(stream)
->>> print(envelope.command)
-b'verack'
->>> print(envelope.payload)
-b''
+include::code-ch09/answers.py[tag=answer9]
 ----
 
-==== Exercise {counter:ch10exercise}
+include::code-ch09/answers.py[tag=exercise10]
 
-Write the `parse` and `serialize` methods for `NetworkEnvelope`.
+[source,python]
+----
+class Block:
+...
+include::code-ch09/answers.py[tag=answer10,indent=4]
+----
+
+include::code-ch09/answers.py[tag=exercise11]
+
+[source,python]
+----
+class Block:
+...
+include::code-ch09/answers.py[tag=answer11,indent=4]
+----
+
+include::code-ch09/answers.py[tag=exercise12]
+
+[source,python]
+----
+include::code-ch09/answers.py[tag=answer12]
+----
+
+include::code-ch09/answers.py[tag=exercise13]
+
+[source,python]
+----
+include::code-ch09/answers.py[tag=answer13]
+----
+
+=== <<chapter_networking>>: Networking
+
+include::code-ch10/answers.py[tag=exercise1]
+
+[source,python]
+----
+include::code-ch10/answers.py[tag=answer1]
+----
+
+include::code-ch10/answers.py[tag=exercise2]
 
 [source,python]
 ----
 class NetworkEnvelope:
 ...
-    @classmethod
-    def parse(cls, s, testnet=False):
-        '''Takes a stream and creates a NetworkEnvelope'''
-        magic = s.read(4)
-        if magic == b'':
-            raise IOError('Connection reset!')
-        if testnet:
-            expected_magic = TESTNET_NETWORK_MAGIC
-        else:
-            expected_magic = NETWORK_MAGIC
-        if magic != expected_magic:
-            raise SyntaxError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
-        command = s.read(12)
-        command = command.strip(b'\x00')
-        payload_length = little_endian_to_int(s.read(4))
-        checksum = s.read(4)
-        payload = s.read(payload_length)
-        calculated_checksum = hash256(payload)[:4]
-        if calculated_checksum != checksum:
-            raise IOError('checksum does not match')
-        return cls(command, payload, testnet=testnet)
-
-    def serialize(self):
-        '''Returns the byte serialization of the entire network message'''
-        result = self.magic
-        result += self.command + b'\x00' * (12 - len(self.command))
-        result += int_to_little_endian(len(self.payload), 4)
-        result += hash256(self.payload)[:4]
-        result += self.payload
-        return result
+include::code-ch10/answers.py[tag=answer2,indent=4]
 ----
 
-==== Exercise {counter:ch10exercise}
+include::code-ch10/answers.py[tag=exercise3]
 
-Write the `serialize` method for `VersionMessage`.
+[source,python]
+----
+class NetworkEnvelope:
+...
+include::code-ch10/answers.py[tag=answer3,indent=4]
+----
+
+include::code-ch10/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class VersionMessage:
 ...
-    def serialize(self):
-        '''Serialize this message to send over the network'''
-        result = int_to_little_endian(self.version, 4)
-        result += int_to_little_endian(self.services, 8)
-        result += int_to_little_endian(self.timestamp, 8)
-        result += int_to_little_endian(self.receiver_services, 8)
-        result += b'\x00' * 10 + b'\xff\xff' + self.receiver_ip
-        result += int_to_little_endian(self.receiver_port, 2)
-        result += int_to_little_endian(self.sender_services, 8)
-        result += b'\x00' * 10 + b'\xff\xff' + self.sender_ip
-        result += int_to_little_endian(self.sender_port, 2)
-        result += self.nonce
-        result += encode_varint(len(self.user_agent))
-        result += self.user_agent
-        result += int_to_little_endian(self.latest_block, 4)
-        if self.relay:
-            result += b'\x01'
-        else:
-            result += b'\x00'
-        return result
+include::code-ch10/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch10exercise}
-
-Write the `handshake` method for `SimpleNode`
+include::code-ch10/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class SimpleNode:
 ...
-    def handshake(self):
-        '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
-        version = VersionMessage()
-        self.send(version.command, version.serialize())
-        self.wait_for_commands({b'verack'})
+include::code-ch10/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch10exercise}
-
-Write the `serialize` method for `GetHeadersMessage`.
+include::code-ch10/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class GetHeadersMessage:
 ...
-    def serialize(self):
-        '''Serialize this message to send over the network'''
-        result = int_to_little_endian(self.version, 4)
-        result += encode_varint(self.num_hashes)
-        result += self.start_block[::-1]
-        result += self.end_block[::-1]
-        return result
+include::code-ch10/answers.py[tag=answer6,indent=4]
 ----
 
-=== Chapter 11: SPV
+=== <<chapter_spv>>: SPV
 
-==== Exercise {counter:ch11exercise}
-
-Write the merkle_parent function.
+include::code-ch11/answers.py[tag=exercise1]
 
 [source,python]
 ----
-def merkle_parent(hash1, hash2):
-    '''Takes the binary hashes and calculates the double-sha256'''
-    return hash256(hash1 + hash2)
+include::code-ch11/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `merkle_parent_level` function.
+include::code-ch11/answers.py[tag=exercise2]
 
 [source,python]
 ----
-def merkle_parent_level(hashes):
-    '''Takes a list of binary hashes and returns a list that's half
-    the length'''
-    if len(hashes) == 1:
-        raise RuntimeError('Cannot take a parent level with only 1 item')
-    if len(hashes) % 2 == 1:
-        hashes.append(hashes[-1])
-    parent_level = []
-    for i in range(0, len(hashes), 2):
-        parent = merkle_parent(hashes[i], hashes[i + 1])
-        parent_level.append(parent)
-    return parent_level
+include::code-ch11/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `merkle_root` function.
+include::code-ch11/answers.py[tag=exercise3]
 
 [source,python]
 ----
-def merkle_root(hashes):
-    '''Takes a list of binary hashes and returns the merkle root
-    '''
-    current_level = hashes
-    while len(current_level) > 1:
-        current_level = merkle_parent_level(current_level)        
-    return current_level[0]
+include::code-ch11/answers.py[tag=answer3]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `validate_merkle_root` method for `Block`.
+include::code-ch11/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class Block:
 ...
-    def validate_merkle_root(self):
-        '''Gets the merkle root of the tx_hashes and checks that it's
-        the same as the merkle root of this block.
-        '''
-        hashes = [h[::-1] for h in self.tx_hashes]
-        root = merkle_root(hashes)
-        return root[::-1] == self.merkle_root
+include::code-ch11/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Create an empty Merkle Tree with 27 items and print each level.
+include::code-ch11/answers.py[tag=exercise5]
 
 [source,python]
 ----
->>> import math
->>> total = 27
->>> max_depth = math.ceil(math.log(total, 2))
->>> merkle_tree = []
->>> for depth in range(max_depth + 1): 
-...     num_items = math.ceil(total / 2**(max_depth - depth))
-...     level_hashes = [None] * num_items
-...     merkle_tree.append(level_hashes)
->>> for level in merkle_tree:
-...     print(level)
-[None]
-[None, None]
-[None, None, None, None]
-[None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+include::code-ch11/answers.py[tag=answer5]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the parse method for `MerkleBlock`.
+include::code-ch11/answers.py[tag=exercise6]
 
 [source,python]
 ----
 class MerkleBlock:
 ...
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses a merkle block. Returns a Merkle Block object'''
-        version = little_endian_to_int(s.read(4))
-        prev_block = s.read(32)[::-1]
-        merkle_root = s.read(32)[::-1]
-        timestamp = little_endian_to_int(s.read(4))
-        bits = s.read(4)
-        nonce = s.read(4)
-        total = little_endian_to_int(s.read(4))
-        num_txs = read_varint(s)
-        hashes = []
-        for _ in range(num_txs):
-            hashes.append(s.read(32)[::-1])
-        flags_length = read_varint(s)
-        flags = s.read(flags_length)
-        return cls(version, prev_block, merkle_root, timestamp, bits, nonce,
-                   total, hashes, flags)
-
+include::code-ch11/answers.py[tag=answer6,indent=4]
 ----
 
-==== Exercise {counter:ch11exercise}
-
-Write the `is_valid` method for `MerkleBlock`
+include::code-ch11/answers.py[tag=exercise7]
 
 [source,python]
 ----
 class MerkleBlock:
 ...
-    def is_valid(self):
-        '''Verifies whether the merkle tree information validates to the merkle root'''
-        flag_bits = bytes_to_bit_field(self.flags)
-        hashes = [h[::-1] for h in self.hashes]
-        merkle_tree = MerkleTree(self.total)
-        merkle_tree.populate_tree(flag_bits, hashes)
-        return merkle_tree.root()[::-1] == self.merkle_root
+include::code-ch11/answers.py[tag=answer7,indent=4]
 ----
 
-=== Chapter 12: Bloom Filters
+=== <<chapter_bloom_filters>>: Bloom Filters
 
-==== Exercise {counter:ch12exercise}
-
-Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
+include::code-ch12/answers.py[tag=exercise1]
 
 [source,python]
 ----
->>> from helper import hash160
->>> bit_field_size = 10
->>> bit_field = [0] * bit_field_size
->>> for item in (b'hello world', b'goodbye'):
-...     h = hash160(item)
-...     bit = int.from_bytes(h, 'big') % bit_field_size
-...     bit_field[bit] = 1
->>> print(bit_field)
-[1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+include::code-ch12/answers.py[tag=answer1]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use bit_field_to_bytes to convert to bytes)
-
-* b'Hello World'
-* b'Goodbye!'
+include::code-ch12/answers.py[tag=exercise2]
 
 [source,python]
 ----
->>> from bloomfilter import BloomFilter, BIP37_CONSTANT
->>> from helper import bit_field_to_bytes, murmur3
->>> field_size = 10
->>> function_count = 5
->>> tweak = 99
->>> items = (b'Hello World',  b'Goodbye!')
->>> bit_field_size = field_size * 8
->>> bit_field = [0] * bit_field_size
->>> for item in items:
-...     for i in range(function_count):
-...         seed = i * BIP37_CONSTANT + tweak
-...         h = murmur3(item, seed=seed)
-...         bit = h % bit_field_size
-...         bit_field[bit] = 1
->>> print(bit_field_to_bytes(bit_field).hex())
-4000600a080000010940
+include::code-ch12/answers.py[tag=answer2]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Write the `add` method for `BloomFilter`
+include::code-ch12/answers.py[tag=exercise3]
 
 [source,python]
 ----
 class BloomFilter:
 ...
-    def add(self, item):
-        '''Add an item to the filter'''
-        for i in range(self.function_count):
-            seed = i * BIP37_CONSTANT + self.tweak
-            h = murmur3(item, seed=seed)
-            bit = h % (self.size * 8)
-            self.bit_field[bit] = 1
+include::code-ch12/answers.py[tag=answer3,indent=4]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Write the  `filterload` payload from the `BloomFilter` class.
+include::code-ch12/answers.py[tag=exercise4]
 
 [source,python]
 ----
 class BloomFilter:
 ...
-    def filterload(self, flag=1):
-        '''Return the payload that goes in a filterload message'''
-        payload = encode_varint(self.size)
-        payload += self.filter_bytes()
-        payload += int_to_little_endian(self.function_count, 4)
-        payload += int_to_little_endian(self.tweak, 4)
-        payload += int_to_little_endian(flag, 1)
-        return payload
+include::code-ch12/answers.py[tag=answer4,indent=4]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Write the `serialize` method for the `GetDataMessage` class.
+include::code-ch12/answers.py[tag=exercise5]
 
 [source,python]
 ----
 class GetDataMessage:
 ...
-    def serialize(self):
-        result = encode_varint(len(self.data))
-        for data_type, identifier in self.data:
-            result += int_to_little_endian(data_type, 4)
-            result += identifier[::-1]
-        return result
+include::code-ch12/answers.py[tag=answer5,indent=4]
 ----
 
-==== Exercise {counter:ch12exercise}
-
-Get the current testnet block id, send yourself some testnet coins, find the UTXO corresponding to the testnet coin *without using a block explorer*, create a transaction using that UTXO as an input and broadcast that message on the network.
-
-*As this is a very difficult problem, it's suggested that you run this as a separate file. Comments are included in the code below to help aid you in understanding the steps.*
+include::code-ch12/answers.py[tag=exercise6]
 
 [source,python]
 ----
-import time
-from block import Block
-from bloomfilter import BloomFilter
-from ecc import PrivateKey
-from helper import hash256, little_endian_to_int, encode_varint, read_varint, decode_base58, SIGHASH_ALL
-from merkleblock import MerkleBlock
-from network import (
-    GetDataMessage,
-    GetHeadersMessage,
-    HeadersMessage,
-    NetworkEnvelope,
-    SimpleNode,
-    TX_DATA_TYPE,
-    FILTERED_BLOCK_DATA_TYPE,
-)
-from script import p2pkh_script, Script
-from tx import Tx, TxIn, TxOut, TxFetcher
-
-last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
-
-secret = little_endian_to_int(hash256(b''))
-private_key = PrivateKey(secret=secret)
-addr = private_key.point.address(testnet=True)
-print(addr)
-h160 = decode_base58(addr)
-
-target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
-target_h160 = decode_base58(target_address)
-target_script = p2pkh_script(target_h160)
-fee = 5000  # fee in satoshis
-
-# connect to tbtc.programmingblockchain.com in testnet mode
-node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
-
-# create a bloom filter of size 30 and 5 functions. Add a tweak that you like
-bf = BloomFilter(30, 5, 90210)
-# add the h160 to the bloom filter
-bf.add(h160)
-
-# complete the handshake
-node.handshake()
-# load the bloom filter with the filterload command
-node.send(b'filterload', bf.filterload())
-
-# set start block to last_block from above
-start_block = bytes.fromhex(last_block_hex)
-# send a getheaders message with the starting block
-getheaders_message = GetHeadersMessage(start_block=start_block)
-node.send(getheaders_message.command, getheaders_message.serialize())
-
-# wait for the headers message
-headers_envelope = node.wait_for_commands({HeadersMessage.command})
-
-# get the stream from the headers
-stream = headers_envelope.stream()
-# parse the headers message
-headers = HeadersMessage.parse(stream)
-# store the last block as None
-last_block = None
-# initialize the GetDataMessage
-get_data_message = GetDataMessage()
-# loop through the blocks in the headers
-for b in headers.blocks:
-    # check that the proof of work on the block is valid
-    if not b.check_pow():
-        raise RuntimeError('proof of work is invalid')
-    # check that this block's prev_block is the last block
-    if last_block is not None and b.prev_block != last_block:
-        raise RuntimeError('chain broken')
-    # add a new item to the get_data_message
-    # should be FILTERED_BLOCK_DATA_TYPE and block hash
-    get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
-    # set the last block to the current hash
-    last_block = b.hash()
-# send the getdata message
-node.send(get_data_message.command, get_data_message.serialize())
-
-# initialize prev_tx, prev_index and pt to None
-prev_tx, prev_index, prev_tx_obj = None, None, None
-# loop while prev_tx is None 
-while prev_tx is None:
-    # wait for the merkleblock or tx commands
-    envelope = node.wait_for_commands({b'merkleblock', b'tx'})
-    # initialize the stream from the envelope
-    stream = envelope.stream()
-    # if we have the merkleblock command
-    if envelope.command == b'merkleblock':
-        # parse the MerkleBlock
-        mb = MerkleBlock.parse(stream)
-        # check that the MerkleBlock is valid
-        if not mb.is_valid():
-            raise RuntimeError('invalid merkle proof')
-    # else we have the tx command
-    else:
-        # parse the tx
-        prev_tx_obj = Tx.parse(stream, testnet=True)
-        # loop through the tx outs
-        for i, tx_out in enumerate(prev_tx_obj.tx_outs):
-            # if our output has the same address as our address we found it
-            if tx_out.script_pubkey.address(testnet=True) == addr:
-                # we found our utxo. set prev_tx, prev_index, and transaction
-                prev_tx = prev_tx_obj.hash()
-                prev_index = i
-                print('found: {}:{}'.format(prev_tx.hex(), prev_index))
-# create tx_in
-tx_in = TxIn(prev_tx, prev_index, Script([]), 0xffffff)
-# set the cache of the previous tx to prev_tx_obj so we don't talk to a block explorer
-TxFetcher.cache[prev_tx] = prev_tx_obj
-# create the tx_ins array
-tx_ins = [tx_in]
-# calculate how much is in this UTXO
-total = prev_tx_obj.tx_outs[prev_index].amount
-# create a new transaction out to the right address with the right amount (subtract fee)
-tx_outs = [TxOut(total-fee, target_script)]
-# create a new transaction
-tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-# sign the transaction
-tx_obj.sign_input(0, private_key)
-# serialize and hex to see what it looks like
-print(tx_obj.serialize().hex())
-# send this signed transaction on the network
-node.send(b'tx', tx_obj.serialize())
-# wait a sec so this message goes through to the other node time.sleep(1) 
-time.sleep(1)
-# now ask for this transaction from the other node
-# create a GetDataMessage
-get_data_message = GetDataMessage()
-# ask for our transaction by adding it to the message
-get_data_message.add_data(TX_DATA_TYPE, tx_obj.hash())
-# send the message
-node.send(get_data_message.command, get_data_message.serialize())
-# now wait for a response
-envelope = node.wait_for_commands({b'tx', b'reject'})
-if envelope.command == b'tx':
-    print(envelope.payload.hex())
-else:
-    print(envelope.payload)
+include::code-ch12/answers.py[tag=answer6]
 ----
+
+A more thoroughly commented answer is in `code-ch12/broadcast.py`

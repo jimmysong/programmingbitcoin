@@ -58,7 +58,7 @@ class NetworkEnvelope:
         command = command.strip(b'\x00')
         # payload length 4 bytes, little endian
         payload_length = little_endian_to_int(s.read(4))
-        # checksum 4 bytes, first four of double-sha256 of payload
+        # checksum 4 bytes, first four of hash256 of payload
         checksum = s.read(4)
         # payload is of length payload_length
         payload = s.read(payload_length)
@@ -66,6 +66,7 @@ class NetworkEnvelope:
         calculated_checksum = hash256(payload)[:4]
         if calculated_checksum != checksum:
             raise RuntimeError('checksum does not match')
+        # return an instance of the class
         return cls(command, payload, testnet=testnet)
 
     def serialize(self):
@@ -77,7 +78,7 @@ class NetworkEnvelope:
         result += self.command + b'\x00' * (12 - len(self.command))
         # payload length 4 bytes, little endian
         result += int_to_little_endian(len(self.payload), 4)
-        # checksum 4 bytes, first four of double-sha256 of payload
+        # checksum 4 bytes, first four of hash256 of payload
         result += hash256(self.payload)[:4]
         # payload
         result += self.payload
@@ -185,6 +186,49 @@ class VersionMessageTest(TestCase):
         self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d2000000000000000001b2f70726f6772616d6d696e67626c6f636b636861696e3a302e312f0000000001')
 
 
+class VerAckMessage:
+    command = b'verack'
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def parse(cls, s):
+        return cls()
+
+    def serialize(self):
+        return b''
+
+
+class PingMessage:
+    command = b'ping'
+
+    def __init__(self, nonce):
+        self.nonce = nonce
+
+    @classmethod
+    def parse(cls, s):
+        nonce = s.read(8)
+        return cls(nonce)
+
+    def serialize(self):
+        return self.nonce
+
+
+class PongMessage:
+    command = b'pong'
+
+    def __init__(self, nonce):
+        self.nonce = nonce
+
+    def parse(cls, s):
+        nonce = s.read(8)
+        return cls(nonce)
+
+    def serialize(self):
+        return self.nonce
+
+
 class GetHeadersMessage:
     command = b'getheaders'
 
@@ -256,16 +300,22 @@ class HeadersMessageTest(TestCase):
             self.assertEqual(b.__class__, Block)
 
 
+# tag::source1[]
 class GetDataMessage:
     command = b'getdata'
 
     def __init__(self):
-        self.data = []
+        self.data = []  # <1>
 
     def add_data(self, data_type, identifier):
-        self.data.append((data_type, identifier))
+        self.data.append((data_type, identifier))  # <2>
+    # end::source1[]
 
     def serialize(self):
+        # start with the number of items as a varint
+        # loop through each tuple (data_type, identifier) in self.data
+            # data type is 4 bytes Little-Endian
+            # identifier needs to be in Little-Endian
         raise NotImplementedError
 
 
@@ -279,6 +329,15 @@ class GetDataMessageTest(TestCase):
         block2 = bytes.fromhex('00000000000000beb88910c46f6b442312361c6693a7fb52065b583979844910')
         get_data.add_data(FILTERED_BLOCK_DATA_TYPE, block2)
         self.assertEqual(get_data.serialize().hex(), hex_msg)
+
+
+class GenericMessage:
+    def __init__(self, command, payload):
+        self.command = command
+        self.payload = payload
+
+    def serialize(self):
+        return self.payload
 
 
 class SimpleNode:
@@ -298,18 +357,20 @@ class SimpleNode:
         self.stream = self.socket.makefile('rb', None)
 
     def handshake(self):
-        '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
+        '''Do a handshake with the other node.
+        Handshake is sending a version message and getting a verack back.'''
         # create a version message
         version = VersionMessage()
         # send the command
-        self.send(version.command, version.serialize())
+        self.send(version)
         # wait for a verack message
-        self.wait_for_commands({b'verack'})
+        self.wait_for(VerAckMessage)
 
-    def send(self, command, payload):
+    def send(self, message):
         '''Send a message to the connected node'''
         # create a network envelope
-        envelope = NetworkEnvelope(command, payload, testnet=self.testnet)
+        envelope = NetworkEnvelope(
+            message.command, message.serialize(), testnet=self.testnet)
         if self.logging:
             print('sending: {}'.format(envelope))
         # send the serialized envelope over the socket using sendall
@@ -322,25 +383,26 @@ class SimpleNode:
             print('receiving: {}'.format(envelope))
         return envelope
 
-    def wait_for_commands(self, commands):
-        '''Wait for one of the commands in the list'''
+    def wait_for(self, *message_classes):
+        '''Wait for one of the messages in the list'''
         # initialize the command we have, which should be None
         command = None
+        command_to_class = {m.command: m for m in message_classes}
         # loop until the command is in the commands we want
-        while command not in commands:
+        while command not in command_to_class.keys():
             # get the next network message
             envelope = self.read()
             # set the command to be evaluated
             command = envelope.command
             # we know how to respond to version and ping, handle that here
-            if command == b'version':
+            if command == VersionMessage.command:
                 # send verack
-                self.send(b'verack', b'')
-            elif command == b'ping':
+                self.send(VerAckMessage())
+            elif command == PingMessage.command:
                 # send pong
-                self.send(b'pong', envelope.payload)
-        # return the last envelope we got
-        return envelope
+                self.send(PongMessage(envelope.payload))
+        # return the envelope parsed as a member of the right message class
+        return command_to_class[command].parse(envelope.stream())
 
 
 class SimpleNodeTest(TestCase):

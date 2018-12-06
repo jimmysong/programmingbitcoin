@@ -158,30 +158,48 @@ def target_to_bits(target):
 def calculate_new_bits(previous_bits, time_differential):
     '''Calculates the new bits given
     a 2016-block time differential and the previous bits'''
+    # if the time differential is greater than 8 weeks, set to 8 weeks
     if time_differential > TWO_WEEKS * 4:
         time_differential = TWO_WEEKS * 4
+    # if the time differential is less than half a week, set to half a week
     if time_differential < TWO_WEEKS // 4:
         time_differential = TWO_WEEKS // 4
+    # the new target is the previous target * time differential / two weeks
     new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
+    # if the new target is bigger than MAX_TARGET, set to MAX_TARGET
     if new_target > MAX_TARGET:
         new_target = MAX_TARGET
+    # convert the new target to bits
     return target_to_bits(new_target)
 
 
 def merkle_parent(hash1, hash2):
-    '''Takes the binary hashes and calculates the double-sha256'''
+    '''Takes the binary hashes and calculates the hash256'''
+    # return the hash256 of hash1 + hash2
     raise NotImplementedError
 
 
 def merkle_parent_level(hashes):
     '''Takes a list of binary hashes and returns a list that's half
     the length'''
+    # if the list has exactly 1 element raise an error
+    # if the list has an odd number of elements, duplicate the last one
+    # and put it at the end so it has an even number of elements
+    # initialize next level
+    # loop over every pair (use: for i in range(0, len(hashes), 2))
+        # get the merkle parent of the hashes at index i and i+1
+        # append parent to parent level
+    # return parent level
     raise NotImplementedError
 
 
 def merkle_root(hashes):
     '''Takes a list of binary hashes and returns the merkle root
     '''
+    # current level starts as hashes
+    # loop until there's exactly 1 element
+        # current level becomes the merkle parent level
+    # return the 1st item of the current level
     raise NotImplementedError
 
 
@@ -196,18 +214,15 @@ def bit_field_to_bytes(bit_field):
     return bytes(result)
 
 
+# tag::source1[]
 def bytes_to_bit_field(some_bytes):
     flag_bits = []
-    # iterate over each byte of flags
     for byte in some_bytes:
-        # iterate over each bit, right-to-left
         for _ in range(8):
-            # add the current bit (byte & 1)
             flag_bits.append(byte & 1)
-            # rightshift the byte 1
             byte >>= 1
     return flag_bits
-
+# end::source1[]
 
 class HelperTest(TestCase):
 

@@ -1,0 +1,38 @@
+import ecc
+import helper
+
+from ecc import Point
+---
+example1
+---
+exercise1:
+# (2,4), (-1,-1), (18,77), (5,7)
+# equation in python is: y**2 == x**3 + 5*x + 7
+---
+exercise2:ecc:PointTest:test_ne
+---
+example2
+---
+exercise3:ecc:PointTest:test_add0
+---
+exercise4:
+from ecc import Point
+
+a = 5
+b = 7
+x1, y1 = 2, 5
+x2, y2 = -1, -1
+
+# (x1,y1) + (x2,y2)
+---
+exercise5:ecc:PointTest:test_add1
+---
+exercise6:
+from ecc import Point
+
+a = 5
+b = 7
+x1, y1 = -1, 1
+# (-1,1) + (-1,1)
+---
+exercise7:ecc:PointTest:test_add2

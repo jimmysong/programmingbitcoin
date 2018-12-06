@@ -15,6 +15,7 @@ from helper import (
 )
 
 
+# tag::source1[]
 NETWORK_MAGIC = b'\xf9\xbe\xb4\xd9'
 TESTNET_NETWORK_MAGIC = b'\x0b\x11\x09\x07'
 
@@ -34,14 +35,38 @@ class NetworkEnvelope:
             self.command.decode('ascii'),
             self.payload.hex(),
         )
+    # end::source1[]
 
     @classmethod
     def parse(cls, s, testnet=False):
         '''Takes a stream and creates a NetworkEnvelope'''
+        # check the network magic
+        magic = s.read(4)
+        if magic == b'':
+            raise RuntimeError('Connection reset!')
+        if testnet:
+            expected_magic = TESTNET_NETWORK_MAGIC
+        else:
+            expected_magic = NETWORK_MAGIC
+        if magic != expected_magic:
+            raise RuntimeError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
+        # command 12 bytes
+        # strip the trailing 0's
+        # payload length 4 bytes, little endian
+        # checksum 4 bytes, first four of hash256 of payload
+        # payload is of length payload_length
+        # verify checksum
+        # return an instance of the class
         raise NotImplementedError
 
     def serialize(self):
         '''Returns the byte serialization of the entire network message'''
+        # add the network magic
+        # command 12 bytes
+        # fill with 0's
+        # payload length 4 bytes, little endian
+        # checksum 4 bytes, first four of hash256 of payload
+        # payload
         raise NotImplementedError
 
     def stream(self):
@@ -74,6 +99,7 @@ class NetworkEnvelopeTest(TestCase):
         self.assertEqual(envelope.serialize(), msg)
 
 
+# tag::source2[]
 class VersionMessage:
     command = b'version'
 
@@ -103,9 +129,23 @@ class VersionMessage:
         self.user_agent = user_agent
         self.latest_block = latest_block
         self.relay = relay
+    # end::source2[]
 
     def serialize(self):
         '''Serialize this message to send over the network'''
+        # version is 4 bytes little endian
+        # services is 8 bytes little endian
+        # timestamp is 8 bytes little endian
+        # receiver services is 8 bytes little endian
+        # IPV4 is 10 00 bytes and 2 ff bytes then receiver ip
+        # receiver port is 2 bytes, little endian should be 0
+        # sender services is 8 bytes little endian
+        # IPV4 is 10 00 bytes and 2 ff bytes then sender ip
+        # sender port is 2 bytes, little endian should be 0
+        # nonce should be 8 bytes
+        # useragent is a variable string, so varint first
+        # latest block is 4 bytes little endian
+        # relay is 00 if false, 01 if true
         raise NotImplementedError
 
 
@@ -116,22 +156,72 @@ class VersionMessageTest(TestCase):
         self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d2000000000000000001b2f70726f6772616d6d696e67626c6f636b636861696e3a302e312f0000000001')
 
 
+# tag::source3[]
+class VerAckMessage:
+    command = b'verack'
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def parse(cls, s):
+        return cls()
+
+    def serialize(self):
+        return b''
+# end::source3[]
+
+class PingMessage:
+    command = b'ping'
+
+    def __init__(self, nonce):
+        self.nonce = nonce
+
+    @classmethod
+    def parse(cls, s):
+        nonce = s.read(8)
+        return cls(nonce)
+
+    def serialize(self):
+        return self.nonce
+
+
+class PongMessage:
+    command = b'pong'
+
+    def __init__(self, nonce):
+        self.nonce = nonce
+
+    def parse(cls, s):
+        nonce = s.read(8)
+        return cls(nonce)
+
+    def serialize(self):
+        return self.nonce
+
+
+# tag::source5[]
 class GetHeadersMessage:
     command = b'getheaders'
-
+    
     def __init__(self, version=70015, num_hashes=1, start_block=None, end_block=None):
         self.version = version
-        self.num_hashes = num_hashes
-        if start_block is None:
-            raise RuntimeError('a start block is required')
+        self.num_hashes = num_hashes  # <1>
+        if start_block is None:  # <2>
+            raise RuntimeError('a starting block is required')
         self.start_block = start_block
         if end_block is None:
-            self.end_block = b'\x00' * 32
+            self.end_block = b'\x00' * 32  # <3>
         else:
             self.end_block = end_block
+    # end::source5[]
 
     def serialize(self):
         '''Serialize this message to send over the network'''
+        # protocol version is 4 bytes little-endian
+        # number of hashes is a varint
+        # start block is in little-endian
+        # end block is also in little-endian
         raise NotImplementedError
 
 
@@ -143,6 +233,7 @@ class GetHeadersMessageTest(TestCase):
         self.assertEqual(gh.serialize().hex(), '7f11010001a35bd0ca2f4a88c4eda6d213e2378a5758dfcd6af437120000000000000000000000000000000000000000000000000000000000000000000000000000000000')
 
 
+# tag::source6[]
 class HeadersMessage:
     command = b'headers'
 
@@ -151,21 +242,15 @@ class HeadersMessage:
 
     @classmethod
     def parse(cls, stream):
-        # number of headers is in a varint
         num_headers = read_varint(stream)
-        # initialize the blocks array
         blocks = []
-        # loop through number of headers times
         for _ in range(num_headers):
-            # add a block to the blocks array by parsing the stream
-            blocks.append(Block.parse(stream))
-            # read the next varint (num_txs)
-            num_txs = read_varint(stream)
-            # num_txs should be 0 or raise a RuntimeError
-            if num_txs != 0:
+            blocks.append(Block.parse(stream))  # <1>
+            num_txs = read_varint(stream)  # <2>
+            if num_txs != 0:  # <3>
                 raise RuntimeError('number of txs not 0')
-        # return a class instance
         return cls(blocks)
+    # end::source6[]
 
 
 class HeadersMessageTest(TestCase):
@@ -179,6 +264,7 @@ class HeadersMessageTest(TestCase):
             self.assertEqual(b.__class__, Block)
 
 
+# tag::source4[]
 class SimpleNode:
 
     def __init__(self, host, port=None, testnet=False, logging=False):
@@ -189,51 +275,48 @@ class SimpleNode:
                 port = 8333
         self.testnet = testnet
         self.logging = logging
-        # connect to socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
-        # create a stream that we can use with the rest of the library
         self.stream = self.socket.makefile('rb', None)
+    # end::source4[]
 
     def handshake(self):
-        '''Do a handshake with the other node. Handshake is sending a version message and getting a verack back.'''
+        '''Do a handshake with the other node.
+        Handshake is sending a version message and getting a verack back.'''
+        # create a version message
+        # send the command
+        # wait for a verack message
         raise NotImplementedError
+    # tag::source4[]
 
-    def send(self, command, payload):
+    def send(self, message):  # <1>
         '''Send a message to the connected node'''
-        # create a network envelope
-        envelope = NetworkEnvelope(command, payload, testnet=self.testnet)
+        envelope = NetworkEnvelope(
+            message.command, message.serialize(), testnet=self.testnet)
         if self.logging:
             print('sending: {}'.format(envelope))
-        # send the serialized envelope over the socket using sendall
         self.socket.sendall(envelope.serialize())
 
-    def read(self):
+    def read(self):  # <2>
         '''Read a message from the socket'''
         envelope = NetworkEnvelope.parse(self.stream, testnet=self.testnet)
         if self.logging:
             print('receiving: {}'.format(envelope))
         return envelope
 
-    def wait_for_commands(self, commands):
-        '''Wait for one of the commands in the list'''
-        # initialize the command we have, which should be None
+    def wait_for(self, *message_classes):  # <3>
+        '''Wait for one of the messages in the list'''
         command = None
-        # loop until the command is in the commands we want
-        while command not in commands:
-            # get the next network message
+        command_to_class = {m.command: m for m in message_classes}
+        while command not in command_to_class.keys():
             envelope = self.read()
-            # set the command to be evaluated
             command = envelope.command
-            # we know how to respond to version and ping, handle that here
-            if command == b'version':
-                # send verack
-                self.send(b'verack', b'')
-            elif command == b'ping':
-                # send pong
-                self.send(b'pong', envelope.payload)
-        # return the last envelope we got
-        return envelope
+            if command == VersionMessage.command:
+                self.send(VerAckMessage())
+            elif command == PingMessage.command:
+                self.send(PongMessage(envelope.payload))
+        return command_to_class[command].parse(envelope.stream())
+# end::source4[]
 
 
 class SimpleNodeTest(TestCase):

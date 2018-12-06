@@ -14,9 +14,11 @@ GENESIS_BLOCK_HASH = bytes.fromhex('000000000019d6689c085ae165831e934ff763ae46a2
 TESTNET_GENESIS_BLOCK_HASH = bytes.fromhex('000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943')
 
 
+# tag::source1[]
 class Block:
 
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):
+    def __init__(self, version, prev_block, merkle_root,
+                 timestamp, bits, nonce, tx_hashes=None):  # <1>
         self.version = version
         self.prev_block = prev_block
         self.merkle_root = merkle_root
@@ -24,6 +26,7 @@ class Block:
         self.bits = bits
         self.nonce = nonce
         self.tx_hashes = tx_hashes
+    # end::source1[]
 
     @classmethod
     def parse(cls, s):
@@ -61,13 +64,13 @@ class Block:
         return result
 
     def hash(self):
-        '''Returns the double-sha256 interpreted little endian of the block'''
+        '''Returns the hash256 interpreted little endian of the block'''
         # serialize
         s = self.serialize()
-        # double-sha256
-        sha = hash256(s)
+        # hash256
+        h256 = hash256(s)
         # reverse
-        return sha[::-1]
+        return h256[::-1]
 
     def bip9(self):
         '''Returns whether this block is signaling readiness for BIP9'''
@@ -102,9 +105,9 @@ class Block:
     def check_pow(self):
         '''Returns whether this block satisfies proof of work'''
         # get the hash256 of the serialization of this block
-        sha = hash256(self.serialize())
+        h256 = hash256(self.serialize())
         # interpret this hash as a little-endian number
-        proof = little_endian_to_int(sha)
+        proof = little_endian_to_int(h256)
         # return whether this integer is less than the target
         return proof < self.target()
 
@@ -112,6 +115,9 @@ class Block:
         '''Gets the merkle root of the tx_hashes and checks that it's
         the same as the merkle root of this block.
         '''
+        # reverse each item in self.tx_hashes
+        # compute the Merkle Root and reverse
+        # return whether self.merkle_root is the same
         raise NotImplementedError
 
 

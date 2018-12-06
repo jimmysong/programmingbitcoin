@@ -60,13 +60,13 @@ class Block:
         return result
 
     def hash(self):
-        '''Returns the double-sha256 interpreted little endian of the block'''
+        '''Returns the hash256 interpreted little endian of the block'''
         # serialize
         s = self.serialize()
-        # double-sha256
-        sha = hash256(s)
+        # hash256
+        h256 = hash256(s)
         # reverse
-        return sha[::-1]
+        return h256[::-1]
 
     def bip9(self):
         '''Returns whether this block is signaling readiness for BIP9'''
@@ -101,9 +101,9 @@ class Block:
     def check_pow(self):
         '''Returns whether this block satisfies proof of work'''
         # get the hash256 of the serialization of this block
-        sha = hash256(self.serialize())
+        h256 = hash256(self.serialize())
         # interpret this hash as a little-endian number
-        proof = little_endian_to_int(sha)
+        proof = little_endian_to_int(h256)
         # return whether this integer is less than the target
         return proof < self.target()
 

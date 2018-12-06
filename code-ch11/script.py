@@ -1,4 +1,5 @@
 from io import BytesIO
+from logging import getLogger
 from unittest import TestCase
 
 from helper import (
@@ -8,8 +9,8 @@ from helper import (
     read_varint,
 )
 from op import (
-    op_hash160,
     op_equal,
+    op_hash160,
     op_verify,
     OP_CODE_FUNCTIONS,
     OP_CODE_NAMES,
@@ -17,19 +18,25 @@ from op import (
 
 
 def p2pkh_script(h160):
-    '''Takes a hash160 and returns the p2pkh scriptPubKey'''
+    '''Takes a hash160 and returns the p2pkh ScriptPubKey'''
     return Script([0x76, 0xa9, h160, 0x88, 0xac])
 
 
 def p2sh_script(h160):
-    '''Takes a hash160 and returns the p2sh scriptPubKey'''
+    '''Takes a hash160 and returns the p2sh ScriptPubKey'''
     return Script([0xa9, h160, 0x87])
+
+
+LOGGER = getLogger(__name__)
 
 
 class Script:
 
-    def __init__(self, instructions):
-        self.instructions = instructions
+    def __init__(self, instructions=None):
+        if instructions is None:
+            self.instructions = []
+        else:
+            self.instructions = instructions
 
     def __repr__(self):
         result = ''
@@ -82,12 +89,11 @@ class Script:
                 instructions.append(s.read(data_length))
                 count += data_length + 2
             else:
-                # we have an op code. set the current byte to op_code
+                # we have an opcode. set the current byte to op_code
                 op_code = current_byte
                 # add the op_code to the list of instructions
                 instructions.append(op_code)
         if count != length:
-            print(Script(instructions))
             raise SyntaxError('parsing script failed')
         return cls(instructions)
 
@@ -96,7 +102,7 @@ class Script:
         result = b''
         # go through each instruction
         for instruction in self.instructions:
-            # if the instruction is an integer, it's an op code
+            # if the instruction is an integer, it's an opcode
             if type(instruction) == int:
                 # turn the instruction into a single byte integer using int_to_little_endian
                 result += int_to_little_endian(instruction, 1)
@@ -104,7 +110,7 @@ class Script:
                 # otherwise, this is an element
                 # get the length in bytes
                 length = len(instruction)
-                # for large lengths, we have to use a pushdata op code
+                # for large lengths, we have to use a pushdata opcode
                 if length < 75:
                     # turn the length into a single byte integer
                     result += int_to_little_endian(length, 1)
@@ -138,27 +144,27 @@ class Script:
         while len(instructions) > 0:
             instruction = instructions.pop(0)
             if type(instruction) == int:
-                # do what the op code says
+                # do what the opcode says
                 operation = OP_CODE_FUNCTIONS[instruction]
                 if instruction in (99, 100):
                     # op_if/op_notif require the instructions array
                     if not operation(stack, instructions):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (107, 108):
                     # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (172, 173, 174, 175):
                     # these are signing operations, they need a sig_hash
                     # to check against
                     if not operation(stack, z):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 else:
                     if not operation(stack):
-                        print('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
             else:
                 # add the instruction to the stack
@@ -166,7 +172,7 @@ class Script:
                 if len(instructions) == 3 and instructions[0] == 0xa9 \
                     and type(instructions[1]) == bytes and len(instructions[1]) == 20 \
                     and instructions[2] == 0x87:
-                    # we execute the next three op codes
+                    # we execute the next three opcodes
                     instructions.pop()
                     h160 = instructions.pop()
                     instructions.pop()
@@ -177,7 +183,7 @@ class Script:
                         return False
                     # final result should be a 1
                     if not op_verify(stack):
-                        print('bad p2sh h160')
+                        LOGGER.info('bad p2sh h160')
                         return False
                     # hashes match! now add the RedeemScript
                     redeem_script = encode_varint(len(instruction)) + instruction
