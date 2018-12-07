@@ -22,7 +22,7 @@ A general overview of these fields might be helpful. Version indicates what addi
 Here is a hexadecimal dump of a typical transaction that shows which parts are which.
 
 .Transaction Components
-image::tx1.png[Transaction Version, Inputs, Outputs and Locktime]
+image::tx1.png[Transaction Version&#x2c; Inputs&#x2c; Outputs&#x2c; and Locktime]
 
 The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
 
