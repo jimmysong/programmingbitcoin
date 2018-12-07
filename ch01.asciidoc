@@ -2,6 +2,7 @@
 :imagesdir: images
 
 [[chapter_finite_fields]]
+[role="pagenumrestart"]
 == Finite Fields
 
 [.lead]
