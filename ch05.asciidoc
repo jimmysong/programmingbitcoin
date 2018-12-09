@@ -1,6 +1,3 @@
-= Programming Bitcoin
-:imagesdir: images
-
 [[chapter_tx_parsing]]
 
 == Transactions
