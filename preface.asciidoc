@@ -1,69 +1,112 @@
+= Programming Bitcoin
 Jimmy Song
 v2.0, 2018-12-03
+:imagesdir: images
 :doctype: book
+
 [preface]
 == Preface
+
 This book will teach you the technology of Bitcoin at a fundamental level. This book doesn't cover monetary, economic or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible. There's a tendency to hype Bitcoin and blockchain without really understanding what's going on and this book is meant to be an antidote to that tendency.
+
 After all, there are lots of books about Bitcoin, everything from the history of Bitcoin, the economic aspects to a technical description of Bitcoin. The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library. The library is not meant to be exhaustive or efficient. The aim of the library is to help you learn.
+
 === Who is this book for?
+
 This book is for programmers who want to learn how Bitcoin works by coding it themselves. You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch. This is not a reference book where you can look up the specification for a particular feature.
+
 The material from this book has been largely taken from my two day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
+
 By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered including the math, the parsing, the network connectivity and block validation.
+
 === What do I need to know?
+
 The prerequisites for this book are that you know programming and that you know Python in particular. The library itself is written in Python 3 and a lot of the exercises can be done in a controlled environment like a Jupyter notebook. An intermediate knowledge of Python is preferred, but even a beginner knowledge of Python is probably sufficient to get a lot of the concepts.
+
 Some knowledge of math is required, especially for Chapters 1 and 2. These chapters introduce mathematical concepts probably not familiar to those that didn't major in mathematics. Math knowledge around algebra-level should suffice to understand the new concepts and to code the exercises covered in those chapters.
+
 General Computer Science knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
+
 === How is the book arranged?
+
 This book is split into 14 chapters and built on top of one another. Each chapter is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
+
 Roughly speaking, Chapters 1-4 establish the mathematical tools that we need, Chapters 5-8 cover Transactions, which are the fundamental unit of Bitcoin and Chapters 9-12 cover Blocks and Networking. The last two chapters cover some advanced topics but don't actually require you to write code.
+
 Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>. After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, we move towards implementing how the cryptographic primitives are stored and transmitted through parsing and serializing all the different classes that we established in <<chapter_serialization>>.
+
 <<chapter_tx_parsing>> covers the Transaction structure. <<chapter_script>> goes into the smart contract language behind Bitcoin called Script. <<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. <<chapter_p2sh>> establishes how p2sh works, which is a way to make more powerful smart contracts.
+
 <<chapter_blocks>> covers Blocks, which are groups of orderd Transactions. <<chapter_networking>> covers network communication in Bitcoin. <<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data from and to nodes that do have the entire blockchain.
+
 <<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn..
+
 Chapters 1-12 have exercises that require you to build up the library from scratch. The answers are in the appendix and in the corresponding github repository. You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
+
 The last exercise in <<chapter_bloom_filters>> is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, the first 11 chapters are setting up toward being able to do this exercise.
+
 There will be a lot of unit tests that you will have to get to pass. The book has been designed this way so you can do the "fun" part of coding. We will be looking at a lot of code and diagrams throughout.
+
 === Setting Up
+
 In order to get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises. Here are the instructions for setting everything up.
+
 Install python 3.5 or above on your machine:
+
 * Windows: `https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe`
 * Mac OS X: `https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg`
 * Linux: see your distro docs (many Linux distributions like Ubuntu come with Python 3.5+ pre-installed)
+
 Install pip:
+
 Download this script `https://bootstrap.pypa.io/get-pip.py` and run it using python3:
+
 [source,bash]
 ----
 $ python3 get-pip.py
 ----
+
 Install git:
+
 The instructions for downloading and installing are at `https://git-scm.com/downloads`.
+
 Download the source code for this book:
+
 [source,bash]
 ----
 $ git clone https://github.com/jimmysong/programmingbitcoin
 $ cd programmingbitcoin
 ----
+
 Install virtualenv:
+
 [source,bash]
 ----
 $ pip install virtualenv
 ----
+
 Install the requirements:
+
 Linux/OSX:
+
 [source,bash]
 ----
 $ virtualenv -p python3 .venv
 $ . .venv/bin/activate
 (.venv) $ pip install -r requirements.txt
 ----
+
 Windows:
+
 [source,bash]
 ----
 C:\programmingbitcoin> virtualenv -p C:\\PathToYourPythonInstallation\\Python.exe .venv
 C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
+
 Run jupyter notebook:
+
 [source,bash]
 ----
 (.venv) $ jupyter notebook
@@ -73,82 +116,126 @@ Run jupyter notebook:
 [I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
 [W 11:13:23.065 NotebookApp] No web browser found: could not locate runnable browser.
 [C 11:13:23.065 NotebookApp]
-Copy/paste this URL into your browser when you connect for the first time,
-to login with a token:
-http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+
+    Copy/paste this URL into your browser when you connect for the first time,
+    to login with a token:
+        http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 ----
+
 You should have a browser open up automatically to something that looks like this:
+
 .Jupyter
 image::jupyter1.png[Jupyter]
+
 You can navigate to various directories and if you wanted to do the exercises from <<chapter_finite_fields>>, you would need to go navigate to the code from <<chapter_finite_fields>> in the code-ch01 directory:
+
 .Jupyter Directory View
 image::jupyter2.png[Chapter 1 Directory]
+
 From here you can open `Chapter1.ipynb`:
+
 .Jupyter Notebook
 image::jupyter3.png[Chapter 1 Notebook]
+
 You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
+
 A large portion of the exercises will be coding concepts introduced in the book. The unit tests are written for you and you will need to write the Python code to make the tests pass. You can edit the file by clicking through a screen like the "this test" link in Figure P-3 . This will take you to a browser tab like this:
+
 .ecc.py
 image::jupyter4.png[Chapter 1 ecc.py]
+
 You can edit the file here and save in order to make the test pass.
+
 === Answers
+
 All the answers to the various exercises in this book are in the Appendix at the end. They are also available in the `code-chxx/answers.py` file where xx is the chapter that you're on.
+
 === Conventions Used in This Book
+
 The following typographical conventions are used in this book:
+
 _Italic_:: Indicates new terms, URLs, email addresses, filenames, and file extensions.
+
 +Constant width+:: Used for program listings, as well as within paragraphs to refer to program elements such as variable or function names, databases, data types, environment variables, statements, and keywords.
+
 **`Constant width bold`**:: Shows commands or other text that should be typed literally by the user.
+
 _++Constant width italic++_:: Shows text that should be replaced with user-supplied values or by values determined by context.
+
+
 [TIP]
 ====
 This element signifies a tip or suggestion.
 ====
+
 [NOTE]
 ====
 This element signifies a general note.
 ====
+
 [WARNING]
 ====
 This element indicates a waning or caution.
 ====
+
 === Using Code Examples
 ++++
 <!--PROD: Please reach out to author to find out if they will be uploading code examples to oreilly.com or their own site (e.g., GitHub). If there is no code download, delete this whole section. If there is, when you email digidist with the link, let them know what you filled in for title_title (should be as close to book title as possible, i.e., leaning_python_2e). This info will determine where digidist loads the files.-->
 ++++
+
 Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/jimmysong/programmingbitcoin$$[].
+
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
+
 We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Programming Bitcoin_ by Jimmy Song (O’Reilly). Copyright 2019, 978-0-596-xxxx-x.”
+
 If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
+
 === O'Reilly Safari
+
 [role = "safarienabled"]
 [NOTE]
 ====
 pass:[<a href="http://oreilly.com/safari" class="orm:hideurl"><em class="hyperlink">Safari</em></a>] (formerly Safari Books Online) is a membership-based training and reference platform for enterprise, govenment, educators, and individuals.
 ====
+
 Members have access to thousands of books, training videos, Leaning Paths, interactive tutorials, and curated playlists from over 250 publishers, including O’Reilly Media, Harvard Business Review, Prentice Hall Professional, Addison-Wesley Professional, Microsoft Press, Sams, Que, Peachpit Press, Adobe, Focal Press, Cisco Press, John Wiley & Sons, Syngress, Morgan Kaufmann, IBM Redbooks, Packt, Adobe Press, FT Press, Apress, Manning, New Riders, McGraw-Hill, Jones & Bartlett, and Course Technology, among others.
+
 For more information, please visit pass:[<a href="http://oreilly.com/safari" class="orm:hideurl"><em>http://oreilly.com/safari</em></a>]. 
+
 === How to Contact Us
+
 Please address comments and questions concening this book to the publisher:
+
 ++++
 <ul class="simplelist">
-<li>O’Reilly Media, Inc.</li>
-<li>1005 Gravenstein Highway North</li>
-<li>Sebastopol, CA 95472</li>
-<li>800-998-9938 (in the United States or Canada)</li>
-<li>707-829-0515 (intenational or local)</li>
-<li>707-829-0104 (fax)</li>
+  <li>O’Reilly Media, Inc.</li>
+  <li>1005 Gravenstein Highway North</li>
+  <li>Sebastopol, CA 95472</li>
+  <li>800-998-9938 (in the United States or Canada)</li>
+  <li>707-829-0515 (intenational or local)</li>
+  <li>707-829-0104 (fax)</li>
 </ul>
 ++++
+
 We have a web page for this book, where we list errata, examples, and any additional information. You can access this page at link:$$http://www.oreilly.com/catalog/<catalog page>$$[].
+
 ++++
 <!--Don't forget to update the link above.-->
 ++++
+
 To comment or ask technical questions about this book, send email to pass:[<a class="email" href="mailto:bookquestions@oreilly.com"><em>bookquestions@oreilly.com</em></a>].
+
 For more information about our books, courses, conferences, and news, see our website at link:$$http://www.oreilly.com$$[].
+
 Find us on Facebook: link:$$http://facebook.com/oreilly$$[]
+
 Follow us on Twitter: link:$$http://twitter.com/oreillymedia$$[]
+
 Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
+
 === Acknowledgments
+
 ++++
 <!--Fill in...-->
 ++++

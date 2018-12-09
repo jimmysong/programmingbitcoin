@@ -1,51 +1,89 @@
+= Programming Bitcoin
+:imagesdir: images
+
 [[chapter_networking]]
 == Networking
+
 [.lead]
 The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. 65000+ nodes are running on the network as of this writing and communicate constantly.
+
 The Bitcoin network is a broadcast network or a gossip network. Every node is announcing different transactions, blocks and peers that it knows about. The protocol is rich and has a lot of features that have been added to it over the years.
+
 One nice thing about the networking protocol is that it is not consensus critical. The same data can be sent from one node to another in some other fashion and the blockchain itself would not be affected.
+
 With that in mind, we'll work toward being able to parse the very first message that one node sends to another, the version message.
+
 === Network Messages
+
 Network messages have a particular form that looks like this
+
 .Network Message or the Envelope that contains the actual payload
 image::network1.png[Network Message]
+
 The first four bytes are always the same and are referred to as the *network magic*. Magic bytes are common in network programming as the communication can be spotty and asynchronous. Magic bytes give the receiver a place to start should the communication get interrupted (say by getting disconnected from your ISP). Magic bytes are also useful to make sure the node is on the right network. You would not want a Bitcoin node to connect to a Litecoin node, for example. Thus, a Litecoin node has a different magic. Bitcoin testnet also has a different magic `0b110907` as opposed to the Bitcoin mainnet magic `f9beb4d9` above.
+
 The next 12 bytes define the command, or what the payload actually carries. There are many different payloads, many of which can be seen at https://wiki.bitcoin.it. Note that the command is meant to be human-readable and in fact this message is "version" in ascii with 0-byte padding.
+
 The next 4 bytes determine the length of the payload. As we saw in the transaction and block parsing sections, this is necessary as the payload is of variable length. As 2^32^ is about 4 billion, we can have payloads that can be as big as 4 GB, though the reference client rejects any payloads over 32MB. Note the number is interpreted in Little-Endian, so in our case here, `0x00000065` is 101 bytes.
+
 The next 4 bytes are the checksum. The checksum algorithm is something of an odd choice as it's the first 4 bytes of the hash256 of the payload. I say odd, as normally, networking protocol checksums generally are designed to have error-correcting capability and hash256 has none. That said, hash256 is common in the rest of the Bitcoin protocol and is thus used here.
+
 The code to handle network messages requires us to create a new class:
+
 [source,python]
 ----
 include::code-ch10/network.py[tag=source1]
 ----
+
 include::code-ch10/answers.py[tag=exercise1]
+
 include::code-ch10/answers.py[tag=exercise2]
+
 include::code-ch10/answers.py[tag=exercise3]
+
 === Parsing the payload
+
 Each command has a separate payload specification. Here is the one for Version:
+
 .Parsed Version
 image::network2.png[Version Message]
+
 The fields for Version are meant to give enough information for two nodes to be able to communicate.
+
 The first field is the network protocol version, which specifies the what messages may be communicated. The service field give information about what capabilities are available to connecting nodes. The timestamp field is 8 bytes (as opposed to 4 bytes in the block header) and is the unix timestamp in little endian.
+
 IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's `.onion` addresses to IPv6). If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP. The port is 2 bytes (default is 8333, which maps to `208d` in Little-Endian hex) and in Little-Endian.
+
 Nonce is a number used only once for reply messages. User Agent identifies the software being run. The height or latest block field helps the other node know which block a node is synced up to.
+
 Relay is used for Bloom Filters, which we'll get to in <<chapter_bloom_filters>>.
+
 Setting some reasonable defaults, our VersionMessage class looks like this:
+
 [source,python]
 ----
 include::code-ch10/network.py[tag=source2]
 ----
+
 At this point, we need a way to serialize this message.
+
 include::code-ch10/answers.py[tag=exercise4]
+
 === Network handshake
+
 The network handshake for two nodes is how node communication is established. It goes something like this:
-* A wants to connect to B and sends the Version message.
-* B receives the Version message and responds with the Verack message and sends its own Version message.
-* A receives the Version and Verack messages and sends back a Verack message
-* B receives the Verack message and continues communication
+
+ * A wants to connect to B and sends the Version message.
+ * B receives the Version message and responds with the Verack message and sends its own Version message.
+ * A receives the Version and Verack messages and sends back a Verack message
+ * B receives the Verack message and continues communication
+
 Once the handshake is finished, A and B can communicate however they want. Note that there is no authentication here and it's up to the nodes to verify all data that come in themselves. If a node sends a bad tx or block, it can expect to get banned or disconnected.
+
 === Connecting to the network
+
 Network communication is tricky due to its asynchronous nature. To experiment, we can establish a connection to a random node on the network synchronously.
+
 [source,python]
 ----
 >>> import socket
@@ -67,14 +105,20 @@ Network communication is tricky due to its asynchronous nature. To experiment, w
 <3> The first step of the handshake is to send a version message.
 <4> We now send the message in the right envelope.
 <5> This line will read any messages coming in through our connected socket.
+
 Connecting in this way, we can't send until we've received and can't respond intelligently to more than 1 message at a time. A more robust implementation would use an asynchronous library (like `asyncio` in Python 3) to allow be able to send and receive without hanging.
+
 We also need a Verack message class which we'll create here:
+
 [source,python]
 ----
 include::code-ch10/network.py[tag=source3]
 ----
+
 Note this is the minimum to create a network message.
+
 Let's now automate this by creating a class that will handle a lot of the sending and receiving for us.
+
 [source,python]
 ----
 include::code-ch10/network.py[tag=source4]
@@ -82,7 +126,9 @@ include::code-ch10/network.py[tag=source4]
 <1> The `send` method sends a message over the socket. The `command` property and `serialize` methods are expected to exist in the `message` object.
 <2> The `read` method reads a new message from the socket. This method could potentially detect the message and route to the right parser and send back not the envelope but the correctly parsed expected object.
 <3> The `wait_for` method lets us wait for any one of several commands (specifically, message classes). This allows us to treat the socket connection a bit more synchronously and makes for a bit easier programming. A commercial strength node would definitely not use something like this.
+
 Now that we have a node, we can now handshake with another node.
+
 [source,python]
 ----
 >>> from network import SimpleNode, VersionMessage
@@ -103,14 +149,22 @@ Now that we have a node, we can now handshake with another node.
 <2> We start the handshake by sending the Version message
 <3> We only finish when we've received both Verack and Version.
 <4> We expect to receive a Verack for our Version and the other node's Version. We don't know which order, though.
+
 include::code-ch10/answers.py[tag=exercise5]
+
 === Getting Block Headers
+
 Now that we can connect to a node, what can we do? When any node first connects to the network, the data that's most crucial to get and verify are the block headers. For full nodes, downloading the Block headers allows us to asynchronously ask for various blocks. For light clients, downloading headers allows us to verify the proof-of-work in each block and give us an idea of which chain has the most proof-of-work. As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network using the block headers alone.
+
 Nodes can give us the block headers without taking up too much bandwidth. The command to get the block headers is called `getheaders` and it looks like this:
+
 .Parsed `getheaders`
 image::getheaders.png[GetHeaders payload]
+
 As with Version, we start with the protocol version, then the number of hashes in this list, then the starting block header and lastly, the ending block header. If we specify the ending block to be `000...000`, we're indicating that we want as many as the other node will give us. The maximum number of headers that we can get back is 2000, or almost a single difficulty adjustment period (2016 blocks).
+
 Here's what the class looks like:
+
 [source,python]
 ----
 include::code-ch10/network.py[tag=source5]
@@ -118,9 +172,13 @@ include::code-ch10/network.py[tag=source5]
 <1> For the purposes of this chapter, we're going to assume that the number of hashes we'll get is 1. A more robust implementation would handle more than a single hash, but we can download the block headers using a single hash.
 <2> A starting block is needed, otherwise we can't create a proper message.
 <3> The ending block we assume to be null, or as many as the server will send to us if not defined.
+
 include::code-ch10/answers.py[tag=exercise6]
+
 === Headers response
+
 At this point, we can now create a node, handshake, and then ask for some headers.
+
 [source,python]
 ----
 >>> from network import SimpleNode, GetHeadersMessage
@@ -130,11 +188,16 @@ At this point, we can now create a node, handshake, and then ask for some header
 >>> getheaders = GetHeadersMessage(start_block=GENESIS_BLOCK_HASH)
 >>> node.send(getheaders)
 ----
+
 Now we need a way to receive the actual headers from our connected node. The other node will send back the `headers` command. The nice thing about the headers command is that it's a bunch of block headers which we already learned how to parse from <<chapter_blocks>>. The actual HeadersMessage class can take advantage. The message looks like this:
+
 .Parsed `headers`
 image::headers.png[headers payload]
+
 The message starts with the number of headers as a varint. We can have up to 2000 come back, so this is important. Each block header, we know, is 80 bytes. We have the number of transactions, or 0 in this case. The number of transactions is always 0. This may be a bit confusing at first since we only asked for the headers and not the transactions. The reason nodes bother sending the number of transactions at all is because this is meant to be compatible with the format for a full block, which is the block header, number of transactions and then the transactions themselves. By specifying that the number of transactions is 0, we can use the same parsing engine as when parsing a full block.
+
 We can proceed to the actual parsing.
+
 [source,python]
 ----
 include::code-ch10/network.py[tag=source6]
@@ -142,7 +205,9 @@ include::code-ch10/network.py[tag=source6]
 <1> Each block gets parsed using the `Block` class's `parse` method using the same stream that we have.
 <2> The number of transactions is always 0 and is a remnant of block parsing.
 <3> If we didn't get 0, something is wrong.
+
 We can now do something useful with the network connection that we've set up. We can download the headers, check their proof-of-work and validate the block header difficulty adjustments.
+
 [source,python]
 ----
 include::code-ch10/examples.py[tag=example1]
@@ -152,6 +217,9 @@ include::code-ch10/examples.py[tag=example1]
 <3> We are checking that the bits/target/difficulty is what should be in our current epoch
 <4> At the end of the epoch, we calculate the next bits/target/difficulty
 <5> We need to store the first block of the epoch to calculate bits at the end of the epoch
+
 Note that this won't work on testnet as the difficulty adjustment algorithm is different. To make sure blocks can proceed for testing, if a block hasn't been found on testnet in 20 minutes, the difficulty drops to 1, making it very easy to find a block. This is on purpose as to allow testers to be able to progress the network without expensive mining equipment. A $30 USB ASIC can typically find a few blocks per minute at the minimum difficulty.
+
 === Conclusion
+
 We've managed to connect to a node on the network, handshake and do something useful, which is download and verify that the block headers meet the consensus rules. In the next chapter, we focus on getting information about transactions that we're interested in from another node in a private, yet provable way.
