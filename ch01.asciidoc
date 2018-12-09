@@ -78,7 +78,7 @@ The class represents an element in a field F~prime~. The bare bones of the class
 include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive. If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
-<2> The rest of the $$__init__$$ method assigns the initialization values to the object.
+<2> The rest of the `$$__init__$$` method assigns the initialization values to the object.
 <3> The $$__eq__$$ method checks if two objects of class `FieldElement` are equal. This is only true when the `num` and `prime` properties are equal.
 
 What we've defined already allows us to do this:
@@ -189,7 +189,7 @@ a+~f~b ∈ F~19~
 
 We denote Finite Field addition with +~f~ to avoid confusion with normal integer addition +.
 
-If we utilize modulo arithmetic, we can guarantee this to be the case. We can define __a+~f~b__ this way:
+If we utilize modulo arithmetic, we can guarantee this to be the case. We can define a+~f~b this way:
 
 a+~f~b = (a+b)%19
 
@@ -310,7 +310,7 @@ Intuitively the fact that we have a prime order results in every element of a Fi
 
 ==== Coding Multiplication in Python
 
-Now that we understand what multiplication should be in `FieldElement`, we want to define the $$__mul__$$ method which overrides the \* operator. We want this to work:
+Now that we understand what multiplication should be in `FieldElement`, we want to define the $$__mul__$$ method which overrides the $*$ operator. We want this to work:
 
 [source,python]
 ----
@@ -323,7 +323,7 @@ include::code-ch01/answers.py[tag=exercise6]
 
 ==== Coding Exponentiation in Python
 
-We need to define the exponentiation for `FieldElement`, which in Python can be defined with the $$__pow__$$ method, overriding the `\*\*` operator. The difference here is that the exponent is *not* a `FieldElement`, so has to be treated a bit differently. We want something like this to work:
+We need to define the exponentiation for `FieldElement`, which in Python can be defined with the $$__pow__$$ method, overriding the $$**$$ operator. The difference here is that the exponent is *not* a `FieldElement`, so has to be treated a bit differently. We want something like this to work:
 
 [source,python]
 ----
@@ -476,4 +476,4 @@ include::code-ch01/ecc.py[tag=source3]
 
 === Conclusion
 
-In this chapter we learned about Finite Fields and how to implement it in Python. We'll be using Finite Fields in <<chapter_elliptic_curve_cryptography>> for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need for Elliptic Curve Cryptography and That's Elliptic Curves.
+In this chapter we learned about Finite Fields and how to implement it in Python. We'll be using Finite Fields in <<chapter_elliptic_curve_cryptography>> for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need for Elliptic Curve Cryptography and that's Elliptic Curves.
