@@ -34,30 +34,19 @@ Mathematically, a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
-1.
-If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
+1. If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
 We call this property _closed_
-2.
-The additive identity, *0* exists.
+2. The additive identity, *0* exists.
 This means *a + 0 = a*
-3.
-The multiplicative identity, *1* exists.
-This means *a ⋅ 1 = a*
-4.
-If *a* is in the set, *-a* is in the set.
-*-a* is defined as the value that makes *a + (-a) = 0*.
-This is what we call the _additive inverse_.
-5.
-If *a* is in the set and is not 0, *a^-1^* is in the set.
-*a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*.
-This is what we call the _multiplicative inverse_.
+3. The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
+4. If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
+5. If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
 
 Let's unpack each of the following.
 
 We have a set of numbers that's finite.
 Because the set is finite, we can designate a number *p* which is how big the set is.
 This is what we call the _order_ of the set.
-
 
 (1) says we are closed under addition and multiplication.
 This means that we have to define addition and multiplication in a way as to make sure that the results stay in the set.
@@ -87,8 +76,7 @@ This will be the trickiest to define in a finite field.
 
 === Defining Finite Sets
 
-If the *order* (or size) of the set is *p*, we can call the elements of the set, 0, 1, 2, ...
-p-1.
+If the *order* (or size) of the set is *p*, we can call the elements of the set, 0, 1, 2, ...p-1.
 These numbers are what we call the elements of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
 They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, etc.
 
@@ -136,7 +124,7 @@ include::code-ch01/ecc.py[tag=source1]
 <1> We first check that `num` is between `0` and `prime-1` inclusive.
 If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the `__init__` method assigns the initialization values to the object.
-<3> The $$__eq__$$ method checks if two objects of class `FieldElement` are equal.
+<3> The `__eq__` method checks if two objects of class `FieldElement` are equal.
 This is only true when the `num` and `prime` properties are equal.
 
 What we've defined already allows us to do this:
@@ -146,7 +134,7 @@ What we've defined already allows us to do this:
 include::code-ch01/examples.py[tag=example1]
 ----
 
-Python allows us to override the $$==$$ operator on `FieldElement` with the $$__eq__$$ method, which is something we'll be taking advantage of going forward.
+Python allows us to override the `==` operator on `FieldElement` with the `__eq__` method, which is something we'll be taking advantage of going forward.
 
 You can see this in action in the code that accompanies this book.
 Once you've set up Jupyter Notebook (see Preface), you can navigate to `code-ch01/Chapter1.ipynb` and run the code to see the results.
@@ -325,7 +313,7 @@ include::code-ch01/answers.py[tag=exercise2]
 
 ==== Coding Addition and Subtraction in Python
 
-In the class `FieldElement` we can now define $$__add__$$ and $$__sub__$$ methods.
+In the class `FieldElement` we can now define `__add__` and `__sub__` methods.
 The idea of these methods is that we want something like this to work:
 
 [source,python]
@@ -333,7 +321,7 @@ The idea of these methods is that we want something like this to work:
 include::code-ch01/examples.py[tag=example4]
 ----
 
-In Python we can define what addition (or + operator) means for our class with the $$__add__$$ method.
+In Python we can define what addition (or + operator) means for our class with the `__add__` method.
 So how do we do this? We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
 
 [source,python]
@@ -342,8 +330,8 @@ include::code-ch01/ecc.py[tag=source2]
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't have any meaning.
 <2> Addition in a Finite Field is defined with the modulo operator, as explained above.
-<3> We have to return an instance of the class, which we can conveniently access with $$self.__class__$$.
-We pass the two initializing arguments, `num` and `self.prime` for the $$__init__$$ method above.
+<3> We have to return an instance of the class, which we can conveniently access with `self.__class__`.
+We pass the two initializing arguments, `num` and `self.prime` for the `__init__` method above.
 
 Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily inheritable.
 We will be subclassing `FieldElement` later, so making the method inheritable is important here.
@@ -407,7 +395,7 @@ If the order of the set was composite number, multiplying the set by one of the 
 
 ==== Coding Multiplication in Python
 
-Now that we understand what multiplication should be in `FieldElement`, we want to define the $$__mul__$$ method which overrides the $*$ operator.
+Now that we understand what multiplication should be in `FieldElement`, we want to define the `__mul__` method which overrides the $*$ operator.
 We want this to work:
 
 [source,python]
@@ -415,13 +403,13 @@ We want this to work:
 include::code-ch01/examples.py[tag=example5]
 ----
 
-As we did with addition and subtraction above, the next exercise is to make multiplication work for our class by defining the $$__mul__$$ method.
+As we did with addition and subtraction above, the next exercise is to make multiplication work for our class by defining the `__mul__` method.
 
 include::code-ch01/answers.py[tag=exercise6]
 
 ==== Coding Exponentiation in Python
 
-We need to define the exponentiation for `FieldElement`, which in Python can be defined with the $$__pow__$$ method, overriding the $$**$$ operator.
+We need to define the exponentiation for `FieldElement`, which in Python can be defined with the `__pow__` method, overriding the `**` operator.
 The difference here is that the exponent is *not* a `FieldElement`, so has to be treated a bit differently.
 We want something like this to work:
 
@@ -435,6 +423,8 @@ We can code it this way.
 
 [source,python]
 ----
+class FieldElement:
+...
     def __pow__(self, exponent):
         num = (self.num ** exponent) % self.prime  # <1>
         return self.__class__(num, self.prime)  # <2>
@@ -539,7 +529,7 @@ In F~19~, this means practically that:
 
 b^18^=1 which means that b^-1^=b^17^ for all b > 0.
 
-So in other words, we can calculate the inverse using the exponent function.
+So in other words, we can calculate the inverse using the exponentiation operator.
 In F~19~:
 
 * 2/7=2⋅7^(19-2)^=2⋅7^17^=465261027974414%19=3
@@ -549,10 +539,10 @@ This is a relatively expensive calculation as exponentiating grows very fast.
 Division is the most expensive operation for that reason.
 To lessen the expensiveness, we can utilize the `pow` function in Python.
 `pow` is a function that does exponentiation.
-Thus something like `pow(7,17)` does the same thing as $$7**17$$.
+Thus something like `pow(7,17)` does the same thing as `7**17`.
 The `pow` function, however, has an optional third argument which makes our calculation more efficient.
 Specifically, `pow` will modulo by the third argument.
-Thus, `pow(7,17,19)` will give the same result as $$7**17%19$$ but do so faster because the modulo function is done after each round of multiplication.
+Thus, `pow(7,17,19)` will give the same result as `7**17%19` but do so faster because the modulo function is done after each round of multiplication.
 
 include::code-ch01/answers.py[tag=exercise8]
 
@@ -560,7 +550,7 @@ include::code-ch01/answers.py[tag=exercise9]
 
 === Redefining Exponentiation
 
-One last thing that we need to take care of before we leave this chapter is the $$__pow__$$ method, which will need to take care of negative exponents.
+One last thing that we need to take care of before we leave this chapter is the `__pow__` method, which will need to take care of negative exponents.
 For example a^-3^ needs to be a Finite Field element, but the current code does not take care of this case.
 We want, for example something like this to work:
 
@@ -569,7 +559,7 @@ We want, for example something like this to work:
 include::code-ch01/examples.py[tag=example7]
 ----
 
-Unfortunately, the way we've defined $$__pow__$$ simply doesn't handle negative exponents as the second parameter of the built-in Python function `pow` is required to be positive.
+Unfortunately, the way we've defined `__pow__` simply doesn't handle negative exponents as the second parameter of the built-in Python function `pow` is required to be positive.
 
 Thankfully, we can use some math we already know to solve this.
 We know from Fermat's Little Theorem that:
@@ -586,6 +576,8 @@ A naive implementation would do something like this:
 
 [source,python]
 ----
+class FieldElement:
+...
     def __pow__(self, exponent):
 	n = exponent
 	while n < 0:
@@ -598,10 +590,12 @@ A naive implementation would do something like this:
 
 Thankfully, we can do even better.
 We already know how to force a number out of being negative, using our familiar friend `%`! As a bonus, we can also reduce very large exponents at the same time given that a^p-1^=1.
-This will make the pow function not work as hard.
+This will make the `pow` function not work as hard.
 
 [source,python]
 ----
+class FieldElement:
+...
 include::code-ch01/ecc.py[tag=source3]
 ----
 <1> Make the exponent into something within the 0 to p-1 range

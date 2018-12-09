@@ -27,7 +27,7 @@ False
 # tag::exercise2[]
 ==== Exercise 2
 
-Write the $$__ne__$$ method for `Point`.
+Write the `__ne__` method for `Point`.
 # end::exercise2[]
 """
 
@@ -40,7 +40,7 @@ def __ne__(self, other):
 # tag::exercise3[]
 ==== Exercise 3
 
-Handle the case where the two points are additive inverses. That is, they have the same x, but a different y, causing a vertical line. This should return the point at infinity.
+Handle the case where the two points are additive inverses. That is, they have the same `x`, but a different `y`, causing a vertical line. This should return the point at infinity.
 # end::exercise3[]
 """
 
@@ -91,7 +91,7 @@ For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
 # tag::exercise5[]
 ==== Exercise 5
 
-Write the $$__add__$$ method where x~1~≠x~2~
+Write the `__add__` method where x~1~≠x~2~
 # end::exercise5[]
 # tag::exercise6[]
 ==== Exercise 6
@@ -110,7 +110,7 @@ For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
 # tag::exercise7[]
 ==== Exercise 7
 
-Write the $$__add__$$ method when P~1~=P~2~.
+Write the `__add__` method when P~1~=P~2~.
 # end::exercise7[]
 """
 

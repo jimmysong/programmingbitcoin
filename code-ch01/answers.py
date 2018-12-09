@@ -7,7 +7,7 @@ from ecc import FieldElement
 # tag::exercise1[]
 ==== Exercise 1
 
-Write the corresponding method $$__ne__$$ which checks if two `FieldElement` objects are _not equal_ to each other.
+Write the corresponding method `__ne__` which checks if two `FieldElement` objects are _not equal_ to each other.
 # end::exercise1[]
 """
 
@@ -44,7 +44,7 @@ Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
 # tag::exercise3[]
 ==== Exercise 3
 
-Write the corresponding $$__sub__$$ method which defines the subtraction of two `FieldElement`s.
+Write the corresponding `__sub__` method which defines the subtraction of two `FieldElement`s.
 # end::exercise3[]
 """
 
@@ -110,7 +110,7 @@ Do you notice anything about these sets?
 # tag::exercise6[]
 ==== Exercise 6
 
-Write the corresponding $$__mul__$$ method which defines the multiplication of two Finite Field elements.
+Write the corresponding `__mul__` method which defines the multiplication of two Finite Field elements.
 # end::exercise6[]
 """
 
@@ -166,9 +166,9 @@ Solve the following equations in F~31~:
 # tag::exercise9[]
 ==== Exercise 9
 
-Write the corresponding $$__truediv__$$ method which defines the division of two field elements.
+Write the corresponding `__truediv__` method which defines the division of two field elements.
 
-Note that in Python3, division is separated into $$__truediv__$$ and $$__floordiv__$$. The first does normal division, the second does integer division.
+Note that in Python3, division is separated into `__truediv__` and `__floordiv__`. The first does normal division, the second does integer division.
 # end::exercise9[]
 """
 
