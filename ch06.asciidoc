@@ -1,107 +1,69 @@
-= Programming Bitcoin
-:imagesdir: images
-
 [[chapter_script]]
-
 == Script
-
 [.lead]
 The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin. Locking is leaving some Bitcoins to someone else. Unlocking is spending some Bitcoins that have been left for you.
-
 In this chapter we examine this locking/unlocking mechanism, which is often called a smart contract. Script is what allows the elliptic curve cryptography (<<chapter_elliptic_curve_cryptography>>) to be evaluated within the transaction (<<chapter_tx_parsing>>). Script essentially allows people to be able to prove that they have the right to spend certain outputs. We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
-
 === Mechanics of Script
-
 If you are confused about what a "smart contract" is, don't worry. "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language. In Bitcoin, Script is the smart contract langauge, or the programming language used to express the conditions under which bitcoins are spendable.
-
 Bitcoin has the digital equivalent of a contract in Script. Script is an intentionally limited programming language in the sense that it doesn't have certain features. Specifically, it does not have any mechanism for loops and is therefore not Turing complete.
-
 [NOTE]
 .Why Bitcoin isn't Turing Complete
 ====
 Turing completeness in a programming language essentially means that you have the ability to do loops. Loops are a useful construct in programming, so you may be wondering at this point why Script doesn't allow for loops.
-
 There are a lot of reasons for this, but let's start with program execution. Anyone can create a Script program that every full node on the network executes. If Script were Turing Complete, it's possible for the loop to go on executing forever. This would essentially cause every full node to enter and never leave that loop and would thus be an easy way to attack the network through what would be called a Denial of Service attack (DoS). A single Script that has an infinite loop could take down Bitcoin! This would be a large systematic vulnerabilty and protecting against this vulnerability is one of the major reasons why Turing-completeness is avoided. Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas". An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
-
 There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing completeness are very difficult to analyze. A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus it's easy to create unintended behavior, causing bugs. Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract participants could lose money. Such bugs are not just theoretical, this was the major problem in the DAO (Decentralized Autonomous Organization) which caused the Ethereum Classic hard fork.
 ====
-
 What you are required to do as part of a transaction is to assign Bitcoins to a *locking* Script. The locking Script is what's specified in ScriptPubKey (see <<chapter_tx_parsing>>). Think of this as the lockbox where some money is deposited which only a particular key can open. The money inside, of course, can only be accessed by someone with that key.
-
 The actual unlocking of bitcoin is done in the ScriptSig field (see <<chapter_tx_parsing>>) and proves ownership of the locked box in order to spend the funds.
-
 === How Script works
-
 Script, as a language, processes one instruction at a time on a stack of elements. There are two possible types of instructions: elements and operations.
-
 Elements are just data. They are byte strings of length 1 to 520. A typical element might be a DER signature or a SEC pubkey.
-
 .Elements
 image::script1.png[Script Elements]
-
 Operations do something to the data. They consume zero or more elements from the processing stack and put zero or more elements back on the stack.
-
 .Operations
 image::script2.png[Script Operations]
-
 A typical operation might be something like OP_DUP, which will duplicate the top element (consuming 0) and putting a new element on top (pushing 1).
-
 .OP_DUP duplicates the top element
 image::op_dup.png[OP_DUP]
-
 At the end of evaluating all the instructions, the top element of the stack must be non-zero for the Script to execute successfully. Having no elements in the stack or the top element being zero would result in failed execution. Failed execution means that the transaction which includes the unlocking Script is invalid and not accepted on the network.
-
 === Example Operations
-
 There are many other operations besides `OP_DUP`. `OP_HASH160` does a sha256 followed by a ripemd160 to the top element of the stack (consuming 1) and putting a new element back (pushing 1). Note in the diagram that `y = ripemd160(sha256(x))`.
-
 .`OP_HASH160` does a sha256 followed by ripemd160 to the top element
 image::op_hash160.png[OP_HASH160]
-
 Another very important operation is `OP_CHECKSIG`. `OP_CHECKSIG` consumes 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey. If so, OP_CHECKSIG pushes a 1 onto the stack, otherwise pushes a 0 on the stack.
-
 .`OP_CHECKSIG` checks if the signature for the pubkey is valid or not
 image::op_checksig.png[OP_CHECKSIG]
-
 ==== Coding opcodes
-
 Given this, we can now code `OP_DUP`. This opcode simply duplicates the top element of the stack.
-
 [source,python]
 ----
 include::code-ch06/op.py[tag=source1]
 ...
 OP_CODE_FUNCTIONS = {
 ...
-    118: op_dup,  # <3>
+118: op_dup,  # <3>
 ...
 }
 ----
 <1> We have to have at least one element to duplicate, otherwise, we can't execute this opcode.
 <2> This is how we duplicate the top element of the stack.
 <3> `118 = 0x76` which is the code for `OP_DUP`
-
 Note that we return a boolean with this opcode, as a way to tell whether the operation was successful. A failed operation automatically fails Script evaluation.
-
 Here's another one for `OP_HASH256`. This opcode will consume the top element, perform a hash256 operation on it and push the result on the stack.
-
 [source,python]
 ----
 include::code-ch06/op.py[tag=source2]
 ...
 OP_CODE_FUNCTIONS = {
 ...
-    170: op_hash256,
+170: op_hash256,
 ...
 }
 ----
-
 include::code-ch06/answers.py[tag=exercise1]
-
 === Parsing the Script fields
-
 Both ScriptPubKey and ScriptSig are parsed the same way. If the byte is between `0x01` and `0x4b` (which we call `n`), we read the next `n` bytes as an element. Otherwise, the byte represents an operation, which we have to look up. Here are some operations and their byte codes:
-
 * `0x00` - `OP_0`
 * `0x51` - `OP_1`
 * `0x60` - `OP_16`
@@ -109,23 +71,16 @@ Both ScriptPubKey and ScriptSig are parsed the same way. If the byte is between 
 * `0x93` - `OP_ADD`
 * `0xa9` - `OP_HASH160`
 * `0xac` - `OP_CHECKSIG`
-
 [NOTE]
 .Longer than 75-byte elements
 ====
 You might be wondering what would happen if you had an element that's greater than `0x4b` (75 in decimal). There are 3 specific opcodes for handling elements with length greater than 75, namely, `OP_PUSHDATA1`, `OP_PUSHDATA2` and `OP_PUSHDATA4`. `OP_PUSHDATA1` means that the next byte contains how many bytes we need to read for the element. `OP_PUSHDATA2` means that the next 2 bytes contain how many bytes we need to read for the element. `OP_PUSHDATA4` means that the next 4 bytes contain how many bytes we need to read for the element.
-
 Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use `OP_PUSHDATA1` `<length of the element>` `<element>`. For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2`. Anything larger than 520 bytes is actually not allowed on the network, so `OP_PUSHDATA4` is unnecessary.
-
 It is possible to encode a number below 76 using `OP_PUSHDATA1` or a number below 256 using `OP_PUSHDATA2` or even any number 520 and below using `OP_PUSHDATA4`. These are considered non-standard transactions, meaning most bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
 ====
-
 There are many more opcodes, which are coded in `op.py` and the full list can be found at http://wiki.bitcoin.it.
-
 ==== Coding a Script parser and serializer
-
 Now that we know how Script is supposed to work, we can write a Script parser.
-
 [source,python]
 ----
 include::code-ch06/script.py[tag=source1]
@@ -142,9 +97,7 @@ include::code-ch06/script.py[tag=source2]
 <8> 77 is `OP_PUSHDATA2`, so the next two bytes tell us how many bytes to read
 <9> We have an opcode that we store.
 <10> Script should have consumed exactly the length of bytes we expected, otherwise we raise an error.
-
 We can similarly write a Script serializer.
-
 [source,python]
 ----
 class Script:
@@ -157,22 +110,14 @@ include::code-ch06/script.py[tag=source3]
 <4> For anything from 256 to 520, we put `OP_PUSHDATA2` first, and then encode the length as two bytes in little endian.
 <5> Any element longer than 520 bytes cannot be serialized.
 <6> We prepend with the length of the entire Script.
-
 Note that both the parser and serializer were used in <<chapter_tx_parsing>> for Transaction parsing/serializing. The Script object represents the instruction set that requires validation.
-
 === Combining the Script fields
-
 To evaluate Script, we need to combine the ScriptPubKey and ScriptSig fields. The lockbox (ScriptPubKey) and the unlocking (ScriptSig) are in _different_ transactions. Specifically, the lockbox is where the bitcoins are received, the unlocking is where the bitcoins are spent. The input in the spending transaction _points to the receiving transaction_. Essentially, we have a situation like this:
-
 .ScriptPubKey and ScriptSig
 image::script3.png[ScriptPubKey and ScriptSig]
-
 Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two Scripts combine. What we do in Bitcoin is take the instructions from ScriptSig and ScriptPubKey and combine them as above. The instructions from the ScriptSig go on top of all the instructions from ScriptPubKey. Each instruction is processed one at a time until no instructions are left to be processed or if the Script exits early.
-
 ==== Coding the combined instruction set
-
 The actual processing requires that we take the ScriptSig and ScriptPubKey, combine them into a single instruction set and evaluate the instructions. In order to do this, we require a way to combine the Scripts.
-
 [source,python]
 ----
 class Script:
@@ -180,83 +125,50 @@ class Script:
 include::code-ch06/script.py[tag=source4]
 ----
 <1> We are combining the instruction set to create a new Script object.
-
 We will use this ability to combine Scripts for evaluation later in this chapter.
-
 === Stardard Scripts
-
 There are many types of standard Scripts in Bitcoin including the following:
-
 * p2pk - Pay-to-pubkey
 * p2pkh - Pay-to-pubkey-hash
 * p2sh - Pay-to-Script-hash
 * p2wpkh - Pay-to-witness-pubkey-hash
 * p2wsh - Pay-to-witness-Script-hash
-
 Addresses are data that fit into known Script templates like that above. Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKey. All of the above have a particular type of address format (base58, bech32) so wallets can pay to them.
-
 To show exactly how all this works, we'll now take a look at one of the original Scripts pay-to-pubkey.
-
 === p2pk
-
 Pay-to-pubkey (p2pk) was used largely during the early days of bitcoin. Most coins thought to belong to Satoshi are in p2pk outputs. There are some limitations that we'll discuss below, but first, we focus on how p2pk works.
-
 Back in <<chapter_elliptic_curve_cryptography>>, we learned both ECDSA signing and verification. Specifically, we need the message, `z`, the public key, `P` and the signature, `r` and `s` to verify. In p2pk, bitcoins are sent to a public key and the owner of the private key can unlock the bitcoins by creating a signature. Effectively, the ScriptPubKey puts those bitcoins under the control of the private key owner.
-
 Specifying where the bitcoins go is the job of the ScriptPubKey. As stated above, this is the lockbox that receive the bitcoins. The actual ScriptPubKey looks like this:
-
 .Pay-to-pubkey (p2pk) ScriptPubKey
 image::p2pk1.png[P2PK ScriptPubKey]
-
 Note the `OP_CHECKSIG`, as that will be very important. The ScriptSig is the part that unlocks the received bitcoins. The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see <<chapter_serialization>>).
-
 In the case of p2pk, the ScriptSig is just the signature.
-
 .Pay-to-pubkey (p2pk) ScriptSig
 image::p2pk2.png[P2PK ScriptSig]
-
 The ScriptPubKey and ScriptSig combine to make an instruction set that looks like this:
-
 .p2pk Combined
 image::p2pk3.png[P2PK Combination]
-
 The two columns below are instructions of Script and the actual stack. At the end of this processing, the top element in the stack must be non-zero to be considered a valid ScriptSig. The Script instructions are processed one instruction at a time. We start with the instructions as combined above:
-
 .p2pk Start
 image::p2pk4.png[P2PK Start]
-
 The first instruction is the signature, which is an element. This is data that goes on our stack.
-
 .p2pk Step 1
 image::p2pk5.png[P2PK Step 1]
-
 The second instruction is the pubkey, which is also an element. This is again, data that goes on our stack.
-
 .p2pk Step 2
 image::p2pk6.png[P2PK Step 2]
-
 `OP_CHECKSIG` consumes 2 stack instructions (pubkey and signature) and determines if they are valid for this transaction. `OP_CHECKSIG` will push a 1 to the stack if the signature is valid, 0 if not. Assuming that the signature is valid for this public key, we have this situation:
-
 .p2pk Step 3
 image::p2pk7.png[P2PK End 1]
-
 We're finished processing all the instructions of Script and we've ended with a single element on the stack which is non-zero (1 is definitely not 0). Therefore, this Script is valid.
-
 If this transaction instead had an invalid signature, the result from `OP_CHECKSIG` would be zero, ending our Script processing like this:
-
 .p2pk End
 image::p2pk8.png[P2PK End 2]
-
 We end with a single element on the stack which is zero. This means the combined Script is invalid and a transaction with this ScriptSig is invalid.
-
 The Script will validate if the signature is valid, but fail if the signature is invalid. Essentially, we are in a situation where the ScriptSig will only unlock the ScriptPubKey if the signature is valid for that public key. In other words, only someone with knowledge of the secret can produce a valid ScriptSig.
-
 Incidentally, we can see where ScriptPubKey got its name. The public key in uncompressed SEC format is the main instruction in ScriptPubKey in p2pk (the other instruction being `OP_CHECKSIG`). Similarly, ScriptSig is named as such because p2pk is a single instruction which is the DER signature format.
-
 ==== Coding Script Evaluation
-
 We now need a way to do what we did above. That is, go through the instruction set and evaluate whether the Script resolves to true. What we want to be able to do is something like this:
-
 [source,python]
 ----
 include::code-ch06/examples.py[tag=example1]
@@ -264,9 +176,7 @@ include::code-ch06/examples.py[tag=example1]
 <1> p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG` which is `0xac` or 170.
 <2> We can do this because of the $$__add__$$ method we created above.
 <3> We want to go through the instructions and see if the result is `True` or not.
-
 Here is the method that we'll use for the _combined_ instruction set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current transaction).
-
 [source,python]
 ----
 from op import OP_CODE_FUNCTIONS, OP_CODE_NAMES
@@ -285,206 +195,119 @@ include::code-ch06/script.py[tag=source5]
 <8> If the stack is empty at the end of processing all the instructions, we fail the Script by returning `False`.
 <9> If the stack's top element is an empty byte string (which is how the stack stores a 0 or False), then we also fail the Script by returning `False`.
 <10> Any other result means that the Script has passed.
-
 [WARNING]
 .Making Script Evaluation Safe
 ====
 The code shown here is a little bit of a cheat as the combined Script is not executed this way exactly. The ScriptSig is evaluated separately from the ScriptPubKey as to not allow operations from ScriptSig to affect the ScriptPubKey instructions.
-
 Specifically, the stack after all the ScriptSig instructions are evaluated are stored and then the ScriptPubkey instructions are evaluated on their own.
 ====
-
-
 ==== Stack elements under the hood
-
 It may be confusing to note that sometimes the stack elements are numbers like 0 or 1 and other times they're byte-strings like a DER signature or a SEC pubkey. Under the hood, they're all bytes, just that some are interpreted as numbers for certain opcodes. For example, 1 is stored on the stack as the `01` byte, 11 is stored as the `0b` byte and so on. For the integer 0, this is actually *not* stored as the `00` byte, but as the empty byte-string.
-
 The code in `op.py` can clarify what's going on:
-
 [source,python]
 ----
 include::code-ch06/op.py[tag=source3]
 ----
-
 Numbers being pushed onto the stack are encoded into bytes and decoded from bytes when the numerical value is needed.
-
 include::code-ch06/answers.py[tag=exercise2]
-
 === Problems with p2pk
-
 Pay-to-pub-key is pretty intuitive in the sense that there is a public key that anyone can send some bitcoins and a signature that can be produced by the owner of the private key to spend that amount. This works well, but there are some problems.
-
 First, the public keys are long. We know from <<chapter_serialization>> that `SECP256K1` public points are 33 bytes in compressed SEC and 65 bytes in uncompressed SEC. Unfortunately, you can't send the 33 or 65 bytes raw very easily. Most character encodings don't render certain byte ranges as they are control characters, newlines or similar. The SEC format is typically rendered instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8). This makes the compressed and uncompressed SEC formats 66 and 130 characters respectively, which is bigger than most identifiers (your username on a website, for instance, is usually less than 20). To compound this, early Bitcoin transactions didn't use the compressed versions so the hexadecimal addresses were 130 characters each! This is not fun or easy for people to transcribe, much less communicate by voice.
-
 That said, the original use-case for p2pk was for IP-to-IP payments where IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that this wasn't necessarily a problem. Incidentally, this IP-to-IP payment system was phased out as it's not secure and prone to man-in-the-middle attacks.
-
 .Why did Satoshi use the uncompressed SEC format?
 ****
 It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it? It turns out that Satoshi was using the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
-
 When Pieter Wuille discovered that the compressed SEC format existed in OpenSSL, more people started using the compressed SEC format in Bitcoin.
 ****
-
 Second, because the public keys are long, this causes a more subtle problem. The UTXO set becomes bigger since this large public key has to be kept around and indexed to see if it's spendable. This requires more resources on the part of full nodes.
-
 Third, because we're storing the public key in the ScriptPubKey field, it's known to everyone. That means should ECDSA someday be broken, these outputs could be stolen. This is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and would affect all of those things, too. For example, quantum computing has the potential to reduce the calculation times significantly for RSA and ECDSA, so having something else in addition to protect these outputs would be more secure.
-
 === Solving the problems with p2pkh
-
 Pay-to-pubkey-hash (p2pkh) is an alternative Script that has a bunch of advantages over p2pk:
-
 1. The addresses are shorter.
 2. It's additionally protected by sha256 and ripemd160.
-
 Addresses are shorter due to the use of the sha256 and ripemd160 hashing algorithms. We utilize both in succession and call that hash160. The result of hash160 is 160-bits or 20 bytes, which can be encoded into an address.
-
 The actual result is an address that you may have seen on the Bitcoin network, something that looks like this:
-
 `1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs`
-
 This address actually has within it the 20 bytes in hex that look like this:
-
 `f54a5851e9372b87810a8e60cdd2e7cfd80b6e31`
-
 These 20 bytes are the result of doing a hash160 operation on this (compressed) SEC public key:
-
 `0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352`
-
 Given p2pkh is shorter and more secure, p2pk is no longer used much on the network.
-
 === p2pkh
-
 Pay-to-pubkey-hash was used during the early days of bitcoin, though not nearly as much as p2pk.
-
 Once again, the lockbox where the bitcoins go is the job of the ScriptPubKey. The actual ScriptPubKey looks like this:
-
 .Pay-to-pubkey-hash (p2pkh) ScriptPubKey
 image::p2pkh1.png[P2PKH ScriptPubKey]
-
 Note that `OP_CHECKSIG` is still here and `OP_HASH160` makes an appearance. Also note that the SEC pubkey has disappeared and has been replaced by a 20 byte hash. There is also a new opcode that you haven't seen before, `OP_EQUALVERIFY`.
-
 The ScriptSig, or the unlocking part of the Script looks like this:
-
 .Pay-to-pubkey-hash (p2pkh) ScriptSig
 image::p2pkh2.png[P2PKH ScriptSig]
-
 As in p2pk, the ScriptSig has the DER signature. Unlike p2pk, however, the ScriptSig now also has the SEC pubkey. In essence, the pubkey has moved from ScriptPubKey to ScriptSig.
-
 The ScriptPubKey and ScriptSig combine to make a list of instructions for processing that looks like this:
-
 .p2pkh Combined
 image::p2pkh3.png[P2PKH Combination]
-
 At this point, the Script is processed one instruction at a time. We start with the instructions as above.
-
 .p2pkh Start
 image::p2pkh4.png[P2PKH Start]
-
 The first two instructions are elements, so they are pushed straight onto the stack.
-
 .p2pkh Step 1
 image::p2pkh5.png[P2PKH Step 1]
-
 `OP_DUP` duplicates the top element, so we end up with this:
-
 .p2pkh Step 2
 image::p2pkh6.png[P2PKH Step 2]
-
 `OP_HASH160` will take the top element and perform the hash160 operation on it (sha256 followed by ripemd160), creating a 20-byte hash like so:
-
 .p2pkh Step 3
 image::p2pkh7.png[P2PKH Step 3]
-
 The next instruction on the stack is an element, thus is pushed straight onto the stack.
-
 .p2pkh Step 4
 image::p2pkh8.png[P2PKH Step 4]
-
 We are now at `OP_EQUALVERIFY`. This opcode consumes the top two elements and checks if they're equal. If they are equal, then the Script processing proceeds. If they are not equal, the Script processing stops immediately and the Script is considered invalid. We assume here that they're equal, leading to this:
-
 .p2pkh Step 5
 image::p2pkh9.png[P2PKH Step 5]
-
 We are now exactly where we were during the `OP_CHECKSIG` part of processing p2pk. Once again, we assume that the signature is valid:
-
 .p2pkh End
 image::p2pkh10.png[P2PKH End]
-
 There are two main ways this Script can fail. If you provide a public key that does not hash160 to the 20-byte hash in the ScriptPubKey, the Script will fail at `OP_EQUALVERIFY` (Figure 6-22). The other failure condition is if you do provide the right public key, but an invalid signature. That would end the Script with a 0 at the end, failing the combined Script.
-
 This is why we call this type of Script pay-to-pubkey-_hash_. The ScriptPubKey has the 20-byte _hash160_ of the public key and not the public key itself. We are locking Bitcoins to a _hash_ of the public key and are responsible for revealing the public key as part of spending the output in our ScriptSig.
-
 The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a hacker would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.
-
 === Scripts can be Arbitrarily Constructed
-
 Note that Scripts can essentially be anything. Script is a smart contract language and you can express the conditions under which the Bitcoins can be unlocked in any manner that you wish. Here is an example ScriptPubKey:
-
 .Example ScriptPubKey
 image::ex1.png[Example 1 ScriptPubKey]
-
 Here's a ScriptSig that will unlock the above.
-
 .Example ScriptSig
 image::ex2.png[Example 1 ScriptSig]
-
 The combination will look like this:
-
 .Example Combined
 image::ex3.png[Example 1 Combination]
-
 This is how the Script processing will start:
-
 .Example Start
 image::ex4.png[Example 1 Start]
-
 `OP_4` will push a 4 on the stack
-
 .Example Step 1
 image::ex5.png[Example 1 Step 1]
-
 `OP_5` will likewise push a 5 on the stack.
-
 .Example Step 2
 image::ex6.png[Example 1 Step 2]
-
 `OP_ADD` will consume the top two elements of the stack, add them together and push back the sum.
-
 .Example Step 3
 image::ex7.png[Example 1 Step 3]
-
 `OP_9` will push a 9 on the stack
-
 .Example Step 4
 image::ex8.png[Example 1 Step 4]
-
 `OP_EQUAL` will consume 2 elements and push a 1 if equal, 0 if not.
-
 .Example End
 image::ex9.png[Example 1 End]
-
 Note that this isn't particularly hard to figure out and requires no signature. As a result, this sort of Script is vulnerable to being taken by pretty much anyone. Think of this as a lockbox with a very flimsy lock that anyone can break into. It turns out that most transactions have some signature component in them as a Script without some signature component is very easily stolen.
-
 Of course, after it's been spent, included in a block and thus secured by proof-of-work, these coins are no longer as easily spendable. Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (<<chapter_blocks>>).
-
 include::code-ch06/answers.py[tag=exercise3]
-
 ==== Utilty of Scripts
-
 The previous exercise was a bit of a cheat as `OP_MUL` is no longer allowed on the Bitcoin network. Version 0.3.5 of Bitcoin disabled a lot of different opcodes as anything that had even a little bit of potential to create vulnerabilties on the network were disabled.
-
 This is just as well since most of the functionality in Script is actually not utilized very much. From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage. Simplifying was a way to make Bitcoin more secure.
-
 This is in stark contrast to other projects which try to expand their smart contract languages, often increasing the attack surface along with the new features.
-
 include::code-ch06/answers.py[tag=exercise4]
-
 ==== Sha1 Piñata
-
 In 2013, Peter Todd created a Script very similar to the Script in Exercise 4 and put some Bitcoins into it to create an economic incentive for people to find hash collisions. The donations reached 2.49153717 BTC and when Google actually found a hash collision for sha1 in February of 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html), this Script was promptly redeemed. The transaction output was 2.48 coins which was $2848.88 USD at the time.
-
 Peter created more piñatas for sha256, hash256 and hash160, which add economic incentives to find collisions for these hashing functions.
-
 === Conclusion
-
 We've covered Script and how it works. We can now proceed to the actual creation and validation of transactions.

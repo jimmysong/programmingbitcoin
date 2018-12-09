@@ -1,81 +1,44 @@
-= Programming Bitcoin
-:imagesdir: images
-
 [[chapter_finite_fields]]
 [role="pagenumrestart"]
 == Finite Fields
-
 [.lead]
 One of the most difficult things about learning how to program Bitcoin is knowing where to start. There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else before you can understand the original thing.
-
 This chapter is going to get you off to a start which is more manageable. It may seem strange, but we'll start with the basic math that you need to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms. These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin. By learning Finite Fields and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need in order to progress logically.
-
 Be aware that this chapter and the next two chapters may feel a bit like you're eating vegetables, especially if you haven't done formal math in a long time. I would encourage you to get through this as the concepts and code here will be used throughout the book.
-
 === Learning Higher Level Math
-
 Learning about new mathematical structures can be a bit intimidating and in this chapter, I hope to dispel the myth that high level math is difficult. Finite Fields, in particular, don't require all that much in terms of prior mathematical knowledge than, say, Algebra.
-
 Think of Finite Fields as something that you could have learned instead of Trigonomotry, just that the education system you're a part of decided that Trigonomotry was more important for you to learn. This is my way of telling you that Finite Fields are not that hard to learn and require no more background than Algebra.
-
 This chapter is required if you want to understand Elliptic Curve Cryptography. Elliptic Curve Cryptography is required for understanding signing and verification, which is at the heart of Bitcoin itself. As I've said, this chapter and the next two may feel a bit unrelated, but I encourage you to endure. The fundamentials here will not only make understanding Bitcoin a lot easier, but also make understanding Schnorr Signatures, Confidential Transactions and other leading edge Bitcoin technologies easier.
-
 === Finite Field Definition
-
 Mathematically, a Finite Field is defined as follows:
-
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
-
 1. If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set. We call this property _closed_
 2. The additive identity, *0* exists. This means *a + 0 = a*
 3. The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
 4. If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
 5. If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
-
 Let's unpack each of the following.
-
 We have a set of numbers that's finite. Because the set is finite, we can designate a number *p* which is how big the set is. This is what we call the _order_ of the set. 
-
 (1) says we are closed under addition and multiplication. This means that we have to define addition and multiplication in a way as to make sure that the results stay in the set. For example, a set containing {0,1,2} is *not* closed under addition since 1+2=3 and 3 is not in the set, neither is 2+2=4. Of course we can define addition a little differently to make this work, but using "normal" addition, this set is not closed. On the other hand, the set {-1,0,1} is closed under normal multiplication. Any two numbers can be multiplied (there are 9 such combinations) and the result is always in the set.
-
 The other option we have in mathematics is to define multiplication in a particular way to make these sets closed. We'll get to how exactly we define addition and multiplication later in this chapter, but the key concept here is that we can *define addition and subtraction differently than the addition and subtraction you are familiar with*.
-
 (2) and (3) mean that we have the additive and multiplicative identities. That means 0 and 1 are in the set.
-
 (4) means that we have the additive inverse. That is, if *a* is in the set, *-a* is in the set. Using this, we can define subtraction. Subtraction is the inverse of addition. Once again, we have to make sure subtraction is defined in a way as to make sure that the result is still in the set, that is, not go under 0. In other words, we need to define subtraction to be _closed_.
-
 (5) means that multiplication has the same property. If *a* is in the set, *a^-1^* is in the set. That is *a⋅a^-1^=1*. Using this, we can define division, the inverse of multiplication. This will be the trickiest to define in a finite field.
-
 === Defining Finite Sets
-
 If the *order* (or size) of the set is *p*, we can call the elements of the set, 0, 1, 2, ... p-1. These numbers are what we call the elements of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc. They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, etc.
-
 In math notation the Finite Field set looks like this:
-
 F~p~ = {0, 1, 2, ... p-1}
-
 What's in the Finite Field set are called _elements_. F~p~ is a specific finite field called "field of p" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call *order*). The numbers between the {}`s represent what elements are in the field. We name the elements 0, 1, 2, etc because they're convenient for our purposes. 
-
 A Finite Field of order 11 looks like this:
-
 F~11~ = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-
 A Finite Field of order 17 looks like this:
-
 F~17~= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
-
 A Finite Field of order 981 looks like this:
-
 F~981~= {0, 1, 2, ... 980}
-
 Notice the order of the field is always 1 more than the largest element. You might have noticed that the field has a prime order every time. For a variety of reasons which will become clear later, it turns out that fields *must* an order that is a power of a prime, but that the Finite Fields whose order is of prime order are the ones we're interested in.
-
 ==== Constructing a Finite Field in Python
-
 We want to represent each Finite Field element and in Python, we'll be creating a class that represents a single Finite Field element. Naturally, we'll name the class `FieldElement`. 
-
 The class represents an element in a field F~prime~. The bare bones of the class look like this:
-
 [source,python]
 ----
 include::code-ch01/ecc.py[tag=source1]
@@ -83,176 +46,98 @@ include::code-ch01/ecc.py[tag=source1]
 <1> We first check that `num` is between `0` and `prime-1` inclusive. If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
 <2> The rest of the $$__init__$$ method assigns the initialization values to the object.
 <3> The $$__eq__$$ method checks if two objects of class `FieldElement` are equal. This is only true when the `num` and `prime` properties are equal.
-
 What we've defined already allows us to do this:
-
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example1]
 ----
-
 Python allows us to override the $$==$$ operator on `FieldElement` with the $$__eq__$$ method, which is something we'll be taking advantage of going forward.
-
 You can see this in action in the code that accompanies this book. Once you've set up Jupyter Notebook (see Preface), you can navigate to `code-ch01/Chapter1.ipynb` and run the code to see the results. For the next exercise, you'll want to open up `ecc.py` by clicking the link in the Exercise 1 box. If you get stuck, please remember that the answers to every exercise are in the Appendix.
-
 include::code-ch01/answers.py[tag=exercise1]
-
 === Modulo Arithmetic
-
 One of the tools we can use in order to make a Finite Field closed under addition, subtraction, multiplication and division is something called modulo arithmetic.
-
 We can define addition on the finite set using something called modulo arithmetic. Modulo arithmetic is something you probably learned when you first learned division. Remember problems like this?
-
 .Long Division Example 1
 image::longdivision.png[Long Division Example 1]
-
 Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division. We define modulo in the same way. We use the operator *%* for "modulo".
-
 7 % 3 = 1
-
 Because
-
 .Long Division Example 2
 image::longdivision-2.png[Long Division Example 2]
-
 Formally speaking, the modulo operation is the remainder after division of one number by another. Let's look at another example with larger numbers:
-
 1747 % 241 = 60
-
 If it helps, you can think of modulo arithmetic as "wrap-around" or "clock" math. Imagine a problem like this:
-
 It is currently 3 o'clock. What hour will it be 47 hours from now?
-
 The answer is 2 o'clock because:
-
 (3 + 47) % 12 = 2
-
 .Clock going forward 47 hours
 image::clock.jpg[Clock]
-
 We can also see this as "wrapping around" in the sense that you go back to zero every time we move ahead 12 hours.
-
 We can perform modulo on negative numbers. For example, you can ask:
-
 It is currently 3 o'clock. What hour was it 16 hours ago?
-
 The answer is 11 o'clock. Hence we can say:
-
 (3 - 16) % 12 = 11
-
 The minute hand is also a modulo operation. For example, you can ask:
-
 It is currently 12 minutes past the hour. What minute will it be 843 minutes from now?
-
 (12 + 843) % 60 = 15
-
 It will be 15 minutes past the hour. Likewise, we can ask:
-
 It is currently 23 minutes past the hour. What minute will it be 97 minutes from now?
-
 (23 + 97) % 60 = 0
-
 0 is another way of saying there is no remainder.
-
 The result of the modulo (%) operation for minutes is always between 0 and 59, inclusive, in this case. This happens to be a very useful property as even very large numbers can be brought down to a relatively small range with modulo:
-
 14738495684013 % 60 = 33
-
 We'll be using modulo as we define field arithmetic. Most operations in Finite Fields use the modulo operator in some capacity.
-
 ==== Modulo Arithmetic in Python
-
 Python uses the `%` operator for modulo arithmetic. Here is how the modulo operator is used:
-
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example2]
 ----
-
 We can also use the modulo operator on negative numbers like this:
-
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example3]
 ----
-
 === Finite Field Addition and Subtraction
-
 Remember that we need to define Finite Field addition in a way as to make sure that the result is still in the set. That is, we want to make sure that addition in a Finite Field is _closed_.
-
 We can use what we just learned, modulo arithmetic, to make addition closed. Let's say we have a Finite Field of 19:
-
 F~19~={0,1,2,...18}, where a, b ∈ F~19~
-
 Note that the symbol '∈' means "is an element of". In our case, `a` and `b` are elements of F~19~.
-
 Addition being closed means:
-
 a+~f~b ∈ F~19~
-
 We denote Finite Field addition with +~f~ to avoid confusion with normal integer addition +.
-
 If we utilize modulo arithmetic, we can guarantee this to be the case. We can define __a+~f~b__ this way:
-
 a+~f~b = (a+b)%19
-
 For example:
-
 7+~f~8 = (7+8)%19 = 15
-
 11+~f~17 = (11+17)%19 = 9
-
 and so on.
-
 We take any two numbers in the set, add and "wrap around" the end to get the sum. We are creating our own addition operator here and the result is a bit unintuitive. After all 11+~f~17=9 just doesn't look right for because we're not used to Finite Field addition.
-
 More generally, we define field addition this way:
-
 a+~f~b=(a+b)%p where a, b ∈ F~p~
-
 We also define the additive inverse this way.
-
 a ∈ F~p~ implies that -~f~a ∈ F~p~
-
 -~f~a = (-a) % p
-
 Again, for clarity, we use -~f~ to distinguish field subtraction and negation from integer subtraction and negation.
-
 In F~19~:
-
 -~f~9 = (-9) % 19 = 10
-
 Which means that:
-
 9 +~f~ 10 = 0
-
 And that turns out to be true.
-
 Similarly, we can do field subtraction.
-
 a-~f~b = (a-b)%p where a, b ∈ F~p~
-
 In F~19~:
-
 11-~f~9=(11-9)%19=2
-
 6-~f~13=(6-13)%19=12
-
 and so on.
-
 include::code-ch01/answers.py[tag=exercise2]
-
 ==== Coding Addition and Subtraction in Python
-
 In the class `FieldElement` we can now define $$__add__$$ and $$__sub__$$ methods. The idea of these methods is that we want something like this to work:
-
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example4]
 ----
-
 In Python we can define what addition (or + operator) means for our class with the $$__add__$$ method. So how do we do this? We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
-
 [source,python]
 ----
 include::code-ch01/ecc.py[tag=source2]
@@ -260,223 +145,133 @@ include::code-ch01/ecc.py[tag=source2]
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't have any meaning.
 <2> Addition in a Finite Field is defined with the modulo operator, as explained above.
 <3> We have to return an instance of the class, which we can conveniently access with $$self.__class__$$. We pass the two initializing arguments, `num` and `self.prime` for the $$__init__$$ method above.
-
 Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily inheritable. We will be subclassing `FieldElement` later, so making the method inheritable is important here.
-
 include::code-ch01/answers.py[tag=exercise3]
-
 === Finite Field Multiplication and Exponentiation
-
 Just as we defined a new addition (+~f~) for Finite Fields that was _closed_, we can also define a new multiplication for Finite Fields that's also closed. By multiplying the same number many times, we can also define exponentiation. In this section, we'll go through exactly how to define this using modulo arithmetic.
-
 Multiplication is adding multiple times.
-
 * 5⋅3 = 5+5+5 = 15
 * 8⋅17 = 8+8+8+...(17 total 8's)...+8 = 136
-
 We can define multiplication on a Finite Field the same way. Operating in F~19~ once again,
-
 * 5⋅~f~3 = 5+~f~5+~f~5
 * 8⋅~f~17 = 8+~f~8+~f~8+~f~...(17 total 8's)...+~f~8
-
 We already know how to do the right side, and that yields a number within the F~19~ set:
-
 * 5⋅~f~3 = 5+~f~5+~f~5 = 15 % 19 = 15
 * 8⋅~f~17 = 8+~f~8+~f~8+~f~...(17 total 8's)...+~f~8 = (8⋅17) % 19 = 136 % 19 = 3
-
 Note that the second result is pretty unintuitive. We don't normally think of 8⋅~f~17=3, but that's part of what's necessary in order to define multiplication to be closed. That is, the result of field multiplication is always in the set {0,1,...p-1}.
-
 Exponentiation is simply multiplying a number many times.
-
 7^3^=7⋅~f~7⋅~f~7=343
-
 In a Finite Field, we can do exponentiation using modulo arithmetic.
-
 In F~19~:
-
 7^3^=343 % 19=1
-
 9^12^=7
-
 Exponentiation again gives us counter-intuitive results. We don't normally think 7^3^=1 or 9^12^=7. Again, Finite Fields have to be defined so that the operations *always* result in a number within the field.
-
 include::code-ch01/answers.py[tag=exercise4]
-
 include::code-ch01/answers.py[tag=exercise5]
-
 [NOTE]
 ====
 The answer to Exercise 5 is why fields have to have a _prime_ power number of elements. No matter what *k* you choose, as long as it's greater than 0, multiplying the entire set by *k* will result in the same set as you started with.
-
 Intuitively the fact that we have a prime order results in every element of a Finite Field being equivalent. If the order of the set was composite number, multiplying the set by one of the divisors would result in a smaller set.
 ====
-
 ==== Coding Multiplication in Python
-
-Now that we understand what multiplication should be in `FieldElement`, we want to define the $$__mul__$$ method which overrides the \* operator. We want this to work:
-
+Now that we understand what multiplication should be in `FieldElement`, we want to define the $$__mul__$$ method which overrides the * operator. We want this to work:
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example5]
 ----
-
 As we did with addition and subtraction above, the next exercise is to make multiplication work for our class by defining the $$__mul__$$ method.
-
 include::code-ch01/answers.py[tag=exercise6]
-
 ==== Coding Exponentiation in Python
-
-We need to define the exponentiation for `FieldElement`, which in Python can be defined with the $$__pow__$$ method, overriding the `\*\*` operator. The difference here is that the exponent is *not* a `FieldElement`, so has to be treated a bit differently. We want something like this to work:
-
+We need to define the exponentiation for `FieldElement`, which in Python can be defined with the $$__pow__$$ method, overriding the $$**$$ operator. The difference here is that the exponent is *not* a `FieldElement`, so has to be treated a bit differently. We want something like this to work:
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example6]
 ----
-
 Note that because the exponent is an integer, instead of another instance of `FieldElement`, the method receives the variable `exponent` as an integer. We can code it this way.
-
 [source,python]
 ----
-    def __pow__(self, exponent):
-        num = (self.num ** exponent) % self.prime  # <1>
-        return self.__class__(num, self.prime)  # <2>
+def __pow__(self, exponent):
+num = (self.num ** exponent) % self.prime  # <1>
+return self.__class__(num, self.prime)  # <2>
 ----
 <1> This is a perfectly fine way to do it, but `pow(self.num, exponent, self.prime)` is more efficient.
 <2> We have to return an instance of the class as before.
-
 Why don't we force the exponent to be a `FieldElement` object? It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out. In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
-
 Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
-
 include::code-ch01/answers.py[tag=exercise7]
-
 === Finite Field Division 
-
 The intuition that helps us with addition, subtraction, multiplication and perhaps even exponentiation unfortunately doesn't help us quite as much in division. Because division is the hardest one to make sense of, we'll start with something that should make sense.
-
 In normal math, division is the inverse of multiplication:
-
 7⋅8 = 56 implies that 56/8 = 7
-
 12⋅2 = 24 implies that 24/12 = 2
-
 And so on. We can use this as the definition of division to help us. Note that like normal math, you cannot divide by 0.
-
 In F~19~, we know that:
-
 3⋅~f~7=21%19=2 implies that 2/~f~7=3
-
 9⋅~f~5=45%19=7 implies that 7/~f~5=9
-
 This is very unintuitive as we generally think of 2/~f~7 or 7/~f~5 as fractions, not nice Finite Field elements. Yet that is one of the remarkable things about Finite Fields: Finite Fields are _closed_ under division. That is, dividing any two numbers where the denominator is not 0 will result in another Finite Field element.
-
 The question you might be asking yourself is, how do I calculate 2/~f~7 if I don't know beforehand that 3⋅~f~7=2? This is indeed a very good question and in order to answer it, we'll have to use the result from the Exercise 7.
-
 In case you didn't get it, the answer is that n^(p-1)^ is always 1 for every p that is prime and every n > 0. This is a beautiful result from number theory called Fermat's Little Theorem. Essentially, the theorem says:
-
 n^(p-1)^%p=1 where p is prime
-
 Since we are operating in prime fields, this will always be true.
-
 .Fermat's Little Theorem
 ****
 There are many proofs of this theorem, but perhaps the simplest is using what we saw in Exercise 5. Namely that these sets are equal:
-
 {1, 2, 3, ... p-2, p-1} = {n%p, 2n%p, 3n%p, ... (p-2)n%p, (p-1)n%p}
-
 The resulting numbers might not be in the right order, but the same numbers are in both sets.
-
 We can then multiply every element in both sets to get this equality:
-
 1⋅2⋅3⋅...⋅(p-2)⋅(p-1) % p = n⋅2n⋅3n⋅...⋅(p-2)n⋅(p-1)n % p
-
 The left side is the same as (p-1)! % p where \! is the factorial (e.g. 5! = 5⋅4⋅3⋅2⋅1). The right side, we can gather up all the n's and get:
-
 (p-1)!⋅n^(p-1)^ % p
-
 Thus:
-
 (p-1)! % p = (p-1)! ⋅n^(p-1)^ % p
-
 The (p-1)! on both sides cancel giving us:
-
 1 = n^(p-1)^ % p
-
 This proves Fermat's Little Theorem
 ****
-
 Because division is the inverse of multiplication, we know:
-
 a/b=a⋅~f~(1/b)=a⋅~f~b^-1^
-
 We can reduce the division problem to a multiplication problem as long as we can figure out what b^-1^ is. This is where Fermat's Little Theorem comes into play. We know:
-
 b^(p-1)^=1
-
 Because p is prime. Thus:
-
 b^-1^=b^-1^⋅~f~1=b^-1^⋅~f~b^(p-1)^=b^(p-2)^
-
 or
-
 b^-1^=b^(p-2)^
-
 In F~19~, this means practically that:
-
 b^18^=1 which means that b^-1^=b^17^ for all b > 0.
-
 So in other words, we can calculate the inverse using the exponent function. In F~19~:
-
 * 2/7=2⋅7^(19-2)^=2⋅7^17^=465261027974414%19=3
 * 7/5=7⋅5^(19-2)^=7⋅5^17^=5340576171875%19=9
-
 This is a relatively expensive calculation as exponentiating grows very fast. Division is the most expensive operation for that reason. To lessen the expensiveness, we can utilize the `pow` function in Python. `pow` is a function that does exponentiation. Thus something like `pow(7,17)` does the same thing as $$7**17$$. The `pow` function, however, has an optional third argument which makes our calculation more efficient. Specifically, `pow` will modulo by the third argument. Thus, `pow(7,17,19)` will give the same result as $$7**17%19$$ but do so faster because the modulo function is done after each round of multiplication.
-
 include::code-ch01/answers.py[tag=exercise8]
-
 include::code-ch01/answers.py[tag=exercise9]
-
 === Redefining Exponentiation
-
-One last thing that we need to take care of before we leave this chapter is the $$__pow__$$ method, which will need to take care of negative exponents. For example a^-3^ needs to be a Finite Field element, but the current code does not take care of this case. We want, for example something like this to work:
-
+One last thing that we need to take care of before we leave this chapter is the $$__pow__$$ method, which will need to take care of negative exponents. For example a^-3^ needs to be a Finite Field element, but the current code does not take care of this case. We want something like this to work:
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example7]
 ----
-
 Unfortunately, the way we've defined $$__pow__$$ simply doesn't handle negative exponents as the second parameter of the built-in Python function `pow` is required to be positive.
-
 Thankfully, we can use some math we already know to solve this. We know from Fermat's Little Theorem that:
-
 a^p-1^ = 1
-
 This fact means that we can multiply by a^p-1^ as many times as we want. So for a^-3^, for example, we can do:
-
 a^-3^=a^-3^⋅a^p-1^=a^p-4^
-
 This is a way we can do negative exponents. A naive implementation would do something like this:
-
 [source,python]
 ----
-    def __pow__(self, exponent):
-	n = exponent
-	while n < 0:
-	    n += self.prime - 1 # <1>
-        num = pow(self.num, n, self.prime) # <2>
-        return self.__class__(num, self.prime)
+def __pow__(self, exponent):
+n = exponent
+while n < 0:
+n += self.prime - 1 # <1>
+num = pow(self.num, n, self.prime) # <2>
+return self.__class__(num, self.prime)
 ----
 <1> We add until we get a positive exponent
 <2> We use the Python built-in `pow` to make this more efficient
-
 Thankfully, we can do even better. We already know how to force a number out of being negative, using our familiar friend `%`! As a bonus, we can also reduce very large exponents at the same time given that a^p-1^=1. This will make the pow function not work as hard.
-
 [source,python]
 ----
 include::code-ch01/ecc.py[tag=source3]
 ----
 <1> Make the exponent into something within the 0 to p-1 range
-
 === Conclusion
-
 In this chapter we learned about Finite Fields and how to implement it in Python. We'll be using Finite Fields in <<chapter_elliptic_curve_cryptography>> for Elliptic Curve Cryptography. We turn next to the other mathematical component that we need for Elliptic Curve Cryptography and That's Elliptic Curves.

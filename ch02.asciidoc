@@ -1,370 +1,228 @@
-= Programming Bitcoin
-:imagesdir: images
-
 [[chapter_elliptic_curves]]
 == Elliptic Curves
-
 [.lead]
 In this chapter we're going to learn about Elliptic Curves. In the next chapter, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
-
 As in the previous chapter, elliptic curves can look intimidating if you haven't seen them before. Also as in the previous chapter, the actual math isn't very difficult. Most of Elliptic Curves could have been taught to you after Algebra. In this chapter, we'll get to what these curves are and what we can do with them.
-
 === Definition
-
 Elliptic Curves are like many equations you've been seeing since pre-Algebra. They have y on one side and x on the other in some form. They specifically have a form like this:
-
 y^2^=x^3^+ax+b
-
 You've worked with other equations that look similar. For example, you probably learned the linear equation back in pre-Algebra:
-
 y = mx + b
-
 You may even remember that *m* here has the name _slope_ and *b*, _y-intercept_. You can also graph linear equations like this:
-
 .Linear Equation
 image::linear.png[Linear Equation]
-
 Similarly, you're probably familiar with the quadratic equation and its graph:
-
 y = ax^2^+bx+c
-
 .Quadratic Equation
 image::quadratic.png[Quadratic Equation]
-
 And sometime around Algebra, you did even higher orders on x, something called the cubic equation and its graph:
-
 y = ax^3^+bx^2^+cx+d
-
 .Cubic Equation
 image::cubic.png[Cubic Equation]
-
 An elliptic curve isn't all that different. The only real difference between the elliptic curve and the cubic curve above is the *y^2^* term on the right side. This has the effect of making the graph symmetric over the x-axis like so:
-
 .Continuous Elliptic Curve
 image::elliptic2.png[Elliptic Curve Equation]
-
 The elliptic curve is less steep than the cubic curve. Again, this is because of the *y^2^* term on the right. At times, the curve may even be disjoint like this:
-
 .Disjoint Elliptic Curve
 image::elliptic1.png[Elliptic Curve Equation]
-
 If it helps, an elliptic curve can be though of as taking a cubic equation graph, taking only the part above the x-axis, flattening it out and then mirroring the top half on the bottom half of the x-axis.
-
 .Step 1: A Cubic Equation
 image::process1.png[Start]
 .Step 2: Stretched Cubic Equation
 image::process2.png[Stretch]
 .Step 3: Reflected over the X-Axis
 image::process3.png[Symmetric]
-
 Specifically, the elliptic curve used in Bitcoin is called secp256k1 and it uses this particular equation:
-
 y^2^=x^3^+7
-
 The canonical form is y^2^=x^3^+ax+b so the curve is defined by the constants `a=0`, `b=7`. The curve looks like this:
-
 .secp256k1 Curve
 image::elliptic3.png[secp256k1 Curve]
-
 === Coding Elliptic Curves in Python
-
 For a variety of reasons which will be clear later, we are not interested in the curve itself, but specific points on the curve. For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1). We are thus going to define the class `Point` to be the actual point on a specific curve. The curve has a specifc form, y^2^=x^3^+ax+b so we can define the curve with just the two numbers `a` and `b`.
-
 [source,python]
 ----
 class Point:
-
-    def __init__(self, x, y, a, b):
-        self.a = a
-        self.b = b
-        self.x = x
-        self.y = y
+def __init__(self, x, y, a, b):
+self.a = a
+self.b = b
+self.x = x
+self.y = y
 include::code-ch02/ecc.py[lines=130..135]
 ----
 <1> We check here that the point is actually on the curve.
 <2> Points are equal if and only if they are on the same curve and have the same coordinates
-
 This allows us to do something like this:
-
 [source,python]
 ----
 include::code-ch02/examples.py[tag=example1]
 ----
-
 We want the $$__init__$$ method to throw an error when the point is not on the curve.
-
 include::code-ch02/answers.py[tag=exercise1]
-
 include::code-ch02/answers.py[tag=exercise2]
-
 === Point Addition
-
 Elliptic Curves are useful because of something called Point Addition. Point Addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve. This is called "addition" because the operation has a lot of the intuitions we associate with what we call "addition". For example, Point Addition is commutative. That is, adding point A to point B is the same as adding point B to point A.
-
 The way we define Point Addition is as follows. It turns out that for every elliptic curve a line, except for a couple of special cases, will intersect at either 1 or 3 points.
-
 .Line intersects at only 1 point
 image::intersect1.png[Line intersecting at 1 point]
 .Line intersects at 3 points
 image::intersect3.png[Line intersecting at 3 points]
-
 The two exceptions are when a line is _tangent_ to the curve and when a line is exactly vertical.
-
 .Line intersects at 2 points because it's vertical
 image::intersect2-1.png[Vertical Line]
 .Line intersects at 2 points because it's tangent to the curve
 image::intersect2-2.png[Tangent Line]
-
 We will come back to these two cases later.
-
 We can define *point addition* using the fact that lines intersect one or three times with the Elliptic Curve. Two points define a line, so since that line must intersect the curve at some point one more time. That third point reflected over the x-axis is the resulting Point Addition.
-
 Like Field Addition, we are defining Point Addition. In our case, Point Addition is defined this way:
-
 For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
-
 * Find the point intersecting the elliptic curve a third time by drawing a line through P~1~ and P~2~
 * Reflect the resulting point over the x-axis
-
 Visually, it looks like this:
-
 .Point Addition
 image::pointaddition.png[Point Addition]
-
 We first draw a line through the two points we're adding (A and B). The third intersection point is C. We then reflect that point over the x-axis, which puts us at the A+B point in Figure 2-14.
-
 One of the properties that we are going to use is that point addition is not easily predictable. We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve. Going back to Figure 2-14, A+B is to the right of both points, A+C would be somewhere between A and C on the x-axis, and B+C would be to the left of both points. In mathematics parlance, point addition is *non-linear*.
-
 === Math of Point Addition
-
 "Addition" in the name Point Addition satisfies certain properties that we think of as addition, such as:
-
 * Identity
 * Commutativity
 * Associativity
 * Invertibiltiy
-
 Identity here means that there's a zero. That is, there exists some point (I) which when added to a point (A) results in A. We'll call this point the point at infinity (reasons for this will become clear in a bit). That is:
-
 I + A = A
-
 This is also related to invertibility. For some point A, there's some other point -A which results in the Identity point. That is:
-
 A + (-A) = I
-
 Visually, these are points opposite each other in the elliptic curve.
-
 .Vertical Line Intersection
 image::intersect2-1.png[Vertical Line]
-
 This is why we call this point the point at infinity. We have one extra point in the elliptic curve which makes the vertical line intersect the curve a third time.
-
 Commutativity means that A+B=B+A. This is obvious since the line going through A and B will intersect the curve a third time in the same place no matter what order.
-
 Associativity means that (A+B) + C = A + (B+C). This isn't obvious and is the reason for flipping over the x-axis.
-
 .(A+B)+C
 image::associativity1.png[Case 1]
 .A+(B+C)
 image::associativity2.png[Case 2]
-
 You can see that in both cases, the final point is exactly the same. While this doesn't prove the associativity of Point addition, the visual should at least give you the intuition that this is true.
-
 To code Point Addition, we're going to split it up into 3 steps:
-
 1. Where the points are in a vertical line or using the Identity.
 2. Where the points are not in a vertical line, but are different.
 3. Where the two points are the same.
-
 === Coding Point Addition
-
 We first handle the identity, or the point at infinity. Since we don't have the infinity numbers in Python, we'll use the `None` value instead. What we want is something like this:
-
 [source,python]
 ----
 include::code-ch02/examples.py[tag=example2]
 ----
-
 In order to make this work, we have to do two things:
-
 First, we have to adjust the $$__init__$$ method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity. Second, we have to overload the addition operator or $$__add__$$ as we did with the `FieldElement` class.
-
 [source,python]
 ----
 include::code-ch02/ecc.py[lines=121..129]
-        if self.y**2 != self.x**3 + self.a*self.x + self.b:
-	    raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
-    ...
+if self.y**2 != self.x**3 + self.a*self.x + self.b:
+raise ValueError('Point ({},{}) is not on the curve'.format(x,y))
+...
 include::code-ch02/ecc.py[lines=147..154]
 ----
 <1> x-coordinate and y-coordinate being `None` is how we signify the point at infinity. Note that the next if statement will fail if we don't return here.
 <2> We overload the `+` operator here
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity. Thus, we return `other`
 <4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity. Thus, we return `self`
-
 include::code-ch02/answers.py[tag=exercise3]
-
 === Point Addition for when x~1~≠x~2~
-
 Now that we've covered the vertical line, we're now proceeding to when the points are different. When we have points where the x's differ, we can add using a fairly simple formula. To help with intuition, it helps first to find the slope created by the two points. You can figure this out using a formula from pre-Algebra:
-
 * P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
 * P~1~+P~2~=P~3~
 * s=(y~2~-y~1~)/(x~2~-x~1~)
-
 This is the slope and we can use the slope to calculate x~3~. Once we know x~3~, we can calculate y~3~. P~3~ can be derived using this formula:
-
 * x~3~=s^2^-x~1~-x~2~
 * y~3~=s(x~1~-x~3~)-y~1~
-
 Remember that y~3~ is the reflection over the x-axis.
-
 .Deriving The Point Addition Formula
 ****
-
 Supposing:
-
 * P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
 * P~1~ + P~2~ = P~3~
-
 We want to know what P~3~ is.
-
 Let's start with the fact that the line that goes through P~1~ and P~2~ has this formula:
-
 * s=(y~2~-y~1~)/(x~2~-x~1~)
 * y=s(x-x~1~)+y~1~
-
 The second formula above is the equation of the line that intersects at both P~1~ and P~2~. Now using this formula and plugging it into the elliptic curve equation, we get:
-
 * y^2^=x^3^+ax+b
 * y^2^=(s(x-x~1~)+y~1~)^2^=x^3^+ax+b
-
 Gathering all the terms, we have this polynomial equation:
-
 * x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
-
 We also know that x~1~, x~2~ and x~3~ are solutions to this equation, thus:
-
 * (x-x~1~)(x-x~2~)(x-x~3~)=0
 * x^3^-(x~1~+x~2~+x~3~)x^2^ +(x~1~x~2~+x~1~x~3~+x~2~x~3~)x-x~1~x~2~x~3~=0
-
 From above, we know that:
-
 * x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
-
 There's a result from called the Theorem on the Equality of Polynomials, which states that the coefficients have to equal each other if the roots are the same. The first coefficient that's interesting is the coefficient in front of x^2^:
-
 -s^2^=-(x~1~+x~2~+x~3~)
-
 We can use this to derive the formula for x~3~:
-
 x~3~=s^2^-x~1~-x~2~
-
 We can plug this in to the formula for the line above:
-
 y=s(x-x~1~)+y~1~
-
 But we have to reflect over the x-axis, so the right side has to be negated:
-
 y~3~=-(s(x~3~-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
-
 QED
 ****
-
 include::code-ch02/answers.py[tag=exercise4]
-
 === Coding Point Addition for when x~1~≠x~2~
-
 We now code this into our library. That means we have to adjust the $$__add__$$ method to handle the case where x~1~≠x~2~. We have the formulas:
-
 * s=(y~2~-y~1~)/(x~2~-x~1~)
 * x~3~=s^2^-x~1~-x~2~
 * y~3~=s(x~1~-x~3~)-y~1~
-
 At the end of the method, we return an instance of the class `Point`.
-
 include::code-ch02/answers.py[tag=exercise5]
-
 === Point Addition for when P~1~=P~2~
-
 When the x coordinates are the same and the y coordinate is different, we have the situation where the points are opposite each other over the x-axis. We know that this means:
-
 P~1~=-P~2~ or P~1~+P~2~=I
-
 We've already handled this above.
-
 What happens when P~1~=P~2~? Visually, we have to calculate the line that's *tangent* to the curve at P~1~ and find the point at which the line intersects the curve. The situation looks like this as we saw before:
-
 .Line that's tangent to the curve
 image::intersect2-2.png[Tangent Line]
-
 Once again, we'll find the slope of the tangent point.
-
 * P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
 * P~1~+P~1~=P~3~
 * s=(3x~1~^2^+a)/(2y~1~)
-
 The rest of the formula goes through as before, except x~1~=x~2~, so we can combine them:
-
 * x~3~=s^2^-2x~1~
 * y~3~=s(x~1~-x~3~)-y~1~
-
 [NOTE]
 .Deriving the Tangent LIne
 ====
 We can derive the slope of the tangent line using some slightly more advanced math: calculus. We know that the slope at a given point is
-
 dy/dx
-
 To get this, we need to take the derivative of both sides of the elliptic curve equation:
-
 y^2^=x^3^+ax+b
-
 Taking the derivative we get:
-
 2y dy=(3x^2^+a) dx
-
 Solving for dy/dx, we get:
-
 dy/dx=(3x^2^+a)/(2y)
-
 That's how we arrive at the slope formula. The rest of the results from the point addition formula derivation hold.
 ====
-
 include::code-ch02/answers.py[tag=exercise6]
-
 === Coding Point Addition for when P~1~=P~2~
-
 We adjust the $$__add__$$ method to account for this particular case. We have the formulas, we now implement them.
-
 * s=(3x~1~^2^+a)/(2y~1~)
 * x~3~=s^2^-2x~1~
 * y~3~=s(x~1~-x~3~)-y~1~
-
 include::code-ch02/answers.py[tag=exercise7]
-
 === Coding One More Exception
-
 There is one more exception and this involves the case where the tangent line is vertical:
-
 .Vertical and Tangent to the curve
 image::tangentvertical.png[Tangent Vertical]
-
 This can only happen if P~1~=P~2~ and the y-coordinate is 0, in which case the slope calculation will end up with a 0 in the denominator.
-
 We handle this with a special case:
-
 [source,python]
 ----
 class Point:
-    ...
-    def __add__(self, other):
-    	...
-	if self == other and self.y == 0 * self.x:  # <1>
-	    return self.__class__(None, None, self.a, self.b)
+...
+def __add__(self, other):
+...
+if self == other and self.y == 0 * self.x:  # <1>
+return self.__class__(None, None, self.a, self.b)
 ----
 <1> If the two points are equal and the y coordinate is zero, we return the point at infinity.
-
 === Conclusion
-
 We've covered what Elliptic Curves are, how they work and how to do point addition. We now combine the concepts from Chapters 1 and 2 to learn Elliptic Curve Cryptography in the <<chapter_elliptic_curve_cryptography>>.
