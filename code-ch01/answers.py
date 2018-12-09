@@ -44,7 +44,7 @@ Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
 # tag::exercise3[]
 ==== Exercise 3
 
-Write the corresponding $$__sub__$$ method which defines the subtraction of two field elements.
+Write the corresponding $$__sub__$$ method which defines the subtraction of two `FieldElement`s.
 # end::exercise3[]
 """
 
@@ -110,7 +110,7 @@ Do you notice anything about these sets?
 # tag::exercise6[]
 ==== Exercise 6
 
-Write the corresponding $$__mul__$$ method which defines the multiplication of two field elements.
+Write the corresponding $$__mul__$$ method which defines the multiplication of two Finite Field elements.
 # end::exercise6[]
 """
 
@@ -131,7 +131,7 @@ def __mul__(self, other):
 # tag::exercise7[]
 ==== Exercise 7
 
-For p = 7, 11, 17, 31, 43, what is this set in F~p~?
+For p = 7, 11, 17, 31, what is this set in F~p~?
 
 {1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
 # end::exercise7[]

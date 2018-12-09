@@ -9,7 +9,7 @@ v2.0, 2018-12-03
 
 This book will teach you the technology of Bitcoin at a fundamental level. This book doesn't cover monetary, economic or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible. There's a tendency to hype Bitcoin and blockchain without really understanding what's going on and this book is meant to be an antidote to that tendency.
 
-After all, there are lots of books about Bitcoin, everything from the history of Bitcoin, the economic aspects to a technical description of Bitcoin. The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library. The library is not meant to be exhaustive or efficient. The aim of the library is for you to learn.
+After all, there are lots of books about Bitcoin, everything from the history of Bitcoin, the economic aspects to a technical description of Bitcoin. The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library. The library is not meant to be exhaustive or efficient. The aim of the library is to help you learn.
 
 === Who is this book for?
 
@@ -17,13 +17,13 @@ This book is for programmers who want to learn how Bitcoin works by coding it th
 
 The material from this book has been largely taken from my two day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+). The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
 
-By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered, including the math, the parsing, the network connectivity and block validation.
+By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network. Everything to accomplish this is covered including the math, the parsing, the network connectivity and block validation.
 
 === What do I need to know?
 
 The prerequisites for this book are that you know programming and that you know Python in particular. The library itself is written in Python 3 and a lot of the exercises can be done in a controlled environment like a Jupyter notebook. An intermediate knowledge of Python is preferred, but even a beginner knowledge of Python is probably sufficient to get a lot of the concepts.
 
-Some knowledge of math is required, especially for Chapters 1 and 2. These chapters introduce mathematical concepts probably not familiar to those that didn't major in mathematics. Math knowledge around algebra-level should suffice to understand the new concepts and code the material covered there.
+Some knowledge of math is required, especially for Chapters 1 and 2. These chapters introduce mathematical concepts probably not familiar to those that didn't major in mathematics. Math knowledge around algebra-level should suffice to understand the new concepts and to code the exercises covered in those chapters.
 
 General Computer Science knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
 
@@ -33,15 +33,15 @@ This book is split into 14 chapters and built on top of one another. Each chapte
 
 Roughly speaking, Chapters 1-4 establish the mathematical tools that we need, Chapters 5-8 cover Transactions, which are the fundamental unit of Bitcoin and Chapters 9-12 cover Blocks and Networking. The last two chapters cover some advanced topics but don't actually require you to write code.
 
-Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>. After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, we move towards actually implementing how they appear to a computer through parsing and serializing all the different classes that we established in <<chapter_serialization>>.
+Chapters 1 and 2 cover some math that we need. Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>. After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, we move towards implementing how the cryptographic primitives are stored and transmitted through parsing and serializing all the different classes that we established in <<chapter_serialization>>.
 
 <<chapter_tx_parsing>> covers the Transaction structure. <<chapter_script>> goes into the smart contract language behind Bitcoin called Script. <<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters. <<chapter_p2sh>> establishes how p2sh works, which is a way to make more powerful smart contracts.
 
-<<chapter_blocks>> covers Blocks, which are groups of Transactions. <<chapter_networking>> covers how the network communication is done in Bitcoin. <<chapter_spv>> and 12 go into how a light client, or software without access to the entire blockchain might request and broadcast data from and to nodes that do have the entire blockchain.
+<<chapter_blocks>> covers Blocks, which are groups of orderd Transactions. <<chapter_networking>> covers network communication in Bitcoin. <<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data from and to nodes that do have the entire blockchain.
 
-<<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you additional things to learn.
+<<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study. Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn..
 
-Chapters 1-12 have lots of exercises that require you to build up the library from scratch. You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
+Chapters 1-12 have exercises that require you to build up the library from scratch. The answers are in the appendix and in the corresponding github repository. You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
 The last exercise in <<chapter_bloom_filters>> is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network. Essentially, the first 11 chapters are setting up toward being able to do this exercise.
 
@@ -75,7 +75,7 @@ Download the source code for this book:
 [source,bash]
 ----
 $ git clone https://github.com/jimmysong/programmingbitcoin
-$ cd programming-bitcoin
+$ cd programmingbitcoin
 ----
 
 Install virtualenv:
@@ -100,9 +100,9 @@ Windows:
 
 [source,bash]
 ----
-C:\programming-bitcoin> virtualenv -p C:\\PathToYourPythonInstallation\\Python.exe .venv
-C:\programming-bitcoin> .venv\Scripts\activate.bat
-C:\programming-bitcoin> pip install -r requirements.txt
+C:\programmingbitcoin> virtualenv -p C:\\PathToYourPythonInstallation\\Python.exe .venv
+C:\programmingbitcoin> .venv\Scripts\activate.bat
+C:\programmingbitcoin> pip install -r requirements.txt
 ----
 
 Run jupyter notebook:
@@ -110,7 +110,7 @@ Run jupyter notebook:
 [source,bash]
 ----
 (.venv) $ jupyter notebook
-[I 11:13:23.061 NotebookApp] Serving notebooks from local directory: /home/jimmy/programming-bitcoin
+[I 11:13:23.061 NotebookApp] Serving notebooks from local directory: /home/jimmy/programmingbitcoin
 [I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
 [I 11:13:23.061 NotebookApp] http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 [I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
@@ -139,7 +139,7 @@ image::jupyter3.png[Chapter 1 Notebook]
 
 You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
 
-A large portion of the exercises will be coding concepts introduced in the book. The unit tests are written for you and you will need to write the Python code to make the tests pass. You can edit the file by clicking through a screen like the "this test" linke in Figure xxx. This will take you to a browser tab like this:
+A large portion of the exercises will be coding concepts introduced in the book. The unit tests are written for you and you will need to write the Python code to make the tests pass. You can edit the file by clicking through a screen like the "this test" link in Figure P-3 . This will take you to a browser tab like this:
 
 .ecc.py
 image::jupyter4.png[Chapter 1 ecc.py]
@@ -148,7 +148,7 @@ You can edit the file here and save in order to make the test pass.
 
 === Answers
 
-All the answers to the various exercises in this book are in the Appendix at the end. They are also available in the `code-chxx/answers.py` file.
+All the answers to the various exercises in this book are in the Appendix at the end. They are also available in the `code-chxx/answers.py` file where xx is the chapter that you're on.
 
 === Conventions Used in This Book
 
@@ -187,7 +187,7 @@ Supplemental material (code examples, exercises, etc.) is available for download
 
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
 
-We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Book Title_ by Some Author (O’Reilly). Copyright 2012 Some Copyright Holder, 978-0-596-xxxx-x.”
+We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Programming Bitcoin_ by Jimmy Song (O’Reilly). Copyright 2019, 978-0-596-xxxx-x.”
 
 If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
 
