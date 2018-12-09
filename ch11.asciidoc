@@ -201,7 +201,7 @@ include::code-ch11/examples.py[tag=example5]
 <1> Since we halve at every level, log~2~ of the number of leaves gives us how many levels there will be in the Merkle Tree. Note we have to round up using `math.ceil` as we round up for halving at each level. We could also be clever and use `len(bin(total))-2`.
 <2> The merkle tree will hold the root level at index 0, the level below at index 1 and so on. In other words, the index is the "depth" from the top.
 <3> We have to go up to `max_depth + 1` as `range` goes to 1 less than the second argument in Python.
-<4> The number of items at any particular level is the number of total leaves divided by the number of times we've halved, rounded up.
+<4> The number of items at any particular level is the number of total leaves divided halved at evry level above the leaf level, rounded up.
 <5> We don't know yet what any of the hashes are, so we set them to `None`
 <6> Note again that `merkle_tree` is a list of lists of hashes, or a 2-dimensional array.
 

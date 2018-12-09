@@ -329,7 +329,7 @@ image::p2wsh-13.png[p2wsh Step 4]
 If the signatures are valid, we end like this:
 
 .p2wsh Step 5
-image::p2wsh-13.png[p2wsh Step 5]
+image::p2wsh-14.png[p2wsh Step 5]
 
 The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent. Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script instructions and added to the instruction set. The rest of the Witness is then put on the instruction set as well, producing the final set of instructions to be evaluated. p2wsh is particularly important as unmalleable multisig is a very useful feature for creating payment channels which is the atomic unit of the Lightning Network.
 
@@ -358,7 +358,7 @@ The RedeemScript goes on the stack:
 .p2sh-p2wsh Step 1
 image::p2sh-p2wpkh5.png[p2sh-p2wsh Step 1]
 
-The OP_HASH160 will turn the RedeemScript's hash:
+The OP_HASH160 will return the RedeemScript's hash:
 
 .p2sh-p2wsh Step 2
 image::p2sh-p2wpkh6.png[p2sh-p2wsh Step 2]

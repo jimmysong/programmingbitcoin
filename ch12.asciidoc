@@ -61,7 +61,7 @@ include::code-ch12/answers.py[tag=exercise1]
 
 === Going a step further
 
-Supposing that we had 1 million possible items and we still wanted to get a hide our interested items behind 5 times the number of false positives, we would need a Bloom Filter that's 1,000,000 / 5 = 200,000 bits long. Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, only 20% of which would be items of interest. 200,000 bits is 25,000 bytes and is a lot to transmit. Can we do better?
+Supposing that we had 1 million possible items and we still wanted to hide our interested items behind 5 times the number of false positives, we would need a Bloom Filter that's 1,000,000 / 5 = 200,000 bits long. Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, only 20% of which would be items of interest. 200,000 bits is 25,000 bytes and is a lot to transmit. Can we do better?
 
 It turns out we can. A Bloom Filter using multiple hash functions can, in fact, shorten the bit field considerably. If we used 5 hash functions over a bit field of 32, we would have 32!/(27!5!) ~ 200,000 possible 5-bit combinations in that 32-bit field. Of 1 million possible items, 5 items on average should have that 5-bit combination. Instead of transmitting 25k bytes, we can transmit just 32 bits or 4 bytes!
 
@@ -107,7 +107,7 @@ include::code-ch12/examples.py[tag=example4]
 <5> Seed formula.
 <6> `murmur3` returns a number, so we don't have to do any weird conversion
 
-We have a 2-byte field with 4 bits set to 1. This particular Bloom Filter has 4 bits set out of 16, so the probability of any random item passing through this filter is 1/4*1/4=1/16. If we have 160 items, we'll receive 10 items on average, 2 of which we'll be interested in.
+This 2-byte Bloom Filter has 4 bits set to 1 out of 16, so the probability of any random item passing through this filter is 1/4*1/4=1/16. If we have 160 items, we'll receive 10 items on average, 2 of which we'll be interested in.
 
 We can now start creating a `BloomFilter` class.
 
@@ -171,7 +171,7 @@ include::code-ch12/examples.py[tag=example5]
 <5> We are creating a `getdata` message for Merkle Blocks that we think will have transactions interesting to us.
 <6> We are specifically asking for the Merkle Block for this Block header. Most of them will probably be complete misses.
 <7> We send the `getdata` message asking for Merkle Blocks for 2000 blocks after the block id at the top.
-<8> The only two commands that interest us are the `merkleblock` command, which proves inclusion andn the `tx` command which will give us the details of the possibly interesting transaction.
+<8> The only two commands that interest us are the `merkleblock` command, which proves inclusion and the `tx` command which will give us the details of the possibly interesting transaction.
 <9> We check that the Merkle Block is valid.
 <10> We're looking for UTXOs that correspond to the address at the top, and we print to screen if we have one.
 
