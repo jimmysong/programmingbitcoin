@@ -131,6 +131,7 @@ class FieldElementTest(TestCase):
         self.assertEqual(a**-4 * b, FieldElement(13, 31))
 
 
+# tag::source1[]
 class Point:
 
     def __init__(self, x, y, a, b):
@@ -142,6 +143,7 @@ class Point:
             return
         if self.y**2 != self.x**3 + a * x + b:
             raise ValueError('({}, {}) is not on the curve'.format(x, y))
+    # end::source1[]
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y \
@@ -202,6 +204,7 @@ class Point:
             y = s * (self.x - x) - self.y
             return self.__class__(x, y, self.a, self.b)
 
+    # tag::source3[]
     def __rmul__(self, coefficient):
         coef = coefficient
         current = self  # <1>
@@ -212,6 +215,7 @@ class Point:
             current += current  # <4>
             coef >>= 1
         return result  # <5>
+    # end::source3[]
 
 
 class PointTest(TestCase):
@@ -247,6 +251,7 @@ class PointTest(TestCase):
         self.assertEqual(a + a, Point(x=18, y=-77, a=5, b=7))
 
 
+# tag::source2[]
 class ECCTest(TestCase):
 
     def test_on_curve(self):
@@ -264,6 +269,8 @@ class ECCTest(TestCase):
             y = FieldElement(y_raw, prime)
             with self.assertRaises(ValueError):
                 Point(x, y, a, b)  # <1>
+    # end::source2[]
+
 
     def test_add(self):
         # tests the following additions on curve y^2=x^3-7 over F_223:
@@ -326,12 +333,19 @@ class ECCTest(TestCase):
             self.assertEqual(s * p1, p2)
 
 
+# tag::source6[]
 A = 0
 B = 7
+# end::source6[]
+# tag::source4[]
 P = 2**256 - 2**32 - 977
+# end::source4[]
+# tag::source9[]
 N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
+# end::source9[]
 
 
+# tag::source5[]
 class S256Field(FieldElement):
 
     def __init__(self, num, prime=None):
@@ -339,8 +353,10 @@ class S256Field(FieldElement):
 
     def __repr__(self):
         return '{:x}'.format(self.num).zfill(64)
+# end::source5[]
 
 
+# tag::source7[]
 class S256Point(Point):
 
     def __init__(self, x, y, a=None, b=None):
@@ -349,6 +365,7 @@ class S256Point(Point):
             super().__init__(x=S256Field(x), y=S256Field(y), a=a, b=b)
         else:
             super().__init__(x=x, y=y, a=a, b=b)  # <1>
+    # end::source7[]
 
     def __repr__(self):
         if self.x is None:
@@ -356,22 +373,27 @@ class S256Point(Point):
         else:
             return 'S256Point({},\n{})'.format(self.x, self.y)
 
+    # tag::source8[]
     def __rmul__(self, coefficient):
         coef = coefficient % N  # <1>
         return super().__rmul__(coef)
+    # end::source8[]
 
+    # tag::source12[]
     def verify(self, z, sig):
         s_inv = pow(sig.s, N - 2, N)  # <1>
         u = z * s_inv % N  # <2>
         v = sig.r * s_inv % N  # <3>
         total = u * G + v * self  # <4>
         return total.x.num == sig.r  # <5>
+    # end::source12[]
 
 
+# tag::source10[]
 G = S256Point(
     0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
     0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
-
+# end::source10[]
 
 class S256Test(TestCase):
 
@@ -410,6 +432,7 @@ class S256Test(TestCase):
         self.assertTrue(point.verify(z, Signature(r, s)))
 
 
+# tag::source11[]
 class Signature:
 
     def __init__(self, r, s):
@@ -418,8 +441,10 @@ class Signature:
 
     def __repr__(self):
         return 'Signature({:x},{:x})'.format(self.r, self.s)
+# end::source11[]
 
 
+# tag::source13[]
 class PrivateKey:
 
     def __init__(self, secret):
@@ -428,7 +453,9 @@ class PrivateKey:
 
     def hex(self):
         return '{:x}'.format(self.secret).zfill(64)
+    # end::source13[]
 
+    # tag::source14[]
     def sign(self, z):
         k = self.deterministic_k(z)  # <1>
         r = (k * G).x.num
@@ -457,6 +484,7 @@ class PrivateKey:
                 return candidate  # <2>
             k = hmac.new(k, v + b'\x00', s256).digest()
             v = hmac.new(k, v, s256).digest()
+    # end::source14[]
 
 
 class PrivateKeyTest(TestCase):
