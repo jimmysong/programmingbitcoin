@@ -110,7 +110,7 @@ If this exact sequence ends up with a 1, then the RedeemScript (top item in figu
 
 If this sounds hacky, it is. But before we get to that, let's look a little closer at exactly how this plays out.
 
-Let's take a simple 1-of-2 multisig ScriptPubKey like this:
+Let's take a simple 2-of-2 multisig ScriptPubKey like this:
 
 .Pay-to-script-hash (p2sh) RedeemScript
 image::p2sh2.png[p2sh RedeemScript]
@@ -130,7 +130,7 @@ Creating the ScriptSig for a p2sh script involves not only revealing the RedeemS
 If you are receiving to a p2sh address, be sure to store and backup the RedeemScript! Better yet, make it easy to reconstruct!
 ====
 
-The ScriptSig for the 1-of-2 multisig looks like this:
+The ScriptSig for the 2-of-2 multisig looks like this:
 
 .Pay-to-script-hash (p2sh) ScriptSig
 image::p2sh4.png[p2sh ScriptSig]
