@@ -90,14 +90,14 @@ include::code-ch02/ecc.py[tag=source1]
 <1> We check here that the point is actually on the curve.
 <2> Points are equal if and only if they are on the same curve and have the same coordinates
 
-This allows us to do this:
+We can now create `Point` objects, and we will get an error if the point is not on the curve:
 
 [source,python]
 ----
 include::code-ch02/examples.py[tag=example1]
 ----
 
-We want the `__init__` method to throw an error when the point is not on the curve.
+In other words, `__init__` will raise an exception when the point is not on the curve.
 
 include::code-ch02/answers.py[tag=exercise1]
 
@@ -112,7 +112,7 @@ For example, Point Addition is commutative.
 That is, adding point A to point B is the same as adding point B to point A.
 
 The way we define Point Addition is as follows.
-It turns out that for every Elliptic Curve a line, except for a couple of special cases, will intersect at either 1 or 3 points.
+It turns out that for every Elliptic Curve, a line will intersect it at either 1 or 3 points, except for a couple of special cases.
 
 .Line intersects at only 1 point
 image::intersect1.png[Line intersecting at 1 point]
@@ -152,7 +152,7 @@ We then reflect that point over the x-axis, which puts us at the A+B point in Fi
 One of the properties that we are going to use is that point addition is not easily predictable.
 We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
 Going back to Figure 2-14, A+B is to the right of both points, A+C would be somewhere between A and C on the x-axis, and B+C would be to the left of both points.
-In mathematics parlance, point addition is *non-linear*.
+In mathematics parlance, point addition is _non-linear_.
 
 === Math of Point Addition
 
@@ -207,8 +207,8 @@ To code point addition, we're going to split it up into 3 steps:
 === Coding Point Addition
 
 We first handle the identity, or the point at infinity.
-Since we don't have the infinity numbers in Python, we'll use the `None` value instead.
-What we want is something like this to work:
+Since we can't easily use infinity in Python, we'll use the `None` value instead.
+What we want is this to work:
 
 [source,python]
 ----

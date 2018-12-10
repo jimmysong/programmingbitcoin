@@ -41,7 +41,7 @@ We can verify that the point (17,64) is on the curve by calculating both sides o
 * y^2^=64^2^%103=79
 * x^3^+7=(17^3^+7)%103=79
 
-We've verified that the point is on the curve using the Finite Field math.
+We've verified that the point is on the curve using Finite Field math.
 
 Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different:
 
@@ -85,7 +85,7 @@ We will do this using the results of Exercise 2.
 ----
 include::code-ch03/ecc.py[tag=source2]
 ----
-<1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, use all the overloaded methods in `FieldElement`
+<1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, use all the overloaded math operations in `FieldElement`
 
 We can now run this test like so:
 
@@ -116,7 +116,7 @@ image::linefinitefield.png[Line over a Finite Field]
 The equation nevertheless works and we can calculate what `y` should be for a given `x`.
 
 Remarkably, point addition works over Finite Fields as well.
-This is because the Elliptic Curve and line equations still work! The same exact formulas we used to calculate point addition over reals work over Finite Fields.
+This is because the Elliptic Curve point addition works over all fields! The same exact formulas we used to calculate point addition over reals work over Finite Fields.
 Specifically:
 
 when x~1~≠x~2~:
@@ -178,9 +178,9 @@ Performing scalar multiplication is straightforward, but doing the opposite, Poi
 This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
 Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, point at infinity is the additive identity or 0).
-If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set like this:
+If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set:
 
-{ G, 2G, 3G, 4G, ... nG }
+{ G, 2G, 3G, 4G, ... nG } where nG=0
 
 It turns out that this set is called a Group and because `n` is finite, we have a Finite Group (or more specifically a Finite Cyclic Group).
 Groups are interesting mathematically because they behave a lot like addition:
@@ -194,23 +194,23 @@ When we combine the fact that scalar multiplication is easy to go in one directi
 You may be wondering why the problem of reversing scalar *multiplication* is referred to as the discrete *log* problem.
 
 We called the operation between the points "addition", but we could easily have called it a point "operation".
-Typically, a new operation that you define in math utilizes the dot operator (⋅).
+Typically, a new operation that you define in math is denoted with the dot operator (⋅).
 The dot operator is also used for multiplication, and it sometimes helps to think that way:
 
 P~1~⋅P~2~=P~3~
 
 When you do lots of multiplying, that's the same as exponentiation.
-Scalar multiplication when we called it "point addition" becomes scalar exponentiation:
+Scalar multiplication when we called it "point addition" becomes scalar exponentiation when thinking "point multiplication":
 
 P^7^=Q
 
-The discrete log problem is really the ability to reverse this:
+The Discrete Log problem in this context is the ability to reverse the above equation, which ends up being:
 
 log~P~Q=7
 
 The log equation on the left has no analytically calculatable algorithm.
 That is, there is no known formula that you can plug in to get the answer generally.
-This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Point Division" problem instead of Discrete Log.
+This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Point Division" problem instead of the Discrete Log problem.
 ****
 
 include::code-ch03/answers.py[tag=exercise4]
@@ -258,7 +258,6 @@ Let's look at each property.
 ==== Identity
 
 If you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group since we generate the group when we get to the point at infinity.
-This is the point, when added to any other point produces the other point.
 So:
 
 0 + A = A
@@ -359,7 +358,7 @@ include::code-ch03/ecc.py[tag=source3]
 ----
 <1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
 <2> We start the result at 0, or the point at infinity.
-<3> We are looking at whether the right-most bit is a 1. If it is, then we add the current.
+<3> We are looking at whether the right-most bit is a 1. If it is, then we add the value of the current bit.
 <4> We need to double the point until we're past how big the coefficient can be.
 <5> We bit shift the coefficient to the right.
 
@@ -376,25 +375,25 @@ If the group has a size of 301, the computer can easily do 301 computations to r
 But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using.
 The security of Elliptic Curve Cryptography depends on computers *not* being able to go through the an appreciable fraction of the group.
 
-An Elliptic Curve for Cryptography is defined with the following parameters:
+An Elliptic Curve for Public Key Cryptography is defined with the following parameters:
 
-* We specify the a and b of the curve y^2^=x^3^+ax+b.
-* We specify the prime of the Finite Field, p.
-* We specify the x and y coordinates of the generator point G
-* We specify the order of the group generated by G, n.
+* We specify the `a` and `b` of the curve y^2^=x^3^+ax+b.
+* We specify the prime of the Finite Field, `p`.
+* We specify the `x` and `y` coordinates of the generator point G
+* We specify the order of the group generated by G, `n`.
 
 These numbers are known publicly and together form the cryptographic curve.
-There are many cryptographic curves and they have different security/convenience tradeoffs, but the one we're most interested in is the one defined for Bitcoin: secp256k1.
+There are many cryptographic curves and they have different security/convenience tradeoffs, but the one we're most interested in is the one Bitcoin uses: secp256k1.
 The parameters for secp256k1 are these:
 
-* a = 0, b = 7, making the equation y^2^=x^3^+7
+* `a = 0`, `b = 7`, making the equation y^2^=x^3^+7
 * p = 2^256^-2^32^-977
-* G~x~ = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
-* G~y~ = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
-* n = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+* G~x~ = `0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798`
+* G~y~ = `0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8`
+* n = `0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141`
 
 G~x~ refers to the x-coordinate of the point G and G~y~ the y-coordinate.
-The numbers starting with '0x' indicate a hexadecimal number.
+The numbers starting with `0x` indicate a hexadecimal number.
 
 There are a few things to notice about this curve.
 
@@ -403,10 +402,9 @@ Many curves have `a` and `b` that are much bigger.
 secp256k1 has a really simple equation.
 
 Second, `p` is really, really close to 2^256^.
-This means that most numbers under 2^256^ are in the prime field.
+This means that most numbers under 2^256^ are in the prime field and thus, any point on the curve has x and y-coordinates that are expressible in 256-bits each.
 `n` is also very close to 2^256^.
-This means about half the points on the curve are in the group.
-The curve was chosen, in part, because `n` is so close to `p`.
+This means any scalar multiple can also be expressed in 256 bits.
 
 Third, 2^256^ is a really big number (See the _How Big is 2^256^_).
 Amazingly, any number below 2^256^ can be stored in 32 bytes.
@@ -439,7 +437,7 @@ Since we know all of the parmeters for secp256k1, we can verify in Python whethe
 include::code-ch03/examples.py[tag=example6]
 ----
 
-Furthermore, we can verify in Python whether the generator point, G, has the order N.
+Furthermore, we can verify in Python whether the generator point, G, has the order `n`.
 
 [source,python]
 ----
@@ -457,8 +455,8 @@ include::code-ch03/ecc.py[tag=source4]
 include::code-ch03/ecc.py[tag=source5]
 ----
 
-We're really only just subclassing the FieldElement so we don't have to pass in `P` all the time.
-We also want to have a nice way to display a 256-bit number and we do this by using the hexadecimal representation and make sure it fills 64 characters so we can see any leading zeroes.
+We're subclassing the `FieldElement` class so we don't have to pass in `P` all the time.
+We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeroes.
 
 Similarly, we can define a point on the secp256k1 curve and call it `S256Point`.
 
@@ -472,61 +470,57 @@ include::code-ch03/ecc.py[tag=source7]
 
 We now have an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
 
-We can also define `__rmul__` a bit more efficiently since we know the order of the group, `N`.
-
-[source,python]
-----
-class S256Point(Point):
-    ...
-include::code-ch03/ecc.py[tag=source8]
-----
-<1> We can mod by `N` because `N*G==Point(infinity)`.
-That is, every `N` times we add `G` to itself or any member of this group, we effectively go back to zero (Point at infinity).
-
-We can also define `G` directly and keep it around since we'll be using it a lot going forward.
-We'll also define `N` since that's very useful.
+We can also define `__rmul__` a bit more efficiently since we know the order of the group, `n`. Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant.
 
 [source,python]
 ----
 include::code-ch03/ecc.py[tag=source9]
 ...
-include::code-ch03/ecc.py[tag=source10]
+class S256Point(Point):
+    ...
+include::code-ch03/ecc.py[tag=source8]
 ----
+<1> We can mod by `n` because nG=0. That is, every `n` times we cycle back to zero or the point at infinity.
 
-Now checking that the order of G is N is trivial:
+We can now define G directly and keep it around since we'll be using it a lot going forward.
 
 [source,python]
 ----
-include::code-ch03/examples.py[tag=example7]
+include::code-ch03/ecc.py[tag=source10]
+----
+
+Now checking that the order of G is `n` is trivial:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example8]
 ----
 
 === Public Key Cryptography
 
-We can use Elliptic Curves over Finite Fields to build up Public Key Cryptography.
-This is because need a Finite Cyclical Group, which we now have with point addition.
-
-The key here is that when we have `P=eG` that this is an *asymmetric* equation.
-We can easily compute `P` when we know `e` and `G`, but we cannot easily compute `e` when we know `P` and `G`.
+Finally, we have the tools that we need to do Public Key Cryptography operations.
+The key operation that we need is `P=eG` which is an *asymmetric* equation.
+We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
 This is the Discrete Log Problem described earlier.
 
-We'll use the fact that it's extremely difficult to compute `e` in that scenario to create signing and verification.
+We'll use the fact that Discrete Log is extremely difficult to create signing and verification.
 
-Generally, we call `e` the Private Key and `P` the Public Key.
+Generally, we call `e` the Private Key and P the Public Key.
 We'll note here that the private key is a single 256-bit number and the public key is a coordinate `(x,y)` where `x` and `y` are _each_ 256-bit numbers.
 
 === Signing and Verification
 
 To set up the motivation for why signing and verification exists, imagine this scenario.
-You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards.
+You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any single target.
 
 Now if someone could observe you and interact with you, proving this would be easy.
 Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow.
-You, being a very good archer do this and prove that you are indeed, a very good archer.
-The target, if specified by the challenger, is easy for that challenger to verify.
+You, being a very good archer, do this and prove your expertise.
+The target, if specified by the challenger, makes your archery skill easy to verify.
 
 Unfortunately, this doesn't scale very well.
 If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges.
-You could try to do something like have 10 people watch you shoot an arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of any target.
+You could try to do something like have 10 people watch you shoot a single arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of an arbitrary target.
 What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer that can hit _any_ target.
 
 If, for example, you shot an arrow into a target of your choosing, then the people observing afterwards won't necessarily be convinced.
@@ -534,15 +528,15 @@ After all, you may be a sneaky person that paints the target around wherever you
 So what can you do?
 
 Here's a very clever thing you can do.
-Inscribe the tip of the arrow with the name of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow.
+Inscribe the tip of the arrow with the position of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow.
 Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit.
-The tip clearly had to be inscribed before the arrow was shot, so this can prove you are indeed a good archer.
+The tip clearly had to be inscribed before the arrow was shot, so this can prove you are indeed a good archer (provided the actual target isn't just one that you've practiced over and over).
 
 This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number.
 We want to prove possession of the secret without revealing the secret itself.
 We do this by putting the target into our calculation and hitting that target.
 
-Ultimately this is going to be used in Transactions which will prove that the rightful owners of the secrets are spending the Bitcoins and not someone who doesn't know the secret.
+Ultimately this is going to be used in Transactions which will prove that the rightful owners of the secrets are spending the Bitcoins.
 
 ==== Inscribing the Target
 
@@ -552,27 +546,26 @@ The secret in our case is `e` satisfying:
 
 eG = P
 
-Where `P` is the public key and `e` is the private key.
+Where P is the public key and `e` is the private key.
 
-The target that we're going to aim at is random.
-We are going to choose this random number by getting a random value `k` which is a 256-bit number.
+The target that we're going to aim at is a random 256-bit number, `k`.
 We then do this:
 
 kG = R
 
-`R` is our target that we're aiming for.
-In fact, we're only going to care about the x-coordinate of `R`, which we'll call `r`.
+R is our target that we're aiming for.
+In fact, we're only going to care about the x-coordinate of R, which we'll call `r`.
 You may have guessed already that `r` here stands for random.
 
 We claim at this point that the following equation is equivalent to the Discrete Log Problem:
 
-uG+vP=kG where k was chosen randomly and u,v≠0 can be chosen by the signer and G and P are known
+uG+vP=kG where `k` was chosen randomly and `u,v≠0` can be chosen by the signer and G and P are known
 
 This is due to the fact that:
 
 uG+vP=kG implies vP=(k-u)G
 
-Since v≠0, we can divide by the scalar multiple `v`.
+Since `v≠0`, we can divide by the scalar multiple `v`.
 
 P=((k-u)/v)G
 
@@ -580,14 +573,14 @@ If we know `e`, we have:
 
 eG=((k-u)/v)G or e = (k-u)/v
 
-This means than any (u,v) combination that satisfies the above equation will suffice.
+This means than any `(u,v)` combination that satisfies the above equation will suffice.
 
-If we don't know `e`, we would have to play with (u,v) until e = (k-u)/v.
-If we could solve this with any (u,v) combination, that would mean we'll have solved P=eG while knowing only P and G.
+If we don't know `e`, we would have to play with `(u,v)` until` e = (k-u)/v`.
+If we could solve this with any `(u,v)` combination, that would mean we'll have solved P=eG while knowing only P and G.
 In other words, we'd have broken the Discrete Log problem.
 
 This means to provide a correct `u` and `v`, we either have to break the Discrete Log problem or we know the secret `e`.
-Since we assume Discrete Log is hard, we can say `e` is known by the one who came up with `u` and `v`.
+Since we assume Discrete Log is hard, we can say `e` is assumed to be known by the one who came up with `u` and `v`.
 
 One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting.
 This is a contract that gets fulfilled as a result of the shooting at the target.
@@ -625,7 +618,7 @@ Verification is straightforward:
 [WARNING]
 .Why We Don't Reveal `k`
 ====
-At this point, you might be wondering why we don't reveal k and instead reveal the x-coordinate of R or `r`.
+At this point, you might be wondering why we don't reveal `k` and instead reveal the x-coordinate of R or `r`.
 If we were to reveal `k`, then:
 
 * uG+vP=R
@@ -670,11 +663,11 @@ uG + vP = (z/s)G + (r/s)P = (z/s)G + (re/s)G = ((z+re)/s)G
 
 We know s = (z+re)/k so:
 
-uG + vP = ((z+re) / ((z+re)/k))G = kG = R
+uG + vP = ( (z+re) / ((z+re)/k) )G = kG = R
 
 We've successfully chosen `u` and `v` in a way as to generate R as we intended.
 Furthermore, we used `r` in the calculation of `v` proving we knew what R should be.
-The only way we could know the details of R beforehand is if we know e, proving we know `e`.
+The only way we could know the details of R beforehand is if we know `e`.
 
 To whit, here are the steps:
 
@@ -686,7 +679,7 @@ To whit, here are the steps:
 [NOTE]
 .Why two rounds of sha256?
 ====
-The calculation of `z` requires two rounds of sha256.
+The calculation of `z` requires two rounds of sha256, or hash256.
 You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number.
 The reason is for security.
 
@@ -705,7 +698,7 @@ We can now verify a signature using some of the primitives that we have.
 ----
 include::code-ch03/examples.py[tag=example9]
 ----
-<1> Note that we use Fermat's Little Theorem for 1/s, since N is prime.
+<1> Note that we use Fermat's Little Theorem for 1/s, since `n` is prime.
 <2> u = z/s
 <3> v = r/s
 <4> uG+vP = (r,y). We need to check that the x-coordinate is r
@@ -732,9 +725,9 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source12]
 ----
-<1> `s_inv` (1/s) is calculated using Fermat's Little Theorem on the order of the group `N` which is prime.
-<2> u = z/s. Note that we can mod by `N` as that's the order of the group.
-<3> v = r/s. Note that we can mod by `N` as that's the order of the group.
+<1> `s_inv` (1/s) is calculated using Fermat's Little Theorem on the order of the group `n` which is prime.
+<2> u = z/s. Note that we can mod by `n` as that's the order of the group.
+<3> v = r/s. Note that we can mod by `n` as that's the order of the group.
 <4> uG+vP should be R
 <5> We check that the x-coordinate is `r`
 
@@ -773,9 +766,9 @@ include::code-ch03/examples.py[tag=example10]
 ----
 <1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult. Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.
-<3> Note this is not a cryptographically secure way to generate a random number. This is for demonstration purposes only.
+<3> We're going to use a fixed `k` here for demonstration purposes.
 <4> kG = (r,y) so we take the `x` coordinate only
-<5> s = (z+re)/k. We can mod by `N` because we know this is a cyclical group of order `N`.
+<5> s = (z+re)/k. We can mod by `n` because we know this is a cyclical group of order `n`.
 <6> The public point needs to be known by the verifier
 
 include::code-ch03/answers.py[tag=exercise7]
@@ -807,12 +800,12 @@ class PrivateKey:
             s = N - s
         return Signature(r, s) # <6>
 ----
-<1> randint chooses a random integer from (0,N).
-<2> r is the x-coordinate of kG
-<3> We use Fermat's Little Theorem again and N, which is prime
+<1> `randint` chooses a random integer from `[0,n)`. Please don't use this function in production as the random number from this library is not nearly random enough.
+<2> `r` is the x-coordinate of kG
+<3> We use Fermat's Little Theorem again and `n`, which is prime
 <4> s = (z+re)/k
 <5> It turns out that using the low-s value will get nodes to relay our transactions easier. This is for malleability reasons
-<6> We return a Signature object from above.
+<6> We return a `Signature` object from above.
 
 .Importance of a unique `k`
 ****
@@ -859,6 +852,6 @@ This makes transactions less malleable (more on that in <<chapter_segwit>>)
 
 We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message.
 Even if you don't read another page in this book, you've learned to implement what was once considered "weapons grade cryptogrpahy".
-This is a major step in your journey and will be essential for the rest of the book.
+This is a major step in your journey and will be essential for the rest of the book!
 
 We now turn to serializing a lot of these structures so that we can store them on disk and send them over the network.

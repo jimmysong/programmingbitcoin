@@ -59,7 +59,7 @@ After we've established the Public Key Cryptography at the end of <<chapter_elli
 Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn..
 
 Chapters 1-12 have exercises that require you to build up the library from scratch.
-The answers are in the appendix and in the corresponding github repository.
+The answers are in the <<appendix>> and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
 You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
 The last exercise in <<chapter_bloom_filters>> is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network.
@@ -123,7 +123,7 @@ Windows:
 
 [source,bash]
 ----
-C:\programmingbitcoin> virtualenv -p C:\\PathToYourPythonInstallation\\Python.exe .venv
+C:\programmingbitcoin> virtualenv -p C:\PathToYourPythonInstallation\Python.exe .venv
 C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
@@ -150,7 +150,7 @@ You should have a browser open up automatically to something that looks like thi
 .Jupyter
 image::jupyter1.png[Jupyter]
 
-You can navigate to various directories and if you wanted to do the exercises from <<chapter_finite_fields>>, you would need to go navigate to the code from <<chapter_finite_fields>> in the code-ch01 directory:
+You can navigate to various directories and if you wanted to do the exercises from <<chapter_finite_fields>>, you would need to go navigate to the code from <<chapter_finite_fields>> in the `code-ch01` directory:
 
 .Jupyter Directory View
 image::jupyter2.png[Chapter 1 Directory]
@@ -161,10 +161,12 @@ From here you can open `Chapter1.ipynb`:
 image::jupyter3.png[Chapter 1 Notebook]
 
 You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
+You can run each "cell" and see the results as if this were an interactive Python shell.
 
 A large portion of the exercises will be coding concepts introduced in the book.
 The unit tests are written for you and you will need to write the Python code to make the tests pass.
-You can edit the file by clicking through a screen like the "this test" link in Figure P-3 .
+You can check whether your code is correct directly in Jupyter.
+You will need to edit the corresponding file by clicking through a link like the "this test" link in Figure P-3 .
 This will take you to a browser tab like this:
 
 .ecc.py
@@ -174,7 +176,7 @@ You can edit the file here and save in order to make the test pass.
 
 === Answers
 
-All the answers to the various exercises in this book are in the Appendix at the end.
+All the answers to the various exercises in this book are in the <<appendix>> at the end.
 They are also available in the `code-chxx/answers.py` file where xx is the chapter that you're on.
 
 === Conventions Used in This Book

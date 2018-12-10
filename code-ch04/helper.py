@@ -3,7 +3,9 @@ from unittest import TestCase, TestSuite, TextTestRunner
 import hashlib
 
 
+# tag::source1[]
 BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+# end::source1[]
 
 
 def run(test):
@@ -12,9 +14,11 @@ def run(test):
     TextTestRunner().run(suite)
 
 
+# tag::source4[]
 def hash160(s):
     '''sha256 followed by ripemd160'''
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
+    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()  # <1>
+# end::source4[]
 
 
 def hash256(s):
@@ -22,26 +26,28 @@ def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
 
+# tag::source2[]
 def encode_base58(s):
-    # determine how many 0 bytes (b'\x00') s starts with
     count = 0
-    for c in s:
+    for c in s:  # <1>
         if c == 0:
             count += 1
         else:
             break
     prefix = b'1' * count
-    # convert from binary to hex, then hex to integer
     num = int(s.hex(), 16)
     result = bytearray()
-    while num > 0:
+    while num > 0:  # <2>
         num, mod = divmod(num, 58)
         result.insert(0, BASE58_ALPHABET[mod])
-    return prefix + bytes(result)
+    return prefix + bytes(result)  # <3>
+# end::source2[]
 
 
+# tag::source3[]
 def encode_base58_checksum(s):
-    return encode_base58(s + hash256(s)[:4]).decode('ascii')
+    return encode_base58(s + hash256(s)[:4]).decode('ascii')  # <1>
+# end::source3[]
 
 
 def decode_base58(s):
