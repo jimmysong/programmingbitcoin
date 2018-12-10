@@ -341,7 +341,8 @@ P~1~=-P~2~ or P~1~+P~2~=I
 
 We've already handled this in Exercise 3.
 
-What happens when P~1~=P~2~? Visually, we have to calculate the line that's *tangent* to the curve at P~1~ and find the point at which the line intersects the curve.
+What happens when P~1~=P~2~?
+Visually, we have to calculate the line that's *tangent* to the curve at P~1~ and find the point at which the line intersects the curve.
 The situation looks like this as we saw before:
 
 .Line that's tangent to the curve

@@ -35,7 +35,8 @@ The only difference is that we have to use the addition/subtraction/multiplicati
 
 === Elliptic Curves over Finite Fields
 
-So what does an Elliptic Curve over a Finite Field look like? Let's look at the equation y^2^=x^3^+7 over F~103~.
+So what does an Elliptic Curve over a Finite Field look like?
+Let's look at the equation y^2^=x^3^+7 over F~103~.
 We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
 
 * y^2^=64^2^%103=79
@@ -116,7 +117,8 @@ image::linefinitefield.png[Line over a Finite Field]
 The equation nevertheless works and we can calculate what `y` should be for a given `x`.
 
 Remarkably, point addition works over Finite Fields as well.
-This is because the Elliptic Curve point addition works over all fields! The same exact formulas we used to calculate point addition over reals work over Finite Fields.
+This is because the Elliptic Curve point addition works over all fields!
+The same exact formulas we used to calculate point addition over reals work over Finite Fields.
 Specifically:
 
 when x~1~≠x~2~:
@@ -240,7 +242,8 @@ But if we were presented this:
 
 s⋅(47,71)=(194,172)
 
-Would you be able to solve for `s`? We can look up the table above, but that's because we have a small group.
+Would you be able to solve for `s`?
+We can look up the table above, but that's because we have a small group.
 We'll see later that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.
 
 === Mathematical Groups
@@ -278,7 +281,8 @@ We know that the result is going to be:
 
 (a+b)G
 
-How do we know if this element is in the group? If `a+b < n` (where `n` is the order of the group), then we know it's in the group by definition.
+How do we know if this element is in the group?
+If `a+b < n` (where `n` is the order of the group), then we know it's in the group by definition.
 If `a+b >= n`, then we know `a < n` and `b < n`, so `a+b<2n` so `a+b-n<n`.
 
 (a+b-n)G=aG+bG-nG=aG+bG-0=aG+bG
@@ -345,7 +349,9 @@ class Point:
 <1> We start the `product` at 0, which in the case of Point Addition is the point at infinity.
 <2> We loop `coefficient` times and add the point each time
 
-This is fine for small coefficients, but what if we have a very large coefficient? That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time? For example, a coefficient of 1 trillion is going to take a really long time.
+This is fine for small coefficients, but what if we have a very large coefficient?
+That is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time?
+For example, a coefficient of 1 trillion is going to take a really long time.
 
 There's a really cool technique called binary expansion that allows us to perform multiplicaton in `log2(n)` loops, which dramatically reduces the calculation time for large numbers.
 For example, 1 trillion is 40 bits in binary, so we only have to loop 40 times for a number that's generally considered very large.
@@ -372,7 +378,8 @@ While we've been using relatively small primes for the sake of examples, we are 
 Small primes mean that we can use a computer to search through the entire Group.
 If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break Discrete Log.
 
-But what if we made the prime larger? It turns out that we can choose much larger primes than we've been using.
+But what if we made the prime larger?
+It turns out that we can choose much larger primes than we've been using.
 The security of Elliptic Curve Cryptography depends on computers *not* being able to go through the an appreciable fraction of the group.
 
 An Elliptic Curve for Public Key Cryptography is defined with the following parameters:
@@ -812,7 +819,8 @@ class PrivateKey:
 There's an important rule in signatures that utilize a random component like we have here.
 The `k` needs to be unique per signature.
 That is, it cannot get reused.
-In fact, a `k` that's reused will result in you revealing your secret! This is because:
+In fact, a `k` that's reused will result in you revealing your secret!
+This is because:
 
 Our secret is `e`, we are reusing `k` to sign z~1~ and z~2~.
 
@@ -824,7 +832,8 @@ Our secret is `e`, we are reusing `k` to sign z~1~ and z~2~.
 * s~1~re - s~2~re = s~2~z~1~ - s~1~z~2~
 * e = (s~2~z~1~ - s~1~z~2~) / (rs~1~ - rs~2~)
 
-If anyone sees both signatures, they can use this formula and find our secret! The Playstation 3 hack back in 2010 was due to the reuse of the `k` value in multiple signatures (https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/).
+If anyone sees both signatures, they can use this formula and find our secret!
+The Playstation 3 hack back in 2010 was due to the reuse of the `k` value in multiple signatures (https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/).
 
 To combat this, there is a deterministic `k` generation standard which uses our secret and `z` to create a unique, deterministic `k` every time.
 The specification is in RFC6979 (https://tools.ietf.org/html/rfc6979) and the code changes to look like this:

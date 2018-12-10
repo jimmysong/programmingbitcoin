@@ -322,7 +322,8 @@ include::code-ch01/examples.py[tag=example4]
 ----
 
 In Python we can define what addition (or + operator) means for our class with the `__add__` method.
-So how do we do this? We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
+So how do we do this?
+We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
 
 [source,python]
 ----
@@ -432,7 +433,8 @@ class FieldElement:
 <1> This is a perfectly fine way to do it, but `pow(self.num, exponent, self.prime)` is more efficient.
 <2> We have to return an instance of the class as before.
 
-Why don't we force the exponent to be a `FieldElement` object? It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out.
+Why don't we force the exponent to be a `FieldElement` object?
+It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out.
 In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
 
 Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
@@ -464,7 +466,8 @@ This is very unintuitive as we generally think of 2/~f~7 or 7/~f~5 as fractions,
 Yet that is one of the remarkable things about Finite Fields: Finite Fields are _closed_ under division.
 That is, dividing any two numbers where the denominator is not 0 will result in another Finite Field element.
 
-The question you might be asking yourself is, how do I calculate 2/~f~7 if I don't know beforehand that 3⋅~f~7=2? This is indeed a very good question and in order to answer it, we'll have to use the result from the Exercise 7.
+The question you might be asking yourself is, how do I calculate 2/~f~7 if I don't know beforehand that 3⋅~f~7=2?
+This is indeed a very good question and in order to answer it, we'll have to use the result from the Exercise 7.
 
 In case you didn't get it, the answer is that n^(p-1)^ is always 1 for every p that is prime and every n > 0.
 This is a beautiful result from number theory called Fermat's Little Theorem.
@@ -489,9 +492,9 @@ We can then multiply every element in both sets to get this equality:
 
 1⋅2⋅3⋅...⋅(p-2)⋅(p-1) % p = n⋅2n⋅3n⋅...⋅(p-2)n⋅(p-1)n % p
 
-The left side is the same as (p-1)! % p where \! is the factorial (e.g.
-5! = 5⋅4⋅3⋅2⋅1).
-The right side, we can gather up all the n's and get:
+The left side is the same as `(p-1)! % p` where `!` is the factorial (e.g.
+`5! = 5⋅4⋅3⋅2⋅1`).
+The right side, we can gather up all the `n`'s and get:
 
 (p-1)!⋅n^(p-1)^ % p
 
@@ -589,7 +592,8 @@ class FieldElement:
 <2> We use the Python built-in `pow` to make this more efficient
 
 Thankfully, we can do even better.
-We already know how to force a number out of being negative, using our familiar friend `%`! As a bonus, we can also reduce very large exponents at the same time given that a^p-1^=1.
+We already know how to force a number out of being negative, using our familiar friend `%`!
+As a bonus, we can also reduce very large exponents at the same time given that a^p-1^=1.
 This will make the `pow` function not work as hard.
 
 [source,python]
