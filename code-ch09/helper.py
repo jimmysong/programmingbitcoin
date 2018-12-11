@@ -143,8 +143,8 @@ def target_to_bits(target):
     else:
         exponent = len(raw_bytes)  # <3>
         coefficient = raw_bytes[:3]  # <4>
-    new_bits_big_endian = bytes([exponent]) + coefficient
-    return new_bits_big_endian[::-1]  # <5>
+    new_bits = coefficient[::-1] + bytes([exponent])  # <5>
+    return new_bits
 # end::source1[]
 
 def calculate_new_bits(previous_bits, time_differential):

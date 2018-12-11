@@ -154,9 +154,9 @@ def target_to_bits(target):
         exponent = len(raw_bytes)
         # coefficient is the first 3 digits of the base-256 number
         coefficient = raw_bytes[:3]
-    new_bits_big_endian = bytes([exponent]) + coefficient
     # we've truncated the number after the first 3 digits of base-256
-    return new_bits_big_endian[::-1]
+    new_bits = coefficient[::-1] + bytes([exponent])
+    return new_bits
 
 
 def calculate_new_bits(previous_bits, time_differential):

@@ -30,9 +30,6 @@
 ...             first_epoch_block = b
 ...         count += 1
 ...         last_block_hash = b.hash()
-...     if len(headers_message.blocks) < 2000:
-...         break
-ffff001d
 ffff001d
 ffff001d
 ffff001d
@@ -50,6 +47,7 @@ ffff001d
 ffff001d
 6ad8001d
 28c4001d
+71be001d
 
 # end::example1[]
 """

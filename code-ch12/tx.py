@@ -86,7 +86,7 @@ class Tx:
         tx_outs = ''
         for tx_out in self.tx_outs:
             tx_outs += tx_out.__repr__() + '\n'
-        return 'tx: {}\nversion: {}\ntx_ins:\n{}\ntx_outs:\n{}\nlocktime: {}\n'.format(
+        return 'tx: {}\nversion: {}\ntx_ins:\n{}tx_outs:\n{}locktime: {}'.format(
             self.id(),
             self.version,
             tx_ins,

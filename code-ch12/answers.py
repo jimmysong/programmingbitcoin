@@ -214,11 +214,6 @@ success!
 """
 
 
-        
-
-
-
-
 class Chapter12Test(TestCase):
 
     def test_apply(self):

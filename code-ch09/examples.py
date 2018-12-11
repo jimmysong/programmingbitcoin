@@ -20,9 +20,10 @@ b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
 # end::example2[]
 # tag::example3[]
 >>> from helper import hash256
->>> block_id = hash256(bytes.fromhex('020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd0000000000000000005b0750fce0a889502d40508d39576821155e9c9e3f5c3157f961db38fd8b25be1e77a759e93c0118a4ffd71d'))
->>> print(block_id.hex())
-2375044d646ad73594dd0b37b113becdb03964584c9e7e000000000000000000
+>>> block_hash = hash256(bytes.fromhex('020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd0000000000000000005b0750fce0a889502d40508d39576821155e9c9e3f5c3157f961db38fd8b25be1e77a759e93c0118a4ffd71d'))[::-1]
+>>> block_id = block_hash.hex()
+>>> print(block_id)
+0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523
 
 # end::example3[]
 # tag::example4[]
