@@ -359,9 +359,12 @@ include::code-ch06/script.py[tag=source5]
 ----
 <1> As the instructions list will change, we make a copy
 <2> We execute until the instructions list is empty
-<3> The function that executes the opcode is in the `OP_CODE_FUNCTIONS` array (e.g. `OP_DUP`, `OP_CHECKSIG`, etc)
-<4> 99 and 100 are `OP_IF` and `OP_NOTIF` respectively. They require manipulation of the instructions array based on the top element of the stack.
-<5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK` respectively. They move stack elements to/from an "alternate" stack, which we call altstack.
+<3> The function that executes the opcode is in the `OP_CODE_FUNCTIONS` array (e.g.
+`OP_DUP`, `OP_CHECKSIG`, etc)
+<4> 99 and 100 are `OP_IF` and `OP_NOTIF` respectively.
+They require manipulation of the instructions array based on the top element of the stack.
+<5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK` respectively.
+They move stack elements to/from an "alternate" stack, which we call altstack.
 <6> 172, 173, 174 and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from <<chapter_elliptic_curve_cryptography>> for signature validation.
 <7> If the instruction is not an opcode, it's an element, so we push that element to the stack.
 <8> If the stack is empty at the end of processing all the instructions, we fail the Script by returning `False`.
@@ -436,8 +439,10 @@ For example, quantum computing has the potential to reduce the calculation times
 
 Pay-to-pubkey-hash (p2pkh) is an alternative Script that has advantages over p2pk:
 
-1. The addresses are shorter.
-2. It's additionally protected by sha256 and ripemd160.
+1.
+The addresses are shorter.
+2.
+It's additionally protected by sha256 and ripemd160.
 
 Addresses are shorter due to the use of the sha256 and ripemd160 hashing algorithms.
 We do both in succession and call that hash160.

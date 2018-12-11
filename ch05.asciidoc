@@ -14,10 +14,14 @@ Let's first look at what Transactions in Bitcoin are, what they look like and ho
 At a high level, a Transaction really only has 4 components.
 They are:
 
-1. Version
-2. Inputs
-3. Outputs
-4. Locktime
+1.
+Version
+2.
+Inputs
+3.
+Outputs
+4.
+Locktime
 
 A general overview of these fields might be helpful.
 Version indicates what additional features the transaction uses, Inputs define what Bitcoins are being spent, Outputs define where the Bitcoins are going and Locktime defines when this Transaction starts being valid.
@@ -36,10 +40,13 @@ With this in mind, we can start constructing the Transaction class, which we'll 
 ----
 include::code-ch05/tx.py[tag=source1]
 ----
-<1> Input and Output are very generic terms so we specify what kind of inputs they are. We'll define the specific object types they are later.
+<1> Input and Output are very generic terms so we specify what kind of inputs they are.
+We'll define the specific object types they are later.
 <2> We need to know which network this transaction is on in order to be able to validate it fully.
-<3> The `id` is what block explorers use for looking up transactions. It's the hash256 of the transaction in hexadecimal format.
-<4> The hash is the hash256 of the serialization in Little-Endian. Note we don't have the `serialize` method yet, so until we do, this won't work.
+<3> The `id` is what block explorers use for looking up transactions.
+It's the hash256 of the transaction in hexadecimal format.
+<4> The hash is the hash256 of the serialization in Little-Endian.
+Note we don't have the `serialize` method yet, so until we do, this won't work.
 
 The rest of this chapter will be concerned with parsing Transactions.
 We could, at this point, write code like this:
@@ -236,7 +243,8 @@ We'll delve more deeply into how Script is parsed in <<chapter_script>>, but for
 ----
 include::code-ch05/examples.py[tag=example1]
 ----
-<1> Note that the `Script` class will be more thoroughly explored in <<chapter_script>>. For now, please trust that the `Script.parse` method will create the object that we need.
+<1> Note that the `Script` class will be more thoroughly explored in <<chapter_script>>.
+For now, please trust that the `Script.parse` method will create the object that we need.
 
 include::code-ch05/answers.py[tag=exercise2]
 
@@ -255,7 +263,8 @@ image::tx6.png[Outputs]
 Each output has two fields: Amount and ScriptPubKey.
 Amount is the amount of Bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin.
 This allows us to divide Bitcoin very finely, down to 1/300th of a penny in USD terms as of this writing.
-The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million Bitcoins) in satoshis, which is 2,100,000,000,000,000 (2100 trillion) satoshis. This number is greater than 2^32^ (4.3 billion or so) and is thus stored in 64 bits, or 8 bytes.
+The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million Bitcoins) in satoshis, which is 2,100,000,000,000,000 (2100 trillion) satoshis.
+This number is greater than 2^32^ (4.3 billion or so) and is thus stored in 64 bits, or 8 bytes.
 Amount is serialized in Little-Endian.
 
 ScriptPubKey, like ScriptSig, has to do with Bitcoin's smart contract language Script.
@@ -350,7 +359,8 @@ include::code-ch05/tx.py[tag=source6]
 
 We've used the `serialize` methods of both `TxIn` and `TxOut` to serialize `Tx`.
 
-Note that the transaction fee is not specified anywhere! This is because the fee is an implied amount.
+Note that the transaction fee is not specified anywhere!
+This is because the fee is an implied amount.
 Fee is the total of the inputs amounts minus the total of the output amounts.
 
 === Transaction Fee

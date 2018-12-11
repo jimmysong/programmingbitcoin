@@ -16,11 +16,23 @@ Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
 This worked because _real_ numbers are also a field.
 Note unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
 
-1. if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set. We call this property _closed_
-2. The additive identity, *0* exists. This means *a + 0 = a*
-3. The multiplicative identity, *1* exists. This means *a ⋅ 1 = a*
-4. If *a* is in the set, *-a* is in the set. *-a* is defined as the value that makes *a + (-a) = 0*. This is what we call the _additive inverse_.
-5. If *a* is in the set and is not 0, *a^-1^* is in the set. *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*. This is what we call the _multiplicative inverse_.
+1.
+if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set.
+We call this property _closed_
+2.
+The additive identity, *0* exists.
+This means *a + 0 = a*
+3.
+The multiplicative identity, *1* exists.
+This means *a ⋅ 1 = a*
+4.
+If *a* is in the set, *-a* is in the set.
+*-a* is defined as the value that makes *a + (-a) = 0*.
+This is what we call the _additive inverse_.
+5.
+If *a* is in the set and is not 0, *a^-1^* is in the set.
+*a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*.
+This is what we call the _multiplicative inverse_.
 
 Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse.
 
@@ -86,7 +98,8 @@ We will do this using the results of Exercise 2.
 ----
 include::code-ch03/ecc.py[tag=source2]
 ----
-<1> We pass in `FieldElement` objects into the `Point` class for initialization. This will, in turn, use all the overloaded math operations in `FieldElement`
+<1> We pass in `FieldElement` objects into the `Point` class for initialization.
+This will, in turn, use all the overloaded math operations in `FieldElement`
 
 We can now run this test like so:
 
@@ -362,9 +375,13 @@ class Point:
     ...
 include::code-ch03/ecc.py[tag=source3]
 ----
-<1> `current` represents the point that's at the current bit. First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on. We double the point each time. In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
+<1> `current` represents the point that's at the current bit.
+First time through the loop it represents 1*self, the second time, it will be 2*self, third time, 4*self, then 8*self and so on.
+We double the point each time.
+In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
 <2> We start the result at 0, or the point at infinity.
-<3> We are looking at whether the right-most bit is a 1. If it is, then we add the value of the current bit.
+<3> We are looking at whether the right-most bit is a 1.
+If it is, then we add the value of the current bit.
 <4> We need to double the point until we're past how big the coefficient can be.
 <5> We bit shift the coefficient to the right.
 
@@ -477,7 +494,8 @@ include::code-ch03/ecc.py[tag=source7]
 
 We now have an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
 
-We can also define `__rmul__` a bit more efficiently since we know the order of the group, `n`. Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant.
+We can also define `__rmul__` a bit more efficiently since we know the order of the group, `n`.
+Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant.
 
 [source,python]
 ----
@@ -487,7 +505,8 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source8]
 ----
-<1> We can mod by `n` because nG=0. That is, every `n` times we cycle back to zero or the point at infinity.
+<1> We can mod by `n` because nG=0.
+That is, every `n` times we cycle back to zero or the point at infinity.
 
 We can now define G directly and keep it around since we'll be using it a lot going forward.
 
@@ -678,10 +697,14 @@ The only way we could know the details of R beforehand is if we know `e`.
 
 To whit, here are the steps:
 
-1. We are given (r, s) as the signature, `z` as the hash of the thing being signed and P, the public key (or public point) of the signer.
-2. We calculate u = z/s, v = r/s
-3. We calculate uG + vP = R
-4. If R's `x` coordinate equals `r`, the signature is valid.
+1.
+We are given (r, s) as the signature, `z` as the hash of the thing being signed and P, the public key (or public point) of the signer.
+2.
+We calculate u = z/s, v = r/s
+3.
+We calculate uG + vP = R
+4.
+If R's `x` coordinate equals `r`, the signature is valid.
 
 [NOTE]
 .Why two rounds of sha256?
@@ -708,7 +731,8 @@ include::code-ch03/examples.py[tag=example9]
 <1> Note that we use Fermat's Little Theorem for 1/s, since `n` is prime.
 <2> u = z/s
 <3> v = r/s
-<4> uG+vP = (r,y). We need to check that the x-coordinate is r
+<4> uG+vP = (r,y).
+We need to check that the x-coordinate is r
 
 include::code-ch03/answers.py[tag=exercise6]
 
@@ -733,8 +757,10 @@ class S256Point(Point):
 include::code-ch03/ecc.py[tag=source12]
 ----
 <1> `s_inv` (1/s) is calculated using Fermat's Little Theorem on the order of the group `n` which is prime.
-<2> u = z/s. Note that we can mod by `n` as that's the order of the group.
-<3> v = r/s. Note that we can mod by `n` as that's the order of the group.
+<2> u = z/s.
+Note that we can mod by `n` as that's the order of the group.
+<3> v = r/s.
+Note that we can mod by `n` as that's the order of the group.
 <4> uG+vP should be R
 <5> We check that the x-coordinate is `r`
 
@@ -748,11 +774,17 @@ We do this by choosing a random `k`.
 
 Signing Procedure:
 
-1. We are given `z`. We know `e` and eG=P.
-2. Choose a random `k`
-3. Calculate R=kG and r=x-coordinate of R
-4. Calculate s = (z+re)/k
-5. Signature is (r,s)
+1.
+We are given `z`.
+We know `e` and eG=P.
+2.
+Choose a random `k`
+3.
+Calculate R=kG and r=x-coordinate of R
+4.
+Calculate s = (z+re)/k
+5.
+Signature is (r,s)
 
 Note that the pubkey `P` has to be transmitted to whoever wants to verify and `z` must be known by the verifier.
 We'll see later that `z` is computed and P is sent along with the signature.
@@ -771,11 +803,13 @@ This library is for teaching purposes only, so please don't use any of the code 
 ----
 include::code-ch03/examples.py[tag=example10]
 ----
-<1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult. Please don't use this for a real secret.
+<1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult.
+Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.
 <3> We're going to use a fixed `k` here for demonstration purposes.
 <4> kG = (r,y) so we take the `x` coordinate only
-<5> s = (z+re)/k. We can mod by `n` because we know this is a cyclical group of order `n`.
+<5> s = (z+re)/k.
+We can mod by `n` because we know this is a cyclical group of order `n`.
 <6> The public point needs to be known by the verifier
 
 include::code-ch03/answers.py[tag=exercise7]
@@ -807,11 +841,13 @@ class PrivateKey:
             s = N - s
         return Signature(r, s) # <6>
 ----
-<1> `randint` chooses a random integer from `[0,n)`. Please don't use this function in production as the random number from this library is not nearly random enough.
+<1> `randint` chooses a random integer from `[0,n)`.
+Please don't use this function in production as the random number from this library is not nearly random enough.
 <2> `r` is the x-coordinate of kG
 <3> We use Fermat's Little Theorem again and `n`, which is prime
 <4> s = (z+re)/k
-<5> It turns out that using the low-s value will get nodes to relay our transactions easier. This is for malleability reasons
+<5> It turns out that using the low-s value will get nodes to relay our transactions easier.
+This is for malleability reasons
 <6> We return a `Signature` object from above.
 
 .Importance of a unique `k`
@@ -844,7 +880,8 @@ class PrivateKey:
 ...
 include::code-ch03/ecc.py[tag=source14]
 ----
-<1> We are using the deterministic `k` instead of a random one. Everything else about `sign` remains the same.
+<1> We are using the deterministic `k` instead of a random one.
+Everything else about `sign` remains the same.
 <2> This algorithm returns a candidate that's suitable.
 
 Deterministic `k` will be unique with very high probability.
