@@ -50,12 +50,9 @@ image::bloomfilter1.png[Simple Bloom Filter]
 
 The actual filter consists of:
 
-1.
-The size of the bit field
-2.
-The hash function we used (and how we converted that to a number)
-3.
-The bit field, which tells the other node which bucket we're interested in.
+1. The size of the bit field
+2. The hash function we used (and how we converted that to a number)
+3. The bit field, which tells the other node which bucket we're interested in.
 
 This works great for a single item, so would be great if we only had a single address/ScriptPubKey/Transaction ID that we're interested in.
 What do we do when there's more than 1 item?
@@ -112,13 +109,10 @@ This means that we can manipulate our Bloom Filter to have the optimum number of
 BIP0037 defines exactly how Bitcoin uses Bloom Filters.
 As before, the things that we need to let the other node know about are:
 
-1.
-The size of the bit field.
+1. The size of the bit field.
 We send this in bytes (8 bits per byte) and round up if we need to.
-2.
-We also send over how many hash functions we want to use along with a "tweak" to be able to change our bloom filter if our filter hits too many items.
-3.
-Lastly, we need to send over the actual bit field that results from running the Bloom Filter over our items.
+2. We also send over how many hash functions we want to use along with a "tweak" to be able to change our bloom filter if our filter hits too many items.
+3. Lastly, we need to send over the actual bit field that results from running the Bloom Filter over our items.
 
 While we could define lots of hash functions (sha256, keccak, ripemd, blake, etc), in practice, we only really use a single hash function with a different seed.
 This allows the implementation to be simpler.

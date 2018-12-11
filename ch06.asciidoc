@@ -439,10 +439,8 @@ For example, quantum computing has the potential to reduce the calculation times
 
 Pay-to-pubkey-hash (p2pkh) is an alternative Script that has advantages over p2pk:
 
-1.
-The addresses are shorter.
-2.
-It's additionally protected by sha256 and ripemd160.
+1. The addresses are shorter.
+2. It's additionally protected by sha256 and ripemd160.
 
 Addresses are shorter due to the use of the sha256 and ripemd160 hashing algorithms.
 We do both in succession and call that hash160.

@@ -14,14 +14,10 @@ Let's first look at what Transactions in Bitcoin are, what they look like and ho
 At a high level, a Transaction really only has 4 components.
 They are:
 
-1.
-Version
-2.
-Inputs
-3.
-Outputs
-4.
-Locktime
+1. Version
+2. Inputs
+3. Outputs
+4. Locktime
 
 A general overview of these fields might be helpful.
 Version indicates what additional features the transaction uses, Inputs define what Bitcoins are being spent, Outputs define where the Bitcoins are going and Locktime defines when this Transaction starts being valid.

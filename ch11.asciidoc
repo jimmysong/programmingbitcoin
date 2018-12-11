@@ -16,10 +16,8 @@ Is it possible to create a Bitcoin wallet on a phone without having all the data
 
 For any wallet, there are two scenarios that we're concerned with:
 
-1.
-Paying someone
-2.
-Getting paid by someone
+1. Paying someone
+2. Getting paid by someone
 
 If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that they've been paid.
 Once they've verified that the transaction has been included in a block sufficiently deep, they'll give you the good or service you are expecting in return.
@@ -42,17 +40,12 @@ The prerequisites are an ordered list of items and a hash function.
 In our case, transactions and hash256 are what we use.
 To construct the Merkle Tree, we follow this algorithm:
 
-1.
-Hash all the items of the ordered list with the provided hash function
-2.
-If there is exactly 1 hash, we are done
-3.
-If there is an odd number of hashes, we add a copy of the last hash in the list to the end so that we have an even number.
-4.
-We pair the hashes in order and hash the concatenation to get the parent level.
+1. Hash all the items of the ordered list with the provided hash function
+2. If there is exactly 1 hash, we are done
+3. If there is an odd number of hashes, we add a copy of the last hash in the list to the end so that we have an even number.
+4. We pair the hashes in order and hash the concatenation to get the parent level.
 We should have half the number of hashes as before.
-5.
-Go to 2.
+5. Go to 2.
 
 The idea is to come to a single hash that represents all of the hashes.
 The gist of getting the Merkle Tree looks like this:
@@ -385,12 +378,9 @@ The flags are a list of bits that tell us about nodes in depth-first order.
 
 The rules for the flags are:
 
-1.
-If the node is given to us (blue box in the Figure 11-7), the flag is 0 and the next hash is its hash value.
-2.
-If the node is an internal node and calculated, that is, calculated from its children (dotted outline in the Figure 11-7), the flag is 1.
-3.
-If the node is a leaf node and is a transaction we're interested in (green box in the Figure 11-7), the flag is 1 and the next hash is its hash value.
+1. If the node is given to us (blue box in the Figure 11-7), the flag is 0 and the next hash is its hash value.
+2. If the node is an internal node and calculated, that is, calculated from its children (dotted outline in the Figure 11-7), the flag is 1.
+3. If the node is a leaf node and is a transaction we're interested in (green box in the Figure 11-7), the flag is 1 and the next hash is its hash value.
 
 .Processing a Merkle Block
 image::merkleproof2.png[Merkle Blocks and Hashes]

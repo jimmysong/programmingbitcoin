@@ -16,23 +16,11 @@ Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
 This worked because _real_ numbers are also a field.
 Note unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
 
-1.
-if *a* and *b* are in the set, *a+b* and *a⋅b* is in the set.
-We call this property _closed_
-2.
-The additive identity, *0* exists.
-This means *a + 0 = a*
-3.
-The multiplicative identity, *1* exists.
-This means *a ⋅ 1 = a*
-4.
-If *a* is in the set, *-a* is in the set.
-*-a* is defined as the value that makes *a + (-a) = 0*.
-This is what we call the _additive inverse_.
-5.
-If *a* is in the set and is not 0, *a^-1^* is in the set.
-*a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*.
-This is what we call the _multiplicative inverse_.
+1. If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
+2. The additive identity, *0* exists and has the property *a + 0 = a*.
+3. The multiplicative identity, *1* exists and has the property *a ⋅ 1 = a*.
+4. If *a* is in the set, *-a* is in the set, which is defined as the value that makes *a + (-a) = 0*.
+5. If *a* is in the set and is not 0, *a^-1^* is in the set, which is defined as the value that makes *a ⋅ a^-1^ = 1*.
 
 Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse.
 
@@ -697,14 +685,10 @@ The only way we could know the details of R beforehand is if we know `e`.
 
 To whit, here are the steps:
 
-1.
-We are given (r, s) as the signature, `z` as the hash of the thing being signed and P, the public key (or public point) of the signer.
-2.
-We calculate u = z/s, v = r/s
-3.
-We calculate uG + vP = R
-4.
-If R's `x` coordinate equals `r`, the signature is valid.
+1. We are given (r, s) as the signature, `z` as the hash of the thing being signed and P, the public key (or public point) of the signer.
+2. We calculate u = z/s, v = r/s
+3. We calculate uG + vP = R
+4. If R's `x` coordinate equals `r`, the signature is valid.
 
 [NOTE]
 .Why two rounds of sha256?
@@ -774,17 +758,11 @@ We do this by choosing a random `k`.
 
 Signing Procedure:
 
-1.
-We are given `z`.
-We know `e` and eG=P.
-2.
-Choose a random `k`
-3.
-Calculate R=kG and r=x-coordinate of R
-4.
-Calculate s = (z+re)/k
-5.
-Signature is (r,s)
+1. We are given `z` and know `e` such that eG=P.
+2. Choose a random `k`
+3. Calculate R=kG and r=x-coordinate of R
+4. Calculate s = (z+re)/k
+5. Signature is (r,s)
 
 Note that the pubkey `P` has to be transmitted to whoever wants to verify and `z` must be known by the verifier.
 We'll see later that `z` is computed and P is sent along with the signature.

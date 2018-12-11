@@ -116,18 +116,15 @@ Bare multisig is a bit ugly, but it's very much functional.
 You can have `m` of `n` signatures required to unlock a UTXO and there is plenty of utility in making outputs multisig, especially if you're a business.
 However, bare multisig suffers from a few problems:
 
-1.
-First problem: the long length of the ScriptPubKey.
+1. First problem: the long length of the ScriptPubKey.
 A hypothetical bare multisig address has to encompass many different public keys and that makes the ScriptPubKey extremely long.
 Unlike p2pkh or even p2pk, these are not easily communicated using voice or even text message.
 
-2.
-Second problem: because the output is so long, it's rather taxing on node software.
+2. Second problem: because the output is so long, it's rather taxing on node software.
 Nodes have to keep track of the UTXO set, so keeping a particularly big ScriptPubKey ready is onerous.
 A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
-3.
-Third problem: because the ScriptPubKey can be so much bigger, bare multisig can and has been abused.
+3. Third problem: because the ScriptPubKey can be so much bigger, bare multisig can and has been abused.
 The entire pdf of the Satoshi's original whitepaper is actually encoded in this transaction in block 230009: `54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`.
 The creator of this transaction actually split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys.
 These are not valid points and the actual whitepaper was encoded into 947 outputs as 1 of 3 bare multisig outputs.

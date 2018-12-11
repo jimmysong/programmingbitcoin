@@ -214,12 +214,9 @@ The rest of this chapter will be concerned with creating a transaction whose inp
 
 The construction of a transaction is most easily done by answering some basic questions:
 
-1.
-Where do we want the bitcoins to go?
-2.
-What outputs are assigned to our private key(s) that are unspent?
-3.
-How quickly do we want these transactions to get into the blockchain?
+1. Where do we want the bitcoins to go?
+2. What outputs are assigned to our private key(s) that are unspent?
+3. How quickly do we want these transactions to get into the blockchain?
 
 We'll be using testnet for this example, though this can easily be applied to mainnet.
 

@@ -200,12 +200,9 @@ While this doesn't prove the associativity of point addition, the visual should 
 
 To code point addition, we're going to split it up into 3 steps:
 
-1.
-Where the points are in a vertical line or using the Identity.
-2.
-Where the points are not in a vertical line, but are different.
-3.
-Where the two points are the same.
+1. Where the points are in a vertical line or using the Identity.
+2. Where the points are not in a vertical line, but are different.
+3. Where the two points are the same.
 
 === Coding Point Addition
 

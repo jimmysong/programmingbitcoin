@@ -21,12 +21,9 @@ There are two forms of SEC format that we need to be concerned with and the firs
 
 Here is how the uncompressed SEC format for a given point P=(x,y) is generated:
 
-1.
-Start with the prefix byte which is `0x04`.
-2.
-Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
-3.
-Next, append the y-coordinate in 32 bytes as a Big-Endian integer.
+1. Start with the prefix byte which is `0x04`.
+2. Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
+3. Next, append the y-coordinate in 32 bytes as a Big-Endian integer.
 
 Here is what the uncompressed SEC format looks like:
 
@@ -99,11 +96,9 @@ We call this the *Compressed SEC format* because of how the y-coordinate is comp
 
 Here is the serialization of the Compressed SEC format for a given point P=(x,y):
 
-1.
-Start with the prefix byte.
+1. Start with the prefix byte.
 If `y` is even, it's `0x02`, otherwise it's `0x03`.
-2.
-Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
+2. Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
 
 The Compressed SEC format looks like this:
 
@@ -212,20 +207,14 @@ This was most likely because the standard was already defined in 2008, supported
 
 DER Signature format is defined like this:
 
-1.
-Start with the `0x30` byte
-2.
-Encode the length of the rest of the signature (usually `0x44` or `0x45`) and append
-3.
-Append the marker byte `0x02`
-4.
-Encode `r` as a Big-Endian integer, but prepend with `0x00` byte if `r`'s first byte >= `0x80`.
+1. Start with the `0x30` byte
+2. Encode the length of the rest of the signature (usually `0x44` or `0x45`) and append
+3. Append the marker byte `0x02`
+4. Encode `r` as a Big-Endian integer, but prepend with `0x00` byte if `r`'s first byte >= `0x80`.
 Prepend the resulting length to `r`.
 Add this to the result.
-5.
-Append the marker byte `0x02`
-6.
-Encode `s` as a Big-Endian integer, but prepend with `0x00` byte if `s`'s first byte >= `0x80`.
+5. Append the marker byte `0x02`
+6. Encode `s` as a Big-Endian integer, but prepend with `0x00` byte if `s`'s first byte >= `0x80`.
 Prepend the resulting length to `s`.
 Add this to the result.
 
@@ -331,16 +320,11 @@ To both shorten and increase security, we can use the ripemd160 hash to compress
 By not using the SEC format directly, we can go from 33 bytes to 20 bytes, shortening the address significantly.
 Here is how a Bitcoin address is created:
 
-1.
-For mainnet addresses, start with the prefix `0x00`, for testnet `0x6f`.
-2.
-Take the SEC format (compressed or uncompressed) and do a sha256 operation followed by the ripemd160 hash operation, the combination which is called a hash160 operation.
-3.
-Combine the prefix from #1 and resulting hash from #2
-4.
-Do a hash256 of the result from #3 and get the first 4 bytes.
-5.
-Take the combination of #3 and #4 and encode in Base58.
+1. For mainnet addresses, start with the prefix `0x00`, for testnet `0x6f`.
+2. Take the SEC format (compressed or uncompressed) and do a sha256 operation followed by the ripemd160 hash operation, the combination which is called a hash160 operation.
+3. Combine the prefix from #1 and resulting hash from #2
+4. Do a hash256 of the result from #3 and get the first 4 bytes.
+5. Take the combination of #3 and #4 and encode in Base58.
 
 Step 4 of this process is called the checksum.
 We can do steps 4 and 5 in one go this way:
@@ -393,18 +377,12 @@ WIF uses the same Base58 encoding that addresses use.
 
 Here is how the WIF format is created:
 
-1.
-For mainnet private keys, start with the prefix `0x80`, for testnet `0xef`.
-2.
-Encode the secret in 32-byte Big-Endian.
-3.
-If the SEC format used for the public key address was compressed add a suffix of `0x01`.
-4.
-Combine the prefix from #1, serialized secret from #2 and suffix from #3
-5.
-Do a hash256 of the result from #4 and get the first 4 bytes.
-6.
-Take the combination of #4 and #5 and encode in Base58.
+1. For mainnet private keys, start with the prefix `0x80`, for testnet `0xef`.
+2. Encode the secret in 32-byte Big-Endian.
+3. If the SEC format used for the public key address was compressed add a suffix of `0x01`.
+4. Combine the prefix from #1, serialized secret from #2 and suffix from #3
+5. Do a hash256 of the result from #4 and get the first 4 bytes.
+6. Take the combination of #4 and #5 and encode in Base58.
  
 We can now create the `wif` method on the `PrivateKey` class.
 
