@@ -3,10 +3,10 @@
 == Transaction Creation and Validation
 
 [.lead]
-One of the trickiest things to code in Bitcoin is the validating transactions.
-Another one is the act of creating the transaction itself.
-In this chapter, we'll cover the exact steps to validating transactions and creating transactions.
-In fact, we'll be creating a transaction for ourselves.
+One of the trickiest things to code in Bitcoin is validating transactions.
+Another one is creating transactions.
+In this chapter, we'll cover the exact steps to doing both.
+Towards the end of this chapter, we'll be creating a testnet transaction and broadcasting it.
 
 === Validating Transactions
 
@@ -14,12 +14,9 @@ Every node, when receiving transactions makes sure that each transaction adheres
 This process is called _transaction validation_.
 Here are the main things that a node needs to check for:
 
-1.
-Inputs of the transaction are previously unspent
-2.
-Sum of the inputs are greater than or equal to the sum of the outputs
-3.
-ScriptSig actually unlocks the previous ScriptPubKey
+1. Inputs of the transaction are previously unspent
+2. Sum of the inputs are greater than or equal to the sum of the outputs
+3. ScriptSig actually unlocks the previous ScriptPubKey
 
 (1) prevents double-spending.
 Any input that's already been spent cannot be spent again.

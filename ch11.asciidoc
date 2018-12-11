@@ -268,7 +268,7 @@ We could also be clever and use `len(bin(total))-2`.
 <2> The merkle tree will hold the root level at index 0, the level below at index 1 and so on.
 In other words, the index is the "depth" from the top.
 <3> We have to go up to `max_depth + 1` as `range` goes to 1 less than the second argument in Python.
-<4> The number of items at any particular level is the number of total leaves divided halved at evry level above the leaf level, rounded up.
+<4> The number of items at any particular level is the number of total leaves halved at every level above the leaf level, rounded up.
 <5> We don't know yet what any of the hashes are, so we set them to `None`
 <6> Note again that `merkle_tree` is a list of lists of hashes, or a 2-dimensional array.
 

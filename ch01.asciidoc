@@ -34,21 +34,16 @@ Mathematically, a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
-1.
-If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
-We call this property _closed_
-2.
-The additive identity, *0* exists.
+1. If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
+We call this property _closed_.
+2. The additive identity, *0* exists.
 This means *a + 0 = a*
-3.
-The multiplicative identity, *1* exists.
+3. The multiplicative identity, *1* exists.
 This means *a ⋅ 1 = a*
-4.
-If *a* is in the set, *-a* is in the set.
+4. If *a* is in the set, *-a* is in the set.
 *-a* is defined as the value that makes *a + (-a) = 0*.
 This is what we call the _additive inverse_.
-5.
-If *a* is in the set and is not 0, *a^-1^* is in the set.
+5. If *a* is in the set and is not 0, *a^-1^* is in the set.
 *a^-1^* is defined as the value that makes *a ⋅ a^-1^ = 1*.
 This is what we call the _multiplicative inverse_.
 
