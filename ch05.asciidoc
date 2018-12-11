@@ -405,5 +405,6 @@ include::code-ch05/answers.py[tag=exercise6]
 
 === Conclusion
 
-We've covered exactly how to parse and serialize transactions along with what most of the fields mean.
-The fields that we didn't cover are related to Script, which we'll now turn to in <<chapter_script>>.
+We've covered exactly how to parse and serialize transactions along with the fields mean.
+There are two fields that require more explanation and they are both related to Bitcoin's smart contract language, Script.
+To that topic we go in <chapter_script>>.
