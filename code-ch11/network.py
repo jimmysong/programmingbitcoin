@@ -118,7 +118,7 @@ class VersionMessage:
                  receiver_ip=b'\x00\x00\x00\x00', receiver_port=8333,
                  sender_services=0,
                  sender_ip=b'\x00\x00\x00\x00', sender_port=8333,
-                 nonce=None, user_agent=b'/programmingblockchain:0.1/',
+                 nonce=None, user_agent=b'/programmingbitcoin:0.1/',
                  latest_block=0, relay=True):
         self.version = version
         self.services = services
@@ -179,7 +179,8 @@ class VersionMessageTest(TestCase):
 
     def test_serialize(self):
         v = VersionMessage(timestamp=0, nonce=b'\x00' * 8)
-        self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d2000000000000000001b2f70726f6772616d6d696e67626c6f636b636861696e3a302e312f0000000001')
+        print(v.serialize().hex())
+        self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d200000000000000000182f70726f6772616d6d696e67626974636f696e3a302e312f0000000001')
 
 
 class VerAckMessage:
