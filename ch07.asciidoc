@@ -357,7 +357,7 @@ include::code-ch07/examples.py[tag=example7]
 Once you have an address, you can get some coins at a myriad of testnet faucets.
 Faucets are where you can get testnet coins for free for testing purposes.
 You can Google "testnet bitcoin faucet" to find them or use one from this list: https://en.bitcoin.it/wiki/Testnet#Faucets.
-My website, https://testnet.programmingbitcoin.com/ is updated to point to a testnet faucet that works.
+My website, https://faucet.programmingbitcoin.com/ is updated to point to a testnet faucet that works.
 Enter your address from above into these faucets to get some testnet coins.
 
 After receiving some coins, spend them using this library.

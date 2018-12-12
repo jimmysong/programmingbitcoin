@@ -410,7 +410,7 @@ include::code-ch04/answers.py[tag=exercise8]
 
 include::code-ch04/answers.py[tag=exercise9]
 
-Go to a testnet faucet (https://testnet.programmingbitcoin.com) and send some testnet coins to that address (it should start with `m` or `n`).
+Go to a testnet faucet (https://faucet.programmingbitcoin.com) and send some testnet coins to that address (it should start with `m` or `n`).
 If you succeeded, congrats!
 You're now the proud owner of some testnet coins!
 
