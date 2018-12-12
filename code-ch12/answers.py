@@ -48,8 +48,8 @@ Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` h
 
 Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use `bit_field_to_bytes` to convert to bytes)
 
-* b'Hello World'
-* b'Goodbye!'
+* `b'Hello World'`
+* `b'Goodbye!'`
 # end::exercise2[]
 # tag::answer2[]
 >>> from bloomfilter import BloomFilter, BIP37_CONSTANT
@@ -125,7 +125,7 @@ def serialize(self):
 # tag::exercise6[]
 ==== Exercise 6
 
-Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input and broadcast that message on the network.
+Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input and broadcast the `tx` message on the  testnet network.
 # end::exercise6[]
 # tag::answer6[]
 >>> import time
