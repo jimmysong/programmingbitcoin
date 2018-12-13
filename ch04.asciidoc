@@ -314,8 +314,8 @@ include::code-ch04/answers.py[tag=exercise4]
 
 === Address Format
 
-The 260 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
-To both shorten and increase security, we can use the ripemd160 hash to compress the public key to a 20-byte hash.
+The 264 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
+To both shorten and increase security, we can use the ripemd160 hash to reduce the size to a 20-byte hash.
 
 By not using the SEC format directly, we can go from 33 bytes to 20 bytes, shortening the address significantly.
 Here is how a Bitcoin address is created:
@@ -349,8 +349,6 @@ We can implement this in `helper.py`.
 [source,python]
 ----
 include::code-ch04/helper.py[tag=source4]
-def hash160(s):
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()  # <1>
 ----
 <1> Note that `hashlib.sha256(s).digest()` does the sha256 and the wrapper around it does the ripemd160.
 
@@ -398,7 +396,7 @@ include::code-ch04/answers.py[tag=exercise6]
 === Big and Little Endian Redux
 
 It will be very useful to know how Big and Little Endian are done in Python as the next few chapters will be parsing and serializing numbers to and from Big/Little Endian quite a bit.
-In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy rule for determining where Little-Endian was used and where Big-Endian was used.
+In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy-to-learn rule for where Little-Endian is used and where Big-Endian is used.
 Recall that SEC format uses Big-Endian encoding as do addresses and WIF.
 From <<chapter_tx_parsing>> onward, we will use Little-Endian encoding a lot more.
 For this reason, we turn to the next two exercises.
@@ -410,7 +408,7 @@ include::code-ch04/answers.py[tag=exercise8]
 
 include::code-ch04/answers.py[tag=exercise9]
 
-Go to a testnet faucet (https://faucet.programmingbitcoin.com) and send some testnet coins to that address (it should start with `m` or `n`).
+Go to a testnet faucet (https://faucet.programmingbitcoin.com) and send some testnet coins to that address (it should start with `m` or `n` or else something is wrong).
 If you succeeded, congrats!
 You're now the proud owner of some testnet coins!
 

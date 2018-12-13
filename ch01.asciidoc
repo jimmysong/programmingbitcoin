@@ -64,15 +64,12 @@ That means 0 and 1 are in the set.
 
 (4) means that we have the additive inverse.
 That is, if *a* is in the set, *-a* is in the set.
-Using this, we can define subtraction.
-Subtraction is the inverse of addition.
-Once again, we have to make sure subtraction is defined in a way as to make sure that the result is still in the set, that is, not go under 0.
-In other words, we need to define subtraction to be _closed_.
+Using the additive inverse, we can define subtraction.
 
 (5) means that multiplication has the same property.
 If *a* is in the set, *a^-1^* is in the set.
 That is *a⋅a^-1^=1*.
-Using this, we can define division, the inverse of multiplication.
+Using the multiplicative inverse, we can define division.
 This will be the trickiest to define in a finite field.
 
 === Defining Finite Sets

@@ -91,7 +91,7 @@ If, for example, you are running Windows 3.1, that's a version number that's ver
 You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
 
 Similarly, Bitcoin transactions have version numbers.
-In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in BIP68/BIP112/BIP113 require use of version > 1).
+In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in BIP112 require use of version > 1).
 
 You may notice here that the actual value in hexadecimal is `01000000`, which doesn't look like 1.
 Interpreted as a Little-Endian integer, however, this number is actually 1 (recall the discussion from <<chapter_serialization>>).
@@ -106,7 +106,7 @@ image::tx3.png[Inputs]
 Each input points to an output of a previous transaction.
 This fact requires more explanation as it's not intuitively obvious at first.
 
-Bitcoin's inputs are spending outputs of another transaction.
+Bitcoin's inputs are spending outputs of a previous transaction.
 That is, you need to have received Bitcoins first to spend something.
 This makes intuitive sense.
 You cannot spend money unless you received money first.
@@ -226,7 +226,7 @@ include::code-ch05/tx.py[tag=source2]
 
 A couple things to note here.
 The amount of each input is not specified.
-We have no idea how much is being spent unless we look up the transaction in the blockchain.
+We have no idea how much is being spent unless we look up in the blockchain for the transaction(s) that we're spending.
 Furthermore, we don't even know if the transaction is unlocking the right box, so to speak, without knowing about the previous transaction.
 Every node must verify that this transaction unlocks the right box and that it doesn't spend non-existent Bitcoins.
 How we do that is discussed more in <<chapter_tx>>.

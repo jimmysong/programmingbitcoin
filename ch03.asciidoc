@@ -517,7 +517,7 @@ The key operation that we need is `P=eG` which is an *asymmetric* equation.
 We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
 This is the Discrete Log Problem described earlier.
 
-We'll use the fact that Discrete Log is extremely difficult to create signing and verification.
+The difficulty of Discrete Log will be essential to understanding signing and verification algorithms.
 
 Generally, we call `e` the Private Key and P the Public Key.
 We'll note here that the private key is a single 256-bit number and the public key is a coordinate `(x,y)` where `x` and `y` are _each_ 256-bit numbers.
@@ -651,7 +651,7 @@ It's worth mentioning again, make sure you're using truly random numbers for `k`
 ==== Verification in-depth
 
 Signatures sign some fixed-length value (our "contract"), in our case something that's 32 bytes.
-The fact that 32 bytes is 256 bits is not a coincidence as the thing we're signing needs to be a scalar for `G`.
+The fact that 32 bytes is 256 bits is not a coincidence as the thing we're signing will be a scalar for `G`.
 
 In order to guarantee that the thing we're signing is 32 bytes, we hash the document first.
 In Bitcoin, the hashing function is hash256, or two rounds of sha256.
@@ -697,11 +697,11 @@ The calculation of `z` requires two rounds of sha256, or hash256.
 You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number.
 The reason is for security.
 
-There is a well-known hash collision attack on sha1 called a _birthday attack_ which basically makes finding collisions much easier.
-This is how Google found a sha1 collision in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html).
-Using sha1 twice, or double-sha1 is the way to defeat this attack.
+There is a well-known hash collision attack on sha1 called a _birthday attack_ which makes finding collisions much easier.
+Google found a sha1 collision using some modifications of a birthday attack and a lot of other things in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html).
+Using sha1 twice, or double-sha1 is the way to defeat slow down some forms of this attack.
 
-There is no known sha256 weakness like a birthday attack, but doing two rounds is a defense against similar potential weaknesses.
+Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential weaknesses.
 ====
 
 ==== Verifying a Signature
@@ -875,7 +875,7 @@ This makes transactions less malleable (more on that in <<chapter_segwit>>)
 ### Conclusion
 
 We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message.
-Even if you don't read another page in this book, you've learned to implement what was once considered "weapons grade cryptography".
+Even if you don't read another page in this book, you've learned to implement what was once considered "weapons grade munitions" (see https://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States).
 This is a major step in your journey and will be essential for the rest of the book!
 
 We now turn to serializing a lot of these structures so that we can store them on disk and send them over the network.

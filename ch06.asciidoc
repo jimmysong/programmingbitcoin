@@ -415,7 +415,9 @@ This makes the compressed and uncompressed SEC formats 66 and 130 characters res
 To compound this, early Bitcoin transactions didn't use the compressed versions so the hexadecimal addresses were 130 characters each!
 This is not fun or easy for people to transcribe, much less communicate by voice.
 
-That said, the original use-case for p2pk was for IP-to-IP payments where IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that this wasn't necessarily a problem.
+That said, the original use-cases for p2pk were for IP-to-IP payments and mining outputs.
+For IP-to-IP payments, IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that human communication wasn't necessarily a problem.
+Use for mining outputs also don't require human communication.
 Incidentally, this IP-to-IP payment system was phased out as it's not secure and prone to man-in-the-middle attacks.
 
 .Why did Satoshi use the uncompressed SEC format?
@@ -459,7 +461,7 @@ These 20 bytes are the result of doing a hash160 operation on this (compressed) 
 
 `0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352`
 
-Given p2pkh is shorter and more secure, p2pk is no longer used much on the network.
+Given p2pkh is shorter and more secure, p2pk use declined significantly after 2010, though it's still fully supported today.
 
 === p2pkh
 
