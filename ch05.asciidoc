@@ -25,7 +25,7 @@ We'll go through each component in depth.
 
 Here is a hexadecimal dump of a typical transaction that shows which parts are which.
 
-.Transaction Components
+.Transaction Components, Version, Inputs, Output and Locktime
 image::tx1.png[Transaction Version, Inputs, Outputs and Locktime]
 
 The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
@@ -113,7 +113,7 @@ You cannot spend money unless you received money first.
 The inputs refer to Bitcoins that belong to you.
 There are two things that each input needs to have:
 
-* A reference to the previous Bitcoins you own
+* A reference to the previous Bitcoins you received
 * Proof that these are yours to spend
 
 The second part uses ECDSA (<<chapter_elliptic_curve_cryptography>>).
@@ -190,7 +190,7 @@ Sequence is also in Little-Endian and takes up 4 bytes.
 
 The fields of the input look like this:
 
-.The Fields of an Input
+.The Fields of an Input, Previous Tx, Previous Index, ScriptSig and Sequence
 image::tx5.png[Input Fields]
 
 .Sequence and Locktime
@@ -271,7 +271,7 @@ Like ScriptSig, ScriptPubKey is a variable-length field and is preceded by the l
 
 An output field look like this:
 
-.A Single Output (at index 0)
+.Output Fields, Amount and ScriptPubKey. This one is at index 0.
 image::tx7.png[Output Fields]
 
 .UTXO Set
@@ -302,7 +302,7 @@ include::code-ch05/answers.py[tag=exercise3]
 Locktime is a way to time-delay a transaction.
 A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,000.
 This was originally construed as a way to do "high frequency trades" (see _Sequence and Locktime_), which turned out to be insecure.
-If the Locktime is greater or equal to 500,000,000, Locktime is a UNIX time stamp.
+If the Locktime is greater or equal to 500,000,000, Locktime is a UNIX timestamp.
 If Locktime is less than 500,000,000, it is a block number.
 This way, transactions can be signed, but unspendable until a certain point in UNIX time or block height.
 

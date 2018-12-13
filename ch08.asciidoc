@@ -124,7 +124,10 @@ Nodes keep track of the UTXO set, so a big ScriptPubKey is more expensive to kee
 A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
 3. Third problem: because the ScriptPubKey can be so much bigger, bare multisig can and has been abused.
-The entire PDF of the Satoshi's original whitepaper is encoded in this transaction in block 230009: `54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`.
+The entire PDF of the Satoshi's original whitepaper is encoded in this transaction in block 230009:
+
+`54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`
+
 The creator of this transaction split up the whitepaper PDF into 64 byte chunks which were then made into invalid uncompressed public keys.
 The whitepaper was encoded into 947 outputs as 1-of-3 Bare Multisig outputs.
 These outputs are not spendable but have to be indexed in the UTXO sets of full nodes.

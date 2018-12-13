@@ -12,7 +12,7 @@ Think of Blocks as a way to order transactions.
 If we order transactions, a double-spend can be prevented by making any later, conflicting transaction invalid.
 This is the equivalent to accepting the earlier transaction as the valid one.
 
-Implement this rule would be easy (earliest transaction is valid, subsequent transactions that conflict are invalid) if we could order transactions one at a time.
+Implementing this rule would be easy (earliest transaction is valid, subsequent transactions that conflict are invalid) if we could order transactions one at a time.
 Unfortunately, that would require nodes on the network to agree on which transaction is supposed to be next and would cause a lot of transmission overhead in coming to consensus.
 We could also order large batches of transactions, maybe once per day, but that wouldn't be very practical as transactions would settle only once per day and not have finality before then.
 
@@ -201,8 +201,8 @@ We will discuss how this is important for SPV (simplified payment verification) 
 The timestamp is a UNIX-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
 This timestamp is used in two places.
-The first for validating timestamp-based locktimes on transactions included in the block and in calculating a new bits/target/difficulty every 2016 blocks.
-The locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's Locktime directly, but the median-time-past (MTP) of the past 11 blocks.
+The first for validating timestamp-based Locktimes on transactions included in the block and in calculating a new bits/target/difficulty every 2016 blocks.
+The Locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's Locktime directly, but the median-time-past (MTP) of the past 11 blocks.
 
 [NOTE]
 .Will Bitcoin overflow on the timestamp?

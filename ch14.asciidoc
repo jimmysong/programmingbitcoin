@@ -30,7 +30,7 @@ The specifications and test vectors are defined in the BIP0032 standard, so impl
 
 Additionally, BIP0044 defines what each layer of the BIP0032 hierarchy can mean and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
 Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better.
-While many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and use their own BIP0032 hierarchy (Electrum and Airbitz being two).
+While many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and use their own BIP0032 hierarchy (Electrum and Edge being two).
 
 ==== Mnemonic Seeds
 
