@@ -33,19 +33,20 @@ class MerkleTree:
         self.current_index = 0
 
     def __repr__(self):
-        result = ''
+        result = []
         for depth, level in enumerate(self.nodes):
+            items = []
             for index, h in enumerate(level):
                 if h is None:
                     short = 'None'
                 else:
                     short = '{}...'.format(h.hex()[:8])
                 if depth == self.current_depth and index == self.current_index:
-                    result += '*{}*, '.format(short[:-2])
+                    items.append('*{}*'.format(short[:-2]))
                 else:
-                    result += '{}, '.format(short)
-            result += '\n'
-        return result
+                    items.append('{}'.format(short))
+            result.append(', '.join(items))
+        return '\n'.join(result)
 
     def up(self):
         # reduce depth by 1 and halve the index
@@ -94,11 +95,9 @@ class MerkleTree:
                 self.set_current_node(hashes.pop(0))
                 # go up a level
                 self.up()
-            # else
             else:
                 # get the left hash
                 left_hash = self.get_left_node()
-                # Exercise 6.2: get the right hash
                 # if we don't have the left hash
                 if left_hash is None:
                     # if the next flag bit is 0, the next hash is our current node
@@ -107,16 +106,9 @@ class MerkleTree:
                         self.set_current_node(hashes.pop(0))
                         # sub-tree doesn't need calculation, go up
                         self.up()
-                    # else
                     else:
                         # go to the left node
                         self.left()
-                # Exercise 6.2: if we don't have the right hash
-                    # go to the right node
-                # Exercise 6.2: else
-                    # combine the left and right hashes
-                    # we've completed this subtree, go up
-                # Exercise 7.2: if the right hash exists
                 elif self.right_exists():
                     # get the right hash
                     right_hash = self.get_right_node()
@@ -124,13 +116,11 @@ class MerkleTree:
                     if right_hash is None:
                         # go to the right node
                         self.right()
-                    # else
                     else:
                         # combine the left and right hashes
                         self.set_current_node(merkle_parent(left_hash, right_hash))
                         # we've completed this sub-tree, go up
                         self.up()
-                # else
                 else:
                     # combine the left hash twice
                     self.set_current_node(merkle_parent(left_hash, left_hash))

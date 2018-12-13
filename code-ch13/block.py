@@ -16,7 +16,8 @@ TESTNET_GENESIS_BLOCK_HASH = bytes.fromhex('000000000933ea01ad0ee984209779baaec3
 
 class Block:
 
-    def __init__(self, version, prev_block, merkle_root, timestamp, bits, nonce, tx_hashes=None):
+    def __init__(self, version, prev_block, merkle_root,
+                 timestamp, bits, nonce, tx_hashes=None):
         self.version = version
         self.prev_block = prev_block
         self.merkle_root = merkle_root

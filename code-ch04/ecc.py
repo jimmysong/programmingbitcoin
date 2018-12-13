@@ -404,7 +404,7 @@ class S256Point(Point):
 
     # tag::source1[]
     def sec(self, compressed=True):
-        '''returns the binary version of the sec format'''
+        '''returns the binary version of the SEC format'''
         if compressed:
             if self.y.num % 2 == 0:
                 return b'\x02' + self.x.num.to_bytes(32, 'big')

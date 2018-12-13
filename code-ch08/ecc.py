@@ -401,7 +401,7 @@ class S256Point(Point):
         return total.x.num == sig.r
 
     def sec(self, compressed=True):
-        # returns the binary version of the sec format, NOT hex
+        '''returns the binary version of the SEC format'''
         # if compressed, starts with b'\x02' if self.y.num is even, b'\x03' if self.y is odd
         # then self.x.num
         # remember, you have to convert self.x.num/self.y.num to binary (some_integer.to_bytes(32, 'big'))
@@ -412,7 +412,8 @@ class S256Point(Point):
                 return b'\x03' + self.x.num.to_bytes(32, 'big')
         else:
             # if non-compressed, starts with b'\x04' followod by self.x and then self.y
-            return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
+            return b'\x04' + self.x.num.to_bytes(32, 'big') + \
+                self.y.num.to_bytes(32, 'big')
 
     def hash160(self, compressed=True):
         return hash160(self.sec(compressed))
@@ -428,8 +429,7 @@ class S256Point(Point):
 
     @classmethod
     def parse(self, sec_bin):
-        '''returns a Point object from a compressed sec binary (not hex)
-        '''
+        '''returns a Point object from a SEC binary (not hex)'''
         if sec_bin[0] == 4:
             x = int.from_bytes(sec_bin[1:33], 'big')
             y = int.from_bytes(sec_bin[33:65], 'big')

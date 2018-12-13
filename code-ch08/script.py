@@ -136,22 +136,29 @@ class Script:
         return encode_varint(total) + result
 
     def evaluate(self, z):
+        # create a copy as we may need to add to this list if we have a
+        # RedeemScript
         instructions = self.instructions[:]
         stack = []
         altstack = []
         while len(instructions) > 0:
             instruction = instructions.pop(0)
             if type(instruction) == int:
+                # do what the opcode says
                 operation = OP_CODE_FUNCTIONS[instruction]
                 if instruction in (99, 100):
+                    # op_if/op_notif require the instructions array
                     if not operation(stack, instructions):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (107, 108):
+                    # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False
                 elif instruction in (172, 173, 174, 175):
+                    # these are signing operations, they need a sig_hash
+                    # to check against
                     if not operation(stack, z):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
                         return False

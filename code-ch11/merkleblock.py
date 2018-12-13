@@ -26,19 +26,20 @@ class MerkleTree:
         self.current_index = 0
 
     def __repr__(self):  # <2>
-        result = ''
+        result = []
         for depth, level in enumerate(self.nodes):
+            items = []
             for index, h in enumerate(level):
                 if h is None:
                     short = 'None'
                 else:
                     short = '{}...'.format(h.hex()[:8])
                 if depth == self.current_depth and index == self.current_index:
-                    result += '*{}*, '.format(short[:-2])
+                    items.append('*{}*'.format(short[:-2]))
                 else:
-                    result += '{}, '.format(short)
-            result += '\n'
-        return result
+                    items.append('{}'.format(short))
+            result.append(', '.join(items))
+        return '\n'.join(result)
     # end::source1[]
 
     # tag::source2[]

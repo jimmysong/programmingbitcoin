@@ -204,12 +204,12 @@ class PongMessage:
 # tag::source5[]
 class GetHeadersMessage:
     command = b'getheaders'
-    
+
     def __init__(self, version=70015, num_hashes=1, start_block=None, end_block=None):
         self.version = version
         self.num_hashes = num_hashes  # <1>
         if start_block is None:  # <2>
-            raise RuntimeError('a starting block is required')
+            raise RuntimeError('a start block is required')
         self.start_block = start_block
         if end_block is None:
             self.end_block = b'\x00' * 32  # <3>
