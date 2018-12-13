@@ -203,7 +203,7 @@ We could do the same thing if Alice and Bob had 100 transactions between them, t
 That's the idea that Satoshi had: a continuously updating mini-ledger between the two parties involved that gets settled on-chain.
 Satoshi's idea was to use Sequence and Locktime to update the "high frequency trade" transaction every time a new payment between the two parties occurred.
 The trade transaction would have two inputs, one from Alice, one from Bob and two outputs, one to Alice and one to Bob.
-The trade transaction would start with sequence at 0 with a far away locktime (say 500 blocks from now), valid in 500 blocks.
+The trade transaction would start with sequence at 0 with a far away Locktime (say 500 blocks from now), valid in 500 blocks.
 This would be the base transaction where Alice and Bob get the same amounts as they put in.
 
 After the first transaction where Alice pays Bob `x` Bitcoins, the sequence of each input would be 1.
@@ -302,9 +302,9 @@ include::code-ch05/answers.py[tag=exercise3]
 Locktime is a way to time-delay a transaction.
 A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,000.
 This was originally construed as a way to do "high frequency trades" (see _Sequence and Locktime_), which turned out to be insecure.
-If the Locktime is greater or equal to 500,000,000, Locktime is a unix time stamp.
+If the Locktime is greater or equal to 500,000,000, Locktime is a UNIX time stamp.
 If Locktime is less than 500,000,000, it is a block number.
-This way, transactions can be signed, but unspendable until a certain point in unix time or block height.
+This way, transactions can be signed, but unspendable until a certain point in UNIX time or block height.
 
 The serialization is in Little-Endian and 4-bytes.
 

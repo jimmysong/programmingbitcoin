@@ -11,7 +11,7 @@ In this chapter, we'll go through what other things you can learn, how to bootst
 Creating a wallet is a difficult task because securing private keys is very difficult.
 That said, there are a bunch of standards for creating wallets that can help.
 
-==== Heirarchical Deterministic Wallets
+==== Hierarchical Deterministic Wallets
 
 For privacy purposes, reusing addresses is very bad (see <<chapter_tx>>).
 That means we need to create lots of addresses.
@@ -24,13 +24,13 @@ What system can you use to ensure that the backups are current?
 
 To combat this problem, Armory, an early Bitcoin wallet, first implemented deterministic wallets.
 The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed.
-The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Heirarchical Deterministic wallet standard or BIP0032 was born.
+The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Hierarchical Deterministic wallet standard or BIP0032 was born.
 BIP0032 wallets have multiple layers and keys, each with a unique derivation path.
 The specifications and test vectors are defined in the BIP0032 standard, so implementing your own HD wallet on testnet is a great way to learn.
 
-Additionally, BIP0044 defines what each layer of the BIP0032 heirarchy can mean and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
+Additionally, BIP0044 defines what each layer of the BIP0032 hierarchy can mean and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
 Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better.
-While many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and use their own BIP0032 heirarchy (Electrum and Airbitz being two).
+While many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and use their own BIP0032 hierarchy (Electrum and Airbitz being two).
 
 ==== Mnemonic Seeds
 

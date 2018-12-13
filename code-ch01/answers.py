@@ -44,7 +44,7 @@ Solve these problems in F~57~ (assume all +'s here are +~f~ and -`s here -~f~)
 # tag::exercise3[]
 ==== Exercise 3
 
-Write the corresponding `__sub__` method which defines the subtraction of two `FieldElement`s.
+Write the corresponding `__sub__` method which defines the subtraction of two `FieldElement` objects.
 # end::exercise3[]
 """
 

@@ -21,7 +21,7 @@ Here are the main things that a node checks:
 (1) prevents double-spending.
 Any input that's already been spent cannot be spent again.
 
-(2) makes sure no new Bitcoins are created (except in a special transaction called the coinbase transaction.
+(2) makes sure no new Bitcoins are created (except in a special transaction called the Coinbase transaction.
 More on that in <<chapter_blocks>>).
 
 (3) makes sure that the combined Script is valid.
@@ -142,7 +142,7 @@ Lastly, we add a 4-byte hash type to the end.
 This is to specify what the signature is authorizing.
 The signature can authorize that this input has to go with all the other inputs and outputs (`SIGHASH_ALL`), go with a specific output (`SIGHASH_SINGLE`) or go with any output whatsoever (`SIGHASH_NONE`).
 The latter two have some theoretical use cases, but in practice, almost every transaction is signed with `SIGHASH_ALL`.
-There's also an orthagonal hash type called `SIGHASH_ANYONECANPAY` which can be combined with any of these three, which we won't get into here.
+There's also an orthogonal hash type called `SIGHASH_ANYONECANPAY` which can be combined with any of these three, which we won't get into here.
 For `SIGHASH_ALL`, the final transaction must have the exact outputs that were signed or the input signature is invalid.
 
 The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like this:

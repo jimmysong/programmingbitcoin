@@ -68,7 +68,7 @@ The fields for Version are meant to give enough information for two nodes to be 
 
 The first field is the network protocol version, which specifies the what messages may be communicated.
 The service field give information about what capabilities are available to connecting nodes.
-The timestamp field is 8 bytes (as opposed to 4 bytes in the block header) and is the unix timestamp in Little-Endian.
+The timestamp field is 8 bytes (as opposed to 4 bytes in the block header) and is the UNIX timestamp in Little-Endian.
 
 IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's `.onion` addresses to IPv6).
 If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP.

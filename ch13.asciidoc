@@ -51,9 +51,9 @@ However, with Payment Channels, there are dependent transactions created _before
 
 === Fixing malleability
 
-Transaction malleabilty is fixed by emptying the ScriptSig field and putting the data in another field that's not used for ID calculation.
+Transaction malleability is fixed by emptying the ScriptSig field and putting the data in another field that's not used for ID calculation.
 For p2wpkh, the signature and pubkey are the items from ScriptSig, so those get moved to the Witness field, which is not used for ID calculation.
-This way, the transaction ID stays stable as the malleabilty vector disappears.
+This way, the transaction ID stays stable as the malleability vector disappears.
 The Witness field and the whole Segwit serialization of a transaction is only sent to nodes that ask for it.
 In other words, old nodes that haven't upgraded to Segwit don't receive the Witness field and don't verify the pubkey and signature.
 
@@ -187,7 +187,7 @@ This makes the Script state look like this:
 .p2sh-p2wpkh Step 4
 image::p2sh-p2wpkh8.png[p2sh-p2wpkh Step 4]
 
-This should look familar as this is the state that p2wpkh starts with.
+This should look familiar as this is the state that p2wpkh starts with.
 After `OP_0` and the 20-byte hash we are left with this:
 
 .p2sh-p2wpkh Step 5

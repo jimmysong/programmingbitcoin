@@ -51,12 +51,12 @@ After we've established the Public Key Cryptography at the end of <<chapter_elli
 <<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters.
 <<chapter_p2sh>> establishes how p2sh works, which is a way to make more powerful smart contracts.
 
-<<chapter_blocks>> covers Blocks, which are groups of orderd Transactions.
+<<chapter_blocks>> covers Blocks, which are groups of ordered Transactions.
 <<chapter_networking>> covers network communication in Bitcoin.
 <<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data from and to nodes that do have the entire blockchain.
 
 <<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study.
-Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn..
+Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
 
 Chapters 1-12 have exercises that require you to build up the library from scratch.
 The answers are in the <<appendix>> and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
@@ -128,7 +128,7 @@ C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
 
-Run jupyter notebook:
+Run Jupyter notebook:
 
 [source,bash]
 ----
@@ -237,7 +237,7 @@ If you feel your use of code examples falls outside fair use or the permission g
 [role = "safarienabled"]
 [NOTE]
 ====
-pass:[<a href="http://oreilly.com/safari" class="orm:hideurl"><em class="hyperlink">Safari</em></a>] (formerly Safari Books Online) is a membership-based training and reference platform for enterprise, govenment, educators, and individuals.
+pass:[<a href="http://oreilly.com/safari" class="orm:hideurl"><em class="hyperlink">Safari</em></a>] (formerly Safari Books Online) is a membership-based training and reference platform for enterprise, government, educators, and individuals.
 ====
 
 Members have access to thousands of books, training videos, Leaning Paths, interactive tutorials, and curated playlists from over 250 publishers, including O’Reilly Media, Harvard Business Review, Prentice Hall Professional, Addison-Wesley Professional, Microsoft Press, Sams, Que, Peachpit Press, Adobe, Focal Press, Cisco Press, John Wiley & Sons, Syngress, Morgan Kaufmann, IBM Redbooks, Packt, Adobe Press, FT Press, Apress, Manning, New Riders, McGraw-Hill, Jones & Bartlett, and Course Technology, among others.
@@ -246,7 +246,7 @@ For more information, please visit pass:[<a href="http://oreilly.com/safari" cla
 
 === How to Contact Us
 
-Please address comments and questions concening this book to the publisher:
+Please address comments and questions concerning this book to the publisher:
 
 ++++
 <ul class="simplelist">

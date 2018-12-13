@@ -89,7 +89,7 @@ Unfortunately, the opcode consumes 1 more element than the m+n+2 elements that i
 `OP_CHECKMULTISIG` consumes m+n+3, so an extra element is added (`OP_0` in our example) in order to not cause a failure.
 The opcode does nothing with that extra element and that extra element can be anything.
 
-As a way to combat malleabilty, however, most nodes on the Bitcoin network will not relay the transaction unless that extra element is `OP_0`.
+As a way to combat malleability, however, most nodes on the Bitcoin network will not relay the transaction unless that extra element is `OP_0`.
 Note that if we had m+n+2 elements, that `OP_CHECKMULTISIG` will just fail as there are not enough elements to be consumed and the combined Script will fail causing the transaction to be invalid.
 ====
 
@@ -124,8 +124,8 @@ Nodes keep track of the UTXO set, so a big ScriptPubKey is more expensive to kee
 A large output is more expensive to keep in fast-access storage (like RAM), being 5-20x larger than a normal p2pkh output.
 
 3. Third problem: because the ScriptPubKey can be so much bigger, bare multisig can and has been abused.
-The entire pdf of the Satoshi's original whitepaper is encoded in this transaction in block 230009: `54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`.
-The creator of this transaction split up the whitepaper pdf into 64 byte chunks which were then made into invalid uncompressed public keys.
+The entire PDF of the Satoshi's original whitepaper is encoded in this transaction in block 230009: `54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`.
+The creator of this transaction split up the whitepaper PDF into 64 byte chunks which were then made into invalid uncompressed public keys.
 The whitepaper was encoded into 947 outputs as 1-of-3 Bare Multisig outputs.
 These outputs are not spendable but have to be indexed in the UTXO sets of full nodes.
 This is a tax every full node has to pay and is in that sense abusive.

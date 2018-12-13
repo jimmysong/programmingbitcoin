@@ -145,7 +145,7 @@ include::code-ch09/answers.py[tag=exercise5]
 Version in normal software refers to a particular set of features.
 For a block, this is similar, in the sense that the version field reflects what capabilities the software that produced the block can do.
 In the past this was used as a way to indicate a single feature that was ready to be deployed by the miner who mined the block.
-Version 2 meant that the software was ready for BIP0034, the coinbase transaction block height feature from earlier in this chapter.
+Version 2 meant that the software was ready for BIP0034, the Coinbase transaction block height feature from earlier in this chapter.
 Version 3 meant that the software was ready for BIP0066, the enforcement of strict DER encoding.
 Version 4 meant that the software was ready for BIP0065, which specified `OP_CHECKLOCKTIMEVERIFY`.
 
@@ -198,17 +198,17 @@ We will discuss how this is important for SPV (simplified payment verification) 
 
 === Timestamp
 
-The timestamp is a unix-style timestamp taking up 4 bytes.
+The timestamp is a UNIX-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
 This timestamp is used in two places.
 The first for validating timestamp-based locktimes on transactions included in the block and in calculating a new bits/target/difficulty every 2016 blocks.
-The locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's locktime directly, but the median-time-past (MTP) of the past 11 blocks.
+The locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's Locktime directly, but the median-time-past (MTP) of the past 11 blocks.
 
 [NOTE]
 .Will Bitcoin overflow on the timestamp?
 ====
 Bitcoin's timestamp field in the block header is 4 bytes or 32 bits.
-This means that once the unix timestamp exceeds 2^32^-1, there is no room to go further.
+This means that once the UNIX timestamp exceeds 2^32^-1, there is no room to go further.
 2^32^ seconds is roughly 136 years, which means that this field will have no more room in 2106 (136 years after 1970).
 
 Many people mistakenly believe that we only have until 68 years after 1970, or 2038, but that's only when the field is a signed integer (2^31^ seconds is 68 years), so we get the benefit of that extra bit, giving us until 2106.
@@ -303,7 +303,7 @@ The formula for calculating the target from these two numbers is:
 
 target = coefficient * 256^exponent-3^
 
-THis is how we calculate the target given the bits field in Python:
+This is how we calculate the target given the bits field in Python:
 
 [source,python]
 ----

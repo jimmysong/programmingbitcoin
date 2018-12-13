@@ -16,11 +16,11 @@ We're getting a little ahead of ourselves, though, so let's start with how Scrip
 
 If you are confused about what a "smart contract" is, don't worry.
 "Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language.
-In Bitcoin, Script is the smart contract langauge, or the programming language used to express the conditions under which bitcoins are spendable.
+In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which bitcoins are spendable.
 
 Bitcoin has the digital equivalent of a contract in Script.
 Script is an intentionally limited programming language in the sense that it avoids certain features.
-Specifically, Script ovids any mechanism for loops and is therefore not Turing complete.
+Specifically, Script avoids any mechanism for loops and is therefore not Turing complete.
 
 [NOTE]
 .Why Bitcoin isn't Turing Complete
@@ -34,7 +34,7 @@ If Script were Turing Complete, it would be possible for the loop to go on execu
 This would validating node to enter and never leave that loop.
 This would be an easy way to attack the network through what would be called a Denial of Service attack (DoS).
 A single Script that has an infinite loop could take down Bitcoin!
-This would be a large systematic vulnerabilty and protecting against this vulnerability is one of the major reasons why Turing-completeness is avoided.
+This would be a large systematic vulnerability and protecting against this vulnerability is one of the major reasons why Turing-completeness is avoided.
 Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas".
 An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
 
@@ -200,7 +200,7 @@ include::code-ch06/script.py[tag=source3]
 <1> If the instruction is an integer, we know that's an opcode.
 <2> If the byte is between 1 and 75 inclusive, we encode the length as a single byte
 <3> For any element with length from 76 to 255, we put `OP_PUSHDATA1` first, then encode the length as a single byte and finally, the element.
-<4> For anything from 256 to 520, we put `OP_PUSHDATA2` first, then encode the length as two bytes in little endian and finally, the element
+<4> For anything from 256 to 520, we put `OP_PUSHDATA2` first, then encode the length as two bytes in little Endian and finally, the element
 <5> Any element longer than 520 bytes cannot be serialized.
 <6> Script serialization starts with the length of the entire Script.
 
@@ -238,7 +238,7 @@ include::code-ch06/script.py[tag=source4]
 
 We will use this ability to combine Scripts for evaluation later in this chapter.
 
-=== Stardard Scripts
+=== Standard Scripts
 
 There are many types of standard Scripts in Bitcoin including the following:
 
@@ -386,7 +386,7 @@ Specifically, the stack after all the ScriptSig instructions are evaluated are s
 It may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte-strings like a DER signature or SEC pubkey.
 Under the hood, they're all bytes, but some are interpreted as numbers for certain opcodes.
 For example, 1 is stored on the stack as the `01` byte, 2 is stored as the `02` byte, 999 as the `e703` and so on.
-Any byte-string is interpreted as a little-endian number for arithmetic opcodes.
+Any byte-string is interpreted as a Little-Endian number for arithmetic opcodes.
 The integer 0 is *not* stored as the `00` byte, but as the empty byte-string.
 
 The code in `op.py` can clarify what's going on:
@@ -558,7 +558,7 @@ The combined Script will be:
 .Example Combined
 image::ex3.png[Example 1 Combination]
 
-Script eveluation will start this way:
+Script evaluation will start this way:
 
 .Example Start
 image::ex4.png[Example 1 Start]
@@ -598,13 +598,13 @@ Someone attempting to spend already spent coins would have to provide proof-of-w
 
 include::code-ch06/answers.py[tag=exercise3]
 
-==== Utilty of Scripts
+==== Utility of Scripts
 
 The previous exercise was a bit of a cheat as `OP_MUL` is no longer allowed on the Bitcoin network.
-Version 0.3.5 of Bitcoin disabled a lot of different opcodes as anything that had even a little bit of potential to create vulnerabilties on the network were disabled.
+Version 0.3.5 of Bitcoin disabled a lot of different opcodes as anything that had even a little bit of potential to create vulnerabilities on the network were disabled.
 
 This is just as well since most of the functionality in Script is actually not used much.
-From a software maintainence standpoint, this is not a great situation as the code has to be maintained despite its lack of usage.
+From a software maintenance standpoint, this is not a great situation as the code has to be maintained despite its lack of usage.
 Simplifying and getting rid of certain capabilities can be seen as a way to make Bitcoin more secure.
 
 This is in stark contrast to other projects which try to expand their smart contract languages, often increasing the attack surface along with new features.
