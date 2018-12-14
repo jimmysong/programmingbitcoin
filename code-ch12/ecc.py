@@ -383,7 +383,7 @@ class S256Point(Point):
         if self.x is None:
             return 'S256Point(infinity)'
         else:
-            return 'S256Point({},{})'.format(self.x, self.y)
+            return 'S256Point({}, {})'.format(self.x, self.y)
 
     def __rmul__(self, coefficient):
         coef = coefficient % N

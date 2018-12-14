@@ -1,3 +1,26 @@
+'''
+# tag::exercise1[]
+==== Exercise 1
+
+Determine what this network message is:
+
+`f9beb4d976657261636b000000000000000000005df6e0e2`
+# end::exercise1[]
+# tag::answer1[]
+>>> from network import NetworkEnvelope
+>>> from io import BytesIO
+>>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
+>>> stream = BytesIO(bytes.fromhex(message_hex))
+>>> envelope = NetworkEnvelope.parse(stream)
+>>> print(envelope.command)
+b'verack'
+>>> print(envelope.payload)
+b''
+
+# end::answer1[]
+'''
+
+
 from io import BytesIO
 from unittest import TestCase
 
@@ -136,30 +159,6 @@ def serialize(self):
     return result
 # end::answer6[]
 methods.append(serialize)
-
-
-class DocTest:
-    '''
-    # tag::exercise1[]
-    ==== Exercise 1
-
-    Determine what this network message is:
-
-    `f9beb4d976657261636b000000000000000000005df6e0e2`
-    # end::exercise1[]
-    # tag::answer1[]
-    >>> from network import NetworkEnvelope
-    >>> from io import BytesIO
-    >>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
-    >>> stream = BytesIO(bytes.fromhex(message_hex))
-    >>> envelope = NetworkEnvelope.parse(stream)
-    >>> print(envelope.command)
-    b'verack'
-    >>> print(envelope.payload)
-    b''
-
-    # end::answer1[]
-    '''
 
 
 class ChapterTest(TestCase):

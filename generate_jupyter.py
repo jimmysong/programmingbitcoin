@@ -2,12 +2,12 @@ import nbformat
 import re
 
 
-FIRST_CELL = """############## PLEASE RUN THIS CELL FIRST! ###################
+FIRST_CELL = '''############## PLEASE RUN THIS CELL FIRST! ###################
 
 # import everything and define a test runner function
 from importlib import reload
 from helper import run
-"""
+'''
 
 UNITTEST_TEMPLATE_1 = '''### Exercise {num}
 
@@ -41,34 +41,51 @@ for chapter in range(1, 13):
         examples = {}
         current = ''
         current_key = None
+        capture = False
         for line in f:
             if line.startswith('>>>') or line.startswith('...'):
-                current += line[4:]
+                if line.endswith('\\\n'):
+                    current += line[4:-2]
+                    capture = True
+                else:
+                    current += line[4:]
+            elif capture:
+                if line.endswith('\\\n'):
+                    current += line[:-2]
+                    capture = True
+                else:
+                    current += line
+                    capture = False
             elif line.startswith('# tag::example'):
                 index = line.rfind('[')
                 current_key = line[7:index]
             elif line.startswith('# end::example'):
                 examples[current_key] = current
                 current = ''
+                current_key = None
     with open('{}/answers.py'.format(path), 'r') as f:
         exercises = {}
         current = ''
         current_key = None
-        for line in f:
+        capture = False
+        for l in f:
+            line = l.lstrip(' ')
             if line.startswith('# tag::exercise'):
                 index = line.rfind('[')
                 current_key = line[7:index]
             elif line.startswith('# end::exercise'):
                 raw = current.strip()
                 raw = raw[raw.find('\n\n')+1:]
-                raw = raw.replace('$$', '`')
                 raw = re.sub(r'([a-zA-Z+-])~(.+?)~', r'\\\\(\1_{\2}\\\\)', raw)
                 raw = re.sub(r'([a-zA-Z0-9()\-+]+)\^(.+?)\^', r'\\\\(\1^{\2}\\\\)', raw)
                 exercises[current_key] = raw
                 current = ''
                 current_key = None
             elif current_key is not None:
-                current += line
+                if line.endswith('\\\n'):
+                    current += line[:-2]
+                else:
+                    current += line
     with open('{}/jupyter.txt'.format(path), 'r') as f:
         raw_cells = f.read().split('---\n')
     cells = notebook['cells']

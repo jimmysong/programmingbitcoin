@@ -1,3 +1,29 @@
+'''
+# tag::answer5[]
+>>> import math
+>>> total = 27
+>>> max_depth = math.ceil(math.log(total, 2))
+>>> merkle_tree = []
+>>> for depth in range(max_depth + 1): 
+...     num_items = math.ceil(total / 2**(max_depth - depth))
+...     level_hashes = [None] * num_items
+...     merkle_tree.append(level_hashes)
+>>> for level in merkle_tree:
+...     print(level)
+[None]
+[None, None]
+[None, None, None, None]
+[None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, N\
+one, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, N\
+one, None, None, None, None, None, None, None, None, None, None, None, None, N\
+one, None]
+
+# end::answer5[]
+'''
+
+
 import math
 
 from unittest import TestCase
@@ -139,33 +165,6 @@ def is_valid(self):
     merkle_tree.populate_tree(flag_bits, hashes)
     return merkle_tree.root()[::-1] == self.merkle_root
 # end::answer7[]
-
-
-class DocTest:
-    '''
-    # tag::answer5[]
-    >>> import math
-    >>> total = 27
-    >>> max_depth = math.ceil(math.log(total, 2))
-    >>> merkle_tree = []
-    >>> for depth in range(max_depth + 1): 
-    ...     num_items = math.ceil(total / 2**(max_depth - depth))
-    ...     level_hashes = [None] * num_items
-    ...     merkle_tree.append(level_hashes)
-    >>> for level in merkle_tree:
-    ...     print(level)
-    [None]
-    [None, None]
-    [None, None, None, None]
-    [None, None, None, None, None, None, None]
-    [None, None, None, None, None, None, None, None, None, None, None, None, N\
-one, None]
-    [None, None, None, None, None, None, None, None, None, None, None, None, N\
-one, None, None, None, None, None, None, None, None, None, None, None, None, N\
-one, None]
-
-    # end::answer5[]
-    '''
 
 
 class ChapterTest(TestCase):

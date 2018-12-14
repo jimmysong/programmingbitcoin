@@ -1,3 +1,51 @@
+'''
+# tag::exercise12[]
+==== Exercise 12
+
+Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
+
+Block 471744:
+
+```
+000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd88000000000000000000
+10c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb84559
+7e8b0118e43a81d3
+```
+
+Block 473759:
+
+```
+02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000
+b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e126425859
+7e8b0118e5f00474
+```
+# end::exercise12[]
+# tag::answer12[]
+>>> from block import Block
+>>> from helper import TWO_WEEKS
+>>> from helper import target_to_bits
+>>> block1_hex = '000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800\
+000000000000000010c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c54\
+48ddb845597e8b0118e43a81d3'
+>>> block2_hex = '02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc2600\
+0000000000000000b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707\
+e1264258597e8b0118e5f00474'
+>>> last_block = Block.parse(BytesIO(bytes.fromhex(block1_hex)))
+>>> first_block = Block.parse(BytesIO(bytes.fromhex(block2_hex)))
+>>> time_differential = last_block.timestamp - first_block.timestamp
+>>> if time_differential > TWO_WEEKS * 4:
+...     time_differential = TWO_WEEKS * 4
+>>> if time_differential < TWO_WEEKS // 4:
+...     time_differential = TWO_WEEKS // 4
+>>> new_target = last_block.target() * time_differential // TWO_WEEKS
+>>> new_bits = target_to_bits(new_target)
+>>> print(new_bits.hex())
+80df6217
+
+# end::answer12[]
+'''
+
+
 from io import BytesIO
 from unittest import TestCase
 
@@ -208,55 +256,6 @@ def calculate_new_bits(previous_bits, time_differential):
     new_target = bits_to_target(previous_bits) * time_differential // TWO_WEEKS
     return target_to_bits(new_target)
 # end::answer13[]
-
-
-class DocTest:
-    '''
-    # tag::exercise12[]
-    ==== Exercise 12
-
-    Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
-
-    Block 471744:
-
-    ```
-    000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd88000000000000000000
-    10c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb84559
-    7e8b0118e43a81d3
-    ```
-
-    Block 473759:
-
-    ```
-    02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000
-    b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e126425859
-    7e8b0118e5f00474
-    ```
-    # end::exercise12[]
-    # tag::answer12[]
-    >>> from block import Block
-    >>> from helper import TWO_WEEKS
-    >>> from helper import target_to_bits
-    >>> block1_hex = '000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800\
-000000000000000010c8aba8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c54\
-48ddb845597e8b0118e43a81d3'
-    >>> block2_hex = '02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc2600\
-0000000000000000b3f449fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707\
-e1264258597e8b0118e5f00474'
-    >>> last_block = Block.parse(BytesIO(bytes.fromhex(block1_hex)))
-    >>> first_block = Block.parse(BytesIO(bytes.fromhex(block2_hex)))
-    >>> time_differential = last_block.timestamp - first_block.timestamp
-    >>> if time_differential > TWO_WEEKS * 4:
-    ...     time_differential = TWO_WEEKS * 4
-    >>> if time_differential < TWO_WEEKS // 4:
-    ...     time_differential = TWO_WEEKS // 4
-    >>> new_target = last_block.target() * time_differential // TWO_WEEKS
-    >>> new_bits = target_to_bits(new_target)
-    >>> print(new_bits.hex())
-    80df6217
-
-    # end::answer12[]
-    '''
 
 
 class ChapterTest(TestCase):

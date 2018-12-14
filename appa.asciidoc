@@ -210,9 +210,7 @@ include::code-ch04/answers.py[tag=exercise3,indent=0]
 
 [source,python]
 ----
-class ECCTest(TestCase):
-...
-include::code-ch04/answers.py[tag=answer3,indent=4]
+include::code-ch04/answers.py[tag=answer3,indent=0]
 ----
 
 include::code-ch04/answers.py[tag=exercise4,indent=0]

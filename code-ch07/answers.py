@@ -1,3 +1,98 @@
+'''
+# tag::exercise4[]
+==== Exercise 4
+
+Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
+
+You can broadcast the transaction at https://testnet.blockchain.info/pushtx
+# end::exercise4[]
+# tag::answer4[]
+>>> from ecc import PrivateKey
+>>> from helper import decode_base58, SIGHASH_ALL
+>>> from script import p2pkh_script, Script
+>>> from tx import TxIn, TxOut, Tx
+>>> prev_tx = bytes.fromhex('75a1c4bc671f55f626dda1074c7725991e6f68b8fcefc\
+fca7b64405ca3b45f1c')
+>>> prev_index = 1
+>>> target_address = 'miKegze5FQNCnGw6PKyqUbYUeBa4x2hFeM'
+>>> target_amount = 0.01
+>>> change_address = 'mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2'
+>>> change_amount = 0.009
+>>> secret = 8675309
+>>> priv = PrivateKey(secret=secret)
+>>> tx_ins = []
+>>> tx_ins.append(TxIn(prev_tx, prev_index))
+>>> tx_outs = []
+>>> h160 = decode_base58(target_address)
+>>> script_pubkey = p2pkh_script(h160)
+>>> target_satoshis = int(target_amount*100000000)
+>>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
+>>> h160 = decode_base58(change_address)
+>>> script_pubkey = p2pkh_script(h160)
+>>> change_satoshis = int(change_amount*100000000)
+>>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
+>>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
+>>> print(tx_obj.sign_input(0, priv))
+True
+>>> print(tx_obj.serialize().hex())
+01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175\
+010000006b483045022100a08ebb92422b3599a2d2fcdaa11f8f807a66ccf33e7f4a9ff0a3c51f\
+1b1ec5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca53901\
+2103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff02\
+40420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d0000\
+0000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000
+
+# end::answer4[]
+# tag::exercise5[]
+==== Exercise 5
+
+Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
+
+You can broadcast the transaction at https://testnet.blockchain.info/pushtx
+# end::exercise5[]
+# tag::answer5[]
+>>> from ecc import PrivateKey
+>>> from helper import decode_base58, SIGHASH_ALL
+>>> from script import p2pkh_script, Script
+>>> from tx import TxIn, TxOut, Tx
+>>> prev_tx_1 = bytes.fromhex('11d05ce707c1120248370d1cbf5561d22c4f83aeba0\
+436792c82e0bd57fe2a2f')
+>>> prev_index_1 = 1
+>>> prev_tx_2 = bytes.fromhex('51f61f77bd061b9a0da60d4bedaaf1b1fad0c11e65f\
+dc744797ee22d20b03d15')
+>>> prev_index_2 = 1
+>>> target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
+>>> target_amount = 0.0429
+>>> secret = 8675309
+>>> priv = PrivateKey(secret=secret)
+>>> tx_ins = []
+>>> tx_ins.append(TxIn(prev_tx_1, prev_index_1))
+>>> tx_ins.append(TxIn(prev_tx_2, prev_index_2))
+>>> tx_outs = []
+>>> h160 = decode_base58(target_address)
+>>> script_pubkey = p2pkh_script(h160)
+>>> target_satoshis = int(target_amount*100000000)
+>>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
+>>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
+>>> print(tx_obj.sign_input(0, priv))
+True
+>>> print(tx_obj.sign_input(1, priv))
+True
+>>> print(tx_obj.serialize().hex())
+01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011\
+010000006a47304402204cc5fe11b2b025f8fc9f6073b5e3942883bbba266b71751068badeb8f1\
+1f0364022070178363f5dea4149581a4b9b9dbad91ec1fd990e3fa14f9de3ccb421fa5b2690121\
+03935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153d\
+b0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b48304502\
+2100b7a938d4679aa7271f0d32d83b61a85eb0180cf1261d44feaad23dfd9799dafb02205ff2f3\
+66ddd9555f7146861a8298b7636be8b292090a224c5dc84268480d8be1012103935581e52c354c\
+d2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d07541000000000019\
+76a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+
+# end::answer5[]
+'''
+
+
 from io import BytesIO
 from unittest import TestCase
 
@@ -81,102 +176,6 @@ def sign_input(self, input_index, private_key):
     self.tx_ins[input_index].script_sig = Script([sig, sec])
     return self.verify_input(input_index)
 # end::answer3[]
-
-
-class DocTest:
-    '''
-    # tag::exercise4[]
-    ==== Exercise 4
-
-    Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
-
-    You can broadcast the transaction at https://testnet.blockchain.info/pushtx
-    # end::exercise4[]
-    # tag::answer4[]
-    >>> from ecc import PrivateKey
-    >>> from helper import decode_base58, SIGHASH_ALL
-    >>> from script import p2pkh_script, Script
-    >>> from tx import TxIn, TxOut, Tx
-    >>> prev_tx = bytes.fromhex('75a1c4bc671f55f626dda1074c7725991e6f68b8fcefc\
-fca7b64405ca3b45f1c')
-    >>> prev_index = 1
-    >>> target_address = 'miKegze5FQNCnGw6PKyqUbYUeBa4x2hFeM'
-    >>> target_amount = 0.01
-    >>> change_address = 'mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2'
-    >>> change_amount = 0.009
-    >>> secret = 8675309
-    >>> priv = PrivateKey(secret=secret)
-    >>> tx_ins = []
-    >>> tx_ins.append(TxIn(prev_tx, prev_index))
-    >>> tx_outs = []
-    >>> h160 = decode_base58(target_address)
-    >>> script_pubkey = p2pkh_script(h160)
-    >>> target_satoshis = int(target_amount*100000000)
-    >>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
-    >>> h160 = decode_base58(change_address)
-    >>> script_pubkey = p2pkh_script(h160)
-    >>> change_satoshis = int(change_amount*100000000)
-    >>> tx_outs.append(TxOut(change_satoshis, script_pubkey))
-    >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-    >>> print(tx_obj.sign_input(0, priv))
-    True
-    >>> print(tx_obj.serialize().hex())
-    01000000011c5fb4a35c40647bcacfeffcb8686f1e9925774c07a1dd26f6551f67bcc4a175\
-010000006b483045022100a08ebb92422b3599a2d2fcdaa11f8f807a66ccf33e7f4a9ff0a3c51f\
-1b1ec5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca53901\
-2103935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff02\
-40420f00000000001976a9141ec51b3654c1f1d0f4929d11a1f702937eaf50c888ac9fbb0d0000\
-0000001976a914d52ad7ca9b3d096a38e752c2018e6fbc40cdf26f88ac00000000
-
-    # end::answer4[]
-    # tag::exercise5[]
-    ==== Exercise 5
-
-    Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
-
-    You can broadcast the transaction at https://testnet.blockchain.info/pushtx
-    # end::exercise5[]
-    # tag::answer5[]
-    >>> from ecc import PrivateKey
-    >>> from helper import decode_base58, SIGHASH_ALL
-    >>> from script import p2pkh_script, Script
-    >>> from tx import TxIn, TxOut, Tx
-    >>> prev_tx_1 = bytes.fromhex('11d05ce707c1120248370d1cbf5561d22c4f83aeba0\
-436792c82e0bd57fe2a2f')
-    >>> prev_index_1 = 1
-    >>> prev_tx_2 = bytes.fromhex('51f61f77bd061b9a0da60d4bedaaf1b1fad0c11e65f\
-dc744797ee22d20b03d15')
-    >>> prev_index_2 = 1
-    >>> target_address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
-    >>> target_amount = 0.0429
-    >>> secret = 8675309
-    >>> priv = PrivateKey(secret=secret)
-    >>> tx_ins = []
-    >>> tx_ins.append(TxIn(prev_tx_1, prev_index_1))
-    >>> tx_ins.append(TxIn(prev_tx_2, prev_index_2))
-    >>> tx_outs = []
-    >>> h160 = decode_base58(target_address)
-    >>> script_pubkey = p2pkh_script(h160)
-    >>> target_satoshis = int(target_amount*100000000)
-    >>> tx_outs.append(TxOut(target_satoshis, script_pubkey))
-    >>> tx_obj = Tx(1, tx_ins, tx_outs, 0, testnet=True)
-    >>> print(tx_obj.sign_input(0, priv))
-    True
-    >>> print(tx_obj.sign_input(1, priv))
-    True
-    >>> print(tx_obj.serialize().hex())
-    01000000022f2afe57bde0822c793604baae834f2cd26155bf1c0d37480212c107e75cd011\
-010000006a47304402204cc5fe11b2b025f8fc9f6073b5e3942883bbba266b71751068badeb8f1\
-1f0364022070178363f5dea4149581a4b9b9dbad91ec1fd990e3fa14f9de3ccb421fa5b2690121\
-03935581e52c354cd2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff153d\
-b0202de27e7944c7fd651ec1d0fab1f1aaed4b0da60d9a1b06bd771ff651010000006b48304502\
-2100b7a938d4679aa7271f0d32d83b61a85eb0180cf1261d44feaad23dfd9799dafb02205ff2f3\
-66ddd9555f7146861a8298b7636be8b292090a224c5dc84268480d8be1012103935581e52c354c\
-d2f484fe8ed83af7a3097005b2f9c60bff71d35bd795f54b67ffffffff01d07541000000000019\
-76a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
-
-    # end::answer5[]
-    '''
 
 
 class ChapterTest(TestCase):

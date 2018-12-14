@@ -51,9 +51,3 @@ ffff001d
 
 # end::example1[]
 '''
-1d
-28c4001d
-71be001d
-
-# end::example1[]
-'''
