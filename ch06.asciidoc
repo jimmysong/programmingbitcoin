@@ -133,7 +133,7 @@ OP_CODE_FUNCTIONS = {
 }
 ----
 
-include::code-ch06/answers.py[tag=exercise1]
+include::code-ch06/answers.py[tag=exercise1,indent=0]
 
 === Parsing the Script fields
 
@@ -399,7 +399,7 @@ include::code-ch06/op.py[tag=source3]
 
 Numbers being pushed to the stack are encoded into bytes and decoded from bytes when the numerical value is needed.
 
-include::code-ch06/answers.py[tag=exercise2]
+include::code-ch06/answers.py[tag=exercise2,indent=0]
 
 === Problems with p2pk
 
@@ -599,7 +599,7 @@ It is for this reason that most transactions have a signature requirement in the
 Once a UTXO has been spent, included in a block and secured by proof-of-work, the coins are locked to a different ScriptPubKey and no longer as easily spendable.
 Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (see <<chapter_blocks>>).
 
-include::code-ch06/answers.py[tag=exercise3]
+include::code-ch06/answers.py[tag=exercise3,indent=0]
 
 ==== Utility of Scripts
 
@@ -612,7 +612,7 @@ Simplifying and getting rid of certain capabilities can be seen as a way to make
 
 This is in stark contrast to other projects which try to expand their smart contract languages, often increasing the attack surface along with new features.
 
-include::code-ch06/answers.py[tag=exercise4]
+include::code-ch06/answers.py[tag=exercise4,indent=0]
 
 ==== Sha1 Piñata
 

@@ -96,7 +96,7 @@ In Bitcoin's case, the transaction version is generally 1, but there are cases w
 You may notice here that the actual value in hexadecimal is `01000000`, which doesn't look like 1.
 Interpreted as a Little-Endian integer, however, this number is actually 1 (recall the discussion from <<chapter_serialization>>).
 
-include::code-ch05/answers.py[tag=exercise1]
+include::code-ch05/answers.py[tag=exercise1,indent=0]
 
 === Inputs
 
@@ -242,7 +242,7 @@ include::code-ch05/examples.py[tag=example1]
 <1> Note that the `Script` class will be more thoroughly explored in <<chapter_script>>.
 For now, please trust that the `Script.parse` method will create the object that we need.
 
-include::code-ch05/answers.py[tag=exercise2]
+include::code-ch05/answers.py[tag=exercise2,indent=0]
 
 === Outputs
 
@@ -295,7 +295,7 @@ We can now start coding the `TxOut` class:
 include::code-ch05/tx.py[tag=source3]
 ----
 
-include::code-ch05/answers.py[tag=exercise3]
+include::code-ch05/answers.py[tag=exercise3,indent=0]
 
 === Locktime
 
@@ -318,9 +318,9 @@ The sender can spend the inputs prior to the Locktime transaction getting into t
 The uses before BIP0065 were limited.
 BIP0065 introduced `OP_CHECKLOCKTIMEVERIFY` which makes Locktime more useful by making an output unspendable until a certain Locktime.
 
-include::code-ch05/answers.py[tag=exercise4]
+include::code-ch05/answers.py[tag=exercise4,indent=0]
 
-include::code-ch05/answers.py[tag=exercise5]
+include::code-ch05/answers.py[tag=exercise5,indent=0]
 
 === Coding Transactions
 
@@ -407,7 +407,7 @@ include::code-ch05/tx.py[tag=source8]
 
 Now that we have the `amount` method in `TxIn` which lets us access how many Bitcoins are in each transaction input, we can calculate the fee for a transaction.
 
-include::code-ch05/answers.py[tag=exercise6]
+include::code-ch05/answers.py[tag=exercise6,indent=0]
 
 === Conclusion
 

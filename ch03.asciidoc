@@ -57,7 +57,7 @@ The graph is not symmetric over the x-axis as in the curve over reals, but about
 What's amazing is that we can use the same point addition equations with the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works.
 This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
 
-include::code-ch03/answers.py[tag=exercise1]
+include::code-ch03/answers.py[tag=exercise1,indent=0]
 
 === Coding Elliptic Curves over Finite Fields
 
@@ -149,9 +149,9 @@ Because we coded FieldElement in such a way as to define `__add__`, `__sub__`, `
 include::code-ch03/examples.py[tag=example3]
 ----
 
-include::code-ch03/answers.py[tag=exercise2]
+include::code-ch03/answers.py[tag=exercise2,indent=0]
 
-include::code-ch03/answers.py[tag=exercise3]
+include::code-ch03/answers.py[tag=exercise3,indent=0]
 
 === Scalar multiplication for Elliptic Curves
 
@@ -216,7 +216,7 @@ That is, there is no known formula that you can plug in to get the answer genera
 This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Point Division" problem instead of the Discrete Log problem.
 ****
 
-include::code-ch03/answers.py[tag=exercise4]
+include::code-ch03/answers.py[tag=exercise4,indent=0]
 
 === Scalar Multiplication Redux
 
@@ -322,7 +322,7 @@ image::associativity2.png[Case 2]
 
 Thus, aG+(bG+cG)=(aG+bG)+cG proving associativity.
 
-include::code-ch03/answers.py[tag=exercise5]
+include::code-ch03/answers.py[tag=exercise5,indent=0]
 
 === Coding Scalar Multiplication
 
@@ -726,7 +726,7 @@ include::code-ch03/examples.py[tag=example9]
 <4> uG+vP = (r,y).
 We need to check that the x-coordinate is r
 
-include::code-ch03/answers.py[tag=exercise6]
+include::code-ch03/answers.py[tag=exercise6,indent=0]
 
 ==== Programming Signature Verification
 
@@ -798,7 +798,7 @@ Please don't use this for a real secret.
 We can mod by `n` because we know this is a cyclical group of order `n`.
 <6> The public point needs to be known by the verifier
 
-include::code-ch03/answers.py[tag=exercise7]
+include::code-ch03/answers.py[tag=exercise7,indent=0]
 
 ==== Programming Message Signing
 

@@ -71,7 +71,7 @@ If the space of all possible items is 50, 10 items on average will make it throu
 .10-bit Bloom Filter with 2 elements
 image::bloomfilter2.png[Two Item Bloom Filter]
 
-include::code-ch12/answers.py[tag=exercise1]
+include::code-ch12/answers.py[tag=exercise1,indent=0]
 
 === Going a step further
 
@@ -147,9 +147,9 @@ We can start coding a `BloomFilter` class.
 include::code-ch12/bloomfilter.py[tag=source1]
 ----
 
-include::code-ch12/answers.py[tag=exercise2]
+include::code-ch12/answers.py[tag=exercise2,indent=0]
 
-include::code-ch12/answers.py[tag=exercise3]
+include::code-ch12/answers.py[tag=exercise3,indent=0]
 
 === Loading a Bloom Filter
 
@@ -166,7 +166,7 @@ image::filterload.png[filterload Command]
 The elements of a Bloom Filter are encoded into bytes. The bit field, hash function count and tweak are encoded in this message.
 The last field, matched item flag, is a way of asking the full node to add any matched transactions to the Bloom Filter.
 
-include::code-ch12/answers.py[tag=exercise4]
+include::code-ch12/answers.py[tag=exercise4,indent=0]
 
 === Getting Merkle Blocks
 
@@ -194,7 +194,7 @@ include::code-ch12/network.py[tag=source1]
 <1> Store the items we want.
 <2> We add items to the message using the `add_data` method.
 
-include::code-ch12/answers.py[tag=exercise5]
+include::code-ch12/answers.py[tag=exercise5,indent=0]
 
 === Getting Transactions of Interest
 
@@ -219,7 +219,7 @@ Most blocks will probably be complete misses.
 What we've done in the above is look at 2000 blocks after a particular block for UTXOs corresponding to a particular address.
 This is without the use of any block explorer, which preserves, to some degree, our privacy.
 
-include::code-ch12/answers.py[tag=exercise6]
+include::code-ch12/answers.py[tag=exercise6,indent=0]
 
 === Conclusion
 

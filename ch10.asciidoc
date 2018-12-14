@@ -50,11 +50,11 @@ The code to handle network messages requires us to create a new class:
 include::code-ch10/network.py[tag=source1]
 ----
 
-include::code-ch10/answers.py[tag=exercise1]
+include::code-ch10/answers.py[tag=exercise1,indent=0]
 
-include::code-ch10/answers.py[tag=exercise2]
+include::code-ch10/answers.py[tag=exercise2,indent=0]
 
-include::code-ch10/answers.py[tag=exercise3]
+include::code-ch10/answers.py[tag=exercise3,indent=0]
 
 === Parsing the payload
 
@@ -89,7 +89,7 @@ include::code-ch10/network.py[tag=source2]
 
 At this point, we need a way to serialize this message.
 
-include::code-ch10/answers.py[tag=exercise4]
+include::code-ch10/answers.py[tag=exercise4,indent=0]
 
 === Network handshake
 
@@ -183,7 +183,7 @@ We can connect with the defaults and everything will be just fine.
 <4> We expect to receive a Verack for our Version and the other node's Version.
 We don't know which order, though.
 
-include::code-ch10/answers.py[tag=exercise5]
+include::code-ch10/answers.py[tag=exercise5,indent=0]
 
 === Getting Block Headers
 
@@ -214,7 +214,7 @@ A more robust implementation would handle more than a single block group, but we
 <2> A starting block is needed, otherwise we can't create a proper message.
 <3> The ending block we assume to be null, or as many as the server will send to us if not defined.
 
-include::code-ch10/answers.py[tag=exercise6]
+include::code-ch10/answers.py[tag=exercise6,indent=0]
 
 === Headers response
 

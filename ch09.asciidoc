@@ -41,7 +41,7 @@ The transaction structure is no different than other transactions on the Bitcoin
 
 These three determine whether a transaction is a Coinbase transaction or not.
 
-include::code-ch09/answers.py[tag=exercise1]
+include::code-ch09/answers.py[tag=exercise1,indent=0]
 
 ==== ScriptSig
 
@@ -75,7 +75,7 @@ BIP0034 regulates the first element of the ScriptSig of Coinbase Transactions.
 This was due to a network problem where miners were using the _same_ Coinbase Transaction for different blocks.
 
 The Coinbase Transaction being the same byte-wise means that the transaction IDs are also the same since the hash256 of the transaction is deterministic.
-To prevent a transaction ID collision, the Gavin Andresen authored BIP0034 which is a soft-fork rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
+To prevent transaction ID duplication, Gavin Andresen authored BIP0034 which is a soft-fork rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
 
 The height is interpreted as a Little-Endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block).
 Thus a Coinbase Transaction cannot be byte-wise the same across different blocks since the block height will differ.
@@ -88,9 +88,9 @@ include::code-ch09/examples.py[tag=example2]
 
 A Coinbase Transaction reveals the Block it was in!
 Coinbase Transactions in different Blocks are required to have different ScriptSigs and thus different Transaction IDs.
-This rule continues to be needed as optimizations like ASICBoost allow the possibility of the same Coinbase Transaction IDs across multiple blocks.
+This rule continues to be needed as it otherwise allow the duplicate Coinbase Transaction IDs across multiple blocks.
 
-include::code-ch09/answers.py[tag=exercise2]
+include::code-ch09/answers.py[tag=exercise2,indent=0]
 
 === Headers vs Full Blocks
 
@@ -134,11 +134,11 @@ We can start coding a `Block` class based on what we already know:
 include::code-ch09/block.py[tag=source1]
 ----
 
-include::code-ch09/answers.py[tag=exercise3]
+include::code-ch09/answers.py[tag=exercise3,indent=0]
 
-include::code-ch09/answers.py[tag=exercise4]
+include::code-ch09/answers.py[tag=exercise4,indent=0]
 
-include::code-ch09/answers.py[tag=exercise5]
+include::code-ch09/answers.py[tag=exercise5,indent=0]
 
 === Version
 
@@ -155,16 +155,17 @@ To alleviate this, the developers came up with BIP9, which allows up to 29 diffe
 ==== BIP9
 
 The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be `001` to indicate that the miner is using BIP9.
-The first 3 bits have to be `001` as that forces older clients to interpret the version field as a number greater than 4, which was the last version number that was used pre-BIP9.
+The first 3 bits have to be `001` as that forces older clients to interpret the version field as a number greater than or equal to 4, which was the last version number that was used pre-BIP9.
 
 This means that in hexadecimal, the first character will always be 2 or 3.
 The other 29 bits can be assigned to different soft-fork features which miners can signal readiness for.
 For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another and so on.
 
 BIP9 requires that 95% of blocks signal readiness in a given 2016 block epoch (the period for a difficulty adjustment, more on that later in this chapter) before the soft fork feature gets activated on the network.
-Soft forks which used BIP9 as of this writing have been BIP68/BIP112/BIP113 (`OP_CHECKSEQUENCEVERIFY` and related changes), BIP141 (segwit) and BIP91 (reducing threshold for segwit).
-These BIPs used bits 0, 1 and 4 for signaling respectively.
-BIP91 was unusual in that it used an 80% threshold and used a smaller block period, so wasn't strictly using BIP9.
+Soft forks which used BIP9 as of this writing have been BIP68/BIP112/BIP113 (`OP_CHECKSEQUENCEVERIFY` and related changes) and BIP141 (segwit).
+These BIPs used bits 0 and 1 for signaling respectively.
+BIP91 used something like BIP9, but used an 80% threshold and used a smaller block period, so wasn't strictly using BIP9.
+Bit 4 was used to signal BIP91.
 
 Checking for these features is relatively straightforward:
 
@@ -178,11 +179,11 @@ The `0b001` is a way of writing a number in binary in Python.
 In our case, we right-shift by 4 bits first and then check that the rightmost bit is 1.
 <3> We shift 1 to the right because BIP141 was assigned to bit 1.
 
-include::code-ch09/answers.py[tag=exercise6]
+include::code-ch09/answers.py[tag=exercise6,indent=0]
 
-include::code-ch09/answers.py[tag=exercise7]
+include::code-ch09/answers.py[tag=exercise7,indent=0]
 
-include::code-ch09/answers.py[tag=exercise8]
+include::code-ch09/answers.py[tag=exercise8,indent=0]
 
 === Previous Block
 
@@ -330,7 +331,7 @@ We can see that the proof-of-work is lower by lining up the numbers in 64 hex ch
 
 `ID: 0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523`
 
-include::code-ch09/answers.py[tag=exercise9]
+include::code-ch09/answers.py[tag=exercise9,indent=0]
 
 ==== Difficulty
 
@@ -358,7 +359,7 @@ The mining difficulty in the above code is roughly 888 billion times more diffic
 
 Difficulty is often shown in block explorers and Bitcoin price charting services as it's a much more intuitive way to understand the effort required to create a new block.
 
-include::code-ch09/answers.py[tag=exercise10]
+include::code-ch09/answers.py[tag=exercise10,indent=0]
 
 ==== Checking that the Proof-of-Work is Sufficient
 
@@ -366,7 +367,7 @@ We already learned that proof-of-work can be calculated by computing the hash256
 If this number is lower than the target, we have a valid proof-of-work.
 If not, the block is not valid as it doesn't have proof-of-work.
 
-include::code-ch09/answers.py[tag=exercise11]
+include::code-ch09/answers.py[tag=exercise11,indent=0]
 
 === Difficulty Adjustment
 
@@ -420,9 +421,9 @@ Since target is always positive for us, we shift everything over by 1 byte if th
 
 If the block doesn't have the correct bits calculated using the difficulty adjustment formula, then we can safely reject that block.
 
-include::code-ch09/answers.py[tag=exercise12]
+include::code-ch09/answers.py[tag=exercise12,indent=0]
 
-include::code-ch09/answers.py[tag=exercise13]
+include::code-ch09/answers.py[tag=exercise13,indent=0]
 
 === Conclusion
 

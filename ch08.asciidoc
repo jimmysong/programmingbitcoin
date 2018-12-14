@@ -17,7 +17,7 @@ The bug has had to stay in the protocol as fixing it would require a hard fork.
 [NOTE]
 .Multiple Private Keys to a Single Aggregated Public Key
 ====
-It is possible to "split" a single private key into multiple private keys and use an interactive method to aggregate signatures, but this is not a common practice.
+It is possible to "split" a single private key into multiple private keys and use an interactive method to aggregate signatures without ever reconstructing the private key, but this is not a common practice.
 Schnorr signatures will make aggregating signatures easier and perhaps more common in the future.
 ====
 
@@ -106,7 +106,7 @@ include::code-ch08/op.py[tag=source1]
 <2> We take care of the off-by-one error by consuming the top element of the stack and not doing anything with the element.
 <3> This is the part that you will need to code for the next exercise.
 
-include::code-ch08/answers.py[tag=exercise1]
+include::code-ch08/answers.py[tag=exercise1,indent=0]
 
 === Problems with Bare Multisig
 
@@ -317,9 +317,9 @@ We can calculate the address using the `encode_base58_checksum` function from `h
 include::code-ch08/examples.py[tag=example1]
 ----
 
-include::code-ch08/answers.py[tag=exercise2]
+include::code-ch08/answers.py[tag=exercise2,indent=0]
 
-include::code-ch08/answers.py[tag=exercise3]
+include::code-ch08/answers.py[tag=exercise3,indent=0]
 
 ==== p2sh Signature Verification
 
@@ -384,9 +384,9 @@ include::code-ch08/examples.py[tag=example3]
 
 We've verified 1 of the 2 signatures that are required to unlock this p2sh multisig.
 
-include::code-ch08/answers.py[tag=exercise4]
+include::code-ch08/answers.py[tag=exercise4,indent=0]
 
-include::code-ch08/answers.py[tag=exercise5]
+include::code-ch08/answers.py[tag=exercise5,indent=0]
 
 === Conclusion
 

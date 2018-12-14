@@ -19,9 +19,9 @@ Here are the main things that a node checks:
 3. ScriptSig successfully unlocks the previous ScriptPubKey.
 
 (1) prevents double-spending.
-Any input that's already been spent cannot be spent again.
+Any input that's been spent (that is, included in the blockchain) cannot be spent again.
 
-(2) makes sure no new Bitcoins are created (except in a special transaction called the Coinbase transaction.
+(2) makes sure no new Bitcoins are created (except in a special type of transaction called Coinbase transactions.
 More on that in <<chapter_blocks>>).
 
 (3) makes sure that the combined Script is valid.
@@ -81,11 +81,11 @@ This is due to the fact that in C++, the amount field is a _signed_ integer and 
 That is, the value could be negative!
 
 The clever transaction passed all the checks including the one for not creating new bitcoins, but only because the output amounts overflowed past the maximum number.
-2^64^ is roughly 1.84 * 10^19^ satoshis, which is 184 billion Bitcoins.
+2^64^ is ~1.84 * 10^19^ satoshis, which is 184 billion Bitcoins.
 The fee was negative by enough that the C++ code was tricked into believing that the fee was actually positive by 0.1 BTC!
 
 The vulnerability is detailed in CVE-2010-5139 and was patched via soft-fork in Bitcoin Core 0.3.11.
-The transaction and the extra Bitcoins it created was invalidated retroactively by a block reorganization, which is another way of saying a new chain of blocks that's longer was mined to replace it.
+The transaction and the extra Bitcoins it created was invalidated retroactively by a block reorganization, which is another way of saying that the block including the value overflow transaction and all the blocks built on top of it were replaced.
 ====
 
 === Checking the Signature
@@ -177,7 +177,7 @@ The signature hashing algorithm is inefficient and wasteful and is called the Qu
 The Quadratic Hashing problem states that calculating the signature hashes, or `z`'s increases quadratically with the number of inputs in a transaction.
 Specifically, the number of hash256 operations for calculating the `z` will increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation as the entire signature hash will need to be calculated anew for each input.
 
-This was particularly obvious with the biggest transaction ever mined:
+This was particularly obvious with the biggest transaction mined to date:
 
 `bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2b4e3e08`
 
@@ -186,9 +186,9 @@ This transaction had 5569 inputs and 1 output and took many miners over a minute
 Segwit (<<chapter_segwit>>) fixes this with a different way of calculating the signature hash, which is specified in BIP0143.
 ====
 
-include::code-ch07/answers.py[tag=exercise1]
+include::code-ch07/answers.py[tag=exercise1,indent=0]
 
-include::code-ch07/answers.py[tag=exercise2]
+include::code-ch07/answers.py[tag=exercise2,indent=0]
 
 === Verifying the entire transaction
 
@@ -203,7 +203,7 @@ include::code-ch07/tx.py[tag=source2]
 <1> We make sure that we are not creating money.
 <2> We make sure that each input has a correct ScriptSig.
 
-Note that a full node would verify more things like checking for double-spends and checking some other consensus rules not discussed in this chapter (max sigops, size of transaction, etc), but this is good enough for our library.
+Note that a full node would verify more things like checking for double-spends and checking some other consensus rules not discussed in this chapter (max sigops, size of ScriptSig, etc), but this is good enough for our library.
 
 === Creating transactions
 
@@ -343,7 +343,7 @@ Multiple inputs would require us to sign each input with the right private key.
 <3> The ScriptSig of a p2pkh from <<chapter_script>> is exactly two elements: signature and SEC format public key.
 <4> We only have that one input that we need to sign, but if there were more, this process of creating the ScriptSig would need to be done for each input.
 
-include::code-ch07/answers.py[tag=exercise3]
+include::code-ch07/answers.py[tag=exercise3,indent=0]
 
 ==== Creating your own transactions on testnet
 
@@ -367,9 +367,9 @@ Enter your address from above into these faucets to get some testnet coins.
 After receiving some coins, spend them using this library.
 This is a big accomplishment for a budding Bitcoin developer, so please take some time to complete this exercise.
 
-include::code-ch07/answers.py[tag=exercise4]
+include::code-ch07/answers.py[tag=exercise4,indent=0]
 
-include::code-ch07/answers.py[tag=exercise5]
+include::code-ch07/answers.py[tag=exercise5,indent=0]
 
 === Conclusion
 

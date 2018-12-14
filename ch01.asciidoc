@@ -139,7 +139,7 @@ Once you've set up Jupyter Notebook (see Preface), you can navigate to `code-ch0
 For the next exercise, you'll want to open up `ecc.py` by clicking the link in the Exercise 1 box.
 If you get stuck, please remember that the answers to every exercise are in the Appendix.
 
-include::code-ch01/answers.py[tag=exercise1]
+include::code-ch01/answers.py[tag=exercise1,indent=0]
 
 === Modulo Arithmetic
 
@@ -307,7 +307,7 @@ In F~19~:
 
 and so on.
 
-include::code-ch01/answers.py[tag=exercise2]
+include::code-ch01/answers.py[tag=exercise2,indent=0]
 
 ==== Coding Addition and Subtraction in Python
 
@@ -335,7 +335,7 @@ We pass the two initializing arguments, `num` and `self.prime` for the `__init__
 Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily inheritable.
 We will be subclassing `FieldElement` later, so making the method inheritable is important here.
 
-include::code-ch01/answers.py[tag=exercise3]
+include::code-ch01/answers.py[tag=exercise3,indent=0]
 
 === Finite Field Multiplication and Exponentiation
 
@@ -379,9 +379,9 @@ Exponentiation again gives us counter-intuitive results.
 We don't normally think 7^3^=1 or 9^12^=7.
 Again, Finite Fields have to be defined so that the operations *always* result in a number within the field.
 
-include::code-ch01/answers.py[tag=exercise4]
+include::code-ch01/answers.py[tag=exercise4,indent=0]
 
-include::code-ch01/answers.py[tag=exercise5]
+include::code-ch01/answers.py[tag=exercise5,indent=0]
 
 [NOTE]
 ====
@@ -404,7 +404,7 @@ include::code-ch01/examples.py[tag=example5]
 
 As we did with addition and subtraction above, the next exercise is to make multiplication work for our class by defining the `__mul__` method.
 
-include::code-ch01/answers.py[tag=exercise6]
+include::code-ch01/answers.py[tag=exercise6,indent=0]
 
 ==== Coding Exponentiation in Python
 
@@ -437,7 +437,7 @@ In fact, if it were, the exponents wouldn't display the intuitive behavior we wo
 
 Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
 
-include::code-ch01/answers.py[tag=exercise7]
+include::code-ch01/answers.py[tag=exercise7,indent=0]
 
 === Finite Field Division 
 
@@ -545,9 +545,9 @@ The `pow` function, however, has an optional third argument which makes our calc
 Specifically, `pow` will modulo by the third argument.
 Thus, `pow(7,17,19)` will give the same result as `7**17%19` but do so faster because the modulo function is done after each round of multiplication.
 
-include::code-ch01/answers.py[tag=exercise8]
+include::code-ch01/answers.py[tag=exercise8,indent=0]
 
-include::code-ch01/answers.py[tag=exercise9]
+include::code-ch01/answers.py[tag=exercise9,indent=0]
 
 === Redefining Exponentiation
 

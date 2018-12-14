@@ -70,7 +70,7 @@ class S256Point(Point):
 <1> In Python 3, you can convert a number to `bytes` using the `to_bytes` method.
 The first argument is how many bytes it should take up and the second argument is the endianness (see _Big and Little Endian_).
 
-include::code-ch04/answers.py[tag=exercise1]
+include::code-ch04/answers.py[tag=exercise1,indent=0]
 
 === Compressed SEC Format
 
@@ -193,7 +193,7 @@ include::code-ch04/ecc.py[tag=source3]
 <3> We take the square-root of the right side of the Elliptic Curve equation to get the `y`.
 <4> Determine evenness and return the correct point.
 
-include::code-ch04/answers.py[tag=exercise2]
+include::code-ch04/answers.py[tag=exercise2,indent=0]
 
 === DER Signatures
 
@@ -244,7 +244,7 @@ include::code-ch04/ecc.py[tag=source4]
 
 Overall, this is an inefficient way to encode `r` and `s` as there are at least 4 bytes that aren't strictly necessary.
 
-include::code-ch04/answers.py[tag=exercise3]
+include::code-ch04/answers.py[tag=exercise3,indent=0]
 
 === Base58
 
@@ -310,7 +310,7 @@ Bech32 uses a 32-character alphabet that's just numbers and lower case letters e
 These are thus far only used for Segwit (<<chapter_segwit>>).
 ====
 
-include::code-ch04/answers.py[tag=exercise4]
+include::code-ch04/answers.py[tag=exercise4,indent=0]
 
 === Address Format
 
@@ -361,7 +361,7 @@ class S256Point:
 include::code-ch04/ecc.py[tag=source5]
 ----
 
-include::code-ch04/answers.py[tag=exercise5]
+include::code-ch04/answers.py[tag=exercise5,indent=0]
 
 === WIF Format
 
@@ -391,7 +391,7 @@ class PrivateKey
 include::code-ch04/ecc.py[tag=source6]
 ----
 
-include::code-ch04/answers.py[tag=exercise6]
+include::code-ch04/answers.py[tag=exercise6,indent=0]
 
 === Big and Little Endian Redux
 
@@ -402,11 +402,11 @@ From <<chapter_tx_parsing>> onward, we will use Little-Endian encoding a lot mor
 For this reason, we turn to the next two exercises.
 The last exercise of this section is to create a testnet address for yourself.
 
-include::code-ch04/answers.py[tag=exercise7]
+include::code-ch04/answers.py[tag=exercise7,indent=0]
 
-include::code-ch04/answers.py[tag=exercise8]
+include::code-ch04/answers.py[tag=exercise8,indent=0]
 
-include::code-ch04/answers.py[tag=exercise9]
+include::code-ch04/answers.py[tag=exercise9,indent=0]
 
 Go to a testnet faucet (https://faucet.programmingbitcoin.com) and send some testnet coins to that address (it should start with `m` or `n` or else something is wrong).
 If you succeeded, congrats!
