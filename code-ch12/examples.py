@@ -1,4 +1,4 @@
-"""
+'''
 # tag::example1[]
 >>> from helper import hash256
 >>> bit_field_size = 10  # <1>
@@ -57,7 +57,8 @@
 >>> from bloomfilter import BloomFilter
 >>> from helper import decode_base58
 >>> from merkleblock import MerkleBlock
->>> from network import FILTERED_BLOCK_DATA_TYPE, GetHeadersMessage, GetDataMessage, HeadersMessage, SimpleNode
+>>> from network import FILTERED_BLOCK_DATA_TYPE, GetHeadersMessage, GetDataMe\
+ssage, HeadersMessage, SimpleNode
 >>> from tx import Tx
 >>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
@@ -92,4 +93,4 @@
 found: e3930e1e566ca9b75d53b0eb9acb7607f547e1182d1d22bd4b661cfe18dcddf1:0
 
 # end::example5[]
-"""
+'''

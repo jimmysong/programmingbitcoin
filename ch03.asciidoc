@@ -400,9 +400,17 @@ The parameters for secp256k1 are these:
 
 * `a = 0`, `b = 7`, making the equation y^2^=x^3^+7
 * p = 2^256^-2^32^-977
-* G~x~ = `0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798`
-* G~y~ = `0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8`
-* n = `0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141`
+* G~x~ =
+
+`0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798`
+
+* G~y~ =
+
+`0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8`
+
+* n =
+
+`0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141`
 
 G~x~ refers to the x-coordinate of the point G and G~y~ the y-coordinate.
 The numbers starting with `0x` indicate a hexadecimal number.

@@ -355,7 +355,7 @@ class ECCTest(TestCase):
 A = 0
 B = 7
 P = 2**256 - 2**32 - 977
-N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
+N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
 
 class S256Field(FieldElement):

@@ -57,17 +57,17 @@ class Script:
             self.instructions = instructions
 
     def __repr__(self):
-        result = ''
+        result = []
         for instruction in self.instructions:
             if type(instruction) == int:
                 if OP_CODE_NAMES.get(instruction):
                     name = OP_CODE_NAMES.get(instruction)
                 else:
                     name = 'OP_[{}]'.format(instruction)
-                result += '{} '.format(name)
+                result.append(name)
             else:
-                result += '{} '.format(instruction.hex())
-        return result
+                result.append(instruction.hex())
+        return ' '.join(result)
 
     def __add__(self, other):
         return Script(self.instructions + other.instructions)

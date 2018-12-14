@@ -1,8 +1,10 @@
-"""
+'''
 # tag::example1[]
 >>> from helper import hash256
->>> hash0 = bytes.fromhex('c117ea8ec828342f4dfb0ad6bd140e03a50720ece40169ee38bdc15d9eb64cf5')
->>> hash1 = bytes.fromhex('c131474164b412e3406696da1ee20ab0fc9bf41c8f05fa8ceea7a08d672d7cc5')
+>>> hash0 = bytes.fromhex('c117ea8ec828342f4dfb0ad6bd140e03a50720ece40169ee38b\
+dc15d9eb64cf5')
+>>> hash1 = bytes.fromhex('c131474164b412e3406696da1ee20ab0fc9bf41c8f05fa8ceea\
+7a08d672d7cc5')
 >>> parent = hash256(hash0 + hash1)
 >>> print(parent.hex())
 8b30c5ba100f6f2e5ad1e2a742e5020491240f8eb514fe97c713c31718ad7ecd
@@ -87,7 +89,8 @@ acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
 [None, None]
 [None, None, None, None]
 [None, None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None,\
+ None, None, None]
 
 # end::example5[]
 # tag::example6[]
@@ -121,8 +124,11 @@ acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
 *597c4baf.*
 6382df3f..., 87cf8fa3...
 3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac...
-272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3...
-9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc...
+272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., \
+d40d268b..., 8636b7a3...
+9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., \
+ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., \
+b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc...
 
 # end::example6[]
 # tag::example7[]
@@ -165,8 +171,11 @@ acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
 597c4baf...
 6382df3f..., 87cf8fa3...
 3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac...
-272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3...
-9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc...
+272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., \
+d40d268b..., 8636b7a3...
+9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., \
+ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., \
+b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc...
 
 # end::example7[]
 # tag::example8[]
@@ -215,8 +224,11 @@ acbcab8bcc1af95d8d563b77d24c3d19b18f1486383d75a5085c4e86c86beed6
 597c4baf..., 6f8a8190...
 6382df3f..., 87cf8fa3..., 5647f416...
 3ba6c080..., 8e894862..., 7ab01bb6..., 3df760ac..., 28e93b98...
-272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., d40d268b..., 8636b7a3..., ce26d40b...
-9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc..., 38faf8c8...
+272945ec..., 9a38d037..., 4a64abd9..., ec7c95e1..., 3b67006c..., 850683df..., \
+d40d268b..., 8636b7a3..., ce26d40b...
+9745f717..., 5573c8ed..., 82a02ecb..., 507ccae5..., a7a4aec2..., bb626766..., \
+ea6d7ac1..., 45774386..., 76880292..., b1ae7f15..., 9b74f89f..., b3a92b5b..., \
+b5c0b915..., c9d52c5c..., c555bc5f..., f9dbfafc..., 38faf8c8...
 
 # end::example8[]
-"""
+'''

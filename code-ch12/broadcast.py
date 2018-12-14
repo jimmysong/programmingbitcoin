@@ -25,6 +25,7 @@ from tx import Tx, TxIn, TxOut, TxFetcher
 
 
 def spend():
+    # tag::answer6[]
     last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
 
     secret = little_endian_to_int(hash256(b''))
@@ -70,9 +71,9 @@ def spend():
         # check that this block's prev_block is the last block
         if last_block is not None and b.prev_block != last_block:
             raise RuntimeError('chain broken')
-        # add a new item to the get_data_message
+        # add a new item to the getdata message
         # should be FILTERED_BLOCK_DATA_TYPE and block hash
-        get_data_message.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
+        getdata.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
         # set the last block to the current hash
         last_block = b.hash()
     # send the getdata message
@@ -129,6 +130,7 @@ def spend():
     # if the received tx has the same id as our tx, we are done!
     if received_tx.id() == tx_obj.id():
         print('success!')
+    # end::answer6[]
 
 
 if __name__ == '__main__':

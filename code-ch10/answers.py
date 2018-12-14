@@ -23,32 +23,13 @@ from network import (
 
 methods = []
 
-"""
-# tag::exercise1[]
-==== Exercise 1
-
-Determine what this network message is:
-
-`f9beb4d976657261636b000000000000000000005df6e0e2`
-# end::exercise1[]
-# tag::answer1[]
->>> from network import NetworkEnvelope
->>> from io import BytesIO
->>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
->>> stream = BytesIO(bytes.fromhex(message_hex))
->>> envelope = NetworkEnvelope.parse(stream)
->>> print(envelope.command)
-b'verack'
->>> print(envelope.payload)
-b''
-
-# end::answer1[]
+'''
 # tag::exercise2[]
 ==== Exercise 2
 
 Write the `parse` method for `NetworkEnvelope`.
 # end::exercise2[]
-"""
+'''
 
 # tag::answer2[]
 @classmethod
@@ -73,13 +54,13 @@ def parse(cls, s, testnet=False):
     return cls(command, payload, testnet=testnet)
 # end::answer2[]
 
-"""
+'''
 # tag::exercise3[]
 ==== Exercise 3
 
 Write the `serialize` method for `NetworkEnvelope`.
 # end::exercise3[]
-"""
+'''
 
 # tag::answer3[]
 def serialize(self):
@@ -92,13 +73,13 @@ def serialize(self):
 # end::answer3[]
 methods.append(serialize)
 
-"""
+'''
 # tag::exercise4[]
 ==== Exercise 4
 
 Write the `serialize` method for `VersionMessage`.
 # end::exercise4[]
-"""
+'''
 
 # tag::answer4[]
 def serialize(self):
@@ -123,13 +104,13 @@ def serialize(self):
 # end::answer4[]
 methods.append(serialize)
 
-"""
+'''
 # tag::exercise5[]
 ==== Exercise 5
 
 Write the `handshake` method for `SimpleNode`
 # end::exercise5[]
-"""
+'''
 
 # tag::answer5[]
 def handshake(self):
@@ -138,13 +119,13 @@ def handshake(self):
     self.wait_for(VerAckMessage)
 # end::answer5[]
 
-"""
+'''
 # tag::exercise6[]
 ==== Exercise 6
 
 Write the `serialize` method for `GetHeadersMessage`.
 # end::exercise6[]
-"""
+'''
 
 # tag::answer6[]
 def serialize(self):
@@ -157,7 +138,31 @@ def serialize(self):
 methods.append(serialize)
 
 
-class Chapter10Test(TestCase):
+class DocTest:
+    '''
+    # tag::exercise1[]
+    ==== Exercise 1
+
+    Determine what this network message is:
+
+    `f9beb4d976657261636b000000000000000000005df6e0e2`
+    # end::exercise1[]
+    # tag::answer1[]
+    >>> from network import NetworkEnvelope
+    >>> from io import BytesIO
+    >>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
+    >>> stream = BytesIO(bytes.fromhex(message_hex))
+    >>> envelope = NetworkEnvelope.parse(stream)
+    >>> print(envelope.command)
+    b'verack'
+    >>> print(envelope.payload)
+    b''
+
+    # end::answer1[]
+    '''
+
+
+class ChapterTest(TestCase):
 
     def test_apply(self):
         NetworkEnvelope.parse = parse

@@ -1,4 +1,4 @@
-"""
+'''
 # tag::example1[]
 >>> from network import SimpleNode, GetHeadersMessage, HeadersMessage
 >>> from block import GENESIS_BLOCK_HASH
@@ -19,7 +19,7 @@
 ...         if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_block_hash:  # <2>
 ...             raise RuntimeError('discontinuous block at {}'.format(count))
 ...         if expected_bits and b.bits != expected_bits:  # <3>
-...             raise RuntimeError('bad bits at block {} {} vs {}'.format(count, b.bits.hex(), expected_bits.hex()))
+...             raise RuntimeError('bad bits at block {}'.format(count))
 ...         if first_epoch_block and count % 2016 == 2015:  # <4>
 ...             expected_bits = calculate_new_bits(
 ...                 expected_bits, b.timestamp - first_epoch_block.timestamp)
@@ -50,4 +50,10 @@ ffff001d
 71be001d
 
 # end::example1[]
-"""
+'''
+1d
+28c4001d
+71be001d
+
+# end::example1[]
+'''

@@ -59,7 +59,7 @@ After we've established the Public Key Cryptography at the end of <<chapter_elli
 Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
 
 Chapters 1-12 have exercises that require you to build up the library from scratch.
-The answers are in the <<appendix>> and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
+The answers are in the Appendix and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
 You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
 The last exercise in <<chapter_bloom_filters>> is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network.
@@ -74,15 +74,25 @@ We will be looking at a lot of code and diagrams throughout.
 In order to get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
 Here are the instructions for setting everything up.
 
-Install python 3.5 or above on your machine:
+Install Python 3.5 or above on your machine:
 
-* Windows: `https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe`
-* Mac OS X: `https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg`
+* Windows:
+
+`https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe`
+
+* Mac OS X:
+
+`https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg`
+
 * Linux: see your distro docs (many Linux distributions like Ubuntu come with Python 3.5+ pre-installed)
 
 Install pip:
 
-Download this script `https://bootstrap.pypa.io/get-pip.py` and run it using python3:
+Download this script:
+
+`https://bootstrap.pypa.io/get-pip.py`
+
+Run this script using Python 3:
 
 [source,bash]
 ----
@@ -137,7 +147,6 @@ Run Jupyter notebook:
 [I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
 [I 11:13:23.061 NotebookApp] http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 [I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-[W 11:13:23.065 NotebookApp] No web browser found: could not locate runnable browser.
 [C 11:13:23.065 NotebookApp]
 
     Copy/paste this URL into your browser when you connect for the first time,
@@ -145,12 +154,12 @@ Run Jupyter notebook:
         http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 ----
 
-You should have a browser open up automatically to something that looks like this:
+You should have a browser open up automatically:
 
 .Jupyter
 image::jupyter1.png[Jupyter]
 
-You can navigate to various directories and if you wanted to do the exercises from <<chapter_finite_fields>>, you would need to go navigate to the code from <<chapter_finite_fields>> in the `code-ch01` directory:
+You can navigate to chapter directories. To do the exercises from <<chapter_finite_fields>>, you would navigate to `code-ch01`:
 
 .Jupyter Directory View
 image::jupyter2.png[Chapter 1 Directory]
@@ -176,7 +185,7 @@ You can edit the file here and save in order to make the test pass.
 
 === Answers
 
-All the answers to the various exercises in this book are in the <<appendix>> at the end.
+All the answers to the various exercises in this book are in the Appendix.
 They are also available in the `code-chxx/answers.py` file where xx is the chapter that you're on.
 
 === Conventions Used in This Book
