@@ -60,7 +60,9 @@ for chapter in range(1, 13):
                 index = line.rfind('[')
                 current_key = line[7:index]
             elif line.startswith('# end::example'):
-                examples[current_key] = current
+                raw = current
+                raw = re.sub(r'  \# \<[0-9]+\>', r'', raw)
+                examples[current_key] = raw
                 current = ''
                 current_key = None
     with open('{}/answers.py'.format(path), 'r') as f:

@@ -73,7 +73,8 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 >>> )
 >>> from script import p2pkh_script, Script
 >>> from tx import Tx, TxIn, TxOut, TxFetcher
->>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
+>>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55\
+ea912e19'
 >>> secret = little_endian_to_int(hash256(b''))
 >>> private_key = PrivateKey(secret=secret)
 >>> addr = private_key.point.address(testnet=True)
@@ -82,7 +83,8 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 >>> target_h160 = decode_base58(target_address)
 >>> target_script = p2pkh_script(target_h160)
 >>> fee = 5000  # fee in satoshis
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=True)
+>>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=\
+True)
 >>> bf = BloomFilter(30, 5, 90210)
 >>> bf.add(h160)
 >>> node.handshake()
@@ -120,11 +122,11 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 >>> tx_obj = Tx(1, [tx_in], [tx_out], 0, testnet=True)
 >>> tx_obj.sign_input(0, private_key)
 >>> print(tx_obj.serialize().hex())
-010000000194e631abb9e1079ec72a1616a3aa0111c614e65b96a6a4420e2cc6af9e6cc96e\
-000000006a47304402203cc8c56abe1c0dd043afa9eb125dafbebdde2dd4cd7abf0fb1aae0667a\
-22006e02203c95b74d0f0735bbf1b261d36e077515b6939fc088b9d7c1b7030a5e494596330121\
-021cdd761c7eb1c90c0af0a5963e94bf0203176b4662778d32bd6d7ab5d8628b32ffffffff01f8\
-829800000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+010000000194e631abb9e1079ec72a1616a3aa0111c614e65b96a6a4420e2cc6af9e6cc96e0000\
+00006a47304402203cc8c56abe1c0dd043afa9eb125dafbebdde2dd4cd7abf0fb1aae0667a2200\
+6e02203c95b74d0f0735bbf1b261d36e077515b6939fc088b9d7c1b7030a5e494596330121021c\
+dd761c7eb1c90c0af0a5963e94bf0203176b4662778d32bd6d7ab5d8628b32ffffffff01f88298\
+00000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
 >>> node.send(tx_obj)
 >>> time.sleep(1)
 >>> getdata = GetDataMessage()

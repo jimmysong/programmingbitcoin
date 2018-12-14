@@ -164,7 +164,6 @@ Now that we have our `z`, we can take the public key in SEC format and the signa
 ----
 include::code-ch07/examples.py[tag=example4]
 ----
-<1> z is from the code above
 
 We can code this transaction validation process into a method for `Tx`.
 Thankfully, the Script engine can already handle signature verification (see <<chapter_script>>), so our task here is to glue everything together.

@@ -113,7 +113,7 @@ def __add__(self, other):
         x = s**2 - 2 * self.x
         y = s * (self.x - x) - self.y
         return self.__class__(x, y, self.a, self.b)
-    # tag::answer7[]
+    # end::answer7[]
 
 
 class ChapterTest(TestCase):

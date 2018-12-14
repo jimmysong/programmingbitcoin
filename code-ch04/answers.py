@@ -12,16 +12,16 @@ Find the uncompressed SEC format for the Public Key where the Private Key secret
 >>> from ecc import PrivateKey
 >>> priv = PrivateKey(5000)
 >>> print(priv.point.sec(compressed=False).hex())
-04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc728\
-90a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10
+04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4\
+f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10
 >>> priv = PrivateKey(2018**5)
 >>> print(priv.point.sec(compressed=False).hex())
-04027f3da1918455e03c46f659266a1bb5204e959db7364d2f473bdf8f0a13cc9dff87647f\
-d023c13b4a4994f17691895806e1b40b57f4fd22581a4f46851f3b06
+04027f3da1918455e03c46f659266a1bb5204e959db7364d2f473bdf8f0a13cc9dff87647fd023\
+c13b4a4994f17691895806e1b40b57f4fd22581a4f46851f3b06
 >>> priv = PrivateKey(0xdeadbeef12345)
 >>> print(priv.point.sec(compressed=False).hex())
-04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa76\
-2fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121
+04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa762fd5\
+9961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121
 
 # end::answer1[]
 # tag::exercise2[]
@@ -65,8 +65,8 @@ Find the DER format for a signature whose `r` and `s` values are:
 >>> s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 >>> sig = Signature(r,s)
 >>> print(sig.der().hex())
-3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c602\
-21008ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6022100\
+8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
 
 # end::answer3[]
 # tag::exercise4[]

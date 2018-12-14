@@ -15,8 +15,9 @@
 ...     headers = node.wait_for(HeadersMessage)
 ...     for b in headers.blocks:
 ...         if not b.check_pow():  # <1>
-...             raise RuntimeError('bad proof of work at block {}'.format(count))
-...         if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_block_hash:  # <2>
+...             raise RuntimeError('bad PoW at block {}'.format(count))
+...         if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_\
+block_hash:  # <2>
 ...             raise RuntimeError('discontinuous block at {}'.format(count))
 ...         if expected_bits and b.bits != expected_bits:  # <3>
 ...             raise RuntimeError('bad bits at block {}'.format(count))

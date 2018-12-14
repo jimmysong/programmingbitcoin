@@ -14,11 +14,11 @@
 [None, None]
 [None, None, None, None]
 [None, None, None, None, None, None, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, N\
-one, None]
-[None, None, None, None, None, None, None, None, None, None, None, None, N\
-one, None, None, None, None, None, None, None, None, None, None, None, None, N\
-one, None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None,\
+ None]
+[None, None, None, None, None, None, None, None, None, None, None, None, None,\
+ None, None, None, None, None, None, None, None, None, None, None, None, None,\
+ None]
 
 # end::answer5[]
 '''

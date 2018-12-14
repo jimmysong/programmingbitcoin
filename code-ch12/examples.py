@@ -60,10 +60,12 @@
 >>> from network import FILTERED_BLOCK_DATA_TYPE, GetHeadersMessage, GetDataMe\
 ssage, HeadersMessage, SimpleNode
 >>> from tx import Tx
->>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55ea912e19'
+>>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55\
+ea912e19'
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
 >>> h160 = decode_base58(address)
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=False)
+>>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=\
+False)
 >>> bf = BloomFilter(size=30, function_count=5, tweak=90210)  # <1>
 >>> bf.add(h160)  # <2>
 >>> node.handshake()
