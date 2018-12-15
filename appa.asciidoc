@@ -707,5 +707,5 @@ include::code-ch12/answers.py[tag=exercise6,indent=0]
 
 [source,python]
 ----
-include::code-ch12/broadcast.py[tag=answer6,indent=0]
+include::code-ch12/answers.py[tag=answer6,indent=0]
 ----

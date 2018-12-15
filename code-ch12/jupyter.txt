@@ -88,7 +88,7 @@ fee = 5000  # fee in satoshis
 
 
 # connect to tbtc.programmingblockchain.com in testnet mode
-# create a bloom filter of size 30 and 5 functions. Add a tweak that you like
+# create a bloom filter of size 30 and 5 functions. Add a tweak.
 # add the h160 to the bloom filter
 # complete the handshake
 # load the bloom filter with the filterload command
@@ -116,7 +116,7 @@ fee = 5000  # fee in satoshis
         # set the tx's testnet to be True
         # loop through the tx outs
             # if our output has the same address as our address we found it
-                # we found our utxo. set prev_tx, prev_index, and transaction
+                # we found our utxo. set prev_tx, prev_index, and tx
 # create the TxIn
 # calculate the output amount (previous amount minus the fee)
 # create a new TxOut to the target script with the output amount

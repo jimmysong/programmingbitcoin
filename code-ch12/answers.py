@@ -60,7 +60,7 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 ...     little_endian_to_int,
 ...     read_varint,
 ...     SIGHASH_ALL,
->>> )
+... )
 >>> from merkleblock import MerkleBlock
 >>> from network import (
 ...     GetDataMessage,
@@ -70,12 +70,12 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 ...     SimpleNode,
 ...     TX_DATA_TYPE,
 ...     FILTERED_BLOCK_DATA_TYPE,
->>> )
+... )
 >>> from script import p2pkh_script, Script
 >>> from tx import Tx, TxIn, TxOut, TxFetcher
->>> last_block_hex = '00000000000538d5c2246336644f9a4956551afb44ba47278759ec55\
-ea912e19'
->>> secret = little_endian_to_int(hash256(b''))
+>>> last_block_hex = '00000000000000a03f9432ac63813c6710bfe41712ac5ef6faab093f\
+e2917636'
+>>> secret = little_endian_to_int(hash256(b'Jimmy Song'))
 >>> private_key = PrivateKey(secret=secret)
 >>> addr = private_key.point.address(testnet=True)
 >>> h160 = decode_base58(addr)
@@ -83,56 +83,100 @@ ea912e19'
 >>> target_h160 = decode_base58(target_address)
 >>> target_script = p2pkh_script(target_h160)
 >>> fee = 5000  # fee in satoshis
+>>> # connect to tbtc.programmingblockchain.com in testnet mode
 >>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=\
-True)
+False)
+>>> # create a bloom filter of size 30 and 5 functions. Add a tweak.
 >>> bf = BloomFilter(30, 5, 90210)
+>>> # add the h160 to the bloom filter
 >>> bf.add(h160)
+>>> # complete the handshake
 >>> node.handshake()
+>>> # load the bloom filter with the filterload command
 >>> node.send(bf.filterload())
+>>> # set start block to last_block from above
 >>> start_block = bytes.fromhex(last_block_hex)
+>>> # send a getheaders message with the starting block
 >>> getheaders = GetHeadersMessage(start_block=start_block)
 >>> node.send(getheaders)
+>>> # wait for the headers message
 >>> headers = node.wait_for(HeadersMessage)
+>>> # store the last block as None
 >>> last_block = None
+>>> # initialize the GetDataMessage
 >>> getdata = GetDataMessage()
+>>> # loop through the blocks in the headers
 >>> for b in headers.blocks:
+...     # check that the proof of work on the block is valid
 ...     if not b.check_pow():
 ...         raise RuntimeError('proof of work is invalid')
+...     # check that this block's prev_block is the last block
 ...     if last_block is not None and b.prev_block != last_block:
 ...         raise RuntimeError('chain broken')
+...     # add a new item to the getdata message
+...     # should be FILTERED_BLOCK_DATA_TYPE and block hash
 ...     getdata.add_data(FILTERED_BLOCK_DATA_TYPE, b.hash())
+...     # set the last block to the current hash
 ...     last_block = b.hash()
+>>> # send the getdata message
 >>> node.send(getdata)
->>> prev_tx, prev_index = None, None
+>>> # initialize prev_tx, prev_index and prev_amount to None
+>>> prev_tx, prev_index, prev_amount = None, None, None
+>>> # loop while prev_tx is None
 >>> while prev_tx is None:
+...     # wait for the merkleblock or tx commands
 ...     message = node.wait_for(MerkleBlock, Tx)
+...     # if we have the merkleblock command
 ...     if message.command == b'merkleblock':
+...         # check that the MerkleBlock is valid
 ...         if not message.is_valid():
 ...             raise RuntimeError('invalid merkle proof')
+...     # else we have the tx command
 ...     else:
+...         # set the tx's testnet to be True
 ...         message.testnet = True
+...         # loop through the tx outs
 ...         for i, tx_out in enumerate(message.tx_outs):
+...             # if our output has the same address as our address we found it
 ...             if tx_out.script_pubkey.address(testnet=True) == addr:
+...                 # we found our utxo. set prev_tx, prev_index, and tx
 ...                 prev_tx = message.hash()
 ...                 prev_index = i
+...                 prev_amount = tx_out.amount
 ...                 print('found: {}:{}'.format(prev_tx.hex(), prev_index))
+found: b2cddd41d18d00910f88c31aa58c6816a190b8fc30fe7c665e1cd2ec60efdf3f:7
+>>> # create the TxIn
 >>> tx_in = TxIn(prev_tx, prev_index)
+>>> # calculate the output amount (previous amount minus the fee)
 >>> output_amount = prev_amount - fee
->>> tx_outs = TxOut(output_amount, target_script)
+>>> # create a new TxOut to the target script with the output amount
+>>> tx_out = TxOut(output_amount, target_script)
+>>> # create a new transaction with the one input and one output
 >>> tx_obj = Tx(1, [tx_in], [tx_out], 0, testnet=True)
->>> tx_obj.sign_input(0, private_key)
+>>> # sign the only input of the transaction
+>>> print(tx_obj.sign_input(0, private_key))
+True
+>>> # serialize and hex to see what it looks like
 >>> print(tx_obj.serialize().hex())
-010000000194e631abb9e1079ec72a1616a3aa0111c614e65b96a6a4420e2cc6af9e6cc96e0000\
-00006a47304402203cc8c56abe1c0dd043afa9eb125dafbebdde2dd4cd7abf0fb1aae0667a2200\
-6e02203c95b74d0f0735bbf1b261d36e077515b6939fc088b9d7c1b7030a5e494596330121021c\
-dd761c7eb1c90c0af0a5963e94bf0203176b4662778d32bd6d7ab5d8628b32ffffffff01f88298\
-00000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+01000000013fdfef60ecd21c5e667cfe30fcb890a116688ca51ac3880f91008dd141ddcdb20700\
+00006b483045022100ff77d2559261df5490ed00d231099c4b8ea867e6ccfe8e3e6d077313ed4f\
+1428022033a1db8d69eb0dc376f89684d1ed1be75719888090388a16f1e8eedeb8067768012103\
+dc585d46cfca73f3a75ba1ef0c5756a21c1924587480700c6eb64e3f75d22083ffffffff019334\
+e500000000001976a914ad346f8eb57dee9a37981716e498120ae80e44f788ac00000000
+>>> # send this signed transaction on the network
 >>> node.send(tx_obj)
+>>> # wait a sec so this message goes through with time.sleep(1)
 >>> time.sleep(1)
+>>> # now ask for this transaction from the other node
+>>> # create a GetDataMessage
 >>> getdata = GetDataMessage()
+>>> # ask for our transaction by adding it to the message
 >>> getdata.add_data(TX_DATA_TYPE, tx_obj.hash())
+>>> # send the message
 >>> node.send(getdata)
+>>> # now wait for a Tx response
 >>> received_tx = node.wait_for(Tx)
+>>> # if the received tx has the same id as our tx, we are done!
 >>> if received_tx.id() == tx_obj.id():
 ...     print('success!')
 success!
