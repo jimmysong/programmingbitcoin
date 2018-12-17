@@ -70,7 +70,6 @@ True
 '''
 
 
-from io import BytesIO
 from unittest import TestCase
 
 import op
@@ -78,7 +77,6 @@ import op
 from ecc import S256Point, Signature
 from helper import hash160
 from op import encode_num
-from script import Script
 
 
 '''
@@ -88,6 +86,7 @@ from script import Script
 Write the `op_hash160` function.
 # end::exercise1[]
 '''
+
 
 # tag::answer1[]
 def op_hash160(stack):
@@ -99,6 +98,7 @@ def op_hash160(stack):
     return True
 # end::answer1[]
 
+
 '''
 # tag::exercise2[]
 ==== Exercise 2
@@ -106,6 +106,7 @@ def op_hash160(stack):
 Write the `op_checksig` function in `op.py`
 # end::exercise2[]
 '''
+
 
 # tag::answer2[]
 def op_checksig(stack, z):

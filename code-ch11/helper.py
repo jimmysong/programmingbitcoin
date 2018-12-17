@@ -36,8 +36,8 @@ def encode_base58(s):
         else:
             break
     prefix = b'1' * count
-    # convert from binary to hex, then hex to integer
-    num = int(s.hex(), 16)
+    # convert to big endian integer
+    num = int.from_bytes(s, 'big')
     result = bytearray()
     while num > 0:
         num, mod = divmod(num, 58)
@@ -223,6 +223,7 @@ def bytes_to_bit_field(some_bytes):
             byte >>= 1
     return flag_bits
 # end::source1[]
+
 
 class HelperTest(TestCase):
 

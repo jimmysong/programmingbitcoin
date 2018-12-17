@@ -287,6 +287,5 @@ Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
 
 === Acknowledgments
 
-++++
-<!--Fill in...-->
-++++
+
+

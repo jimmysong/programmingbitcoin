@@ -172,6 +172,7 @@ class VerAckMessage:
         return b''
 # end::source3[]
 
+
 class PingMessage:
     command = b'ping'
 

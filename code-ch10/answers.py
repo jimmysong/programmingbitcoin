@@ -21,12 +21,9 @@ b''
 '''
 
 
-from io import BytesIO
 from unittest import TestCase
 
-from block import GENESIS_BLOCK_HASH
 from helper import (
-    calculate_new_bits,
     encode_varint,
     hash256,
     int_to_little_endian,
@@ -34,7 +31,6 @@ from helper import (
 )
 from network import (
     GetHeadersMessage,
-    HeadersMessage,
     NetworkEnvelope,
     SimpleNode,
     VersionMessage,
@@ -46,6 +42,7 @@ from network import (
 
 methods = []
 
+
 '''
 # tag::exercise2[]
 ==== Exercise 2
@@ -53,6 +50,7 @@ methods = []
 Write the `parse` method for `NetworkEnvelope`.
 # end::exercise2[]
 '''
+
 
 # tag::answer2[]
 @classmethod
@@ -77,6 +75,7 @@ def parse(cls, s, testnet=False):
     return cls(command, payload, testnet=testnet)
 # end::answer2[]
 
+
 '''
 # tag::exercise3[]
 ==== Exercise 3
@@ -84,6 +83,7 @@ def parse(cls, s, testnet=False):
 Write the `serialize` method for `NetworkEnvelope`.
 # end::exercise3[]
 '''
+
 
 # tag::answer3[]
 def serialize(self):
@@ -94,7 +94,10 @@ def serialize(self):
     result += self.payload
     return result
 # end::answer3[]
+
+
 methods.append(serialize)
+
 
 '''
 # tag::exercise4[]
@@ -103,6 +106,7 @@ methods.append(serialize)
 Write the `serialize` method for `VersionMessage`.
 # end::exercise4[]
 '''
+
 
 # tag::answer4[]
 def serialize(self):
@@ -125,7 +129,10 @@ def serialize(self):
         result += b'\x00'
     return result
 # end::answer4[]
+
+
 methods.append(serialize)
+
 
 '''
 # tag::exercise5[]
@@ -135,12 +142,14 @@ Write the `handshake` method for `SimpleNode`
 # end::exercise5[]
 '''
 
+
 # tag::answer5[]
 def handshake(self):
     version = VersionMessage()
     self.send(version)
     self.wait_for(VerAckMessage)
 # end::answer5[]
+
 
 '''
 # tag::exercise6[]
@@ -150,6 +159,7 @@ Write the `serialize` method for `GetHeadersMessage`.
 # end::exercise6[]
 '''
 
+
 # tag::answer6[]
 def serialize(self):
     result = int_to_little_endian(self.version, 4)
@@ -158,6 +168,8 @@ def serialize(self):
     result += self.end_block[::-1]
     return result
 # end::answer6[]
+
+
 methods.append(serialize)
 
 

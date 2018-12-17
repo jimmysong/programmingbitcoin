@@ -174,7 +174,6 @@ class Point:
         if self.x == other.x and self.y != other.y:
             return self.__class__(None, None, self.a, self.b)
 
-
         # Case 2: self.x ≠ other.x
         # Formula (x3,y3)==(x1,y1)+(x2,y2)
         # s=(y2-y1)/(x2-x1)
@@ -270,7 +269,6 @@ class ECCTest(TestCase):
             with self.assertRaises(ValueError):
                 Point(x, y, a, b)  # <1>
     # end::source2[]
-
 
     def test_add(self):
         # tests the following additions on curve y^2=x^3-7 over F_223:
@@ -394,6 +392,7 @@ G = S256Point(
     0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
     0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 # end::source10[]
+
 
 class S256Test(TestCase):
 

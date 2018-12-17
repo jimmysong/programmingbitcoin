@@ -273,7 +273,6 @@ class Script:
             and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 32
     # end::source5[]
 
-
     def address(self, testnet=False):
         '''Returns the address corresponding to the script'''
         if self.is_p2pkh_script_pubkey():  # p2pkh

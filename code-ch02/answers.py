@@ -64,10 +64,12 @@ Write the `__ne__` method for `Point`.
 # end::exercise2[]
 '''
 
+
 # tag::answer2[]
 def __ne__(self, other):
     return not (self == other)
 # end::answer2[]
+
 
 '''
 # tag::exercise3[]
@@ -86,6 +88,7 @@ Write the `__add__` method where x~1~≠x~2~
 Write the `__add__` method when P~1~=P~2~.
 # end::exercise7[]
 '''
+
 
 def __add__(self, other):
     if self.a != other.a or self.b != other.b:

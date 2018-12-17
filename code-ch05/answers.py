@@ -61,7 +61,6 @@ OP_DUP OP_HASH160 ab0c0b2e98b1ab6dbf67d4750b0a56244948a879 OP_EQUALVERIFY OP_CHE
 '''
 
 
-from io import BytesIO
 from unittest import TestCase
 
 from helper import little_endian_to_int, read_varint
@@ -70,6 +69,7 @@ from tx import Tx, TxIn, TxOut
 
 
 methods = []
+
 
 '''
 # tag::exercise1[]
@@ -99,6 +99,8 @@ Write the inputs parsing part of the `parse` method in `Tx` and the `parse` meth
         return cls(version, inputs, None, None, testnet=testnet)
 # end::answer2.1[]
 '''
+
+
 # tag::answer2.2[]
 @classmethod
 def parse(cls, s):
@@ -111,7 +113,10 @@ def parse(cls, s):
     sequence = little_endian_to_int(s.read(4))
     return cls(prev_tx, prev_index, script_sig, sequence)
 # end::answer2.2[]
+
+
 methods.append(parse)
+
 
 '''
 # tag::exercise3[]
@@ -137,6 +142,7 @@ class Tx:
 # end::answer3.1[]
 '''
 
+
 # tag::answer3.2[]
 @classmethod
 def parse(cls, s):
@@ -147,7 +153,10 @@ def parse(cls, s):
     script_pubkey = Script.parse(s)
     return cls(amount, script_pubkey)
 # end::answer3.2[]
+
+
 methods.append(parse)
+
 
 '''
 # tag::exercise4[]
@@ -156,6 +165,7 @@ methods.append(parse)
 Write the Locktime parsing part of the `parse` method in `Tx`.
 # end::exercise4[]
 '''
+
 
 # tag::answer4[]
 @classmethod
@@ -172,7 +182,10 @@ def parse(cls, s, testnet=False):
     locktime = little_endian_to_int(s.read(4))
     return cls(version, inputs, outputs, locktime, testnet=testnet)
 # end::answer4[]
+
+
 methods.append(parse)
+
 
 '''
 # tag::exercise6[]
@@ -181,6 +194,7 @@ methods.append(parse)
 Write the `fee` method for the `Tx` class.
 # end::exercise6[]
 '''
+
 
 # tag::answer6[]
 def fee(self, testnet=False):

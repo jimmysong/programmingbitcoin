@@ -4,7 +4,7 @@
 >>> total = 27
 >>> max_depth = math.ceil(math.log(total, 2))
 >>> merkle_tree = []
->>> for depth in range(max_depth + 1): 
+>>> for depth in range(max_depth + 1):
 ...     num_items = math.ceil(total / 2**(max_depth - depth))
 ...     level_hashes = [None] * num_items
 ...     merkle_tree.append(level_hashes)
@@ -23,8 +23,6 @@
 # end::answer5[]
 '''
 
-
-import math
 
 from unittest import TestCase
 
@@ -52,11 +50,13 @@ Write the `merkle_parent` function.
 # end::exercise1[]
 '''
 
+
 # tag::answer1[]
 def merkle_parent(hash1, hash2):
     '''Takes the binary hashes and calculates the hash256'''
     return hash256(hash1 + hash2)
 # end::answer1[]
+
 
 '''
 # tag::exercise2[]
@@ -65,6 +65,7 @@ def merkle_parent(hash1, hash2):
 Write the `merkle_parent_level` function.
 # end::exercise2[]
 '''
+
 
 # tag::answer2[]
 def merkle_parent_level(hashes):
@@ -81,6 +82,7 @@ def merkle_parent_level(hashes):
     return parent_level
 # end::answer2[]
 
+
 '''
 # tag::exercise3[]
 ==== Exercise 3
@@ -89,15 +91,17 @@ Write the `merkle_root` function.
 # end::exercise3[]
 '''
 
+
 # tag::answer3[]
 def merkle_root(hashes):
     '''Takes a list of binary hashes and returns the merkle root
     '''
     current_level = hashes
     while len(current_level) > 1:
-        current_level = merkle_parent_level(current_level)        
+        current_level = merkle_parent_level(current_level)
     return current_level[0]
 # end::answer3[]
+
 
 '''
 # tag::exercise4[]
@@ -107,12 +111,14 @@ Write the `validate_merkle_root` method for `Block`.
 # end::exercise4[]
 '''
 
+
 # tag::answer4[]
 def validate_merkle_root(self):
     hashes = [h[::-1] for h in self.tx_hashes]
     root = merkle_root(hashes)
     return root[::-1] == self.merkle_root
 # end::answer4[]
+
 
 '''
 # tag::exercise5[]
@@ -128,6 +134,7 @@ Create an empty Merkle Tree with 27 items and print each level.
 Write the `parse` method for `MerkleBlock`.
 # end::exercise6[]
 '''
+
 
 # tag::answer6[]
 @classmethod
@@ -149,6 +156,7 @@ def parse(cls, s):
                nonce, total, hashes, flags)
 # end::answer6[]
 
+
 '''
 # tag::exercise7[]
 ==== Exercise 7
@@ -156,6 +164,7 @@ def parse(cls, s):
 Write the `is_valid` method for `MerkleBlock`
 # end::exercise7[]
 '''
+
 
 # tag::answer7[]
 def is_valid(self):
@@ -168,7 +177,7 @@ def is_valid(self):
 
 
 class ChapterTest(TestCase):
-    
+
     def test_apply(self):
         helper.merkle_parent = merkle_parent
         merkleblock.merkle_parent = merkle_parent

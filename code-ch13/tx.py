@@ -6,7 +6,6 @@ import requests
 
 from ecc import PrivateKey
 from helper import (
-    decode_base58,
     encode_varint,
     hash256,
     int_to_little_endian,

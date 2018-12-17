@@ -93,19 +93,17 @@ d9555f7146861a8298b7636be8b292090a224c5dc84268480d8be1012103935581e52c354cd2f4\
 '''
 
 
-from io import BytesIO
 from unittest import TestCase
 
-from ecc import PrivateKey, S256Point, Signature
 from helper import (
-    decode_base58,
     encode_varint,
     hash256,
     int_to_little_endian,
     SIGHASH_ALL,
 )
-from script import p2pkh_script, Script
-from tx import Tx, TxIn, TxOut
+from script import Script
+from tx import Tx, TxIn
+
 
 '''
 # tag::exercise1[]
@@ -114,6 +112,7 @@ from tx import Tx, TxIn, TxOut
 Write the `sig_hash` method for the `Tx` class.
 # end::exercise1[]
 '''
+
 
 # tag::answer1[]
 def sig_hash(self, input_index):
@@ -142,6 +141,7 @@ def sig_hash(self, input_index):
     return int.from_bytes(h256, 'big')
 # end::answer1[]
 
+
 '''
 # tag::exercise2[]
 ==== Exercise 2
@@ -149,6 +149,7 @@ def sig_hash(self, input_index):
 Write the `verify_input` method for the `Tx` class. You will want to use the `TxIn.script_pubkey()`, `Tx.sig_hash()` and `Script.evaluate()` methods.
 # end::exercise2[]
 '''
+
 
 # tag::answer2[]
 def verify_input(self, input_index):
@@ -159,6 +160,7 @@ def verify_input(self, input_index):
     return combined.evaluate(z)
 # end::answer2[]
 
+
 '''
 # tag::exercise3[]
 ==== Exercise 3
@@ -166,6 +168,7 @@ def verify_input(self, input_index):
 Write the `sign_input` method for the `Tx` class.
 # end::exercise3[]
 '''
+
 
 # tag::answer3[]
 def sign_input(self, input_index, private_key):

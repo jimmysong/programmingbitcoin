@@ -40,8 +40,8 @@ def encode_base58(s):
         else:
             break
     prefix = b'1' * count
-    # convert from binary to hex, then hex to integer
-    num = int(s.hex(), 16)
+    # convert to big endian integer
+    num = int.from_bytes(s, 'big')
     result = bytearray()
     while num > 0:
         num, mod = divmod(num, 58)

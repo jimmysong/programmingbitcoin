@@ -55,7 +55,7 @@ Find the DER format for a signature whose `r` and `s` values are:
 
 `0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6`
 
-* s = 
+* s =
 
 `0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec`
 # end::exercise3[]
@@ -155,9 +155,6 @@ mft9LRNtaBNtpkknB8xgm17UvPedZ4ecYL
 
 from unittest import TestCase
 
-from ecc import PrivateKey, Signature
-from helper import encode_base58, hash256
-
 import helper
 
 
@@ -169,12 +166,14 @@ Write a function `little_endian_to_int` which takes Python bytes, interprets tho
 # end::exercise7[]
 '''
 
+
 # tag::answer7[]
 def little_endian_to_int(b):
     '''little_endian_to_int takes byte sequence as a little-endian number.
     Returns an integer'''
     return int.from_bytes(b, 'little')
 # end::answer7[]
+
 
 '''
 # tag::exercise8[]
@@ -183,6 +182,7 @@ def little_endian_to_int(b):
 Write a function `int_to_little_endian` which does the reverse of the last exercise.
 # end::exercise8[]
 '''
+
 
 # tag::answer8[]
 def int_to_little_endian(n, length):

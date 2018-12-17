@@ -59,7 +59,6 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 ...     hash256,
 ...     little_endian_to_int,
 ...     read_varint,
-...     SIGHASH_ALL,
 ... )
 >>> from merkleblock import MerkleBlock
 >>> from network import (
@@ -72,7 +71,7 @@ Get the current testnet block ID, send yourself some testnet coins, find the UTX
 ...     FILTERED_BLOCK_DATA_TYPE,
 ... )
 >>> from script import p2pkh_script, Script
->>> from tx import Tx, TxIn, TxOut, TxFetcher
+>>> from tx import Tx, TxIn, TxOut
 >>> last_block_hex = '00000000000000a03f9432ac63813c6710bfe41712ac5ef6faab093f\
 e2917636'
 >>> secret = little_endian_to_int(hash256(b'Jimmy Song'))
@@ -188,28 +187,15 @@ success!
 from unittest import TestCase
 
 from bloomfilter import BloomFilter, BIP37_CONSTANT
-from ecc import PrivateKey
 from helper import (
-    bit_field_to_bytes,
-    decode_base58,
     encode_varint,
-    hash160,
-    hash256,
     int_to_little_endian,
-    little_endian_to_int,
     murmur3,
 )
-from merkleblock import MerkleBlock
 from network import (
     GenericMessage,
     GetDataMessage,
-    GetHeadersMessage,
-    HeadersMessage,
-    SimpleNode,
-    FILTERED_BLOCK_DATA_TYPE,
 )
-from script import p2pkh_script, Script
-from tx import Tx, TxIn, TxOut, TxFetcher
 
 
 '''
@@ -220,6 +206,7 @@ Write the `add` method for `BloomFilter`
 # end::exercise3[]
 '''
 
+
 # tag::answer3[]
 def add(self, item):
     for i in range(self.function_count):
@@ -229,6 +216,7 @@ def add(self, item):
         self.bit_field[bit] = 1
 # end::answer3[]
 
+
 '''
 # tag::exercise4[]
 ==== Exercise 4
@@ -236,6 +224,7 @@ def add(self, item):
 Write the  `filterload` payload from the `BloomFilter` class.
 # end::exercise4[]
 '''
+
 
 # tag::answer4[]
 def filterload(self, flag=1):
@@ -247,6 +236,7 @@ def filterload(self, flag=1):
     return GenericMessage(b'filterload', payload)
 # end::answer4[]
 
+
 '''
 # tag::exercise5[]
 ==== Exercise 5
@@ -254,6 +244,7 @@ def filterload(self, flag=1):
 Write the `serialize` method for the `GetDataMessage` class.
 # end::exercise5[]
 '''
+
 
 # tag::answer5[]
 def serialize(self):

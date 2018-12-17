@@ -119,6 +119,7 @@ Write the corresponding method `__ne__` which checks if two `FieldElement` objec
 # end::exercise1[]
 '''
 
+
 # tag::answer1[]
 def __ne__(self, other):
     # this should be the inverse of the == operator
@@ -133,6 +134,7 @@ def __ne__(self, other):
 Write the corresponding `__sub__` method which defines the subtraction of two `FieldElement` objects.
 # end::exercise3[]
 '''
+
 
 # tag::answer3[]
 def __sub__(self, other):
@@ -187,13 +189,13 @@ def __truediv__(self, other):
     # this means:
     # 1/n == pow(n, p-2, p)
     # We return an element of the same class
-    num = self.num * pow(other.num, self.prime-2, self.prime) % self.prime
+    num = self.num * pow(other.num, self.prime - 2, self.prime) % self.prime
     return self.__class__(num, self.prime)
 # end::answer9[]
 
 
 class ChapterTest(TestCase):
-    
+
     def test_apply(self):
         FieldElement.__ne__ = __ne__
         FieldElement.__sub__ = __sub__

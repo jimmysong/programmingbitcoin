@@ -109,6 +109,7 @@ class MerkleTree:
                 raise RuntimeError('flag bits not all consumed')
     # end::source3[]
 
+
 class MerkleTreeTest(TestCase):
 
     def test_init(self):

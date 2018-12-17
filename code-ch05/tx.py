@@ -229,6 +229,7 @@ class TxOut:
         return result
     # end::source4[]
 
+
 class TxTest(TestCase):
     cache_file = '../tx.cache'
 

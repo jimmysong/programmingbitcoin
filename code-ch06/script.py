@@ -136,6 +136,7 @@ class Script:
         return True  # <10>
     # end::source5[]
 
+
 class ScriptTest(TestCase):
 
     def test_parse(self):

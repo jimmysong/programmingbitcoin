@@ -78,6 +78,7 @@ Write the `op_checkmultisig` function of `op.py`.
 # end::exercise1[]
 '''
 
+
 # tag::answer1[]
 def op_checkmultisig(stack, z):
     if len(stack) < 1:
@@ -111,6 +112,7 @@ def op_checkmultisig(stack, z):
     return True
 # end::answer1[]
 
+
 '''
 # tag::exercise2[]
 ==== Exercise 2
@@ -118,6 +120,7 @@ def op_checkmultisig(stack, z):
 Write `h160_to_p2pkh_address` that converts a 20-byte hash160 into a p2pkh address.
 # end::exercise2[]
 '''
+
 
 # tag::answer2[]
 def h160_to_p2pkh_address(h160, testnet=False):
@@ -128,6 +131,7 @@ def h160_to_p2pkh_address(h160, testnet=False):
     return encode_base58_checksum(prefix + h160)
 # end::answer2[]
 
+
 '''
 # tag::exercise3[]
 ==== Exercise 3
@@ -135,6 +139,7 @@ def h160_to_p2pkh_address(h160, testnet=False):
 Write `h160_to_p2sh_address` that converts a 20-byte hash160 into a p2sh address.
 # end::exercise3[]
 '''
+
 
 # tag::answer3[]
 def h160_to_p2sh_address(h160, testnet=False):
@@ -145,6 +150,7 @@ def h160_to_p2sh_address(h160, testnet=False):
     return encode_base58_checksum(prefix + h160)
 # end::answer3[]
 
+
 '''
 # tag::exercise5[]
 ==== Exercise 5
@@ -152,6 +158,7 @@ def h160_to_p2sh_address(h160, testnet=False):
 Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh transactions.
 # end::exercise5[]
 '''
+
 
 # tag::answer5[]
 def sig_hash(self, input_index, redeem_script=None):
@@ -180,6 +187,7 @@ def sig_hash(self, input_index, redeem_script=None):
     s += int_to_little_endian(SIGHASH_ALL, 4)
     h256 = hash256(s)
     return int.from_bytes(h256, 'big')
+
 
 def verify_input(self, input_index):
     tx_in = self.tx_ins[input_index]

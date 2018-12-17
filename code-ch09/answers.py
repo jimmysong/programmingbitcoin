@@ -21,6 +21,7 @@ fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e1264258597e8b0118e5f0
 ```
 # end::exercise12[]
 # tag::answer12[]
+>>> from io import BytesIO
 >>> from block import Block
 >>> from helper import TWO_WEEKS
 >>> from helper import target_to_bits
@@ -46,7 +47,6 @@ b845597e8b0118e43a81d3'
 '''
 
 
-from io import BytesIO
 from unittest import TestCase
 
 import helper
@@ -59,7 +59,6 @@ from helper import (
     target_to_bits,
     TWO_WEEKS,
 )
-from script import Script
 from tx import Tx
 
 
@@ -70,6 +69,7 @@ from tx import Tx
 Write the `is_coinbase` method of the `Tx` class.
 # end::exercise1[]
 '''
+
 
 # tag::answer1[]
 def is_coinbase(self):
@@ -83,6 +83,7 @@ def is_coinbase(self):
     return True
 # end::answer1[]
 
+
 '''
 # tag::exercise2[]
 ==== Exercise 2
@@ -90,6 +91,7 @@ def is_coinbase(self):
 Write the `coinbase_height` method for the `Tx` class.
 # end::exercise2[]
 '''
+
 
 # tag::answer2[]
 def coinbase_height(self):
@@ -99,6 +101,7 @@ def coinbase_height(self):
     return little_endian_to_int(element)
 # end::answer2[]
 
+
 '''
 # tag::exercise3[]
 ==== Exercise 3
@@ -106,6 +109,7 @@ def coinbase_height(self):
 Write the `parse` for `Block`.
 # end::exercise3[]
 '''
+
 
 # tag::answer3[]
 @classmethod
@@ -119,6 +123,7 @@ def parse(cls, s):
     return cls(version, prev_block, merkle_root, timestamp, bits, nonce)
 # end::answer3[]
 
+
 '''
 # tag::exercise4[]
 ==== Exercise 4
@@ -126,6 +131,7 @@ def parse(cls, s):
 Write the `serialize` for `Block`.
 # end::exercise4[]
 '''
+
 
 # tag::answer4[]
 def serialize(self):
@@ -138,6 +144,7 @@ def serialize(self):
     return result
 # end::answer4[]
 
+
 '''
 # tag::exercise5[]
 ==== Exercise 5
@@ -146,12 +153,14 @@ Write the `hash` for `Block`.
 # end::exercise5[]
 '''
 
+
 # tag::answer5[]
 def hash(self):
     s = self.serialize()
     sha = hash256(s)
     return sha[::-1]
 # end::answer5[]
+
 
 '''
 # tag::exercise6[]
@@ -161,10 +170,12 @@ Write the `bip9` method for the `Block` class.
 # end::exercise6[]
 '''
 
+
 # tag::answer6[]
 def bip9(self):
     return self.version >> 29 == 0b001
 # end::answer6[]
+
 
 '''
 # tag::exercise7[]
@@ -174,10 +185,12 @@ Write the `bip91` method for the `Block` class.
 # end::exercise7[]
 '''
 
+
 # tag::answer7[]
 def bip91(self):
     return self.version >> 4 & 1 == 1
 # end::answer7[]
+
 
 '''
 # tag::exercise8[]
@@ -187,10 +200,12 @@ Write the `bip141` method for the `Block` class.
 # end::exercise8[]
 '''
 
+
 # tag::answer8[]
 def bip141(self):
     return self.version >> 1 & 1 == 1
 # end::answer8[]
+
 
 '''
 # tag::exercise9[]
@@ -200,6 +215,7 @@ Write the `bits_to_target` function in `helper.py`.
 # end::exercise9[]
 '''
 
+
 # tag::answer9[]
 def bits_to_target(bits):
     exponent = bits[-1]
@@ -207,8 +223,10 @@ def bits_to_target(bits):
     return coefficient * 256**(exponent - 3)
 # end::answer9[]
 
+
 def target(self):
     return bits_to_target(self.bits)
+
 
 '''
 # tag::exercise10[]
@@ -218,11 +236,13 @@ Write the `difficulty` method for `Block`
 # end::exercise10[]
 '''
 
+
 # tag::answer10[]
 def difficulty(self):
     lowest = 0xffff * 256**(0x1d - 3)
     return lowest / self.target()
 # end::answer10[]
+
 
 '''
 # tag::exercise11[]
@@ -233,12 +253,15 @@ Write the `check_pow` method for `Block`.
 # end::exercise11[]
 '''
 
+
 # tag::answer11[]
 def check_pow(self):
     sha = hash256(self.serialize())
     proof = little_endian_to_int(sha)
     return proof < self.target()
 # end::answer11[]
+
+
 '''
 # tag::exercise13[]
 ==== Exercise 13
@@ -246,6 +269,7 @@ def check_pow(self):
 Write the `calculate_new_bits` function in `helper.py`
 # end::exercise13[]
 '''
+
 
 # tag::answer13[]
 def calculate_new_bits(previous_bits, time_differential):
