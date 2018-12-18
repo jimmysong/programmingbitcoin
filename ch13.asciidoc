@@ -31,7 +31,7 @@ Transaction Malleability is the ability to change the transaction's ID without a
 Mt. Gox CEO Mark Karpeles cited transaction malleability as the reason why his exchange was not allowing withdrawals back in 2013.
 
 Malleability of the ID is an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network.
-A malleable transaction ID makes creating the Payment Channel transactions much more difficult.
+A malleable transaction ID makes much more difficult the safe creation of Payment Channel transactions.
 
 The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction.
 The ID of the transaction is the hash256 of the transaction.
@@ -70,7 +70,7 @@ image::p2wpkh1.png[p2wpkh to old nodes]
 .Pay-to-witness-pubkey-hash as seen by post-BIP0141 software
 image::p2wpkh2.png[p2wpkh to new nodes]
 
-The difference between these two serializations is that the latter transaction (Segwit serialization) has a couple of markers and the Witness field.
+The difference between these two serializations is that the latter transaction (Segwit serialization) has the marker, flag and Witness fields.
 Otherwise, the two transactions look similar.
 The reason the transaction ID not malleable is because first serialization is used for calculating the transaction ID.
 
@@ -122,7 +122,7 @@ image::p2wpkh13.png[p2wpkh Step 4]
 For an older node, processing stops at `<20-byte hash> 0`, as older nodes don't know the special Segwit rule.
 Only upgraded nodes do the rest of the validation, much like p2sh.
 Note that less data is sent over the network to older nodes.
-Also, nodes are given the option of not having to verify transactions that are X blocks old if they don't want to.
+Also, nodes are given the option of not having to download (and hence not verify) transactions that are X blocks old if they don't want to.
 In a sense, the signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating directly if it so chooses.
 
 Furthermore, this is a special rule for Segwit Version 0.
@@ -215,8 +215,9 @@ A post-Segwit node would do the complete validation, including checking the sign
 .Can Anyone Spend Segwit Outputs?
 ====
 Detractors to Segwit have referred to Segwit outputs as "anyone can spend".
-This would be true if the majority of mining hash power didn't upgrade to Segwit.
-Fortunately, Segwit was activated on the network with nearly all of the hashing power committed to validating Segwit transactions.
+This would be true if the Bitcoin community rejected Segwit.
+In other words, if an economically significant part of the Bitcoin community refused to do the Segwit validation and split from the network, the outputs would have been anyone can spend.
+Fortunately, Segwit was activated on the network, there was no network split and Segwit transactions are validated per the soft-fork rules by the vast economic majority of nodes.
 ====
 
 ==== Coding p2wpkh and p2sh-p2wpkh
@@ -410,7 +411,7 @@ image::p2wsh-14.png[p2wsh Step 5]
 The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
 Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script instructions and added to the instruction set.
 The rest of the Witness is then put on the instruction set as well, producing the final set of instructions to be evaluated.
-p2wsh is particularly important as unmalleable multisig are required for creating Payment Channels.
+p2wsh is particularly important as unmalleable multisig transactions are required for creating bi-directional Payment Channels for the Lightning Network.
 
 === P2SH-P2WSH
 
@@ -580,7 +581,7 @@ Other improvements to Segwit include fixing the quadratic hashing problem throug
 A lot of the calculations for signature hash, or `z`, can be reused instead of requiring a new hash256 hash for each input.
 The signature hash calculation is detailed in BIP0143 and can be seen in `code-ch13/tx.py`.
 
-Another improvement is that uncompressed SEC pubkeys are now forbidden and only compressed SEC pubkeys are used for Segwit, saving space.
+Another improvement is that by policy, uncompressed SEC pubkeys are now forbidden and only compressed SEC pubkeys are used for Segwit, saving space.
 
 ==== Conclusion
 

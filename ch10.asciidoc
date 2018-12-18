@@ -74,7 +74,7 @@ IP addresses can be IPv6, IPv4 or OnionCat (a mapping of TOR's `.onion` addresse
 If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP.
 The port is 2 bytes Little-Endian. The default on mainnet is 8333, which maps to `208d` in Little-Endian hex.
 
-Nonce is a number used only once for reply messages.
+Nonce is a number used by a node to detect a connection to itself.
 User Agent identifies the software being run.
 The height or latest block field helps the other node know which block a node is synced up to.
 
@@ -189,7 +189,7 @@ include::code-ch10/answers.py[tag=exercise5,indent=0]
 
 Now that we have code to connect to a node, what can we do?
 When any node first connects to the network, the data that's most crucial to get and verify are the block headers.
-For full nodes, downloading the Block headers allows them to asynchronously ask for full blocks.
+For full nodes, downloading the Block headers allows them to asynchronously ask for full blocks from multiple nodes, parallelizing the download of the blocks.
 For light clients, downloading headers allows them to verify the proof-of-work in each block.
 As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network, but that requires the light clients have the block headers.
 
@@ -199,7 +199,7 @@ The command to get the block headers is called `getheaders` and it looks like th
 .Parsed `getheaders`
 image::getheaders.png[GetHeaders payload]
 
-As with Version, we start with the protocol version, then the number of block header groups in this list, then the starting block header and lastly, the ending block header.
+As with Version, we start with the protocol version, then the number of block headers in this list (this number can be more than 1 if there's a chain split), then the starting block headers and lastly, the ending block header.
 If we specify the ending block to be `000...000`, we're indicating that we want as many as the other node will give us.
 The maximum number of headers that we can get back is 2000, or almost a single difficulty adjustment period (2016 blocks).
 
