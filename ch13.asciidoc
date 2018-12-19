@@ -216,8 +216,9 @@ A post-Segwit node would do the complete validation, including checking the sign
 ====
 Detractors to Segwit have referred to Segwit outputs as "anyone can spend".
 This would be true if the Bitcoin community rejected Segwit.
-In other words, if an economically significant part of the Bitcoin community refused to do the Segwit validation and split from the network, the outputs would have been anyone can spend.
-Fortunately, Segwit was activated on the network, there was no network split and Segwit transactions are validated per the soft-fork rules by the vast economic majority of nodes.
+In other words, if an economically significant part of the Bitcoin community refused to do the Segwit validation and actively split from the network by accepting a transaction that's not Segwit valid, the outputs would have been anyone can spend.
+Due to a variety of economic incentives, Segwit was activated on the network, there was no network split, a lot of Bitcoins are now locked in Segwit outputs and Segwit transactions are validated per the soft-fork rules by the vast economic majority of nodes.
+We can now say confidently that the detractors were wrong.
 ====
 
 ==== Coding p2wpkh and p2sh-p2wpkh
