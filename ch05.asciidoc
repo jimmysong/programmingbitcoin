@@ -170,7 +170,7 @@ The fields are as follows:
 * ScriptSig
 * Sequence
 
-As explained above, each input is has a reference to a previous transaction's output.
+As explained above, each input has a reference to a previous transaction's output.
 The previous transaction ID is the hash256 of the previous transaction's contents.
 The previous transaction ID uniquely defines the previous transaction as the probability of a hash collision is impossibly low.
 As we'll see below, each transaction has to have at least 1 output, but may have many.
