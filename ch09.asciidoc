@@ -28,7 +28,7 @@ Coinbase is the required first transaction of every block and is the only transa
 The Coinbase transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the block reward.
 
 The Coinbase transaction is what makes it worthwhile for a miner to mine.
-Here's what a Coinbase transaction looks like:
+Figure 9-1 shows what a Coinbase transaction looks like:
 
 .Coinbase Transaction
 image::coinbase1.png[Coinbase Transaction]
@@ -95,7 +95,7 @@ include::code-ch09/answers.py[tag=exercise2,indent=0]
 === Headers vs Full Blocks
 
 Blocks are batches of transactions and the block header is metadata about the transactions included in the block.
-The block header consists of:
+The block header as shown in Figure 9-2 consists of:
 
 * Version
 * Previous Block

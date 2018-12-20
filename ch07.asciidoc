@@ -103,7 +103,7 @@ include::code-ch07/examples.py[tag=example2]
 
 SEC public keys and DER signatures are in the stack when an instruction like `OP_CHECKSIG` is executed make getting the public key `P` and signature `(r,s)` pretty straightforward (see <<chapter_script>>).
 The hard part is getting the signature hash, `z`.
-A naive way to get the signature hash would be to hash the transaction serialization.
+A naive way to get the signature hash would be to hash the transaction serialization as shown in Figure 7-1.
 Unfortunately, we can't do that since the signature is part of the ScriptSig and a signature can't sign itself.
 
 .A signature is in the yellow highlighted part, or the ScriptSig.
@@ -115,7 +115,7 @@ The procedure is as follows.
 
 ==== Step 1: Empty all the ScriptSigs
 
-The first step is to empty all the ScriptSigs when checking the signature.
+The first step is to empty all the ScriptSigs when checking the signature (Figure 7-2).
 The same procedure is used for creating the signature, except the ScriptSigs are usually already empty.
 
 .Empty each input's ScriptSig (in yellow highlighted field)
@@ -125,12 +125,12 @@ Note that this example has only 1 input, so only that input's ScriptSig is empti
 
 ==== Step 2: Replace the ScriptSig of the input being signed with the previous ScriptPubKey
 
-Each input points to a previous transaction output, which has a ScriptPubKey. Recall this diagram from <<chapter_script>>.
+Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>> shown in Figure 7-3.
 
 .ScriptPubKey and ScriptSig
 image::script3.png[ScriptPubKey and ScriptSig]
 
-We take the ScriptPubKey that the input is pointing to and put that in place of the empty ScriptSig.
+We take the ScriptPubKey that the input is pointing to and put that in place of the empty ScriptSig (Figure 7-4).
 This may require a lookup on the blockchain, but in practice, the signer already knows the ScriptPubKey as the input is one where the signer has the private key.
 
 .Replace the ScriptSig (yellow highlighted field) for one of the inputs with the previous ScriptPubKey
@@ -145,7 +145,7 @@ The latter two have some theoretical use cases, but in practice, almost every tr
 There's also rarely used hash type called `SIGHASH_ANYONECANPAY` which can be combined with any of the previous three, which we won't get into here.
 For `SIGHASH_ALL`, the final transaction must have the exact outputs that were signed or the input signature is invalid.
 
-The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like this:
+The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like Figure 7-5:
 
 .Append the hash type (SIGHASH_ALL), or the orange `01000000`
 image::validation4.png[Validation Step 3]
@@ -237,7 +237,7 @@ In this example, we have an output here denoted by transaction ID and output ind
 
 `0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299:13`
 
-When we view this output on a testnet block explorer, we can see that our output is worth 0.33 tBTC.
+When we view this output on a testnet block explorer (Figure 7-6), we can see that our output is worth 0.33 tBTC.
 
 .UTXO that we're spending
 image::txcreation1.png[Transaction seen on the blockchain]

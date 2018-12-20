@@ -48,7 +48,7 @@ To construct the Merkle Tree, we follow this algorithm:
 5. Go to 2.
 
 The idea is to come to a single hash that "represents" the entire ordered list.
-Visually, a Merkle Tree looks like this:
+Visually, a Merkle Tree looks like Figure 11-1:
 
 .Merkle Tree
 image::merkle1.png[Merkle Tree]
@@ -180,7 +180,7 @@ include::code-ch11/answers.py[tag=exercise4,indent=0]
 === Using a Merkle Tree 
 
 Now that we know how a Merkle Tree is constructed, we can create and verify Proofs of Inclusion.
-Light nodes can get proofs that transactions of interest were included in a block without having to know all the transactions of a block.
+Light nodes can get proofs that transactions of interest were included in a block without having to know all the transactions of a block (Figure 11-2).
 
 .Merkle Proof
 image::merkleproof.png[Merkle Proof]
@@ -225,14 +225,14 @@ A full node communicates these two pieces of information to a light client using
 
 To understand what's in a Merkle Block, we need to understand a bit about how a Merkle Tree or more generally, Binary Trees, can be traversed.
 In a binary tree, nodes can be traversed breadth-first or depth-first.
-Breadth-first traversal would go level by level like this:
+Breadth-first traversal would go level by level like Figure 11-3:
 
 .Breadth-First Ordering
 image::breadthfirst.png[Breadth First]
 
 The breadth-first ordering starts at the root and goes from root to leaves, level by level, left to right.
 
-Depth-first ordering is a bit different and looks like this:
+Depth-first ordering is a bit different and looks like Figure 11-4:
 
 .Depth-First Ordering
 image::depthfirst.png[Depth First]
@@ -242,7 +242,7 @@ The depth-first ordering starts at the root, traverses the left side at each nod
 .Merkle Proof
 image::merkleproof.png[Merkle Proof]
 
-In a Proof of Inclusion, the full node sends the green boxes, H~K~ and H~N~ along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
+In a Proof of Inclusion (see Figure 11-5), the full node sends the green boxes, H~K~ and H~N~ along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The location of each hash is reconstructed using depth-first ordering from some flags.
 The process of reconstructing the tree is what we describe next.
 
@@ -348,7 +348,7 @@ We can now traverse the tree for the number of leaves that aren't powers of 2.
 ==== Merkle Block Command
 
 The full node communicating a Merkle Block sends all the information needed to verify that the interesting transaction is in the Merkle Tree.
-The `merkleblock` network command is what communicates this information and looks like this:
+The `merkleblock` network command is what communicates this information and looks like Figure 11-6:
 
 .Parsed `merkleblock`
 image::merkleblock.png[merkleblock command]

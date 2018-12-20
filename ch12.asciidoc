@@ -42,7 +42,7 @@ include::code-ch12/examples.py[tag=example1]
 <3> Interpret this as a Big-Endian integer and modulo by 10 to determine the bucket this item belongs to.
 <4> We indicate the bucket we want in the Bloom Filter.
 
-Conceptually, what we just did looks like this:
+Conceptually, what we just did looks like Figure 12-1:
 
 .10-bit Bloom Filter with 1 element
 image::bloomfilter1.png[Simple Bloom Filter]
@@ -58,7 +58,10 @@ What do we do when we're interested in more than 1 item?
 
 We can run a second item through the same filter and set that bit to 1 as well.
 The full node can then send multiple buckets of transactions instead of a single bucket.
-Let's create a Bloom Filter with two items, "hello world" and "goodbye":
+Let's create a Bloom Filter with two items, "hello world" and "goodbye" (Figure 12-2)
+
+.10-bit Bloom Filter with 2 elements
+image::bloomfilter2.png[Two Item Bloom Filter]
 
 [source,python]
 ----
@@ -67,9 +70,6 @@ include::code-ch12/examples.py[tag=example2]
 <1> We are creating a filter for two items here, but this can be extended to many more.
 
 If the space of all possible items is 50, 10 items on average will make it through this filter instead of the 5 when we only had 1 item of interest because 2 buckets are returned, not 1.
-
-.10-bit Bloom Filter with 2 elements
-image::bloomfilter2.png[Two Item Bloom Filter]
 
 include::code-ch12/answers.py[tag=exercise1,indent=0]
 
@@ -94,7 +94,7 @@ include::code-ch12/examples.py[tag=example3]
 ----
 <1> We iterate over 2 different hash functions (`hash256` and `hash160`), but we could just as easily have more.
 
-Conceptually, this is what the code above does:
+Conceptually, Figure 12-3 shows what the code above does:
 
 .10-bit Bloom Filter with 2 elements and 2 hash functions
 image::bloomfilter3.png[Multiple Hash Functions]
@@ -158,7 +158,7 @@ The first thing a light client must do is set the optional relay flag in the ver
 This tells the full node not to send transaction messages unless they match a Bloom Filter or has specifically requested the message.
 After the relay flag, a light client then communicates to the full node the Bloom Filter itself.
 The command to set the Bloom Filter is called `filterload`.
-The payload looks like this:
+The payload looks like Figure 12-4:
 
 .Parsed `filterload`
 image::filterload.png[filterload Command]
@@ -176,7 +176,7 @@ The specific type of data that a light client will want from a full node is some
 A filtered block is asking for transactions that pass through the bloom filter in the form of Merkle Blocks.
 In other words, the light client can ask for Merkle Blocks whose transactions of interest match the Bloom Filter.
 
-Here is what the payload for `getdata` looks like:
+Here is what the payload for `getdata` looks like Figure 12-5:
 
 .Parsed `getdata`
 image::getdata.png[getdata Command]

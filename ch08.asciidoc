@@ -31,48 +31,48 @@ As discussed in <<chapter_script>>, Script has a lot of different opcodes.
 The opcode consumes a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
 
 The transaction output is called "bare" multisig because it's a long ScriptPubKey.
-Here's what a ScriptPubKey for a 1-of-2 multisig looks like.
+Figure 8-1 shows what a ScriptPubKey for a 1-of-2 multisig looks like.
 
 .Bare Multisig ScriptPubKey
 image::multisig1.png[Bare Multisig ScriptPubKey]
 
 Among Bare Multisig ScriptPubKeys, this one is on the small end, and we can already see that it's long.
 The ScriptPubKey for p2pkh is only 25 bytes whereas this Bare Multisig is 101 bytes (though obviously, compressed SEC format would reduce it some), and this is a 1-of-2!
-Here's what the ScriptSig looks like:
+Figure 8-2 shows what the ScriptSig looks like:
 
 .Bare Multisig ScriptSig
 image::multisig2.png[Bare Multisig ScriptSig]
 
 We only need 1 signature for this 1-of-2 multisig, so this is relatively short, though something like a 5-of-7 would require 5 DER signatures and would be a lot longer (360 bytes or so).
-Here's how the two would combine
+Figure 8-3 shows how the two combine.
 
 .Bare Multisig Combined Script.
 image::multisig3.png[Bare Multisig Combined Script]
 
 Note `m` and `n` are something between 1 and 16 inclusive.
 We've generalized here so we can see what a Bare m-of-n Multisig would look like (`m` and `n` can be anything from 1 to 20, though there's numerical opcodes only go up to `OP_16`, 17 to 20 would require `0112` to push a number like 18 to the stack).
-The starting state looks like this:
+The starting state looks like Figure 8-4:
 
 .Bare Multisig Start
 image::multisig4.png[Bare Multisig Start]
 
-`OP_0` will push the number `0` to the stack.
+`OP_0` will push the number `0` to the stack (Figure 8-5).
 
 .Bare Multisig Step 1
 image::multisig5.png[Bare Multisig Step 1]
 
-The signatures are elements so they'll be pushed directly to the stack.
+The signatures are elements so they'll be pushed directly to the stack (Figure 8-6).
 
 .Bare Multisig Step 2
 image::multisig6.png[Bare Multisig Step 2]
 
-`OP_m` will push the number `m` on the stack, the public keys will be pushed to the stack and `OP_n` will push the number `n` to the stack.
+`OP_m` will push the number `m` on the stack, the public keys will be pushed to the stack and `OP_n` will push the number `n` to the stack (Figure 8-7).
 
 .Bare Multisig Step 3
 image::multisig7.png[Bare Multisig Step 3]
 
 At this point, `OP_CHECKMULTISIG` will consume `m+n+3` elements (see _`OP_CHECKMULTISIG` Off-by-one Bug_) and push a 1 to the stack if `m` of the signatures are valid for `m` distinct public keys from the list of `n` public keys, a 0 otherwise.
-Assuming that the signatures are valid, the stack has a single `1` which validates the combined Script:
+Assuming that the signatures are valid, the stack has a single `1` which validates the combined Script (Figure 8-8):
 
 .Bare Multisig End
 image::multisig8.png[Bare Multisig End]
@@ -144,7 +144,7 @@ The solution that p2sh implements is to take the hash of some Script instruction
 Pay-to-script-hash was introduced in 2011 to a lot of controversy.
 There were multiple proposals, but as we'll see, p2sh is kludgy, but works.
 
-In p2sh, a special rule gets executed only when this pattern is encountered:
+In p2sh, a special rule gets executed only when the pattern shown in Figure 8-9 is encountered:
 
 .Pay-to-script-hash Pattern that executes the special rule
 image::p2sh1.png[p2sh Pattern]
@@ -156,7 +156,7 @@ The RedeemScript does not add new Script instructions for processing unless this
 If this sounds hacky, it is.
 But before we get to that, let's look a little closer at exactly how this plays out.
 
-Let's say we have a 2-of-2 multisig ScriptPubKey:
+Let's say we have a 2-of-2 multisig ScriptPubKey (Figure 8-10):
 
 .Pay-to-script-hash (p2sh) RedeemScript
 image::p2sh2.png[p2sh RedeemScript]
@@ -164,7 +164,7 @@ image::p2sh2.png[p2sh RedeemScript]
 This is a ScriptPubKey for a Bare Multisig.
 What we need to do to convert this to p2sh is to take a hash of this Script and keep this Script handy for when we want to redeem it.
 We call this the RedeemScript, because the Script is only revealed during redemption.
-We put the hash of the RedeemScript as the ScriptPubKey like so:
+We put the hash of the RedeemScript as the ScriptPubKey like Figure 8-11:
 
 .Pay-to-script-hash (p2sh) ScriptPubKey
 image::p2sh3.png[p2sh ScriptPubKey]
@@ -184,18 +184,18 @@ If you are receiving to a p2sh address, be sure to store and backup the RedeemSc
 Better yet, make it easy to reconstruct!
 ====
 
-The ScriptSig for the 2-of-2 multisig looks like this:
+The ScriptSig for the 2-of-2 multisig looks like Figure 8-12:
 
 .Pay-to-script-hash (p2sh) ScriptSig
 image::p2sh4.png[p2sh ScriptSig]
 
-This produces the combined Script:
+This produces the combined Script (Figure 8-13):
 
 .p2sh Combined
 image::p2sh5.png[p2sh Combined Script]
 
 As before, `OP_0` is there because of the `OP_CHECKMULTISIG` bug.
-The key to understanding p2sh is the execution of the exact sequence:
+The key to understanding p2sh is the execution of the exact sequence shown in Figure 8-14:
 
 .p2sh pattern that executes the special rule
 image::p2sh1.png[p2sh Pattern]
@@ -206,50 +206,50 @@ We hash the Script that locks the funds and put that into the blockchain instead
 This is why we call this ScriptPubKey pay-to-script-_hash_.
 
 Let's go through exactly how this works.
-We start with the Script instructions:
+We start with the Script instructions (Figure 8-15):
 
 .p2sh Start
 image::p2sh6.png[p2sh Start]
 
-`OP_0` will push a 0 to the stack, the two signatures and the RedeemScript will be pushed to the stack directly, leading to this:
+`OP_0` will push a 0 to the stack, the two signatures and the RedeemScript will be pushed to the stack directly, leading to Figure 8-16:
 
 .p2sh Step 1
 image::p2sh7.png[p2sh Step 1]
 
-`OP_HASH160` will hash the RedeemScript, which will make the stack look like this:
+`OP_HASH160` will hash the RedeemScript, which will make the stack look like Figure 8-17:
 
 .p2sh Step 2
 image::p2sh8.png[p2sh Step 2]
 
-The 20-byte hash will be pushed on the stack:
+The 20-byte hash will be pushed on the stack (Figure 8-18):
 
 .p2sh Step 3
 image::p2sh9.png[p2sh Step 3]
 
 And finally, `OP_EQUAL` will compare the top two elements.
-If the software checking this transaction is pre-BIP0016, we would end up with this:
+If the software checking this transaction is pre-BIP0016, we would end up with Figure 8-19:
 
 .p2sh End if evaluating with pre-BIP0016 software
 image::p2sh10.png[p2sh pre-BIP0016 End]
 
 This would end evaluation for pre-BIP0016 nodes and the result would be valid, assuming the hashes are equal.
 
-On the other hand, BIP0016 nodes, which as of this writing are the vast majority, will parse the RedeemScript as Script instructions:
+On the other hand, BIP0016 nodes, which as of this writing are the vast majority, will parse the RedeemScript as Script instructions (Figure 8-20):
 
 .p2sh RedeemScript
 image::p2sh2.png[p2sh RedeemScript]
 
-These go into the Script column as instructions:
+These go into the Script column as instructions (Figure 8-21):
 
 .p2sh Step 4
 image::p2sh11.png[p2sh Step 4]
 
-`OP_2` pushes a `2` to the stack, the pubkeys are also pushed and a final `OP_2` pushes another `2` to the stack:
+`OP_2` pushes a `2` to the stack, the pubkeys are also pushed and a final `OP_2` pushes another `2` to the stack (Figure 8-22):
 
 .p2sh Step 5
 image::p2sh12.png[p2sh Step 5]
 
-`OP_CHECKMULTISIG` consumes m+n+3 elements, which is the entire stack, and we end the same way we did Bare Multisig.
+`OP_CHECKMULTISIG` consumes m+n+3 elements, which is the entire stack, and we end the same way we did Bare Multisig (Figure 8-23).
 
 .p2sh End for post-BIP0016 software
 image::p2sh13.png[p2sh End]
@@ -257,7 +257,7 @@ image::p2sh13.png[p2sh End]
 The RedeemScript substitution is a bit hacky and there's special-cased code in Bitcoin software to handle this.
 Why wasn't something a lot less hacky and more intuitive chosen?
 BIP0012 was a competing proposal at the time which used `OP_EVAL` and was considered more elegant.
-A ScriptPubKey like this would have worked with BIP0012:
+A ScriptPubKey like Figure 8-24 would have worked with BIP0012:
 
 .`OP_EVAL` would have been an instruction which adds additional instructions based on the top element.
 image::op_eval.png[`OP_EVAL`]
@@ -329,7 +329,7 @@ The p2sh signature verification is different than the p2pkh process covered in <
 Unlike p2pkh where there's only 1 signature and 1 public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some equal or smaller number of signatures (in DER format in the ScriptSig).
 Thankfully, signatures have to be in the same order as the pubkeys or the signatures are not considered valid.
 
-Once we have a particular signature and public key, we only need the signature hash, or `z` to figure out whether the signature is valid.
+Once we have a particular signature and public key, we only need the signature hash, or `z` to figure out whether the signature is valid (Figure 8-25).
 
 .Validation of p2sh Inputs
 image::verifyp2sh1.png[Validation Start]
@@ -338,7 +338,7 @@ As with p2pkh, finding the signature hash is the most difficult part of the p2sh
 
 ==== Step 1: Empty all the ScriptSigs
 
-The first step is to empty all the ScriptSigs when checking the signature.
+The first step is to empty all the ScriptSigs when checking the signature (Figure 8-26).
 The same procedure is used for creating the signature.
 
 .Empty each input's ScriptSig
@@ -347,7 +347,7 @@ image::verifyp2sh2.png[Validation Step 1]
 ==== Step 2: Replace the ScriptSig of the p2sh input being signed with the RedeemScript
 
 Each p2sh input has a RedeemScript.
-We take the RedeemScript and put that in place of the empty ScriptSig.
+We take the RedeemScript and put that in place of the empty ScriptSig (Figure 8-27).
 This is different from p2pkh in that it's not the ScriptPubKey.
 
 .Replace the ScriptSig of the input we're checking with the RedeemScript
@@ -355,7 +355,7 @@ image::verifyp2sh3.png[Validation Step 2]
 
 ==== Step 3: Append the hash type
 
-Lastly, we add a 4-byte hash type to the end.
+Lastly, we add a 4-byte hash type to the end (Figure 8-28).
 This is the same as in p2pkh.
 
 The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the transaction look like this:
@@ -371,7 +371,7 @@ The code for getting our signature hash, or `z`, looks like this:
 include::code-ch08/examples.py[tag=example2]
 ----
 
-Now that we have our `z`, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript:
+Now that we have our `z`, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript  (Figure 8-29):
 
 .DER and SEC within the p2sh ScriptSig and RedeemScript
 image::p2sh-sigelements.png[DER and SEC]

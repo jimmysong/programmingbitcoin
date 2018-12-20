@@ -16,7 +16,7 @@ With that in mind, we'll work in this chapter toward requesting, receiving and v
 
 === Network Messages
 
-All network messages looks like this:
+All network messages looks like Figure 10-1:
 
 .Network Message or the Envelope that contains the actual payload
 image::network1.png[Network Message]
@@ -59,7 +59,7 @@ include::code-ch10/answers.py[tag=exercise3,indent=0]
 === Parsing the payload
 
 Each command has a separate payload specification.
-Here is the one for Version:
+Figure 10-2 is the parsed payload for Version:
 
 .Parsed Version
 image::network2.png[Version Message]
@@ -194,7 +194,7 @@ For light clients, downloading headers allows them to verify the proof-of-work i
 As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network, but that requires the light clients have the block headers.
 
 Nodes can give us the block headers without taking up much bandwidth.
-The command to get the block headers is called `getheaders` and it looks like this:
+The command to get the block headers is called `getheaders` and it looks like Figure 10-3:
 
 .Parsed `getheaders`
 image::getheaders.png[GetHeaders payload]
@@ -232,7 +232,7 @@ We can now create a node, handshake, and then ask for some headers.
 
 Now we need a way to receive the headers from the other node.
 The other node will send back the `headers` command.
-The headers command is a list of block headers which we already learned how to parse from <<chapter_blocks>>.
+The headers command is a list of block headers (Figure 10-4) which we already learned how to parse from <<chapter_blocks>>.
 The `HeadersMessage` class can take advantage when parsing.
 
 .Parsed `headers`

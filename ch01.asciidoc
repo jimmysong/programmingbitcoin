@@ -147,7 +147,7 @@ One of the tools we can use in order to make a Finite Field closed under additio
 
 We can define addition on the finite set using something called modulo arithmetic.
 Modulo arithmetic is something you probably learned when you first learned division.
-Remember problems like this?
+Remember problems like Figure 1-1?
 
 .Long Division Example 1
 image::longdivision.png[Long Division Example 1]
@@ -158,7 +158,7 @@ We use the operator *%* for "modulo".
 
 7 % 3 = 1
 
-Because
+Figure 1-2 shows another example.
 
 .Long Division Example 2
 image::longdivision-2.png[Long Division Example 2]
@@ -174,9 +174,7 @@ Imagine a problem like this:
 It is currently 3 o'clock.
 What hour will it be 47 hours from now?
 
-The answer is 2 o'clock because:
-
-(3 + 47) % 12 = 2
+The answer is 2 o'clock because (3 + 47) % 12 = 2 (see Figure 1-3)
 
 .Clock going forward 47 hours
 image::clock.jpg[Clock]

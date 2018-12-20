@@ -25,7 +25,7 @@ Here is how the uncompressed SEC format for a given point P=(x,y) is generated:
 2. Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
 3. Next, append the y-coordinate in 32 bytes as a Big-Endian integer.
 
-Here is what the uncompressed SEC format looks like:
+The uncompressed SEC format is in Figure 4-1:
 
 .Uncompressed SEC Format
 image::sec1.png[Uncompressed SEC Format]
@@ -74,7 +74,7 @@ include::code-ch04/answers.py[tag=exercise1,indent=0]
 
 === Compressed SEC Format
 
-Recall that for any x-coordinate, there are at most two y-coordinates due to the y^2^ term in the elliptic curve equation:
+Recall that for any x-coordinate, there are at most two y-coordinates due to the y^2^ term in the elliptic curve equation (Figure 4-2):
 
 .The two possible values for y are where this vertical line intersects the curve.
 image::intersect2-1.png[Elliptic Curve Vertical Line]
@@ -100,7 +100,7 @@ Here is the serialization of the Compressed SEC format for a given point P=(x,y)
 If `y` is even, it's `0x02`, otherwise it's `0x03`.
 2. Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
 
-The Compressed SEC format looks like this:
+The Compressed SEC format is in Figure 4-3:
 
 .Compressed SEC Format
 image::sec2.png[Compressed SEC Format]
@@ -222,7 +222,7 @@ The rules for #4 and #6 with the first byte starting with something greater than
 The first bit being 1 means that the number is negative.
 All numbers in an ECDSA signature are positive, so we have to prepend with `0x00` if the first bit is zero which is equivalent to first byte >= `0x80`.
 
-Here's what DER format looks like:
+The DER format is in Figure 4-4:
 
 .DER Format
 image::der.png[DER format]
