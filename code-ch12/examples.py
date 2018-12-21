@@ -64,7 +64,7 @@ ssage, HeadersMessage, SimpleNode
 ea912e19'
 >>> address = 'mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv'
 >>> h160 = decode_base58(address)
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=\
+>>> node = SimpleNode('testnet.programmingbitcoin.com', testnet=True, logging=\
 False)
 >>> bf = BloomFilter(size=30, function_count=5, tweak=90210)  # <1>
 >>> bf.add(h160)  # <2>

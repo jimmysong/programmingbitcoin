@@ -163,7 +163,7 @@ Now that we have a node, we can now handshake with another node.
 [source,python]
 ----
 >>> from network import SimpleNode, VersionMessage
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True)
+>>> node = SimpleNode('testnet.programmingbitcoin.com', testnet=True)
 >>> version = VersionMessage()  # <1>
 >>> node.send(version)  # <2>
 >>> verack_received = False
@@ -222,11 +222,13 @@ We can now create a node, handshake, and then ask for some headers.
 
 [source,python]
 ----
+>>> from io import BytesIO
+>>> from block import Block, GENESIS_BLOCK
 >>> from network import SimpleNode, GetHeadersMessage
->>> from block import GENESIS_BLOCK_HASH
->>> node = SimpleNode('btc.programmingblockchain.com', testnet=True)
+>>> node = SimpleNode('mainnet.programmingbitcoin.com', testnet=False)
 >>> node.handshake()
->>> getheaders = GetHeadersMessage(start_block=GENESIS_BLOCK_HASH)
+>>> genesis = Block.parse(BytesIO(GENESIS_BLOCK))
+>>> getheaders = GetHeadersMessage(start_block=genesis.hash())
 >>> node.send(getheaders)
 ----
 

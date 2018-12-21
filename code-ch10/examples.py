@@ -1,36 +1,33 @@
 '''
 # tag::example1[]
+>>> from io import BytesIO
 >>> from network import SimpleNode, GetHeadersMessage, HeadersMessage
->>> from block import GENESIS_BLOCK_HASH
+>>> from block import Block, GENESIS_BLOCK, LOWEST_BITS
 >>> from helper import calculate_new_bits
->>> node = SimpleNode('btc.programmingblockchain.com', testnet=False)
->>> node.handshake()
->>> last_block_hash = GENESIS_BLOCK_HASH
->>> first_epoch_block = None
->>> expected_bits = None
+>>> previous = Block.parse(BytesIO(GENESIS_BLOCK))
+>>> first_epoch_timestamp = previous.timestamp
+>>> expected_bits = LOWEST_BITS
 >>> count = 1
+>>> node = SimpleNode('mainnet.programmingbitcoin.com', testnet=False)
+>>> node.handshake()
 >>> for _ in range(19):
-...     getheaders = GetHeadersMessage(start_block=last_block_hash)
+...     getheaders = GetHeadersMessage(start_block=previous.hash())
 ...     node.send(getheaders)
 ...     headers = node.wait_for(HeadersMessage)
-...     for b in headers.blocks:
-...         if not b.check_pow():  # <1>
+...     for header in headers.blocks:
+...         if not header.check_pow():  # <1>
 ...             raise RuntimeError('bad PoW at block {}'.format(count))
-...         if last_block_hash != GENESIS_BLOCK_HASH and b.prev_block != last_\
-block_hash:  # <2>
+...         if header.prev_block != previous.hash():  # <2>
 ...             raise RuntimeError('discontinuous block at {}'.format(count))
-...         if expected_bits and b.bits != expected_bits:  # <3>
-...             raise RuntimeError('bad bits at block {}'.format(count))
-...         if first_epoch_block and count % 2016 == 2015:  # <4>
-...             expected_bits = calculate_new_bits(
-...                 expected_bits, b.timestamp - first_epoch_block.timestamp)
+...         if count % 2016 == 0:
+...             time_diff = previous.timestamp - first_epoch_timestamp
+...             expected_bits = calculate_new_bits(previous.bits, time_diff)
 ...             print(expected_bits.hex())
-...         elif first_epoch_block is None:  # <5>
-...             expected_bits = b.bits
-...         if count % 2016 == 0 or not first_epoch_block:
-...             first_epoch_block = b
+...             first_epoch_timestamp = header.timestamp
+...         if header.bits != expected_bits:  # <3>
+...             raise RuntimeError('bad bits at block {}'.format(count))
+...         previous = header
 ...         count += 1
-...         last_block_hash = b.hash()
 ffff001d
 ffff001d
 ffff001d

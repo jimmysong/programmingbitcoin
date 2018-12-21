@@ -409,5 +409,5 @@ class SimpleNode:
 class SimpleNodeTest(TestCase):
 
     def test_handshake(self):
-        node = SimpleNode('tbtc.programmingblockchain.com', testnet=True)
+        node = SimpleNode('testnet.programmingbitcoin.com', testnet=True)
         node.handshake()

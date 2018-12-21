@@ -87,7 +87,7 @@ target_script = p2pkh_script(target_h160)
 fee = 5000  # fee in satoshis
 
 
-# connect to tbtc.programmingblockchain.com in testnet mode
+# connect to testnet.programmingbitcoin.com in testnet mode
 # create a bloom filter of size 30 and 5 functions. Add a tweak.
 # add the h160 to the bloom filter
 # complete the handshake

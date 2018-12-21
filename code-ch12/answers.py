@@ -82,8 +82,8 @@ e2917636'
 >>> target_h160 = decode_base58(target_address)
 >>> target_script = p2pkh_script(target_h160)
 >>> fee = 5000  # fee in satoshis
->>> # connect to tbtc.programmingblockchain.com in testnet mode
->>> node = SimpleNode('tbtc.programmingblockchain.com', testnet=True, logging=\
+>>> # connect to testnet.programmingbitcoin.com in testnet mode
+>>> node = SimpleNode('testnet.programmingbitcoin.com', testnet=True, logging=\
 False)
 >>> # create a bloom filter of size 30 and 5 functions. Add a tweak.
 >>> bf = BloomFilter(30, 5, 90210)

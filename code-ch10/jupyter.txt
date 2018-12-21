@@ -1,6 +1,6 @@
 import network
 
-from block import GENESIS_BLOCK_HASH
+from block import GENESIS_BLOCK
 from helper import calculate_new_bits
 from network import (
     NetworkEnvelope,
