@@ -107,7 +107,7 @@ A naive way to get the signature hash would be to hash the transaction serializa
 Unfortunately, we can't do that since the signature is part of the ScriptSig and a signature can't sign itself.
 
 .A signature is in the yellow highlighted part, or the ScriptSig.
-image::validation1.png[Validation Start]
+image::images/validation1.png[Validation Start]
 
 Instead, we modify the transaction before signing it.
 That is, we compute a different signature hash, or `z`, _for each input_.
@@ -119,7 +119,7 @@ The first step is to empty all the ScriptSigs when checking the signature (Figur
 The same procedure is used for creating the signature, except the ScriptSigs are usually already empty.
 
 .Empty each input's ScriptSig (in yellow highlighted field)
-image::validation2.png[Validation Step 1]
+image::images/validation2.png[Validation Step 1]
 
 Note that this example has only 1 input, so only that input's ScriptSig is emptied, but it's possible to have more than 1 input. Each of those would be emptied.
 
@@ -128,13 +128,13 @@ Note that this example has only 1 input, so only that input's ScriptSig is empti
 Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>> shown in Figure 7-3.
 
 .ScriptPubKey and ScriptSig
-image::script3.png[ScriptPubKey and ScriptSig]
+image::images/script3.png[ScriptPubKey and ScriptSig]
 
 We take the ScriptPubKey that the input is pointing to and put that in place of the empty ScriptSig (Figure 7-4).
 This may require a lookup on the blockchain, but in practice, the signer already knows the ScriptPubKey as the input is one where the signer has the private key.
 
 .Replace the ScriptSig (yellow highlighted field) for one of the inputs with the previous ScriptPubKey
-image::validation3.png[Validation Step 2]
+image::images/validation3.png[Validation Step 2]
 
 ==== Step 3: Append the hash type
 
@@ -148,7 +148,7 @@ For `SIGHASH_ALL`, the final transaction must have the exact outputs that were s
 The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like Figure 7-5:
 
 .Append the hash type (SIGHASH_ALL), or the orange `01000000`
-image::validation4.png[Validation Step 3]
+image::images/validation4.png[Validation Step 3]
 
 The hash256 of this modified transaction is interpreted as a Big-Endian integer to produce `z`.
 The code for converting the modified transaction to `z` looks like this:
@@ -240,7 +240,7 @@ In this example, we have an output here denoted by transaction ID and output ind
 When we view this output on a testnet block explorer (Figure 7-6), we can see that our output is worth 0.33 tBTC.
 
 .UTXO that we're spending
-image::txcreation1.png[Transaction seen on the blockchain]
+image::images/txcreation1.png[Transaction seen on the blockchain]
 
 Since this is more than 0.1 tBTC, we'll want to send the rest back to ourselves.
 Though it's generally bad privacy and security practice to reuse addresses, we'll send the bitcoins back to `mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2` to make the transaction construction easier.

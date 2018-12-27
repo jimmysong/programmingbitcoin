@@ -26,7 +26,7 @@ We'll go through each component in depth.
 Figure 5-1 shows a hexadecimal dump of a typical transaction that shows which parts are which.
 
 .Transaction Components, Version, Inputs, Output and Locktime
-image::tx1.png[Transaction Version, Inputs, Outputs and Locktime]
+image::images/tx1.png[Transaction Version, Inputs, Outputs and Locktime]
 
 The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
 
@@ -84,7 +84,7 @@ Our method will be able to handle any sort of stream and return the `Tx` object 
 === Version
 
 .Version
-image::tx2.png[Version]
+image::images/tx2.png[Version]
 
 When you see a version number in something (Figure 5-2 shows an example), it's meant to give the receiver information about what the versioned thing is supposed to represent.
 If, for example, you are running Windows 3.1, that's a version number that's very different than Windows 8 or Windows 10.
@@ -101,7 +101,7 @@ include::code-ch05/answers.py[tag=exercise1,indent=0]
 === Inputs
 
 .Inputs
-image::tx3.png[Inputs]
+image::images/tx3.png[Inputs]
 
 Each input points to an output of a previous transaction (see Figure 5-3).
 This fact requires more explanation as it's not intuitively obvious at first.
@@ -129,7 +129,7 @@ This would be analogous to 14 inputs or 7000 inputs.
 The number of inputs is the next part of the transaction shown in Figure 5-4:
 
 .Number of Inputs
-image::tx4.png[Inputs]
+image::images/tx4.png[Inputs]
 
 We can see that the byte is actually `01`, which means that this transaction has 1 input.
 It may be tempting here to assume that it's always a single byte, but it's not.
@@ -191,7 +191,7 @@ Sequence is also in Little-Endian and takes up 4 bytes.
 The fields of the input look like Figure 5-5:
 
 .The Fields of an Input, Previous Tx, Previous Index, ScriptSig and Sequence
-image::tx5.png[Input Fields]
+image::images/tx5.png[Input Fields]
 
 .Sequence and Locktime
 ****
@@ -254,7 +254,7 @@ An exchange may batch transactions, for example, and pay out a lot of people at 
 Like inputs, the outputs serialization starts with how many outputs there are as a varint as shown in Figure 5-6.
 
 .Number of Outputs
-image::tx6.png[Outputs]
+image::images/tx6.png[Outputs]
 
 Each output has two fields: Amount and ScriptPubKey.
 Amount is the amount of Bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin.
@@ -272,7 +272,7 @@ Like ScriptSig, ScriptPubKey is a variable-length field and is preceded by the l
 An output field look like Figure 5-7:
 
 .Output Fields, Amount and ScriptPubKey. This one is at index 0.
-image::tx7.png[Output Fields]
+image::images/tx7.png[Output Fields]
 
 .UTXO Set
 ****
@@ -309,7 +309,7 @@ This way, transactions can be signed, but unspendable until a certain point in U
 The serialization is in Little-Endian and 4-bytes (Figure 5-8).
 
 .Locktime
-image::tx8.png[Locktime]
+image::images/tx8.png[Locktime]
 
 The main problem with using Locktime is that the recipient of the transaction has no certainty that the transaction will be good when the Locktime comes.
 This is similar to a post-dated bank check, which has the possibility of bouncing.
