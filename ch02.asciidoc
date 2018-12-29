@@ -240,7 +240,7 @@ Note that the next if statement will fail if we don't return here.
 <2> We overload the `+` operator here
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity.
 Thus, we return `other`
-<4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity.
+<4> `other.x` being `None` means that `other` is the point at infinity, or the additive identity.
 Thus, we return `self`
 
 include::code-ch02/answers.py[tag=exercise3,indent=0]
