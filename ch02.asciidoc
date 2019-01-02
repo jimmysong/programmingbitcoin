@@ -24,45 +24,55 @@ For example, you probably learned the linear equation back in pre-Algebra:
 y = mx + b
 
 You may even remember that *m* here has the name _slope_ and *b*, _y-intercept_.
-You can also graph linear equations like Figure 2-1:
+You can also graph linear equations like <<linear_equation>>:
 
+[[linear_equation]]
 .Linear Equation
 image::images/prbc_0201.png[Linear Equation]
 
-Similarly, you're probably familiar with the quadratic equation and its graph (Figure 2-2):
+Similarly, you're probably familiar with the quadratic equation and its graph (<<quadratic_equation>>):
 
 y = ax^2^+bx+c
 
+[[quadratic_equation]]
 .Quadratic Equation
 image::images/prbc_0202.png[Quadratic Equation]
 
-And sometime around Algebra, you did even higher orders of `x`, something called the cubic equation and its graph (Figure 2-3):
+And sometime around Algebra, you did even higher orders of `x`, something called the cubic equation and its graph (<<cubic_equation>>):
 
 y = ax^3^+bx^2^+cx+d
 
+[[cubic_equation]]
 .Cubic Equation
 image::images/prbc_0203.png[Cubic Equation]
 
 An Elliptic Curve isn't all that different.
 The only real difference between the Elliptic Curve and the cubic curve above is the *y^2^* term on the left side.
-This has the effect of making the graph symmetric over the x-axis, shown in Figure 2-4:
+This has the effect of making the graph symmetric over the x-axis, shown in <<continuous_elliptic_curve>>:
 
+[[continuous_elliptic_curve]]
 .Continuous Elliptic Curve
 image::images/prbc_0204.png[Elliptic Curve Equation]
 
 The Elliptic Curve is also less steep than the cubic curve.
 Again, this is because of the *y^2^* term on the left side.
-At times, the curve may even be disjoint like Figure 2-5:
+At times, the curve may even be disjoint like <<disjoint_elliptic_curve>>:
 
+[[disjoint_elliptic_curve]]
 .Disjoint Elliptic Curve
 image::images/prbc_0205.png[Elliptic Curve Equation]
 
-If it helps, an Elliptic Curve can be though of as taking a cubic equation graph (Figure 2-6), taking only the part above the x-axis, flattening it out (Figure 2-7) and then mirroring the top half on the bottom half of the x-axis (Figure 2-8).
+If it helps, an Elliptic Curve can be though of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), taking only the part above the x-axis, flattening it out (<<step_2_a_cubic_equation>>) and then mirroring the top half on the bottom half of the x-axis (<<step_3_a_cubic_equation>>).
 
+[[step_1_a_cubic_equation]]
 .Step 1: A Cubic Equation
 image::images/prbc_0206.png[Start]
+
+[[step_2_a_cubic_equation]]
 .Step 2: Stretched Cubic Equation
 image::images/prbc_0207.png[Stretch]
+
+[[step_3_a_cubic_equation]]
 .Step 3: Reflected over the X-Axis
 image::images/prbc_0208.png[Symmetric]
 
@@ -71,8 +81,9 @@ Specifically, the Elliptic Curve used in Bitcoin is called secp256k1 and it uses
 y^2^=x^3^+7
 
 The canonical form is y^2^=x^3^+ax+b so the curve is defined by the constants `a=0`, `b=7`.
-The curve looks like Figure 2-9:
+The curve looks like <<secp256k1_curve>>:
 
+[[secp256k1_curve]]
 .secp256k1 Curve
 image::images/prbc_0209.png[secp256k1 Curve]
 
@@ -112,17 +123,23 @@ For example, Point Addition is commutative.
 That is, adding point A to point B is the same as adding point B to point A.
 
 The way we define Point Addition is as follows.
-It turns out that for every Elliptic Curve, a line will intersect it at either 1 point (Figure 2-10) or 3 points (Figure 2-11), except for a couple of special cases.
+It turns out that for every Elliptic Curve, a line will intersect it at either 1 point (<<line_intersects_at_only_1_point>>) or 3 points (<<line_intersects_at_3_points>>), except for a couple of special cases.
 
+[[line_intersects_at_only_1_point]]
 .Line intersects at only 1 point
 image::images/prbc_0210.png[Line intersecting at 1 point]
+
+[[line_intersects_at_3_points]]
 .Line intersects at 3 points
 image::images/prbc_0211.png[Line intersecting at 3 points]
 
-The two exceptions are when a line is _tangent_ to the curve (Figure 2-13) and when a line is exactly vertical (Figure 2-12).
+The two exceptions are when a line is _tangent_ to the curve (<<line_intersects_at_2_points_because_its_tangent_to_the_curve>>) and when a line is exactly vertical (<<line_intersects_at_2_points_because_its_vertical>>).
 
+[[line_intersects_at_2_points_because_its_vertical]]
 .Line intersects at 2 points because it's vertical
 image::images/prbc_0212.png[Vertical Line]
+
+[[line_intersects_at_2_points_because_its_tangent_to_the_curve]]
 .Line intersects at 2 points because it's tangent to the curve
 image::images/prbc_0213.png[Tangent Line]
 
@@ -140,18 +157,19 @@ For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
 * Find the point intersecting the Elliptic Curve a third time by drawing a line through P~1~ and P~2~
 * Reflect the resulting point over the x-axis
 
-Visually, it looks like Figure 2-14:
+Visually, it looks like <<point_addition>>:
 
+[[point_addition]]
 .Point Addition
 image::images/prbc_0214.png[Point Addition]
 
 We first draw a line through the two points we're adding (A and B).
 The third intersection point is C.
-We then reflect that point over the x-axis, which puts us at the A+B point in Figure 2-14.
+We then reflect that point over the x-axis, which puts us at the A+B point in <<point_addition>>.
 
 One of the properties that we are going to use is that point addition is not easily predictable.
 We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
-Going back to Figure 2-14, A+B is to the right of both points, A+C would be somewhere between A and C on the x-axis, and B+C would be to the left of both points.
+Going back to <<point_addition>>, A+B is to the right of both points, A+C would be somewhere between A and C on the x-axis, and B+C would be to the left of both points.
 In mathematics parlance, point addition is _non-linear_.
 
 === Math of Point Addition
@@ -176,8 +194,9 @@ That is:
 
 A + (-A) = I
 
-Visually, these are points opposite the x-axis on the curve (see Figure 2-15).
+Visually, these are points opposite the x-axis on the curve (see <<vertical_line_intersection>>).
 
+[[vertical_line_intersection]]
 .Vertical Line Intersection
 image::images/prbc_0212.png[Vertical Line]
 
@@ -190,12 +209,15 @@ This is obvious since the line going through A and B will intersect the curve a 
 Associativity means that (A+B) + C = A + (B+C).
 This isn't obvious and is the reason for flipping over the x-axis.
 
+[[a_b_c_case_1]]
 .(A+B)+C
 image::images/prbc_0216.png[Case 1]
+
+[[a_b_c_case_2]]
 .A+(B+C)
 image::images/prbc_0217.png[Case 2]
 
-You can see that in both Figure 2-16 and Figure 2-17, the final point is the same.
+You can see that in both <<a_b_c_case_1>> and <<a_b_c_case_2>>, the final point is the same.
 While this doesn't prove the associativity of point addition, the visual should at least give you the intuition that this is true.
 
 To code point addition, we're going to split it up into 3 steps:
@@ -346,8 +368,9 @@ We've already handled this in Exercise 3.
 
 What happens when P~1~=P~2~?
 Visually, we have to calculate the line that's *tangent* to the curve at P~1~ and find the point at which the line intersects the curve.
-The situation looks like this as we saw before (see Figure 2-18):
+The situation looks like this as we saw before (see <<line_thats_tangent_to_the_curve>>):
 
+[[line_thats_tangent_to_the_curve]]
 .Line that's tangent to the curve
 image::images/prbc_0213.png[Tangent Line]
 
@@ -401,8 +424,9 @@ include::code-ch02/answers.py[tag=exercise7,indent=0]
 
 === Coding One More Exception
 
-There is one more exception and this involves the case where the tangent line is vertical (Figure 2-19):
+There is one more exception and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>):
 
+[[vertical_and_tangent_to_the_curve]]
 .Vertical and Tangent to the curve
 image::images/prbc_0219.png[Tangent Vertical]
 

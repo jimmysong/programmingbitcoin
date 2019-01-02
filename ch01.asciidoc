@@ -159,8 +159,9 @@ We use the operator *%* for "modulo".
 
 7 % 3 = 1
 
-Figure 1-2 shows another example.
+<<long_division_example_two>> shows another example.
 
+[[long_division_example_two]]
 .Long Division Example 2
 image::images/prbc_0102.png[Long Division Example 2]
 
@@ -175,8 +176,9 @@ Imagine a problem like this:
 It is currently 3 o'clock.
 What hour will it be 47 hours from now?
 
-The answer is 2 o'clock because (3 + 47) % 12 = 2 (see Figure 1-3)
+The answer is 2 o'clock because (3 + 47) % 12 = 2 (see <<clock_going_forward_47_hours>>)
 
+[[clock_going_forward_47_hours]]
 .Clock going forward 47 hours
 image::images/prbc_0103.png[Clock]
 
