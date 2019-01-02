@@ -28,7 +28,7 @@ The prerequisites for this book are that you know programming and that you know 
 The library itself is written in Python 3 and a lot of the exercises can be done in a controlled environment like a Jupyter notebook.
 An intermediate knowledge of Python is preferred, but even a beginner knowledge of Python is probably sufficient to get a lot of the concepts.
 
-Some knowledge of math is required, especially for Chapters 1 and 2.
+Some knowledge of math is required, especially for Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>].
 These chapters introduce mathematical concepts probably not familiar to those that didn't major in mathematics.
 Math knowledge around algebra-level should suffice to understand the new concepts and to code the exercises covered in those chapters.
 
@@ -39,10 +39,10 @@ General Computer Science knowledge like hash functions will come in handy, but a
 This book is split into 14 chapters and built on top of one another.
 Each chapter is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
 
-Roughly speaking, Chapters 1-4 establish the mathematical tools that we need, Chapters 5-8 cover Transactions, which are the fundamental unit of Bitcoin and Chapters 9-12 cover Blocks and Networking.
+Roughly speaking, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_serialization">#chapter_serialization</a>] establish the mathematical tools that we need, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_tx_parsing">#chapter_tx_parsing</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_p2sh">#chapter_p2sh</a>] cover Transactions, which are the fundamental unit of Bitcoin and Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_blocks">#chapter_blocks</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] cover Blocks and Networking.
 The last two chapters cover some advanced topics but don't actually require you to write code.
 
-Chapters 1 and 2 cover some math that we need.
+Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>] cover some math that we need.
 Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
 After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, we move towards implementing how the cryptographic primitives are stored and transmitted through parsing and serializing all the different classes that we established in <<chapter_serialization>>.
 
@@ -58,7 +58,7 @@ After we've established the Public Key Cryptography at the end of <<chapter_elli
 <<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study.
 Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
 
-Chapters 1-12 have exercises that require you to build up the library from scratch.
+Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] have exercises that require you to build up the library from scratch.
 The answers are in the Appendix and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
 You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 

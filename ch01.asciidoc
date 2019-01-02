@@ -147,8 +147,9 @@ One of the tools we can use in order to make a Finite Field closed under additio
 
 We can define addition on the finite set using something called modulo arithmetic.
 Modulo arithmetic is something you probably learned when you first learned division.
-Remember problems like Figure 1-1?
+Remember problems like <<long_division_example_one>>?
 
+[[long_division_example_one]]
 .Long Division Example 1
 image::images/prbc_0101.png[Long Division Example 1]
 
