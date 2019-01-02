@@ -150,7 +150,7 @@ Modulo arithmetic is something you probably learned when you first learned divis
 Remember problems like Figure 1-1?
 
 .Long Division Example 1
-image::longdivision.png[Long Division Example 1]
+image::images/longdivision.png[Long Division Example 1]
 
 Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division.
 We define modulo in the same way.
@@ -161,7 +161,7 @@ We use the operator *%* for "modulo".
 Figure 1-2 shows another example.
 
 .Long Division Example 2
-image::longdivision-2.png[Long Division Example 2]
+image::images/longdivision-2.png[Long Division Example 2]
 
 Formally speaking, the modulo operation is the remainder after division of one number by another.
 Let's look at another example with larger numbers:
@@ -177,7 +177,7 @@ What hour will it be 47 hours from now?
 The answer is 2 o'clock because (3 + 47) % 12 = 2 (see Figure 1-3)
 
 .Clock going forward 47 hours
-image::clock.jpg[Clock]
+image::images/clock.jpg[Clock]
 
 We can also see this as "wrapping around" in the sense that you go past zero every time we move ahead 12 hours.
 
@@ -437,7 +437,7 @@ Some of what we're doing now may seem slow for large numbers, but we'll use some
 
 include::code-ch01/answers.py[tag=exercise7,indent=0]
 
-=== Finite Field Division 
+=== Finite Field Division
 
 The intuition that helps us with addition, subtraction, multiplication and perhaps even exponentiation unfortunately doesn't help us quite as much in division.
 Because division is the hardest one to make sense of, we'll start with something that should make sense.

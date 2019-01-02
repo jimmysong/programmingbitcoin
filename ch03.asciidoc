@@ -28,7 +28,7 @@ Real numbers are easy to plot and we can see the a graph over reals visually.
 For example, y^2^=x^3^+7 can be plotted like Figure 3-1:
 
 .secp256k1 over real numbers
-image::elliptic3.png[secp256k1 Curve]
+image::images/elliptic3.png[secp256k1 Curve]
 
 It turns out we can use the point addition equations over any field, including the Finite Fields we learned in <<chapter_finite_fields>>.
 The only difference is that we have to use the addition/subtraction/multiplication/division as defined in <<chapter_finite_fields>>, not the "normal" versions that the real numbers use.
@@ -47,7 +47,7 @@ We've verified that the point is on the curve using Finite Field math.
 Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different (Figure 3-2):
 
 .Elliptic Curve over a Finite Field
-image::finitefieldellipticcurve.png[Elliptic Curve over a Finite Field]
+image::images/finitefieldellipticcurve.png[Elliptic Curve over a Finite Field]
 
 As you can see, it's very much a scattershot of points and there's no smooth curve here.
 This is not surprising since the points are discrete.
@@ -113,7 +113,7 @@ y=mx+b
 It turns out that a "line" in a Finite Field is not quite what you'd expect (Figure 3-3):
 
 .Line over a Finite Field
-image::linefinitefield.png[Line over a Finite Field]
+image::images/linefinitefield.png[Line over a Finite Field]
 
 The equation nevertheless works and we can calculate what `y` should be for a given `x`.
 
@@ -171,7 +171,7 @@ We can do this because we have defined point addition and point addition is asso
 One property of scalar multiplication is that it's really hard to predict without calculating (see Figure 3-4):
 
 .Scalar Multiplication Results for y^2^=x^3^+7 over F~223~ for point (170,142)
-image::scatterplot.png[Scalar Multiplication Results]
+image::images/scatterplot.png[Scalar Multiplication Results]
 
 Each point is labeled by how many times we've added the point.
 You can see that this is a complete scattershot.
@@ -269,7 +269,7 @@ So:
 We call 0 the point at infinity because visually, it's the point that exists to help the math work out (Figure 3-5):
 
 .Vertical Line "intersects" a third time at the point at infinity
-image::intersect2-1.png[Vertical Line]
+image::images/intersect2-1.png[Vertical Line]
 
 ==== Closure
 
@@ -297,7 +297,7 @@ So we know that this element is in the group, proving closure.
 Visually, invertibility is easy to see (Figure 3-6):
 
 .Each point is invertible by taking the reflection over the x-axis
-image::intersect2-1.png[Vertical Line]
+image::images/intersect2-1.png[Vertical Line]
 
 Mathematically, we know that if aG is in the group, (n-a)G is also in the group.
 You can add them together to get aG+(n-a)G=(a+n-a)G=nG=0.
@@ -307,7 +307,7 @@ You can add them together to get aG+(n-a)G=(a+n-a)G=nG=0.
 We know from Point Addition that A+B=B+A (Figure 3-7):
 
 .The Line through the points doesn't change
-image::pointaddition.png[Point Addition]
+image::images/pointaddition.png[Point Addition]
 
 This means that aG+bG=bG+aG, which proves commutativity.
 
@@ -316,9 +316,9 @@ This means that aG+bG=bG+aG, which proves commutativity.
 We know from Point Addition that A+(B+C)=(A+B)+C (see Figure 3-8 and 3-9)
 
 .(A+B)+C
-image::associativity1.png[Case 1]
+image::images/associativity1.png[Case 1]
 .A+(B+C)
-image::associativity2.png[Case 2]
+image::images/associativity2.png[Case 2]
 
 Thus, aG+(bG+cG)=(aG+bG)+cG proving associativity.
 

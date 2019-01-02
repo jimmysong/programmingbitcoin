@@ -54,7 +54,7 @@ You can also specify inline text as code: +print "Hello World"+.
 Now, let's take a look at a figure with a caption:
 
 .Figures like this will be automatically numbered in output.
-image::images/tarsier.png["Drawing of Tarsiers"]
+image::images/images/tarsier.png["Drawing of Tarsiers"]
 
 Here is a blockquote with an author attribution:
 
