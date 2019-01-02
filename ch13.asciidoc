@@ -65,10 +65,10 @@ This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do addi
 To understand Segwit, it helps to look at what the transaction looks like when sent to an old node (Figure 13-1) versus a new node (Figure 13-2):
 
 .Pay-to-witness-pubkey-hash as seen by pre-BIP0141 software
-image::images/p2wpkh1.png[p2wpkh to old nodes]
+image::images/prbc_1301.png[p2wpkh to old nodes]
 
 .Pay-to-witness-pubkey-hash as seen by post-BIP0141 software
-image::images/p2wpkh2.png[p2wpkh to new nodes]
+image::images/prbc_1302.png[p2wpkh to new nodes]
 
 The difference between these two serializations is that the latter transaction (Segwit serialization) has the marker, flag and Witness fields.
 Otherwise, the two transactions look similar.
@@ -82,22 +82,22 @@ The ScriptSig, as seen in both serializations is empty.
 The combined Script is Figure 13-3:
 
 .Pay-to-witness-pubkey-hash (p2wpkh) ScriptPubKey
-image::images/p2wpkh3.png[p2wpkh ScriptPubKey]
+image::images/prbc_1303.png[p2wpkh ScriptPubKey]
 
 The processing of the combined Script starts like Figure 13-4:
 
 .p2wpkh Start
-image::images/p2wpkh4.png[p2wpkh Start]
+image::images/prbc_1304.png[p2wpkh Start]
 
 `OP_0` pushes a `0` on the stack (Figure 13-5):
 
 .p2wpkh Step 1
-image::images/p2wpkh5.png[p2wpkh Step 1]
+image::images/prbc_1305.png[p2wpkh Step 1]
 
 The 20-byte hash is an element, so it's pushed to the stack (Figure 13-6):
 
 .p2wpkh Step 2
-image::images/p2wpkh6.png[p2wpkh Step 2]
+image::images/prbc_1306.png[p2wpkh Step 2]
 
 At this point, older nodes will stop as there are no more Script instructions to be processed.
 Since the top element is non-zero, this will be counted as a valid Script.
@@ -111,13 +111,13 @@ Namely: `<signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP
 Figure 13-7 shows the state that is encountered next:
 
 .p2wpkh Step 3
-image::images/p2wpkh7.png[p2wpkh Step 3]
+image::images/prbc_1307.png[p2wpkh Step 3]
 
 The rest of the processing of p2wpkh is the same as the processing of p2pkh as seen in <<chapter_script>>.
 The end state is a single `1` on the stack if and only if the 20-byte hash is the hash160 of the pubkey and the signature is valid (Figure 13-8):
 
 .p2wpkh Step 4
-image::images/p2wpkh13.png[p2wpkh Step 4]
+image::images/prbc_1308.png[p2wpkh Step 4]
 
 For an older node, processing stops at `<20-byte hash> 0`, as older nodes don't know the special Segwit rule.
 Only upgraded nodes do the rest of the validation, much like p2sh.
@@ -145,10 +145,10 @@ A p2sh-p2wpkh address is a normal p2sh address, but the RedeemScript is `OP_0 <2
 As with p2wpkh, different transactions are sent to older nodes (Figure 13-9) versus newer nodes (Figure 13-10):
 
 .Pay-to-script-hash-pay-to-witness-pubkey-hash (p2sh-p2wpkh) to pre-BIP0141 software
-image::images/p2sh-p2wpkh1.png[p2sh-p2wpkh to Old Nodes]
+image::images/prbc_1309.png[p2sh-p2wpkh to Old Nodes]
 
 .p2sh-p2wpkh to post-BIP0141 software
-image::images/p2sh-p2wpkh2.png[p2sh-p2wpkh to New Nodes]
+image::images/prbc_1310.png[p2sh-p2wpkh to New Nodes]
 
 The difference versus p2wpkh is that the ScriptSig is no longer empty.
 The ScriptSig has a RedeemScript which is equal to the ScriptPubkey in p2wpkh.
@@ -156,28 +156,28 @@ As this is a p2sh, the ScriptPubKey is the same as any other p2sh.
 The combined Script looks like Figure 13-11:
 
 .p2sh-p2wpkh ScriptPubKey is the same as a normal p2sh ScriptPubKey
-image::images/p2sh-p2wpkh3.png[p2sh-p2wpkh ScriptPubKey]
+image::images/prbc_1311.png[p2sh-p2wpkh ScriptPubKey]
 
 We start the Script evaluation like Figure 13-12:
 
 .p2sh-p2wpkh Start
-image::images/p2sh-p2wpkh4.png[p2sh-p2wpkh Start]
+image::images/prbc_1312.png[p2sh-p2wpkh Start]
 
 Notice that the instructions to be processed are exactly what triggers the p2sh Special rule.
 The RedeemScript goes on the stack (Figure 13-13):
 
 .p2sh-p2wpkh Step 1
-image::images/p2sh-p2wpkh5.png[p2sh-p2wpkh Step 1]
+image::images/prbc_1313.png[p2sh-p2wpkh Step 1]
 
 The `OP_HASH160` will turn the RedeemScript's hash (Figure 13-14):
 
 .p2sh-p2wpkh Step 2
-image::images/p2sh-p2wpkh6.png[p2sh-p2wpkh Step 2]
+image::images/prbc_1314.png[p2sh-p2wpkh Step 2]
 
 The hash will go on the stack and we then get to `OP_EQUAL` (Figure 13-15):
 
 .p2sh-p2wpkh Step 3
-image::images/p2sh-p2wpkh7.png[p2sh-p2wpkh Step 3]
+image::images/prbc_1315.png[p2sh-p2wpkh Step 3]
 
 At this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid as they are unaware of the p2sh validation rules.
 However, post-BIP0016 nodes recognize the special Script sequence for p2sh, so the RedeemScript will then be evaluated as Script instructions.
@@ -185,26 +185,26 @@ The RedeemScript is `OP_0 <20-byte hash>`, which is the same as the ScriptPubKey
 This makes the Script state look like Figure 13-16:
 
 .p2sh-p2wpkh Step 4
-image::images/p2sh-p2wpkh8.png[p2sh-p2wpkh Step 4]
+image::images/prbc_1316.png[p2sh-p2wpkh Step 4]
 
 This should look familiar as this is the state that p2wpkh starts with.
 After `OP_0` and the 20-byte hash we are left with Figure 13-17:
 
 .p2sh-p2wpkh Step 5
-image::images/p2sh-p2wpkh9.png[p2sh-p2wpkh Step 5]
+image::images/prbc_1317.png[p2sh-p2wpkh Step 5]
 
 At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules.
 However, post-Segwit nodes will recognize the special Script sequence for p2wpkh.
 The signature and pubkey from the Witness field along with the 20-byte hash will add the p2pkh instructions (Figure 13-18):
 
 .p2sh-p2wpkh Step 6
-image::images/p2sh-p2wpkh10.png[p2sh-p2wpkh Step 6]
+image::images/prbc_1318.png[p2sh-p2wpkh Step 6]
 
 The rest of the processing is the same as p2pkh (<<chapter_script>>).
 Assuming the signature and pubkey are valid, we are left with FIgure 13-19:
 
 .p2sh-p2wpkh End
-image::images/p2sh-p2wpkh11.png[p2sh-p2wpkh End]
+image::images/prbc_1319.png[p2sh-p2wpkh End]
 
 As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016.
 A node pre-BIP0016 would consider the Script valid once the RedeemScripts were equal and a post-BIP0016, pre-Segwit node would consider the Script valid at the 20-byte hash.
@@ -352,10 +352,10 @@ Pay-to-witness-script-hash is like p2sh, but with all the ScriptSig data in the 
 As with p2wpkh, we send different data to pre-BIP0141 software (Figure 13-20) vs post-BIP0141 software (Figure 13-21):
 
 .Pay-to-witness-script-hash as seen by pre-BIP0141 software
-image::images/p2wsh-3.png[p2wsh to old nodes]
+image::images/prbc_1320.png[p2wsh to old nodes]
 
 .Pay-to-witness-script-hash as seen by post-BIP0141 software
-image::images/p2wsh-4.png[p2wsh to new nodes]
+image::images/prbc_1321.png[p2wsh to new nodes]
 
 The ScriptPubKey for a p2wsh is `OP_0 <32-byte hash>`.
 This sequence triggers another special rule.
@@ -363,20 +363,20 @@ The ScriptSig, as with p2wpkh, is empty.
 When p2wsh is being spent, the combined Script looks like Figure 13-22:
 
 .Pay-to-witness-script-hash (p2wsh) ScriptPubKey
-image::images/p2wsh-8.png[p2wsh ScriptPubKey]
+image::images/prbc_1322.png[p2wsh ScriptPubKey]
 
 The processing of this Script starts similarly to p2wpkh (Figure 13-23 and 13-24):
 
 .p2sh Start
-image::images/p2wsh-9.png[p2wsh Start]
+image::images/prbc_1323.png[p2wsh Start]
 
 .p2wsh Step 1
-image::images/p2wsh-10.png[p2wsh Step 1]
+image::images/prbc_1324.png[p2wsh Step 1]
 
 The 32-byte hash is an element, so is pushed to the stack (Figure 13-25):
 
 .p2wsh Step 2
-image::images/p2wsh-11.png[p2wsh Step 2]
+image::images/prbc_1325.png[p2wsh Step 2]
 
 As with p2wpkh, older nodes will stop as there are no more Script instructions to be processed.
 Newer nodes will recognize the special sequence and do additional validation by looking at the Witness field.
@@ -384,7 +384,7 @@ Newer nodes will recognize the special sequence and do additional validation by 
 The Witness field for p2wsh in our case is a 2-of-3 multisig (Figure 13-26):
 
 .p2wsh Witness
-image::images/p2wsh-6.png[p2wsh Witness]
+image::images/prbc_1326.png[p2wsh Witness]
 
 The last item of the Witness is called the *WitnessScript* and must sha256 to the 32-byte hash from the ScriptPubKey.
 Note this is sha256, not hash256.
@@ -392,22 +392,22 @@ Once the WitnessScript is validated by having the same hash value, the WitnessSc
 The Witness Script looks like Figure 13-27:
 
 .p2wsh Witness Script
-image::images/p2wsh-7.png[p2wsh Witness Script]
+image::images/prbc_1327.png[p2wsh Witness Script]
 
 The rest of the Witness field is put on top to produce this instruction set (Figure 13-28):
 
 .p2wsh Step 3
-image::images/p2wsh-12.png[p2wsh Step 3]
+image::images/prbc_1328.png[p2wsh Step 3]
 
 As you can see, this is a 2-of-3 multisig much like what was explored in <<chapter_p2sh>> (Figure 13-29).
 
 .p2wsh Step 4
-image::images/p2wsh-13.png[p2wsh Step 4]
+image::images/prbc_1329.png[p2wsh Step 4]
 
 If the signatures are valid, we end like Figure 13-30:
 
 .p2wsh Step 5
-image::images/p2wsh-14.png[p2wsh Step 5]
+image::images/prbc_1330.png[p2wsh Step 5]
 
 The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
 Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script instructions and added to the instruction set.
@@ -420,78 +420,78 @@ Like p2sh-p2wpkh, p2sh-p2wsh is a way to make p2wsh backward-compatible.
 These transactions are sent to older nodes (Figure 13-31) vs newer nodes (Figure 13-32):
 
 .Pay-to-script-hash-pay-to-witness-script-hash (p2sh-p2wsh) to pre-BIP0141 software
-image::images/p2sh-p2wsh-4.png[p2sh-p2wsh to Old Nodes]
+image::images/prbc_1331.png[p2sh-p2wsh to Old Nodes]
 
 .p2sh-p2wsh to post-BIP0141 software
-image::images/p2sh-p2wsh-1.png[p2sh-p2wsh to New Nodes]
+image::images/prbc_1332.png[p2sh-p2wsh to New Nodes]
 
 As with p2sh-p2wpkh, the ScriptPubKey is indistinguishable from any other p2sh and the ScriptSig is only the RedeemScript (Figure 13-33):
 
 .p2sh-p2wsh ScriptPubKey
-image::images/p2sh-p2wpkh3.png[p2sh-p2wsh ScriptPubKey]
+image::images/prbc_1311.png[p2sh-p2wsh ScriptPubKey]
 
 We start the p2sh-p2wsh in exactly the same way that p2sh-p2wpkh starts (Figure 13-34).
 
 .p2sh-p2wsh Start
-image::images/p2sh-p2wpkh4.png[p2sh-p2wsh Start]
+image::images/prbc_1312.png[p2sh-p2wsh Start]
 
 The RedeemScript is pushed to the stack (Figure 13-35):
 
 .p2sh-p2wsh Step 1
-image::images/p2sh-p2wpkh5.png[p2sh-p2wsh Step 1]
+image::images/prbc_1313.png[p2sh-p2wsh Step 1]
 
 The `OP_HASH160` will return the RedeemScript's hash (Figure 13-36):
 
 .p2sh-p2wsh Step 2
-image::images/p2sh-p2wpkh6.png[p2sh-p2wsh Step 2]
+image::images/prbc_1314.png[p2sh-p2wsh Step 2]
 
 The hash is pushed to the stack and we then get to `OP_EQUAL` (Figure 13-37):
 
 .p2sh-p2wsh Step 3
-image::images/p2sh-p2wpkh7.png[p2sh-p2wsh Step 3]
+image::images/prbc_1315.png[p2sh-p2wsh Step 3]
 
 As with p2sh-p2wpkh, if the hashes are equal, pre-BIP0016 nodes will mark the input as valid as they are unaware of the p2sh validation rules.
 However, post-BIP0016 nodes will recognize the special Script sequence for p2sh, so the RedeemScript will be interpreted as new Script instructions.
 The RedeemScript is `OP_0 <32-byte hash>`, which is the same as the ScriptPubKey for p2wsh (Figure 13-38).
 
 .p2sh-p2wsh RedeemScript
-image::images/p2sh-p2wsh-6.png[p2sh-p2wsh RedeemScript]
+image::images/prbc_1338.png[p2sh-p2wsh RedeemScript]
 
 This makes the Script state look like Figure 13-39:
 
 .p2sh-p2wsh Step 4
-image::images/p2wsh-9.png[p2sh-p2wsh Step 4]
+image::images/prbc_1323.png[p2sh-p2wsh Step 4]
 
 Of course, this is the exact same starting state as p2wsh (Figure 13-40).
 
 .p2sh-p2wsh Step 5
-image::images/p2wsh-10.png[p2sh-p2wsh Step 5]
+image::images/prbc_1324.png[p2sh-p2wsh Step 5]
 
 The 32-byte hash is an element, so is pushed to the stack (Figure 13-41):
 
 .p2sh-p2wsh Step 6
-image::images/p2wsh-11.png[p2sh-p2wsh Step 6]
+image::images/prbc_1325.png[p2sh-p2wsh Step 6]
 
 At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules.
 However, post-Segwit nodes will recognize the special Script sequence for p2wsh.
 The Witness field (Figure 13-42) contains the Witness Script (Figure 13-43). The sha256 of the WitnessScript is checked against 32-byte hash and if equal, the WitnessScript is interpreted as Script and put into the instruction set (Figure 13-44):
 
 .p2sh-p2wsh Witness
-image::images/p2sh-p2wsh-8.png[p2sh-p2wsh Witness]
+image::images/prbc_1342.png[p2sh-p2wsh Witness]
 
 .p2sh-p2wsh Witness Script
-image::images/p2wsh-7.png[p2wsh Witness Script]
+image::images/prbc_1327.png[p2wsh Witness Script]
 
 The Witness Script is a 2-of-3 multisig which is put into the instruction set (Figure 13-44):
 
 .p2sh-p2wsh Step 7
-image::images/p2wsh-12.png[p2sh-p2wsh Step 7]
+image::images/prbc_1328.png[p2sh-p2wsh Step 7]
 
 As you can see, this is a 2-of-3 multisig as in <<chapter_p2sh>>.
 If the signatures are valid, we end like Figure 13-45:
 
 .p2sh-p2wsh End
-image::images/p2wsh-14.png[p2sh-p2wsh End]
+image::images/prbc_1330.png[p2sh-p2wsh End]
 
 This makes p2wsh backwards compatible, allowing older wallets to send to p2sh ScriptPubKeys which they can handle.
 

@@ -45,7 +45,7 @@ include::code-ch12/examples.py[tag=example1]
 Conceptually, what we just did looks like Figure 12-1:
 
 .10-bit Bloom Filter with 1 element
-image::images/bloomfilter1.png[Simple Bloom Filter]
+image::images/prbc_1201.png[Simple Bloom Filter]
 
 Our Bloom Filter consists of:
 
@@ -61,7 +61,7 @@ The full node can then send multiple buckets of transactions instead of a single
 Let's create a Bloom Filter with two items, "hello world" and "goodbye" (Figure 12-2)
 
 .10-bit Bloom Filter with 2 elements
-image::images/bloomfilter2.png[Two Item Bloom Filter]
+image::images/prbc_1202.png[Two Item Bloom Filter]
 
 [source,python]
 ----
@@ -97,7 +97,7 @@ include::code-ch12/examples.py[tag=example3]
 Conceptually, Figure 12-3 shows what the code above does:
 
 .10-bit Bloom Filter with 2 elements and 2 hash functions
-image::images/bloomfilter3.png[Multiple Hash Functions]
+image::images/prbc_1203.png[Multiple Hash Functions]
 
 A Bloom Filter can be optimized by changing the number of hash functions and bit field size to get a desirable false-positive rate.
 
@@ -161,7 +161,7 @@ The command to set the Bloom Filter is called `filterload`.
 The payload looks like Figure 12-4:
 
 .Parsed `filterload`
-image::images/filterload.png[filterload Command]
+image::images/prbc_1204.png[filterload Command]
 
 The elements of a Bloom Filter are encoded into bytes. The bit field, hash function count and tweak are encoded in this message.
 The last field, matched item flag, is a way of asking the full node to add any matched transactions to the Bloom Filter.
@@ -179,7 +179,7 @@ In other words, the light client can ask for Merkle Blocks whose transactions of
 Here is what the payload for `getdata` looks like Figure 12-5:
 
 .Parsed `getdata`
-image::images/getdata.png[getdata Command]
+image::images/prbc_1205.png[getdata Command]
 
 The number of items as a varint specify how many items we want.
 The each item has a type.
