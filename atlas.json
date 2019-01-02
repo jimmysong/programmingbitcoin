@@ -4,38 +4,39 @@
     "titlepage.html",
     "copyright.html",
     "toc.html",
-    "all.asciidoc",  
+    "all.asciidoc",
     "author_bio.html"
   ],
   "formats": {
     "pdf": {
       "version": "print",
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
-      "color_count": "1",
+      "color_count": "4",
       "trim_size": "7inx9.1875in",
       "antennahouse_version": "AHFormatterV62_64-MR4"
     },
     "epub": {
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "epubcheck": true,
       "show_comments": false,
-      "downsample_images": false
+      "downsample_images": false,
+      "mathmlreplacement": false
     },
     "mobi": {
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
       "downsample_images": false
     },
     "html": {
       "toc": true,
-      "index": false,
+      "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
       "consolidated": false
