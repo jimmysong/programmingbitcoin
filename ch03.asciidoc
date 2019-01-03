@@ -25,8 +25,9 @@ Note unlike a _finite_ field, there are an _infinite_ number of real numbers, bu
 Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse.
 
 Real numbers are easy to plot and we can see the a graph over reals visually.
-For example, y^2^=x^3^+7 can be plotted like Figure 3-1:
+For example, y^2^=x^3^+7 can be plotted like <<secp256k1_over_real_numbers>>:
 
+[[secp256k1_over_real_numbers]]
 .secp256k1 over real numbers
 image::images/prbc_0209.png[secp256k1 Curve]
 
@@ -44,8 +45,9 @@ We can verify that the point (17,64) is on the curve by calculating both sides o
 
 We've verified that the point is on the curve using Finite Field math.
 
-Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different (Figure 3-2):
+Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different (<<elliptic_curve_over_a_finite_field>>):
 
+[[elliptic_curve_over_a_finite_field]]
 .Elliptic Curve over a Finite Field
 image::images/prbc_0302.png[Elliptic Curve over a Finite Field]
 
@@ -110,8 +112,9 @@ We can use all the same equations over Finite Fields, including the linear equat
 
 y=mx+b
 
-It turns out that a "line" in a Finite Field is not quite what you'd expect (Figure 3-3):
+It turns out that a "line" in a Finite Field is not quite what you'd expect (<<line_over_a_finite_field>>):
 
+[[line_over_a_finite_field]]
 .Line over a Finite Field
 image::images/prbc_0303.png[Line over a Finite Field]
 
@@ -168,8 +171,9 @@ This is what we call Scalar Multiplication.
 That is, we have a _scalar_ number in front of the point.
 We can do this because we have defined point addition and point addition is associative.
 
-One property of scalar multiplication is that it's really hard to predict without calculating (see Figure 3-4):
+One property of scalar multiplication is that it's really hard to predict without calculating (see <<scalar_multiplication_results_for_y_2_x_3_7>>):
 
+[[scalar_multiplication_results_for_y_2_x_3_7]]
 .Scalar Multiplication Results for y^2^=x^3^+7 over F~223~ for point (170,142)
 image::images/prbc_0304.png[Scalar Multiplication Results]
 
@@ -266,8 +270,9 @@ So:
 
 0 + A = A
 
-We call 0 the point at infinity because visually, it's the point that exists to help the math work out (Figure 3-5):
+We call 0 the point at infinity because visually, it's the point that exists to help the math work out (<<vertical_line_intersects_a_third_time>>):
 
+[[vertical_line_intersects_a_third_time]]
 .Vertical Line "intersects" a third time at the point at infinity
 image::images/prbc_0212.png[Vertical Line]
 
@@ -294,8 +299,9 @@ So we know that this element is in the group, proving closure.
 
 ==== Invertibility
 
-Visually, invertibility is easy to see (Figure 3-6):
+Visually, invertibility is easy to see (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>):
 
+[[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
 .Each point is invertible by taking the reflection over the x-axis
 image::images/prbc_0212.png[Vertical Line]
 
@@ -304,8 +310,9 @@ You can add them together to get aG+(n-a)G=(a+n-a)G=nG=0.
 
 ==== Commutativity
 
-We know from Point Addition that A+B=B+A (Figure 3-7):
+We know from Point Addition that A+B=B+A (<<the_line_through_the_points_doesnt_change>>):
 
+[[the_line_through_the_points_doesnt_change]]
 .The Line through the points doesn't change
 image::images/prbc_0214.png[Point Addition]
 
@@ -313,10 +320,13 @@ This means that aG+bG=bG+aG, which proves commutativity.
 
 ==== Associativity
 
-We know from Point Addition that A+(B+C)=(A+B)+C (see Figure 3-8 and 3-9)
+We know from Point Addition that A+(B+C)=(A+B)+C (see Figure pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_1">#a_b_c_case_1</a> and <a data-type="xref" data-xrefstyle="select:labelnumber"href="#a_b_c_case_2">#a_b_c_case_2</a>])
 
+[[a_b_c_case_1]]
 .(A+B)+C
 image::images/prbc_0216.png[Case 1]
+
+[[a_b_c_case_2]]
 .A+(B+C)
 image::images/prbc_0217.png[Case 2]
 
