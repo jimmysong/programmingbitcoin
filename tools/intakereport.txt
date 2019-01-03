@@ -1,0 +1,72 @@
+Title: Programming Bitcoin
+ISBN: 9781492031499
+JIRA #: DCPSPROD-2866
+
+
+Stylesheet: animal_theme_sass
+Toolchain: Atlas 2
+
+Atlas URL: https://atlas.oreilly.com/oreillymedia/programming-bitcoin/
+Incoming format: Asciidoc
+Outgoing format: Asciidoc
+
+Preliminary pagecount: 346 with figs
+  
+Is this project in Early Release? NO
+
+Resources
+=========
+** There are 178 illustrations in this book.
+
+   Once the figs are processed on /work, you'll need to add them to the book's repo.
+
+   A report mapping original figure file names to their new names can be found in the tools folder for this project as figure_renaming_report.tsv.
+
+
+** Intake Report:
+   (Git repo) tools/intakereport.txt
+
+** MS Snapshot:
+    To view the submitted files, you'll need to checkout the git tag named 'manuscript_to_prod' 
+    by running the following command in your checkout:
+    
+    $ git checkout manuscript_to_prod
+    
+    This will temporarily switch the files in your repo to the state they were in when the manuscript_to_prod tag 
+    was created. 
+    To switch the files back to the current state, run:
+    
+    $ git checkout master
+  
+  
+Notes from Tools:
+=================
+
+** PROD: Add any authors to project that need to be added.
+** Syntax highlighting: applied to 228 out of 240 code listings.
+
+** Every single figure xref was hardcoded in the source files. I added ids and xref markup, but I would encourage Prod Ed/Copyeditor to make sure the proper figures are linked.
+
+** Please let Tools know ASAP if there are any other global problems for which we can help automate a fix.
+
+Notes at arrival in production:
+==================
+
+PE: Kristen
+Source files: https://atlas.oreilly.com/oreillymedia/programming-bitcoin
+Pagecount: 330
+Incoming format: AsciiDoc
+
+Notes: 
+* Ch 5 has width attribute errors [Nick: FIXED. This was caused by commas used in the figure alt text]
+* Ch 10 has href value errors [Nick: NOT FIXED. This is caused by missing callouts in the code block on line 267 of Chapter 10. Author will need to add callouts 4 and 5 to the code.
+* Is it OK to have subscript in headers? It's showing up OK in the epub, but wanted to check if this was a big no-no [Nick: This does not cause any epubcheck problems, so I did not make any changes.]
+* This book is on an abbreviated schedule, so a faster intake would be appreciated!
+
+==================
+
+Please let me know about any other issues.
+
+Thanks,
+Nick
+
