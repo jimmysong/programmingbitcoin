@@ -23,8 +23,9 @@ A general overview of these fields might be helpful.
 Version indicates what additional features the transaction uses, Inputs define what Bitcoins are being spent, Outputs define where the Bitcoins are going and Locktime defines when this Transaction starts being valid.
 We'll go through each component in depth.
 
-Figure 5-1 shows a hexadecimal dump of a typical transaction that shows which parts are which.
+<<transaction_components_version_inputs_output_locktime>> shows a hexadecimal dump of a typical transaction that shows which parts are which.
 
+[[transaction_components_version_inputs_output_locktime]]
 .Transaction Components, Version, Inputs, Output and Locktime
 image::images/prbc_0501.png[Transaction Version, Inputs, Outputs and Locktime]
 
@@ -83,10 +84,11 @@ Our method will be able to handle any sort of stream and return the `Tx` object 
 
 === Version
 
+[[version_chap_five]]
 .Version
 image::images/prbc_0502.png[Version]
 
-When you see a version number in something (Figure 5-2 shows an example), it's meant to give the receiver information about what the versioned thing is supposed to represent.
+When you see a version number in something (<<version_chap_five>> shows an example), it's meant to give the receiver information about what the versioned thing is supposed to represent.
 If, for example, you are running Windows 3.1, that's a version number that's very different than Windows 8 or Windows 10.
 You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what API's you can program against.
 
@@ -100,10 +102,11 @@ include::code-ch05/answers.py[tag=exercise1,indent=0]
 
 === Inputs
 
+[[inputs_chap_five]]
 .Inputs
 image::images/prbc_0503.png[Inputs]
 
-Each input points to an output of a previous transaction (see Figure 5-3).
+Each input points to an output of a previous transaction (see <<inputs_chap_five>>).
 This fact requires more explanation as it's not intuitively obvious at first.
 
 Bitcoin's inputs are spending outputs of a previous transaction.
@@ -126,8 +129,9 @@ There are situations where there could be even more.
 In our analogy, we can pay for a 70 dollar meal with 14 5-dollar bills or even 7000 pennies.
 This would be analogous to 14 inputs or 7000 inputs.
 
-The number of inputs is the next part of the transaction shown in Figure 5-4:
+The number of inputs is the next part of the transaction shown in <<number_of_inputs>>:
 
+[[number_of_inputs]]
 .Number of Inputs
 image::images/prbc_0504.png[Inputs]
 
@@ -188,8 +192,9 @@ A variable-length field requires us to define exactly how long the field will be
 Sequence was originally intended as a way to do what Satoshi called "high frequency trades" with the Locktime field (see _Sequence and Locktime_), but is currently used with Replace-By-Fee and `OP_CHECKSEQUENCEVERIFY`.
 Sequence is also in Little-Endian and takes up 4 bytes.
 
-The fields of the input look like Figure 5-5:
+The fields of the input look like <<the_fields_of_an_input_previous_tx_previous_index_scriptsig_and_sequence>>:
 
+[[the_fields_of_an_input_previous_tx_previous_index_scriptsig_and_sequence]]
 .The Fields of an Input, Previous Tx, Previous Index, ScriptSig and Sequence
 image::images/prbc_0505.png[Input Fields]
 
@@ -251,8 +256,9 @@ Each transaction must have one or more outputs.
 Why would anyone have more than one output?
 An exchange may batch transactions, for example, and pay out a lot of people at once instead of generating a single transaction for every single person that requests Bitcoins.
 
-Like inputs, the outputs serialization starts with how many outputs there are as a varint as shown in Figure 5-6.
+Like inputs, the outputs serialization starts with how many outputs there are as a varint as shown in <<number_of_outputs>>.
 
+[[number_of_outputs]]
 .Number of Outputs
 image::images/prbc_0506.png[Outputs]
 
@@ -269,8 +275,9 @@ ScriptPubKey can be thought of as a one-way safe that can receive deposits from 
 We'll explore what this is in more detail in <<chapter_script>>.
 Like ScriptSig, ScriptPubKey is a variable-length field and is preceded by the length of the field in a varint.
 
-An output field look like Figure 5-7:
+An output field look like <<output_fields_amount_and_scriptpubkey_this_one_is_at_index_0>>:
 
+[[output_fields_amount_and_scriptpubkey_this_one_is_at_index_0]]
 .Output Fields, Amount and ScriptPubKey. This one is at index 0.
 image::images/prbc_0507.png[Output Fields]
 
@@ -306,8 +313,9 @@ If the Locktime is greater or equal to 500,000,000, Locktime is a UNIX timestamp
 If Locktime is less than 500,000,000, it is a block number.
 This way, transactions can be signed, but unspendable until a certain point in UNIX time or block height.
 
-The serialization is in Little-Endian and 4-bytes (Figure 5-8).
+The serialization is in Little-Endian and 4-bytes (<<locktime>>).
 
+[[locktime]]
 .Locktime
 image::images/prbc_0508.png[Locktime]
 
