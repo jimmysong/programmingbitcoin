@@ -320,13 +320,13 @@ This means that aG+bG=bG+aG, which proves commutativity.
 
 ==== Associativity
 
-We know from Point Addition that A+(B+C)=(A+B)+C (see Figure pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_1">#a_b_c_case_1</a> and <a data-type="xref" data-xrefstyle="select:labelnumber"href="#a_b_c_case_2">#a_b_c_case_2</a>])
+We know from Point Addition that A+(B+C)=(A+B)+C (see Figure pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber"href="#a_b_c_case_two">#a_b_c_case_two</a>])
 
-[[a_b_c_case_1]]
+[[a_b_c_case_one]]
 .(A+B)+C
 image::images/prbc_0216.png[Case 1]
 
-[[a_b_c_case_2]]
+[[a_b_c_case_two]]
 .A+(B+C)
 image::images/prbc_0217.png[Case 2]
 
