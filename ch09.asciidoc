@@ -28,8 +28,9 @@ Coinbase is the required first transaction of every block and is the only transa
 The Coinbase transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the block reward.
 
 The Coinbase transaction is what makes it worthwhile for a miner to mine.
-Figure 9-1 shows what a Coinbase transaction looks like:
+<<coinbase_transaction>> shows what a Coinbase transaction looks like:
 
+[[coinbase_transaction]]
 .Coinbase Transaction
 image::images/prbc_0901.png[Coinbase Transaction]
 
@@ -79,7 +80,7 @@ To prevent transaction ID duplication, Gavin Andresen authored BIP0034 which is 
 
 The height is interpreted as a Little-Endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block).
 Thus a Coinbase Transaction cannot be byte-wise the same across different blocks since the block height will differ.
-Here's how we can parse the height from the Coinbase Transaction in Figure 9-1:
+Here's how we can parse the height from the Coinbase Transaction in <<coinbase_transaction>>:
 
 [source,python]
 ----
@@ -95,7 +96,7 @@ include::code-ch09/answers.py[tag=exercise2,indent=0]
 === Headers vs Full Blocks
 
 Blocks are batches of transactions and the block header is metadata about the transactions included in the block.
-The block header as shown in Figure 9-2 consists of:
+The block header as shown in <<parsed_block>> consists of:
 
 * Version
 * Previous Block
@@ -104,6 +105,7 @@ The block header as shown in Figure 9-2 consists of:
 * Bits
 * Nonce
 
+[[parsed_block]]
 .Parsed Block
 image::images/prbc_0902.png[Block Parsing]
 
