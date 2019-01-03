@@ -320,7 +320,7 @@ This means that aG+bG=bG+aG, which proves commutativity.
 
 ==== Associativity
 
-We know from Point Addition that A+(B+C)=(A+B)+C (see Figure pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber"href="#a_b_c_case_two">#a_b_c_case_two</a>])
+We know from Point Addition that A+(B+C)=(A+B)+C (see Figure pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>])
 
 [[a_b_c_case_one]]
 .(A+B)+C
