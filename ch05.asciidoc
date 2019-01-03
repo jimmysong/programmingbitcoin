@@ -27,7 +27,7 @@ We'll go through each component in depth.
 
 [[transaction_components_version_inputs_output_locktime]]
 .Transaction Components, Version, Inputs, Output and Locktime
-image::images/prbc_0501.png[Transaction Version, Inputs, Outputs and Locktime]
+image::images/prbc_0501.png[Transaction Version Inputs Outputs and Locktime]
 
 The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
 
