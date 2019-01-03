@@ -127,9 +127,9 @@ Note that this example has only 1 input, so only that input's ScriptSig is empti
 
 ==== Step 2: Replace the ScriptSig of the input being signed with the previous ScriptPubKey
 
-Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>> shown in <<scriptpubkey_and_scriptsig>>.
+Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>> shown in <<scriptpubkey_and_scriptsig2>>.
 
-[[scriptpubkey_and_scriptsig]]
+[[scriptpubkey_and_scriptsig2]]
 .ScriptPubKey and ScriptSig
 image::images/prbc_0606.png[ScriptPubKey and ScriptSig]
 
