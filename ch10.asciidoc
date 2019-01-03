@@ -16,8 +16,9 @@ With that in mind, we'll work in this chapter toward requesting, receiving and v
 
 === Network Messages
 
-All network messages looks like Figure 10-1:
+All network messages looks like <<network_message_or_the_envelope_that_contains_the_actual_payload>>:
 
+[[network_message_or_the_envelope_that_contains_the_actual_payload]]
 .Network Message or the Envelope that contains the actual payload
 image::images/prbc_1001.png[Network Message]
 
@@ -59,8 +60,9 @@ include::code-ch10/answers.py[tag=exercise3,indent=0]
 === Parsing the payload
 
 Each command has a separate payload specification.
-Figure 10-2 is the parsed payload for Version:
+<<parsed_version_chap_ten>> is the parsed payload for Version:
 
+[[parsed_version_chap_ten]]
 .Parsed Version
 image::images/prbc_1002.png[Version Message]
 
@@ -194,8 +196,9 @@ For light clients, downloading headers allows them to verify the proof-of-work i
 As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network, but that requires the light clients have the block headers.
 
 Nodes can give us the block headers without taking up much bandwidth.
-The command to get the block headers is called `getheaders` and it looks like Figure 10-3:
+The command to get the block headers is called `getheaders` and it looks like <<parsed_getheaders>>:
 
+[[parsed_getheaders]]
 .Parsed `getheaders`
 image::images/prbc_1003.png[GetHeaders payload]
 
@@ -234,9 +237,10 @@ We can now create a node, handshake, and then ask for some headers.
 
 Now we need a way to receive the headers from the other node.
 The other node will send back the `headers` command.
-The headers command is a list of block headers (Figure 10-4) which we already learned how to parse from <<chapter_blocks>>.
+The headers command is a list of block headers (<<parsed_headers_chap_ten>>) which we already learned how to parse from <<chapter_blocks>>.
 The `HeadersMessage` class can take advantage when parsing.
 
+[[parsed_headers_chap_ten]]
 .Parsed `headers`
 image::images/prbc_1004.png[headers payload]
 
