@@ -1,6 +1,7 @@
 {
   "branch": "master",
   "files": [
+    "cover.html",
     "titlepage.html",
     "copyright.html",
     "toc.html",
@@ -26,9 +27,9 @@
   ],
   "formats": {
     "pdf": {
-      "version": "print",
+      "version": "web",
       "toc": true,
-      "index": true,
+      "index": false,
       "syntaxhighlighting": true,
       "show_comments": false,
       "color_count": "4",
@@ -37,7 +38,7 @@
     },
     "epub": {
       "toc": true,
-      "index": true,
+      "index": false,
       "syntaxhighlighting": true,
       "epubcheck": true,
       "show_comments": false,
@@ -46,7 +47,7 @@
     },
     "mobi": {
       "toc": true,
-      "index": true,
+      "index": false,
       "syntaxhighlighting": true,
       "show_comments": false,
       "downsample_images": false
