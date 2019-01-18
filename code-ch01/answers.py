@@ -157,7 +157,7 @@ def __sub__(self, other):
 # tag::exercise6[]
 ==== Exercise 6
 
-Write the corresponding `__mul__` method which defines the multiplication of two Finite Field elements.
+Write the corresponding `__mul__` method that defines the multiplication of two Finite Field elements.
 # end::exercise6[]
 '''
 
