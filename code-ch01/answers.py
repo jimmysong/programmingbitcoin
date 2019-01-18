@@ -79,7 +79,7 @@ For _p_ = 7, 11, 17, 31, what is this set in __F~p~__?
 
 ++++
 <ul class="simplelist">
-<li>{1<sub>(p-1)</sub>, 2<sub>(p-1)</sub>, 3<sub>(p-1)</sub>, 4<sub>(p-1)</sub>, ... (p-1)<sub>(p-1)</sub>}</li>
+<li>{1<sup>(p-1)</sup>, 2<sup>(p-1)</sup>, 3<sup>(p-1)</sup>, 4<sup>(p-1)</sup>, ... (p-1)<sup>(p-1)</sup>}</li>
 </ul>
 ++++
 
