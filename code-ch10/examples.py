@@ -21,9 +21,9 @@
 ...             raise RuntimeError('discontinuous block at {}'.format(count))
 ...         if count % 2016 == 0:
 ...             time_diff = previous.timestamp - first_epoch_timestamp
-...             expected_bits = calculate_new_bits(previous.bits, time_diff)
+...             expected_bits = calculate_new_bits(previous.bits, time_diff) <4>
 ...             print(expected_bits.hex())
-...             first_epoch_timestamp = header.timestamp
+...             first_epoch_timestamp = header.timestamp <5>
 ...         if header.bits != expected_bits:  # <3>
 ...             raise RuntimeError('bad bits at block {}'.format(count))
 ...         previous = header
