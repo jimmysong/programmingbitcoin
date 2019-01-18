@@ -24,11 +24,11 @@ Solve these problems in __F__~57~ (assume all pass:[+s] here are pass:[+<sub><em
 # tag::exercise4[]
 ==== Exercise 4
 
-Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are field versions):
+Solve the following equations in __F__~97~ (again, assume ⋅ and exponentiation are field versions):
 
-* 95⋅45⋅31
-* 17⋅13⋅19⋅44
-* 12^7^⋅77^49^
+* 95 ⋅ 45 ⋅ 31
+* 17 ⋅ 13 ⋅ 19 ⋅ 44
+* 12^7^ ⋅ 77^49^
 # end::exercise4[]
 # tag::answer4[]
 >>> prime = 97
@@ -43,9 +43,14 @@ Solve the following equations in F~97~ (again, assume ⋅ and exponentiation are
 # tag::exercise5[]
 ==== Exercise 5
 
-For k = 1, 3, 7, 13, 18, what is this set in F~19~?
+For _k_ = 1, 3, 7, 13, 18, what is this set in __F__~19~?
 
-{k⋅0, k⋅1, k⋅2, k⋅3, ... k⋅18}
+++++
+<ul class="simplelist">
+<li>{<em>k</em> ⋅ 0, <em>k</em> ⋅ 1, <em>k</em> ⋅ 2, <em>k</em> ⋅ 3, ... <em>k</em> ⋅ 18}</li>
+</ul>
+++++
+
 
 Do you notice anything about these sets?
 # end::exercise5[]
