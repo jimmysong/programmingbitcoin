@@ -75,9 +75,15 @@ Do you notice anything about these sets?
 # tag::exercise7[]
 ==== Exercise 7
 
-For p = 7, 11, 17, 31, what is this set in F~p~?
+For _p_ = 7, 11, 17, 31, what is this set in __F~p~__?
 
-{1^(p-1)^, 2^(p-1)^, 3^(p-1)^, 4^(p-1)^, ... (p-1)^(p-1)^}
+++++
+<ul class="simplelist">
+<li>{1<sub>(p-1)</sub>, 2<sub>(p-1)</sub>, 3<sub>(p-1)</sub>, 4<sub>(p-1)</sub>, ... (p-1)<sub>(p-1)</sub>}</li>
+</ul>
+++++
+
+
 # end::exercise7[]
 # tag::answer7[]
 >>> for prime in (7, 11, 17, 31):
