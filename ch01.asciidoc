@@ -82,40 +82,51 @@ In math notation the Finite Field set looks like this:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>p</sub> = {0, 1, 2, ...p–1}</li>
+<li>F<sub>p</sub> = {0, 1, 2, ... p–1}</li>
 </ul>
 ++++
 
-What's in the Finite Field set are called _elements_.
-F~p~ is a specific finite field called "field of p" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call *order*).
-The numbers between the {}`s represent what elements are in the field.
-We name the elements 0, 1, 2, etc because they're convenient for our purposes.
+What's in the Finite Field set are called elements.
+F~p~ is a specific finite field called "field of p" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call _order_).
+The numbers between the {}s represent what elements are in the field.
+We name the elements 0, 1, 2, etc. because they're convenient for our purposes.
 
 
 A Finite Field of order 11 looks like this:
 
-F~11~ = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+++++
+<ul class="simplelist">
+<li>F<sub>11</sub> = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}</li>
+</ul>
+++++
 
 A Finite Field of order 17 looks like this:
 
-F~17~= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+++++
+<ul class="simplelist">
+<li>F<sub>17</sub>= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}</li>
+</ul>
+++++
 
 A Finite Field of order 981 looks like this:
 
-F~981~= {0, 1, 2, ...
-980}
+++++
+<ul class="simplelist">
+<li>F<sub>981</sub>= {0, 1, 2, ... 980}</li>
+</ul>
+++++
 
 Notice the order of the field is always 1 more than the largest element.
 You might have noticed that the field has a prime order every time.
-For a variety of reasons which will become clear later, it turns out that fields *must* an order that is a power of a prime, but that the Finite Fields whose order is of prime order are the ones we're interested in.
+For a variety of reasons that will become clear later, it turns out that fields _must_ have an order that is a power of a prime, but that the Finite Fields whose order is prime are the ones we're interested in.
 
 ==== Constructing a Finite Field in Python
 
-We want to represent each Finite Field element and in Python, we'll be creating a class that represents a single Finite Field element.
+We want to represent each Finite Field element, so in Python, we'll be creating a class that represents a single Finite Field element.
 Naturally, we'll name the class `FieldElement`.
 
 
-The class represents an element in a field F~prime~.
+The class represents an element in a field __F__~prime~.
 The bare bones of the class look like this:
 
 [source,python]
@@ -123,7 +134,7 @@ The bare bones of the class look like this:
 include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive.
-If not, we have an invalid Field Element and we raise a `ValueError` which is what we should raise when we get an inappropriate value.
+If not, we have an invalid Field Element and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
 <2> The rest of the `__init__` method assigns the initialization values to the object.
 <3> The `__eq__` method checks if two objects of class `FieldElement` are equal.
 This is only true when the `num` and `prime` properties are equal.
@@ -138,9 +149,9 @@ include::code-ch01/examples.py[tag=example1]
 Python allows us to override the `==` operator on `FieldElement` with the `__eq__` method, which is something we'll be taking advantage of going forward.
 
 You can see this in action in the code that accompanies this book.
-Once you've set up Jupyter Notebook (see Preface), you can navigate to `code-ch01/Chapter1.ipynb` and run the code to see the results.
-For the next exercise, you'll want to open up `ecc.py` by clicking the link in the Exercise 1 box.
-If you get stuck, please remember that the answers to every exercise are in the Appendix.
+Once you've set up Jupyter Notebook (see Preface), you can navigate to _code-ch01/Chapter1.ipynb_ and run the code to see the results.
+For the next exercise, you'll want to open up _ecc.py_ by clicking the link in the Exercise 1 box.
+If you get stuck, please remember that the answers to every exercise are in <<appendix_solutions>>.
 
 include::code-ch01/answers.py[tag=exercise1,indent=0]
 
