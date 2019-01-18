@@ -632,32 +632,48 @@ This proves Fermat's Little Theorem.
 
 Because division is the inverse of multiplication, we know:
 
-a/b=a⋅~f~(1/b)=a⋅~f~b^-1^
+++++
+<ul class="simplelist">
+<li><em>a</em>/<em>b</em>=<em>a</em> ⋅ <sub><em>f</em></sub>(1/<em>b</em>)=<em>a</em> ⋅ <sub><em>f</em></sub><em>b</em><sup>–1</sup></li>
+</ul>
+++++
 
-We can reduce the division problem to a multiplication problem as long as we can figure out what b^-1^ is.
+
+We can reduce the division problem to a multiplication problem as long as we can figure out what __b__^–1^ is.
 This is where Fermat's Little Theorem comes into play.
 We know:
 
-b^(p-1)^=1
+++++
+<ul class="simplelist">
+<li><em>b</em><sup>(<em>p</em>-1)</sup>=1</li>
+</ul>
+++++
 
-Because p is prime.
-Thus:
+because _p_ is prime. Thus:
 
-b^-1^=b^-1^⋅~f~1=b^-1^⋅~f~b^(p-1)^=b^(p-2)^
+++++
+<ul class="simplelist">
+<li><em>b</em><sup>-1</sup> = <em>b</em><sup>–1</sup> ⋅ <sub><em>f</em></sub>1=<em>b</em><sup>–1</sup> ⋅ <sub><em>f</em></sub><em>b</em><sup>(<em>p</em> – 1)</sup>=<em>b</em><sup>(<em>p</em>-2)</sup></li>
+</ul>
+++++
+
 
 or
 
-b^-1^=b^(p-2)^
+++++
+<ul class="simplelist">
+<li><em>b</em><sup>–1</sup>=<em>b</em><sup>(<em>p</em> – 2)</sup></li>
+</ul>
+++++
 
-In F~19~, this means practically that:
 
-b^18^=1 which means that b^-1^=b^17^ for all b > 0.
+In F~19~, this means practically that pass:[<em>b</em><sup>18</sup> = 1 ], which means that __b__^–1^ = __b__^17^ for all _b_ > 0.
 
 So in other words, we can calculate the inverse using the exponentiation operator.
-In F~19~:
+In __F__~19~:
 
-* 2/7=2⋅7^(19-2)^=2⋅7^17^=465261027974414%19=3
-* 7/5=7⋅5^(19-2)^=7⋅5^17^=5340576171875%19=9
+* 2/7 = 2 ⋅ 7^(19 – 2)^=2 ⋅ 7^17^=465261027974414%19 = 3
+* 7/5 = 7 ⋅ 5^(19 – 2)^=7 ⋅ 5^17^=5340576171875%19 = 9
 
 This is a relatively expensive calculation as exponentiating grows very fast.
 Division is the most expensive operation for that reason.
