@@ -479,6 +479,7 @@ include::code-ch01/answers.py[tag=exercise4,indent=0]
 
 include::code-ch01/answers.py[tag=exercise5,indent=0]
 
+.Why Fields Are Prime
 [NOTE]
 ====
 The answer to Exercise 5 is why fields have to have a _prime_ power number of elements.
