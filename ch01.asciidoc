@@ -157,32 +157,39 @@ include::code-ch01/answers.py[tag=exercise1,indent=0]
 
 === Modulo Arithmetic
 
-One of the tools we can use in order to make a Finite Field closed under addition, subtraction, multiplication and division is something called modulo arithmetic.
+One of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
 
-We can define addition on the finite set using something called modulo arithmetic.
-Modulo arithmetic is something you probably learned when you first learned division.
+We can define addition on the finite set using modulo arithmetic, which is something you probably learned when you first learned division.
 Remember problems like <<long_division_example_one>>?
 
 [[long_division_example_one]]
-.Long Division Example 1
+.Long division example 1
 image::images/prbc_0101.png[Long Division Example 1]
 
-Whenever the division wasn't even, there was something called the "remainder" which is the leftover from the actual division.
+Whenever the division wasn't even, there was something called the "remainder," which is the leftover from the actual division.
 We define modulo in the same way.
-We use the operator *%* for "modulo".
+We use the operator % for "modulo":
 
-7 % 3 = 1
+++++
+<ul class="simplelist">
+<li>7 % 3 = 1</li>
+</ul>
+++++
 
 <<long_division_example_two>> shows another example.
 
 [[long_division_example_two]]
-.Long Division Example 2
+.Long division example 2
 image::images/prbc_0102.png[Long Division Example 2]
 
 Formally speaking, the modulo operation is the remainder after division of one number by another.
 Let's look at another example with larger numbers:
 
-1747 % 241 = 60
+++++
+<ul class="simplelist">
+<li>1747 % 241 = 60</li>
+</ul>
+++++
 
 If it helps, you can think of modulo arithmetic as "wrap-around" or "clock" math.
 Imagine a problem like this:
@@ -207,7 +214,11 @@ What hour was it 16 hours ago?
 The answer is 11 o'clock.
 Hence we can say:
 
-(3 - 16) % 12 = 11
+++++
+<ul class="simplelist">
+<li>(3 - 16) % 12 = 11</li>
+</ul>
+++++
 
 The minute hand is also a modulo operation.
 For example, you can ask:
@@ -215,7 +226,11 @@ For example, you can ask:
 It is currently 12 minutes past the hour.
 What minute will it be 843 minutes from now?
 
-(12 + 843) % 60 = 15
+++++
+<ul class="simplelist">
+<li>(12 + 843) % 60 = 15</li>
+</ul>
+++++
 
 It will be 15 minutes past the hour.
 Likewise, we can ask:
@@ -223,14 +238,22 @@ Likewise, we can ask:
 It is currently 23 minutes past the hour.
 What minute will it be 97 minutes from now?
 
-(23 + 97) % 60 = 0
+++++
+<ul class="simplelist">
+<li>(23 + 97) % 60 = 0</li>
+</ul>
+++++
 
 0 is another way of saying there is no remainder.
 
 The result of the modulo (%) operation for minutes is always between 0 and 59, inclusive, in this case.
 This happens to be a very useful property as even very large numbers can be brought down to a relatively small range with modulo:
 
-14738495684013 % 60 = 33
+++++
+<ul class="simplelist">
+<li>14738495684013 % 60 = 33</li>
+</ul>
+++++
 
 We'll be using modulo as we define field arithmetic.
 Most operations in Finite Fields use the modulo operator in some capacity.
@@ -254,59 +277,99 @@ include::code-ch01/examples.py[tag=example3]
 
 === Finite Field Addition and Subtraction
 
-Remember that we need to define Finite Field addition in a way as to make sure that the result is still in the set.
+Remember that we need to define Finite Field addition such that we ensure the result is still in the set.
 That is, we want to make sure that addition in a Finite Field is _closed_.
 
 We can use what we just learned, modulo arithmetic, to make addition closed.
 Let's say we have a Finite Field of 19:
 
-F~19~={0,1,2,...18}, where a, b ∈ F~19~
+++++
+<ul class="simplelist">
+<li>F<sub>19</sub>={0,1,2,...18}</li>
+</ul>
+++++
 
-Note that the symbol '∈' means "is an element of".
-In our case, `a` and `b` are elements of F~19~.
+where a, b ∈ __F__~19~. Note that the symbol ∈ means "is an element of."
+In our case, _a_ and _b_ are elements of __F__~19~.
 
 Addition being closed means:
 
-a+~f~b ∈ F~19~
+++++
+<ul class="simplelist">
+<li>a+<sub><em>f</em></sub>b ∈ F<sub>19</sub></li>
+</ul>
+++++
 
-We denote Finite Field addition with +~f~ to avoid confusion with normal integer addition +.
+
+
+We denote Finite Field addition with pass:[+<sub><em>f</em></sub>] to avoid confusion with normal integer addition +.
 
 If we utilize modulo arithmetic, we can guarantee this to be the case.
-We can define a+~f~b this way:
+We can define pass:[a+<sub><em>f</em></sub>b] this way:
 
-a+~f~b = (a+b)%19
+++++
+<ul class="simplelist">
+<li>a+<sub><em>f</em></sub>b = (a+b)%19</li>
+</ul>
+++++
+
 
 For example:
 
-7+~f~8 = (7+8)%19 = 15
+++++
+<ul class="simplelist">
+<li>7+<sub><em>f</em></sub>8 = (7+8)%19 = 15</li>
+<li>11+<sub><em>f</em></sub>17 = (11+17)%19 = 9</li>
+</ul>
+++++
 
-11+~f~17 = (11+17)%19 = 9
 
 and so on.
 
-We take any two numbers in the set, add and "wrap around" the end to get the sum.
+We take any two numbers in the set, add, and "wrap around" the end to get the sum.
 We are creating our own addition operator here and the result is a bit unintuitive.
-After all 11+~f~17=9 just doesn't look right for because we're not used to Finite Field addition.
+After all, pass:[11+<sub><em>f</em></sub>17=9] just doesn't look right because we're not used to Finite Field addition.
 
 More generally, we define field addition this way:
 
-a+~f~b=(a+b)%p where a, b ∈ F~p~
+++++
+<ul class="simplelist">
+<li>a+<sub><em>f</em></sub>b=(a+b)%p</li>
+</ul>
+++++
+ 
+where a, b ∈ F~p~. 
 
-We also define the additive inverse this way.
+We also define the additive inverse this way. pass:[a ∈ F<sub><em>p</em></sub> implies that -<sub><em>f</em></sub>a ∈ F<sub><em>p</em></sub>]:
 
-a ∈ F~p~ implies that -~f~a ∈ F~p~
+++++
+<ul class="simplelist">
+<li>-<sub><em>f</em></sub>a = (-a) % p</li>
+</ul>
+++++
 
--~f~a = (-a) % p
 
-Again, for clarity, we use -~f~ to distinguish field subtraction and negation from integer subtraction and negation.
 
-In F~19~:
+Again, for clarity, we use pass:[-<sub><em>f</em></sub>] to distinguish field subtraction and negation from integer subtraction and negation.
 
--~f~9 = (-9) % 19 = 10
+In __F__~19~:
 
-Which means that:
+++++
+<ul class="simplelist">
+<li>-<sub><em>f</em></sub>9 = (-9) % 19 = 10</li>
+</ul>
+++++
 
-9 +~f~ 10 = 0
+
+which means that:
+
+++++
+<ul class="simplelist">
+<li>9 +<sub><em>f</em></sub> 10 = 0</li>
+</ul>
+++++
+
+
 
 And that turns out to be true.
 
