@@ -4,24 +4,24 @@
 
 [.lead]
 One of the most difficult things about learning how to program Bitcoin is knowing where to start.
-There are so many components that depend on each other that learning one thing may lead you to have to learn another which in turn may lead you to learn something else before you can understand the original thing.
+There are so many components that depend on each other that learning one thing may lead you to have to learn another, which in turn may lead you to learn something else before you can understand the original thing.
 
-This chapter is going to get you off to a start which is more manageable.
+This chapter is going to get you off to a more manageable start.
 It may seem strange, but we'll start with the basic math that you need to understand Elliptic Curve Cryptography.
 Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms.
 These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin.
-By learning Finite Fields and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need in order to progress logically.
+By learning Finite Fields and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need to progress logically.
 
 Be aware that this chapter and the next two chapters may feel a bit like you're eating vegetables, especially if you haven't done formal math in a long time.
-I would encourage you to get through this as the concepts and code here will be used throughout the book.
+I would encourage you to get through this, as the concepts and code here will be used throughout the book.
 
-=== Learning Higher Level Math
+=== Learning Higher-Level Math
 
-Learning about new mathematical structures can be a bit intimidating and in this chapter, I hope to dispel the myth that high level math is difficult.
-Finite Fields, in particular, don't require all that much in terms of prior mathematical knowledge than, say, Algebra.
+Learning about new mathematical structures can be a bit intimidating, and in this chapter, I hope to dispel the myth that high-level math is difficult.
+Finite Fields, in particular, don't require all that much in terms of prior mathematical knowledge than, say, algebra.
 
-Think of Finite Fields as something that you could have learned instead of Trigonometry, just that the education system you're a part of decided that Trigonometry was more important for you to learn.
-This is my way of telling you that Finite Fields are not that hard to learn and require no more background than Algebra.
+Think of Finite Fields as something that you could have learned instead of trigonometry, just that the education system you're a part of decided that trigonometry was more important for you to learn.
+This is my way of telling you that Finite Fields are not that hard to learn and require no more background than algebra.
 
 This chapter is required if you want to understand Elliptic Curve Cryptography.
 Elliptic Curve Cryptography is required for understanding signing and verification, which is at the heart of Bitcoin itself.
@@ -34,27 +34,27 @@ Mathematically, a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
-1. If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
+1. If _a_ and _b_ are in the set, __a + b__ and __a ⋅ b__ are in the set.
 We call this property _closed_.
-2. The additive identity, *0* exists and has the property *a + 0 = a*.
-3. The multiplicative identity, *1* exists and has the property *a ⋅ 1 = a*.
-4. If *a* is in the set, *-a* is in the set, which is defined as the value that makes *a + (-a) = 0*.
+2. The additive identity: _0_ exists and has the property __a + 0 = a__.
+3. The multiplicative identity: _1_ exists and has the property __a ⋅ 1 = a__.
+4. If _a_ is in the set, __–a__ is in the set, which is defined as the value that makes __a + (-a) = 0__.
 This is what we call the _additive inverse_.
-5. If *a* is in the set and is not 0, *a^-1^* is in the set, which is defined as the value that makes *a ⋅ a^-1^ = 1*.
+5. If _a_ is in the set and is not 0, __a^–1^__ is in the set, which is defined as the value that makes __a ⋅ a^–1^ = 1__.
 This is what we call the _multiplicative inverse_.
 
 Let's unpack each of the following.
 
 We have a set of numbers that's finite.
-Because the set is finite, we can designate a number *p* which is how big the set is.
+Because the set is finite, we can designate a number _p_, which is how big the set is.
 This is what we call the _order_ of the set.
 
 (1) says we are closed under addition and multiplication.
-This means that we have to define addition and multiplication in a way as to make sure that the results stay in the set.
-For example, a set containing {0,1,2} is *not* closed under addition since 1+2=3 and 3 is not in the set, neither is 2+2=4.
+This means that we have to define addition and multiplication in a way that ensures the results stay in the set.
+For example, a set containing {0,1,2} is _not_ closed under addition, since 1 + 2 = 3 and 3 is not in the set; neither is 2 + 2 = 4.
 Of course we can define addition a little differently to make this work, but using "normal" addition, this set is not closed.
 On the other hand, the set {-1,0,1} is closed under normal multiplication.
-Any two numbers can be multiplied (there are 9 such combinations) and the result is always in the set.
+Any two numbers can be multiplied (there are nine such combinations) and the result is always in the set.
 
 The other option we have in mathematics is to define multiplication in a particular way to make these sets closed.
 We'll get to how exactly we define addition and multiplication later in this chapter, but the key concept here is that we can *define addition and subtraction differently than the addition and subtraction you are familiar with*.
@@ -63,11 +63,11 @@ We'll get to how exactly we define addition and multiplication later in this cha
 That means 0 and 1 are in the set.
 
 (4) means that we have the additive inverse.
-That is, if *a* is in the set, *-a* is in the set.
+That is, if _a_ is in the set, *-a* is in the set.
 Using the additive inverse, we can define subtraction.
 
 (5) means that multiplication has the same property.
-If *a* is in the set, *a^-1^* is in the set.
+If _a_ is in the set, *a^-1^* is in the set.
 That is *a⋅a^-1^=1*.
 Using the multiplicative inverse, we can define division.
 This will be the trickiest to define in a finite field.
