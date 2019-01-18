@@ -131,7 +131,7 @@ def __ne__(self, other):
 # tag::exercise3[]
 ==== Exercise 3
 
-Write the corresponding `__sub__` method which defines the subtraction of two `FieldElement` objects.
+Write the corresponding `__sub__` method that defines the subtraction of two `FieldElement` objects.
 # end::exercise3[]
 '''
 
