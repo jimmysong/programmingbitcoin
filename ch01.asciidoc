@@ -483,7 +483,7 @@ include::code-ch01/answers.py[tag=exercise5,indent=0]
 [NOTE]
 ====
 The answer to Exercise 5 is why fields have to have a _prime_ power number of elements.
-No matter what *k* you choose, as long as it's greater than 0, multiplying the entire set by *k* will result in the same set as you started with.
+No matter what _k_ you choose, as long as it's greater than 0, multiplying the entire set by _k_ will result in the same set as you started with.
 
 Intuitively the fact that we have a prime order results in every element of a Finite Field being equivalent.
 If the order of the set was composite number, multiplying the set by one of the divisors would result in a smaller set.
@@ -491,7 +491,7 @@ If the order of the set was composite number, multiplying the set by one of the 
 
 ==== Coding Multiplication in Python
 
-Now that we understand what multiplication should be in `FieldElement`, we want to define the `__mul__` method which overrides the `*` operator.
+Now that we understand what multiplication should be in `FieldElement`, we want to define the `__mul__` method that overrides the `*` operator.
 We want this to work:
 
 [source,python]
@@ -499,14 +499,14 @@ We want this to work:
 include::code-ch01/examples.py[tag=example5]
 ----
 
-As we did with addition and subtraction above, the next exercise is to make multiplication work for our class by defining the `__mul__` method.
+As we did with addition and subtraction, the next exercise is to make multiplication work for our class by defining the `__mul__` method.
 
 include::code-ch01/answers.py[tag=exercise6,indent=0]
 
 ==== Coding Exponentiation in Python
 
 We need to define the exponentiation for `FieldElement`, which in Python can be defined with the `__pow__` method, overriding the `**` operator.
-The difference here is that the exponent is *not* a `FieldElement`, so has to be treated a bit differently.
+The difference here is that the exponent is _not_ a `FieldElement`, so has to be treated a bit differently.
 We want something like this to work:
 
 [source,python]
@@ -515,7 +515,7 @@ include::code-ch01/examples.py[tag=example6]
 ----
 
 Note that because the exponent is an integer, instead of another instance of `FieldElement`, the method receives the variable `exponent` as an integer.
-We can code it this way.
+We can code it this way:
 
 [source,python]
 ----
@@ -529,7 +529,7 @@ class FieldElement:
 <2> We have to return an instance of the class as before.
 
 Why don't we force the exponent to be a `FieldElement` object?
-It turns out that the exponent doesn't have to be a member of the Finite Field in order for the math to work out.
+It turns out that the exponent doesn't have to be a member of the Finite Field for the math to work.
 In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
 
 Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
@@ -538,14 +538,13 @@ include::code-ch01/answers.py[tag=exercise7,indent=0]
 
 === Finite Field Division
 
-The intuition that helps us with addition, subtraction, multiplication and perhaps even exponentiation unfortunately doesn't help us quite as much in division.
+The intuition that helps us with addition, subtraction, multiplication, and perhaps even exponentiation unfortunately doesn't help us quite as much in division.
 Because division is the hardest one to make sense of, we'll start with something that should make sense.
 
 In normal math, division is the inverse of multiplication:
 
-7⋅8 = 56 implies that 56/8 = 7
-
-12⋅2 = 24 implies that 24/12 = 2
+* 7 ⋅ 8 = 56 implies that 56/8 = 7
+* 12 ⋅ 2 = 24 implies that 24/12 = 2
 
 And so on.
 We can use this as the definition of division to help us.
@@ -553,22 +552,28 @@ Note that like normal math, you cannot divide by 0.
 
 In F~19~, we know that:
 
-3⋅~f~7=21%19=2 implies that 2/~f~7=3
+* 3 ⋅ ~f~7=21%19=2 implies that 2/~f~7=3
 
-9⋅~f~5=45%19=7 implies that 7/~f~5=9
+* 9 ⋅ ~f~5=45%19=7 implies that 7/~f~5=9
 
-This is very unintuitive as we generally think of 2/~f~7 or 7/~f~5 as fractions, not nice Finite Field elements.
+This is very unintuitive, as we generally think of 2/~__f__~7 or 7/~__f__~5 as fractions, not nice Finite Field elements.
 Yet that is one of the remarkable things about Finite Fields: Finite Fields are _closed_ under division.
 That is, dividing any two numbers where the denominator is not 0 will result in another Finite Field element.
 
-The question you might be asking yourself is, how do I calculate 2/~f~7 if I don't know beforehand that 3⋅~f~7=2?
-This is indeed a very good question and in order to answer it, we'll have to use the result from the Exercise 7.
+The question you might be asking yourself is, how do I calculate 2/~__f__~7 if I don't know beforehand that 3 ⋅ ~__f__~7=2?
+This is indeed a very good question; to answer it, we'll have to use the result from Exercise 7.
 
-In case you didn't get it, the answer is that n^(p-1)^ is always 1 for every p that is prime and every n > 0.
+In case you didn't get it, the answer is that __n__^(__p__–1)^ is always 1 for every _p_ that is prime and every _n_ > 0.
 This is a beautiful result from number theory called Fermat's Little Theorem.
 Essentially, the theorem says:
 
-n^(p-1)^%p=1 where p is prime
+++++
+<ul class="simplelist">
+<li><em>n</em><sup>(p–1)</sup>%<em>p</em>=1 </li>
+</ul>
+++++
+
+where _p_ is prime.
 
 Since we are operating in prime fields, this will always be true.
 
@@ -577,31 +582,52 @@ Since we are operating in prime fields, this will always be true.
 There are many proofs of this theorem, but perhaps the simplest is using what we saw in Exercise 5.
 Namely that these sets are equal:
 
-{1, 2, 3, ...
-p-2, p-1} = {n%p, 2n%p, 3n%p, ...
-(p-2)n%p, (p-1)n%p}
+++++
+<ul class="simplelist">
+<li>{1, 2, 3, ...</li>
+<li><em>p</em>-2, <em>p</em>-1} = {<em>n</em>%<em>p</em>, 2<em>n</em>%<em>p</em>, 3<em>n</em>%<em>p</em>, ...</li>
+<li>(<em>p</em>-2)<em>n</em>%<em>p</em>, (<em>p</em>-1)<em>n</em>%<em>p</em>}</li>
+</ul>
+++++
 
 The resulting numbers might not be in the right order, but the same numbers are in both sets.
 
 We can then multiply every element in both sets to get this equality:
 
-1⋅2⋅3⋅...⋅(p-2)⋅(p-1) % p = n⋅2n⋅3n⋅...⋅(p-2)n⋅(p-1)n % p
+++++
+<ul class="simplelist">
+<li>1 ⋅ 2 ⋅ 3 ⋅ ... ⋅ (<em>p</em> - 2) ⋅ (<em>p</em>-1) % <em>p</em> = <em>n</em> ⋅ 2<em>n</em> ⋅ 3<em>n</em> ⋅ ... ⋅ (<em>p</em>-2)<em>n</em> ⋅ (<em>p</em>-1)<em>n</em> % <em>p</em></li>
+</ul>
+++++
 
-The left side is the same as `(p-1)! % p` where `!` is the factorial (e.g.
-`5! = 5⋅4⋅3⋅2⋅1`).
-The right side, we can gather up all the `n`'s and get:
+The left side is the same as `(p-1)! % p` where `!` is the factorial (e.g.,
+`5! = 5 ⋅ 4 ⋅ 3 ⋅ 2 ⋅ 1`). On the right side, we can gather up all the `n`'s and get:
 
-(p-1)!⋅n^(p-1)^ % p
+++++
+<ul class="simplelist">
+<li>(<em>p</em>-1)! ⋅ <em>n</em><sup>(<em>p</em> - 1)</sup> % <em>p</em></li>
+</ul>
+++++
+
 
 Thus:
 
-(p-1)! % p = (p-1)! ⋅n^(p-1)^ % p
+++++
+<ul class="simplelist">
+<li>(<em>p</em> - 1)! % <em>p</em> = (<em>p</em> - 1)! ⋅ <em>n</em><sup>(<em>p</em> - 1)</sup> % <em>p</em></li>
+</ul>
+++++
 
-The (p-1)! on both sides cancel giving us:
+The (_p_ - 1)! on both sides cancel giving us:
 
-1 = n^(p-1)^ % p
+++++
+<ul class="simplelist">
+<li>1 = <em>n</em><sup>(<em>p</em>-1)</sup> % <em>p</em></li>
+</ul>
+++++
 
-This proves Fermat's Little Theorem
+
+This proves Fermat's Little Theorem.
 ****
 
 Because division is the inverse of multiplication, we know:
