@@ -375,13 +375,23 @@ And that turns out to be true.
 
 Similarly, we can do field subtraction.
 
-a-~f~b = (a-b)%p where a, b ∈ F~p~
+++++
+<ul class="simplelist">
+<li>a-<sub><em>f</em></sub>b = (a-b)%p</li>
+</ul>
+++++
+
+ 
+where a, b ∈ F~p~
 
 In F~19~:
 
-11-~f~9=(11-9)%19=2
-
-6-~f~13=(6-13)%19=12
+++++
+<ul class="simplelist">
+<li>11-<sub><em>f</em></sub>9=(11-9)%19=2</li>
+<li>6-<sub><em>f</em></sub>13=(6-13)%19=12</li>
+</ul>
+++++
 
 and so on.
 
@@ -399,16 +409,16 @@ include::code-ch01/examples.py[tag=example4]
 
 In Python we can define what addition (or + operator) means for our class with the `__add__` method.
 So how do we do this?
-We combine what we learned above with modulo arithmetic and create a new method of the class `FieldElement` like so:
+We combine what we learned with modulo arithmetic and create a new method of the class `FieldElement` like so:
 
 [source,python]
 ----
 include::code-ch01/ecc.py[tag=source2]
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't have any meaning.
-<2> Addition in a Finite Field is defined with the modulo operator, as explained above.
+<2> Addition in a Finite Field is defined with the modulo operator, as explained earlier.
 <3> We have to return an instance of the class, which we can conveniently access with `self.__class__`.
-We pass the two initializing arguments, `num` and `self.prime` for the `__init__` method above.
+We pass the two initializing arguments, `num` and `self.prime`, for the `__init__` method above.
 
 Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily inheritable.
 We will be subclassing `FieldElement` later, so making the method inheritable is important here.
@@ -423,23 +433,23 @@ In this section, we'll go through exactly how to define this using modulo arithm
 
 Multiplication is adding multiple times.
 
-* 5⋅3 = 5+5+5 = 15
-* 8⋅17 = 8+8+8+...(17 total 8's)...+8 = 136
+* 5 ⋅ 3 = 5 + 5 + 5 = 15
+* 8 ⋅ 17 = 8 + 8 + 8 + ... (17 total 8's) ... + 8 = 136
 
 We can define multiplication on a Finite Field the same way.
 Operating in F~19~ once again,
 
-* 5⋅~f~3 = 5+~f~5+~f~5
-* 8⋅~f~17 = 8+~f~8+~f~8+~f~...(17 total 8's)...+~f~8
+* 5 ⋅~__f__~3 = 5 + ~__f__~5 + ~__f__~5
+* 8 ⋅~__f__~17 = 8 + ~__f__~8 + ~__f__~8 + ~__f__~ ... (17 total 8's) ... + ~__f__~8
 
 We already know how to do the right side, and that yields a number within the F~19~ set:
 
-* 5⋅~f~3 = 5+~f~5+~f~5 = 15 % 19 = 15
-* 8⋅~f~17 = 8+~f~8+~f~8+~f~...(17 total 8's)...+~f~8 = (8⋅17) % 19 = 136 % 19 = 3
+* 5 ⋅ ~__f__~3 = 5 + ~__f__~5 + ~__f__~5 = 15 % 19 = 15
+* 8 ⋅ ~__f__~17 = 8 + ~__f__~8 + ~__f__~8 + ~__f__~ ... (17 total 8's) ... + ~__f__~8 = (8⋅17) % 19 = 136 % 19 = 3
 
 Note that the second result is pretty unintuitive.
-We don't normally think of 8⋅~f~17=3, but that's part of what's necessary in order to define multiplication to be closed.
-That is, the result of field multiplication is always in the set {0,1,...p-1}.
+We don't normally think of 8  ⋅~__f__~17 = 3, but that's part of what's necessary in order to define multiplication to be closed.
+That is, the result of field multiplication is always in the set {0,1, ... __p__–1}.
 
 Exponentiation is simply multiplying a number many times.
 
