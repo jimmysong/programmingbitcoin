@@ -448,24 +448,32 @@ We already know how to do the right side, and that yields a number within the F~
 * 8 ⋅ ~__f__~17 = 8 + ~__f__~8 + ~__f__~8 + ~__f__~ ... (17 total 8's) ... + ~__f__~8 = (8⋅17) % 19 = 136 % 19 = 3
 
 Note that the second result is pretty unintuitive.
-We don't normally think of 8  ⋅~__f__~17 = 3, but that's part of what's necessary in order to define multiplication to be closed.
+We don't normally think of 8 ⋅ ~__f__~17 = 3, but that's part of what's necessary in order to define multiplication to be closed.
 That is, the result of field multiplication is always in the set {0,1, ... __p__–1}.
 
 Exponentiation is simply multiplying a number many times.
 
-7^3^=7⋅~f~7⋅~f~7=343
+++++
+<ul class="simplelist">
+<li>7<sup>3</sup>=7⋅<sub><em>f</em></sub>7⋅<sub><em>f</em></sub>7=343</li>
+</ul>
+++++
 
 In a Finite Field, we can do exponentiation using modulo arithmetic.
 
-In F~19~:
+In __F__~19~:
 
-7^3^=343 % 19=1
+++++
+<ul class="simplelist">
+<li>7<sup>3</sup>=343 % 19=1</li>
+<li>9<sup>12</sup>=7</li>
+</ul>
+++++
 
-9^12^=7
 
-Exponentiation again gives us counter-intuitive results.
-We don't normally think 7^3^=1 or 9^12^=7.
-Again, Finite Fields have to be defined so that the operations *always* result in a number within the field.
+Exponentiation again gives us counterintuitive results.
+We don't normally think 7^3^ = 1 or 9^12^ = 7.
+Again, Finite Fields have to be defined so that the operations _always_ result in a number within the field.
 
 include::code-ch01/answers.py[tag=exercise4,indent=0]
 
