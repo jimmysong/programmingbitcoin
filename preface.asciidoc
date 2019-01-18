@@ -2,95 +2,88 @@
 == Preface
 
 This book will teach you the technology of Bitcoin at a fundamental level.
-This book doesn't cover monetary, economic or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible.
-There's a tendency to hype Bitcoin and blockchain without really understanding what's going on and this book is meant to be an antidote to that tendency.
+It doesn't cover the monetary, economic, or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible.
+There's a tendency to hype Bitcoin and blockchain without really understanding what's going on; this book is meant to be an antidote to that tendency.
 
 After all, there are lots of books about Bitcoin, everything from the history of Bitcoin, the economic aspects to a technical description of Bitcoin.
 The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library.
 The library is not meant to be exhaustive or efficient.
 The aim of the library is to help you learn.
 
-=== Who is this book for?
+=== Who Is This Book for?
 
 This book is for programmers who want to learn how Bitcoin works by coding it themselves.
 You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch.
 This is not a reference book where you can look up the specification for a particular feature.
 
-The material from this book has been largely taken from my two day seminar where I teach developers all about Bitcoin (see +programmingblockchain.com+).
-The material has been refined many times as I've taught this material 20+ times and have taught 400+ people as of this writing.
+The material from this book has been largely taken from my two-day seminar where I teach developers all about Bitcoin (see https://programmingblockchain.com[]).
+The material has been refined extensively, as I've taught this material more than 20 times and have taught more than 400 people as of this writing.
 
-By the time you're done with the book, you'll not only be able to create transactions, but be able to get all the data you need from peers and send the transaction over the network.
-Everything to accomplish this is covered including the math, the parsing, the network connectivity and block validation.
+By the time you're done with the book, you'll not only be able to create transactions, but also get all the data you need from peers and send the transaction over the network.
+It covers everything needed to accomplish this, including the math, parsing, network connectivity, and block validation.
 
-=== What do I need to know?
+=== What Do I Need to Know?
 
-The prerequisites for this book are that you know programming and that you know Python in particular.
-The library itself is written in Python 3 and a lot of the exercises can be done in a controlled environment like a Jupyter notebook.
-An intermediate knowledge of Python is preferred, but even a beginner knowledge of Python is probably sufficient to get a lot of the concepts.
+The prerequisites for this book are that you know programming, Python in particular.
+The library itself is written in Python 3, and a lot of the exercises can be done in a controlled environment like a Jupyter notebook.
+An intermediate knowledge of Python is preferable, but even a beginning knowledge of Python is probably sufficient to get a lot of the concepts.
 
 Some knowledge of math is required, especially for Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>].
-These chapters introduce mathematical concepts probably not familiar to those that didn't major in mathematics.
-Math knowledge around algebra-level should suffice to understand the new concepts and to code the exercises covered in those chapters.
+These chapters introduce mathematical concepts probably not familiar to those who didn't major in mathematics.
+Math knowledge around algebra level should suffice to understand the new concepts and to code the exercises covered in those chapters.
 
-General Computer Science knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
+General computer science knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
 
-=== How is the book arranged?
+=== How Is the Book Arranged?
 
-This book is split into 14 chapters and built on top of one another.
-Each chapter is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
+This book is split into 14 chapters. Each is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
 
-Roughly speaking, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_serialization">#chapter_serialization</a>] establish the mathematical tools that we need, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_tx_parsing">#chapter_tx_parsing</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_p2sh">#chapter_p2sh</a>] cover Transactions, which are the fundamental unit of Bitcoin and Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_blocks">#chapter_blocks</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] cover Blocks and Networking.
+Roughly speaking, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_serialization">#chapter_serialization</a>] establish the mathematical tools that we need; Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_tx_parsing">#chapter_tx_parsing</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_p2sh">#chapter_p2sh</a>] cover Transactions, which are the fundamental unit of Bitcoin; and Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_blocks">#chapter_blocks</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] cover Blocks and Networking.
 The last two chapters cover some advanced topics but don't actually require you to write code.
 
 Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>] cover some math that we need.
-Finite Fields and Elliptic Curves are needed in order for us to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
-After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, we move towards implementing how the cryptographic primitives are stored and transmitted through parsing and serializing all the different classes that we established in <<chapter_serialization>>.
+Finite Fields and Elliptic Curves are needed to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
+After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, <<chapter_serialization>> adds parsing and serialization, which are how cryptographic primitives are stored and transmitted.
 
 <<chapter_tx_parsing>> covers the Transaction structure.
 <<chapter_script>> goes into the smart contract language behind Bitcoin called Script.
-<<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first 4 chapters.
+<<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first four chapters.
 <<chapter_p2sh>> establishes how p2sh works, which is a way to make more powerful smart contracts.
 
 <<chapter_blocks>> covers Blocks, which are groups of ordered Transactions.
 <<chapter_networking>> covers network communication in Bitcoin.
-<<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data from and to nodes that do have the entire blockchain.
+<<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data to and from nodes that store the entire blockchain.
 
-<<chapter_segwit>> covers Segwit and <<chapter_advanced>> covers suggestions for further study.
+<<chapter_segwit>> covers Segwit, a backward-compatible upgrade introduced in 2017, and <<chapter_advanced>> covers suggestions for further study.
 Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
 
-Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>-<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] have exercises that require you to build up the library from scratch.
+Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] have exercises that require you to build up the library from scratch.
 The answers are in the Appendix and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
-You will be writing many Python classes and will be building towards being able to not just validate transactions/blocks, but also creating your own transactions and broadcasting them on the network.
+You will be writing many Python classes and building toward not just validating transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
-The last exercise in <<chapter_bloom_filters>> is specifically asking you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising and broadcast that on the network.
-Essentially, the first 11 chapters are setting up toward being able to do this exercise.
+The last exercise in <<chapter_bloom_filters>> specifically asks you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising, and broadcast that on the network.
+The first 11 chapters essentially prepare you for this exercise.
 
-There will be a lot of unit tests that you will have to get to pass.
+There will be a lot of unit tests that your code will need to pass.
 The book has been designed this way so you can do the "fun" part of coding.
-We will be looking at a lot of code and diagrams throughout.
+To aid your progress, we will be looking at a lot of code and diagrams throughout.
 
 === Setting Up
 
-In order to get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
+To get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
 Here are the instructions for setting everything up.
 
-Install Python 3.5 or above on your machine:
+Install Python 3.5 or higher on your machine:
 
-* Windows:
+Windows:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe[]
 
-`https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe`
+Mac OS X:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg[]
 
-* Mac OS X:
+Linux:: See your distro docs (many Linux distributions like Ubuntu come with Python 3.5+ pre-installed)
 
-`https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg`
+Install pip by downloading this script:
 
-* Linux: see your distro docs (many Linux distributions like Ubuntu come with Python 3.5+ pre-installed)
-
-Install pip:
-
-Download this script:
-
-`https://bootstrap.pypa.io/get-pip.py`
+https://bootstrap.pypa.io/get-pip.py[]
 
 Run this script using Python 3:
 
@@ -101,7 +94,7 @@ $ python3 get-pip.py
 
 Install git:
 
-The instructions for downloading and installing are at `https://git-scm.com/downloads`.
+The instructions for downloading and installing are at https://git-scm.com/downloads[].
 
 Download the source code for this book:
 
