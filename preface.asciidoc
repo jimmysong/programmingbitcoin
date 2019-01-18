@@ -124,22 +124,24 @@ $ . .venv/bin/activate
 
 Windows:
 
-[source,bash]
 ----
 C:\programmingbitcoin> virtualenv -p C:\PathToYourPythonInstallation\Python.exe .venv
 C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
 
-Run Jupyter notebook:
+Run Jupyter Notebook:
 
 [source,bash]
 ----
 (.venv) $ jupyter notebook
-[I 11:13:23.061 NotebookApp] Serving notebooks from local directory: /home/jimmy/programmingbitcoin
+[I 11:13:23.061 NotebookApp] Serving notebooks from local directory:
+  /home/jimmy/programmingbitcoin
 [I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
-[I 11:13:23.061 NotebookApp] http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
-[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 11:13:23.061 NotebookApp] http://localhost:8888/?token=
+  f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels 
+  (twice to skip confirmation).
 [C 11:13:23.065 NotebookApp]
 
     Copy/paste this URL into your browser when you connect for the first time,
@@ -147,18 +149,21 @@ Run Jupyter notebook:
         http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 ----
 
-You should have a browser open up automatically:
+You should have a browser open up automatically, as shown in <<pr0001>>.
 
+[[pr0001]]
 .Jupyter
 image::images/prbc_0001.png[Jupyter]
 
-You can navigate to chapter directories. To do the exercises from <<chapter_finite_fields>>, you would navigate to `code-ch01`:
+Here's how to navigate to chapter directories. To do the exercises from <<chapter_finite_fields>>, you would navigate to _code-ch01_ (<<pr0002>>):
 
-.Jupyter Directory View
+[[pr0002]]
+.Jupyter directory view
 image::images/prbc_0002.png[Chapter 1 Directory]
 
-From here you can open `Chapter1.ipynb`:
+From here you can open _Chapter1.ipynb_ (<<pr0003>>):
 
+[[pr0003]]
 .Jupyter Notebook
 image::images/prbc_0003.png[Chapter 1 Notebook]
 
@@ -166,20 +171,21 @@ You may want to familiarize yourself with this interface if you haven't seen it 
 You can run each "cell" and see the results as if this were an interactive Python shell.
 
 A large portion of the exercises will be coding concepts introduced in the book.
-The unit tests are written for you and you will need to write the Python code to make the tests pass.
+The unit tests are written for you, and you will need to write the Python code to make the tests pass.
 You can check whether your code is correct directly in Jupyter.
-You will need to edit the corresponding file by clicking through a link like the "this test" link in Figure P-3 .
-This will take you to a browser tab like this:
+You will need to edit the corresponding file by clicking through a link like the "this test" link in <<pr0003>>.
+This will take you to a browser tab, as shown in <<pr0003>>.
 
+[[pr0004]]
 .ecc.py
 image::images/prbc_0004.png[Chapter 1 ecc.py]
 
-You can edit the file here and save in order to make the test pass.
+To make the test pass, edit the file here and save.
 
 === Answers
 
-All the answers to the various exercises in this book are in the Appendix.
-They are also available in the `code-chxx/answers.py` file where xx is the chapter that you're on.
+All the answers to the various exercises in this book are in <<appendix_solutions>>.
+They are also available in the __code-ch<xx>/answers.py__ file where +xx+ is the chapter that you're on.
 
 === Conventions Used in This Book
 
@@ -230,7 +236,7 @@ Incorporating a significant amount of example code from this book into your prod
 We appreciate, but do not require, attribution.
 An attribution usually includes the title, author, publisher, and ISBN.
 For example: “_Programming Bitcoin_ by Jimmy Song (O’Reilly).
-Copyright 2019, 978-0-596-xxxx-x.”
+Copyright 2019, 978-1-492-03149-9.”
 
 If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
 
@@ -262,11 +268,7 @@ Please address comments and questions concerning this book to the publisher:
 ++++
 
 We have a web page for this book, where we list errata, examples, and any additional information.
-You can access this page at link:$$http://www.oreilly.com/catalog/<catalog page>$$[].
-
-++++
-<!--Don't forget to update the link above.-->
-++++
+You can access this page at http://bit.ly/programmingBitcoin[].
 
 To comment or ask technical questions about this book, send email to pass:[<a class="email" href="mailto:bookquestions@oreilly.com"><em>bookquestions@oreilly.com</em></a>].
 
