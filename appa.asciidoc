@@ -1,4 +1,5 @@
 [appendix]
+[[appendix_solutions]]
 == Solutions
 
 === <<chapter_finite_fields>>: Finite Fields
