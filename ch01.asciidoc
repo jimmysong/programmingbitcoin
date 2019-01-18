@@ -57,26 +57,26 @@ On the other hand, the set {-1,0,1} is closed under normal multiplication.
 Any two numbers can be multiplied (there are nine such combinations) and the result is always in the set.
 
 The other option we have in mathematics is to define multiplication in a particular way to make these sets closed.
-We'll get to how exactly we define addition and multiplication later in this chapter, but the key concept here is that we can *define addition and subtraction differently than the addition and subtraction you are familiar with*.
+We'll get to how exactly we define addition and multiplication later in this chapter, but the key concept here is that we can _define addition and subtraction differently than the addition and subtraction you are familiar with_.
 
 (2) and (3) mean that we have the additive and multiplicative identities.
 That means 0 and 1 are in the set.
 
 (4) means that we have the additive inverse.
-That is, if _a_ is in the set, *-a* is in the set.
+That is, if _a_ is in the set, _–a_ is in the set.
 Using the additive inverse, we can define subtraction.
 
 (5) means that multiplication has the same property.
-If _a_ is in the set, *a^-1^* is in the set.
-That is *a⋅a^-1^=1*.
+If _a_ is in the set, __a__^–1^ is in the set.
+That is _a_ ⋅ __a__^–1^ = 1.
 Using the multiplicative inverse, we can define division.
 This will be the trickiest to define in a finite field.
 
 === Defining Finite Sets
 
-If the *order* (or size) of the set is *p*, we can call the elements of the set, 0, 1, 2, ...p-1.
-These numbers are what we call the elements of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
-They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, etc.
+If the _order_ (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2,...p – 1.
+These numbers are what we call the _elements_ of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
+They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, and so forth.
 
 In math notation the Finite Field set looks like this:
 
