@@ -115,7 +115,7 @@ from ecc import FieldElement
 # tag::exercise1[]
 ==== Exercise 1
 
-Write the corresponding method `__ne__` which checks if two `FieldElement` objects are _not equal_ to each other.
+Write the corresponding method `__ne__`, which checks if two `FieldElement` objects are _not equal_ to each other.
 # end::exercise1[]
 '''
 
