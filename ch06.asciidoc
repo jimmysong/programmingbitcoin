@@ -150,7 +150,7 @@ Here are some operations and their byte codes:
 * `0x00` - `OP_0`
 * `0x51` - `OP_1`
 * `0x60` - `OP_16`
-* `0x75` - `OP_DUP`
+* `0x76` - `OP_DUP`
 * `0x93` - `OP_ADD`
 * `0xa9` - `OP_HASH160`
 * `0xac` - `OP_CHECKSIG`
