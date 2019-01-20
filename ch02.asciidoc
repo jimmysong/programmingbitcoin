@@ -179,7 +179,7 @@ In mathematics parlance, point addition is _non-linear_.
 * Identity
 * Commutativity
 * Associativity
-* Invertibiltiy
+* Invertibility
 
 Identity here means that there's a zero.
 That is, there exists some point (I) which when added to a point (A) results in A.
