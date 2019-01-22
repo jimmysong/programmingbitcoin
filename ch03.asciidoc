@@ -471,21 +471,19 @@ The parameters for secp256k1 are these:
 
 * _n_ = pass:[<br/>]`0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141`
 
-__G~x~__ refers to the x-coordinate of the point _G_ and __G~y~__ the y-coordinate.
-The numbers starting with `0x` indicate a hexadecimal number.
-
-There are a few things to notice about this curve.
+__G~x~__ refers to the _x_ coordinate of the point _G_ and __G~y~__ the _y_ coordinate.
+The numbers starting with `0x` indicate a hexadecimal number. There are a few things to notice about this curve.
 
 First, the equation is relatively simple.
 Many curves have `a` and `b` that are much bigger.
 secp256k1 has a really simple equation.
 
-Second, `p` is really, really close to 2^256^.
-This means that most numbers under 2^256^ are in the prime field and thus, any point on the curve has x and y-coordinates that are expressible in 256-bits each.
+Second, `p` is extremely close to 2^256^.
+This means that most numbers under 2^256^ are in the prime field and thus, any point on the curve has _x_ and _y_ coordinates that are expressible in 256 bits each.
 `n` is also very close to 2^256^.
 This means any scalar multiple can also be expressed in 256 bits.
 
-Third, 2^256^ is a really big number (See the _How Big is 2^256^_).
+Third, 2^256^ is a huge number (see sidebar).
 Amazingly, any number below 2^256^ can be stored in 32 bytes.
 This means that we can store the private key relatively easily.
 
@@ -496,12 +494,12 @@ To give you an idea, here are some relative scales:
 
 2^256^ ~ 10^77^
 
- * Number of atoms in and on earth ~ 10^50^
+ * Number of atoms in and on Earth ~ 10^50^
  * Number of atoms in the solar system ~ 10^57^
  * Number of atoms in the Milky Way ~ 10^68^
  * Number of atoms in the universe ~ 10^80^
 
-A trillion (10^12^) computers doing a trillion computations every trillionth (10^-12^) of a second for a trillion years is still less than 10^56^ computations.
+A trillion (10^12^) computers doing a trillion computations every trillionth (10^–12^) of a second for a trillion years is still less than 10^56^ computations.
 
 Think of finding a private key this way.
 There are as many possible private keys in Bitcoin as there are atoms in a billion galaxies.
@@ -509,14 +507,14 @@ There are as many possible private keys in Bitcoin as there are atoms in a billi
 
 ==== Working with secp256k1
 
-Since we know all of the parameters for secp256k1, we can verify in Python whether the generator point, G, is on the curve y^2^=x^3^+7:
+Since we know all of the parameters for secp256k1, we can verify in Python whether the generator point, G, is on the curve __y__^2^ = __x__^3^ + 7:
 
 [source,python]
 ----
 include::code-ch03/examples.py[tag=example6]
 ----
 
-Furthermore, we can verify in Python whether the generator point, G, has the order `n`.
+Furthermore, we can verify in Python whether the generator point, _G_, has the order `n`.
 
 [source,python]
 ----
@@ -535,7 +533,7 @@ include::code-ch03/ecc.py[tag=source5]
 ----
 
 We're subclassing the `FieldElement` class so we don't have to pass in `P` all the time.
-We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeroes.
+We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeros.
 
 Similarly, we can define a point on the secp256k1 curve and call it `S256Point`.
 
@@ -549,7 +547,7 @@ include::code-ch03/ecc.py[tag=source7]
 
 We now have an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
 
-We can also define `__rmul__` a bit more efficiently since we know the order of the group, `n`.
+We can also define `__rmul__` a bit more efficiently, since we know the order of the group, `n`.
 Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant.
 
 [source,python]
@@ -560,17 +558,17 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source8]
 ----
-<1> We can mod by `n` because nG=0.
+<1> We can mod by `n` because _nG_ = 0.
 That is, every `n` times we cycle back to zero or the point at infinity.
 
-We can now define G directly and keep it around since we'll be using it a lot going forward.
+We can now define _G_ directly and keep it around since we'll be using it a lot going forward.
 
 [source,python]
 ----
 include::code-ch03/ecc.py[tag=source10]
 ----
 
-Now checking that the order of G is `n` is trivial:
+Now checking that the order of _G_ is `n` is trivial:
 
 [source,python]
 ----
@@ -579,20 +577,20 @@ include::code-ch03/examples.py[tag=example8]
 
 === Public Key Cryptography
 
-Finally, we have the tools that we need to do Public Key Cryptography operations.
-The key operation that we need is `P=eG` which is an *asymmetric* equation.
+At last, we have the tools that we need to do Public Key Cryptography operations.
+The key operation that we need is `P=eG`, which is an _asymmetric_ equation.
 We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
 This is the Discrete Log Problem described earlier.
 
 The difficulty of Discrete Log will be essential to understanding signing and verification algorithms.
 
-Generally, we call `e` the Private Key and P the Public Key.
+Generally, we call `e` the _private key_ and P the _public key_.
 We'll note here that the private key is a single 256-bit number and the public key is a coordinate `(x,y)` where `x` and `y` are _each_ 256-bit numbers.
 
 === Signing and Verification
 
 To set up the motivation for why signing and verification exists, imagine this scenario.
-You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any single target.
+You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any particular target.
 
 Now if someone could observe you and interact with you, proving this would be easy.
 Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow.
@@ -602,65 +600,91 @@ The target, if specified by the challenger, makes your archery skill easy to ver
 Unfortunately, this doesn't scale very well.
 If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges.
 You could try to do something like have 10 people watch you shoot a single arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of an arbitrary target.
-What we want is something that you can do once, requires no interaction but still proves that you are indeed, a good archer that can hit _any_ target.
+What we want is something that you can do once, that requires no interaction back and forth between the archer and the verifiers, but still proves that you are indeed, a good archer that can hit _any_ target.
 
-If, for example, you shot an arrow into a target of your choosing, then the people observing afterwards won't necessarily be convinced.
+If, for example, you shot an arrow into a target of your choosing, then the people observing afterward won't necessarily be convinced.
 After all, you may be a sneaky person that paints the target around wherever your arrow happened to land.
 So what can you do?
 
 Here's a very clever thing you can do.
 Inscribe the tip of the arrow with the position of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow.
-Now anyone seeing the target can take an x-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit.
-The tip clearly had to be inscribed before the arrow was shot, so this can prove you are indeed a good archer (provided the actual target isn't just one that you've practiced over and over).
+Now anyone seeing the target can take an X-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit.
+The tip clearly had to be inscribed before the arrow was shot, so this can prove you are actually  a good archer (provided the actual target isn't just one that you've practiced over and over).
 
 This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number.
 We want to prove possession of the secret without revealing the secret itself.
 We do this by putting the target into our calculation and hitting that target.
 
-Ultimately this is going to be used in Transactions which will prove that the rightful owners of the secrets are spending the Bitcoins.
+Ultimately this is going to be used in Transactions, which will prove that the rightful owners of the secrets are spending the Bitcoins.
 
 ==== Inscribing the Target
 
 The inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
 
-The secret in our case is `e` satisfying:
+The secret in our case is `e` satisfying the following:
 
-eG = P
+++++
+<ul class="simplelist">
+<li><em>eG</em> = <em>P</em></li>
+</ul>
+++++
 
-Where P is the public key and `e` is the private key.
+where _P_ is the public key and `e` is the private key.
 
 The target that we're going to aim at is a random 256-bit number, `k`.
 We then do this:
 
-kG = R
+++++
+<ul class="simplelist">
+<li><em>kG</em> = <em>R</em></li>
+</ul>
+++++
 
-R is our target that we're aiming for.
-In fact, we're only going to care about the x-coordinate of R, which we'll call `r`.
+
+_R_ is our target that we're aiming for.
+In fact, we're only going to care about the _x_ coordinate of _R_, which we'll call `r`.
 You may have guessed already that `r` here stands for random.
 
 We claim at this point that the following equation is equivalent to the Discrete Log Problem:
 
-uG+vP=kG where `k` was chosen randomly and `u,v≠0` can be chosen by the signer and G and P are known
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>kG</em></li>
+</ul>
+++++
 
-This is due to the fact that:
+where `k` was chosen randomly and `u,v≠0` can be chosen by the signer and G and P are known. This is due to the fact that
 
-uG+vP=kG implies vP=(k-u)G
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>kG</em> implies <em>vP</em> = (<em>k</em> – <em>u</em>)<em>G</em></li>
+</ul>
+++++
 
-Since `v≠0`, we can divide by the scalar multiple `v`.
+Since `v≠0`, we can divide by the scalar multiple `v`:
 
-P=((k-u)/v)G
+++++
+<ul class="simplelist">
+<li><em>P</em> = ((<em>k</em> – <em>u</em>)/<em>v</em>)<em>G</em></li>
+</ul>
+++++
+
 
 If we know `e`, we have:
 
-eG=((k-u)/v)G or e = (k-u)/v
+++++
+<ul class="simplelist">
+<li><em>eG</em> = ((<em>k</em> - <em>u</em>)/<em>v</em>)<em>G</em> or <em>e</em> = (<em>k</em> - <em>u</em>)/<em>v</em></li>
+</ul>
+++++
 
 This means than any `(u,v)` combination that satisfies the above equation will suffice.
 
-If we don't know `e`, we would have to play with `(u,v)` until` e = (k-u)/v`.
-If we could solve this with any `(u,v)` combination, that would mean we'll have solved P=eG while knowing only P and G.
+If we don't know `e`, we would have to play with `(u,v)` until __e = (k-u)/v__.
+If we could solve this with any `(u,v)` combination, that would mean we'll have solved _P_ = _eG_ while knowing only _P_ and _G_.
 In other words, we'd have broken the Discrete Log problem.
 
-This means to provide a correct `u` and `v`, we either have to break the Discrete Log problem or we know the secret `e`.
+This means to provide a correct `u` and `v`, we either have to break the Discrete Log problem or know the secret `e`.
 Since we assume Discrete Log is hard, we can say `e` is assumed to be known by the one who came up with `u` and `v`.
 
 One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting.
@@ -669,104 +693,120 @@ William Tell, for example, was shooting so that he could save his son (shoot the
 You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive.
 This has to be incorporated into our equations.
 
-In signature/verification parlance, this is called the *signature hash*.
+In signature/verification parlance, this is called the _signature hash_.
 A hash is a deterministic function that takes arbitrary data into a data of fixed size.
 This is a fingerprint of the message containing the intent of the shooter that anyone verifying the message already knows.
 We denote this with the letter `z`.
-This is incorporated into our uG+vP calculation this way:
+This is incorporated into our _uG_ + _vP_ calculation this way:
 
-u = z/s, v = r/s
+++++
+<ul class="simplelist">
+<li><em>u</em> = <em>z</em>/<em>s</em>, <em>v</em> = <em>r</em>/<em>s</em></li>
+</ul>
+++++
 
-Since r is used in the calculation of `v`, we now have the tip of the arrow inscribed.
+Since _r_ is used in the calculation of `v`, we now have the tip of the arrow inscribed.
 We also have the intent of the shooter incorporated into `u`, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
 
 To make the equation work, we can calculate `s`:
 
-* uG+vP=R=kG
-* uG+veG=kG
-* u+ve=k
-* z/s+re/s=k
-* (z+re)/s=k
-* s=(z+re)/k
+* _uG_ + _vP_ = _R_ = _kG_
+* _uG_ + _veG_ = _kG_
+* _u_ + _ve_ = _k_
+* _z_/_s_ + _re_/_s_ = _k_
+* (_z_ + _re_)/_s_ = _k_
+* _s_ = (_z_ + _re_)/_k_
 
-This is the basis of the signature algorithm and the two numbers in a signature are `r` and `s`.
+This is the basis of the signature algorithm, and the two numbers in a signature are `r` and `s`.
 
 Verification is straightforward:
 
-* uG+vP where u,v≠0
-* uG+vP=(z/s)G+(re/s)G=((z+re)/s)G=((z+re)/((z+re)/k))G=kG=(r,y)
+* __uG__ + __vP__ where __u__,__v__ ≠ 0
+* __uG__ + __vP__ = (__z__/__s__)__G__ + (__re__/__s__)__G__ = ((__z__ + __re__)/__s__)__G__ = ((__z__ + __re__)/((__z__ + __re__)/__k__))__G__ = __kG__ = (__r__,__y__)
 
 [WARNING]
 .Why We Don't Reveal `k`
 ====
-At this point, you might be wondering why we don't reveal `k` and instead reveal the x-coordinate of R or `r`.
+At this point, you might be wondering why we don't reveal `k` and instead reveal the _x_ coordinate of _R_ or `r`.
 If we were to reveal `k`, then:
 
-* uG+vP=R
-* uG+veG=kG
-* kG-uG=veG
-* (k-u)G = veG
-* (k-u) = ve
-* (k-u)*1/v = e
+* __uG__ + __vP__ = __R__
+* __uG__ + __veG__ = __kG__
+* __kG__ – __uG__ = __veG__
+* (__k__ – __u__)__G__ = __veG__
+* (__k__ – __u__) = __ve__
+* (__k__ – __u__) &#xd7; 1/__v__ = __e__
 
-Means that our secret would be revealed, which would defeat the whole purpose of the signature.
+means that our secret would be revealed, which would defeat the whole purpose of the signature.
 We can, however, reveal R.
 
-It's worth mentioning again, make sure you're using truly random numbers for `k`, as even accidentally revealing `k` for a known signature is the equivalent of revealing your secret and losing your funds!
+It's worth mentioning again: make sure you're using truly random numbers for `k`, as even accidentally revealing `k` for a known signature is the equivalent of revealing your secret and losing your funds!
 ====
 
-==== Verification in-depth
+==== Verification in Depth
 
 Signatures sign some fixed-length value (our "contract"), in our case something that's 32 bytes.
-The fact that 32 bytes is 256 bits is not a coincidence as the thing we're signing will be a scalar for `G`.
+The fact that 32 bytes is 256 bits is not a coincidence, as the thing we're signing will be a scalar for `G`.
 
-In order to guarantee that the thing we're signing is 32 bytes, we hash the document first.
+To guarantee that the thing we're signing is 32 bytes, we hash the document first.
 In Bitcoin, the hashing function is hash256, or two rounds of sha256.
 This guarantees the thing that we're signing is exactly 32 bytes.
-We will call the result of the hash, the signature hash, or `z`.
+We will call the result of the hash the _signature hash_, or `z`.
 
-The signature that we are verifying has two components, (r, s).
-The `r` is as above, it's the x-coordinate of some point R that we'll come back to.
+The signature that we are verifying has two components, (`r`, `s`).
+The `r` is as above; it's the _x_ coordinate of some point R that we'll come back to.
 The formula for `s` is as above:
 
-s = (z+re)/k
+++++
+<ul class="simplelist">
+<li><em>s</em> = (<em>z</em>+<em>re</em>)/<em>k</em></li>
+</ul>
+++++
 
-Keep in mind that we know `e` (P = eG, or what we're proving we know in the first place), we know `k` (kG = R, remember?) and we know `z`.
+Keep in mind that we know `e` (_P_ = _eG_, or what we're proving we know in the first place), we know `k` (_kG_ = _R_, remember?), and we know `z`.
 
-We will now construct R=uG+vP by defining `u` and `v` this way:
+We will now construct _R_ = _uG_ + _vP_ by defining `u` and `v` this way:
 
-* u = z/s
-* v = r/s
+* _u_ = _z_/_s_
+* _v_ = _r_/_s_
 
 Thus:
 
-uG + vP = (z/s)G + (r/s)P = (z/s)G + (re/s)G = ((z+re)/s)G
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>r</em>/<em>s</em>)<em>P</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>re</em>/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/<em>s</em>)<em>G</em></li>
+</ul>
+++++
 
-We know s = (z+re)/k so:
+We know _s_ = (_z_ + _re_)/_k_ so:
 
-uG + vP = ( (z+re) / ((z+re)/k) )G = kG = R
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = ((<em>z</em> + <em>re</em>) / ((<em>z</em> + <em>re</em>)/<em>k</em>))<em>G</em> = <em>kG</em> = <em>R</em></li>
+</ul>
+++++
 
-We've successfully chosen `u` and `v` in a way as to generate R as we intended.
+We've successfully chosen `u` and `v` in a way as to generate _R_ as we intended.
 Furthermore, we used `r` in the calculation of `v` proving we knew what R should be.
-The only way we could know the details of R beforehand is if we know `e`.
+The only way we could know the details of _R_ beforehand is if we know `e`.
 
 To whit, here are the steps:
 
-1. We are given (r, s) as the signature, `z` as the hash of the thing being signed and P, the public key (or public point) of the signer.
-2. We calculate u = z/s, v = r/s
-3. We calculate uG + vP = R
-4. If R's `x` coordinate equals `r`, the signature is valid.
+1. We are given (`r`, `s`) as the signature, `z` as the hash of the thing being signed, and P, the public key (or public point) of the signer.
+2. We calculate _u_ = __z__/__s__, _v_ = __r__/__s__.
+3. We calculate _uG_ + _vP_ = _R_.
+4. If __R__'s `x` coordinate equals `r`, the signature is valid.
 
 [NOTE]
-.Why two rounds of sha256?
+.Why Two Rounds of sha256?
 ====
 The calculation of `z` requires two rounds of sha256, or hash256.
 You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number.
 The reason is for security.
 
-There is a well-known hash collision attack on sha1 called a _birthday attack_ which makes finding collisions much easier.
-Google found a sha1 collision using some modifications of a birthday attack and a lot of other things in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html).
-Using sha1 twice, or double-sha1 is the way to defeat slow down some forms of this attack.
+There is a well-known hash collision attack on SHA-1 called a _birthday attack_ that makes finding collisions much easier.
+Google found a SHA-1 collision using some modifications of a birthday attack and a lot of other things in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html).
+Using SHA-1 twice, or double-SHA-1, is the way to defeat slow down some forms of this attack.
 
 Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential weaknesses.
 ====
@@ -779,17 +819,17 @@ We can now verify a signature using some of the primitives that we have.
 ----
 include::code-ch03/examples.py[tag=example9]
 ----
-<1> Note that we use Fermat's Little Theorem for 1/s, since `n` is prime.
-<2> u = z/s
-<3> v = r/s
-<4> uG+vP = (r,y).
-We need to check that the x-coordinate is r
+<1> Note that we use Fermat's Little Theorem for 1/_s_, since `n` is prime.
+<2> _u_ = _z_/_s_
+<3> _v_ = _r_/_s_
+<4> _uG_ + _vP_ = (_r_,_y_).
+We need to check that the _x_ coordinate is `r`
 
 include::code-ch03/answers.py[tag=exercise6,indent=0]
 
 ==== Programming Signature Verification
 
-We already have a class `S256Point` which is the public point for the private key.
+We already have a class `S256Point`, which is the public point for the private key.
 We create a `Signature` class that houses the `r` and `s` values:
 
 [source,python]
@@ -807,17 +847,17 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source12]
 ----
-<1> `s_inv` (1/s) is calculated using Fermat's Little Theorem on the order of the group `n` which is prime.
-<2> u = z/s.
+<1> `s_inv` (1/_s_) is calculated using Fermat's Little Theorem on the order of the group `n`, which is prime.
+<2> _u_ = _z_/_s_.
 Note that we can mod by `n` as that's the order of the group.
-<3> v = r/s.
+<3> _v_ = _r_/_s_.
 Note that we can mod by `n` as that's the order of the group.
-<4> uG+vP should be R
-<5> We check that the x-coordinate is `r`
+<4> _uG_ + _vP_ should be _R_.
+<5> We check that the _x_ coordinate is `r`
 
 So given a public key, which is a point on the secp256k1 curve and a signature hash, `z`, we can verify whether a signature is valid or not.
 
-==== Signing In-depth
+==== Signing In Depth
 
 Given that we know how verification should work, signing is straightforward.
 The only missing step is figuring out what `k`, and thus R=kG to use.
