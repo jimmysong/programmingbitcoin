@@ -2,7 +2,7 @@
 # tag::exercise4[]
 ==== Exercise 4
 
-Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a 1 input, 2 output transaction.
+Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a one-input, two-output transaction.
 
 You can broadcast the transaction at https://testnet.blockchain.info/pushtx
 # end::exercise4[]
@@ -46,7 +46,7 @@ c5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca539012103\
 # tag::exercise5[]
 ==== Exercise 5
 
-Advanced: get some more testnet coins from a testnet faucet and create a 2 input, 1 output transaction. 1 input should be from the faucet, the other should be from the previous exercise, the output can be your own address.
+Advanced: get some more testnet coins from a testnet faucet and create a two-input, one-output transaction. One input should be from the faucet, the other should be from the previous exercise; the output can be your own address.
 
 You can broadcast the transaction at https://testnet.blockchain.info/pushtx
 # end::exercise5[]
@@ -146,7 +146,7 @@ def sig_hash(self, input_index):
 # tag::exercise2[]
 ==== Exercise 2
 
-Write the `verify_input` method for the `Tx` class. You will want to use the `TxIn.script_pubkey()`, `Tx.sig_hash()` and `Script.evaluate()` methods.
+Write the `verify_input` method for the `Tx` class. You will want to use the `TxIn.script_pubkey()`, `Tx.sig_hash()`, and `Script.evaluate()` methods.
 # end::exercise2[]
 '''
 
