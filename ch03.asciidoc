@@ -3,7 +3,7 @@
 
 [.lead]
 The previous two chapters covered some fundamental math.
-We learned how Finite Fields work and we also learned what an Elliptic Curve is.
+We learned how Finite Fields work and what an Elliptic Curve is.
 In this chapter, we're going to combine the two concepts to learn Elliptic Curve Cryptography.
 Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
@@ -11,21 +11,21 @@ Specifically, we're going to build the primitives needed to sign and verify mess
 
 We discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers.
 Specifically, it's not just integers or even rational numbers, but all _real_ numbers.
-Pi, sqrt(2), e+7th root of 19, etc are all part of real numbers.
+Pi, sqrt(2), __e__+7th root of 19, and the like are all real numbers.
 
 This worked because _real_ numbers are also a field.
-Note unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
+Unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
 
-1. If *a* and *b* are in the set, *a+b* and *a⋅b* are in the set.
-2. The additive identity, *0* exists and has the property *a + 0 = a*.
-3. The multiplicative identity, *1* exists and has the property *a ⋅ 1 = a*.
-4. If *a* is in the set, *-a* is in the set, which is defined as the value that makes *a + (-a) = 0*.
-5. If *a* is in the set and is not 0, *a^-1^* is in the set, which is defined as the value that makes *a ⋅ a^-1^ = 1*.
+1. If _a_ and _b_ are in the set, _a + b_ and _a ⋅ b_ are in the set.
+2. The additive identity: _0_ exists and has the property _a + 0 = a_.
+3. The multiplicative identity: _1_ exists and has the property _a ⋅ 1 = a_.
+4. If _a_ is in the set, _–a_ is in the set, which is defined as the value that makes _a + (–a) = 0_.
+5. If _a_ is in the set and is not 0, _a^–1^_ is in the set, which is defined as the value that makes _a ⋅ a^–1^ = 1_.
 
-Clearly, all of these are true as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, -x is the additive inverse and 1/x is the multiplicative inverse.
+Clearly, all of these are true, as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, –__x__ is the additive inverse, and 1/__x__ is the multiplicative inverse.
 
-Real numbers are easy to plot and we can see the a graph over reals visually.
-For example, y^2^=x^3^+7 can be plotted like <<secp256k1_over_real_numbers>>:
+Real numbers are easy to plot on a graph.
+For example, __y__^2^ = __x__^3^ + 7 can be plotted like <<secp256k1_over_real_numbers>>:
 
 [[secp256k1_over_real_numbers]]
 .secp256k1 over real numbers
@@ -37,11 +37,11 @@ The only difference is that we have to use the addition/subtraction/multiplicati
 === Elliptic Curves over Finite Fields
 
 So what does an Elliptic Curve over a Finite Field look like?
-Let's look at the equation y^2^=x^3^+7 over F~103~.
+Let's look at the equation __y__^2^ = _-x__^3^ + 7 over __F__~103~.
 We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
 
-* y^2^=64^2^%103=79
-* x^3^+7=(17^3^+7)%103=79
+* __y__^2^ = 64^2^ % 103 = 79
+* __x__^3^ + 7 = (17^3^+7) % 103 = 79
 
 We've verified that the point is on the curve using Finite Field math.
 
@@ -53,10 +53,10 @@ image::images/prbc_0302.png[Elliptic Curve over a Finite Field]
 
 As you can see, it's very much a scattershot of points and there's no smooth curve here.
 This is not surprising since the points are discrete.
-About the only pattern is that the curve is symmetric right around the middle, which is due to the y^2^ term.
-The graph is not symmetric over the x-axis as in the curve over reals, but about half-way up the y-axis due to there not being negative numbers in a Finite Field.
+About the only pattern is that the curve is symmetric right around the middle, because of the __y__^2^ term.
+The graph is not symmetric over the x-axis as in the curve over reals, but about halfway up the y-axis due to there not being negative numbers in a Finite Field.
 
-What's amazing is that we can use the same point addition equations with the addition, subtraction, multiplication, division and exponentiation as we defined them for Finite Fields and everything still works.
+What's amazing is that we can use the same point addition equations with the addition, subtraction, multiplication, division, and exponentiation as we defined them for Finite Fields and everything still works.
 This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
 
 include::code-ch03/answers.py[tag=exercise1,indent=0]
