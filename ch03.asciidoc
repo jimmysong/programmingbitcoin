@@ -160,64 +160,92 @@ include::code-ch03/answers.py[tag=exercise2,indent=0]
 
 include::code-ch03/answers.py[tag=exercise3,indent=0]
 
-=== Scalar multiplication for Elliptic Curves
+=== Scalar Multiplication for Elliptic Curves
 
 Because we can add a point to itself, we can introduce some new notation:
 
-(170,142) + (170,142) = 2⋅(170,142)
+++++
+<ul class="simplelist">
+<li>(170,142) + (170,142) = 2 ⋅ (170,142)</li>
+</ul>
+++++
 
 Similarly, because we have associativity, we can actually add the point again:
 
-2⋅(170,142) + (170,142) = 3⋅(170, 142)
+++++
+<ul class="simplelist">
+<li>2 ⋅ (170,142) + (170,142) = 3 ⋅ (170, 142)</li>
+</ul>
+++++
 
 We can do this as many times as we want.
-This is what we call Scalar Multiplication.
+This is what we call _scalar multiplication_.
 That is, we have a _scalar_ number in front of the point.
 We can do this because we have defined point addition and point addition is associative.
 
 One property of scalar multiplication is that it's really hard to predict without calculating (see <<scalar_multiplication_results_for_y_2_x_3_7>>):
 
 [[scalar_multiplication_results_for_y_2_x_3_7]]
-.Scalar Multiplication Results for y^2^=x^3^+7 over F~223~ for point (170,142)
+.Scalar multiplication results for y^2^ = x^3^ + 7 over F~223~ for point (170,142)
 image::images/prbc_0304.png[Scalar Multiplication Results]
 
 Each point is labeled by how many times we've added the point.
 You can see that this is a complete scattershot.
-This is because point addition is non-linear and not easy to calculate.
-Performing scalar multiplication is straightforward, but doing the opposite, Point division, is not.
+This is because point addition is nonlinear and not easy to calculate.
+Performing scalar multiplication is straightforward, but doing the opposite, point division, is not.
 
 This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
 Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, point at infinity is the additive identity or 0).
-If we imagine a point G and scalar multiply until we get the point at infinity, we end up with a set:
+If we imagine a point G and scalar-multiply until we get the point at infinity, we end up with a set:
 
-{ G, 2G, 3G, 4G, ... nG } where nG=0
+++++
+<ul class="simplelist">
+<li>{ G, 2G, 3G, 4G, ... nG } where nG = 0</li>
+</ul>
+++++
 
-It turns out that this set is called a Group and because `n` is finite, we have a Finite Group (or more specifically a Finite Cyclic Group).
+It turns out that this set is called a Group and because `n` is finite, we have a Finite Group (or more specifically, a Finite Cyclic Group).
 Groups are interesting mathematically because they behave a lot like addition:
 
-G+4G=5G or aG+bG=(a+b)G
+++++
+<ul class="simplelist">
+<li>G + 4G = 5G or aG + bG = (a + b)G</li>
+</ul>
+++++
 
 When we combine the fact that scalar multiplication is easy to go in one direction but hard in the other and the mathematical properties of a Group, we have exactly what we need for Elliptic Curve Cryptography.
 
-.Why is this called the Discrete Log Problem?
+.Why Is This Called the Discrete Log Problem?
 ****
-You may be wondering why the problem of reversing scalar *multiplication* is referred to as the discrete *log* problem.
+You may be wondering why the problem of reversing scalar _multiplication_ is referred to as the Discrete _Log_ problem.
 
-We called the operation between the points "addition", but we could easily have called it a point "operation".
+We called the operation between the points "addition," but we could easily have called it a point "operation."
 Typically, a new operation that you define in math is denoted with the dot operator (⋅).
 The dot operator is also used for multiplication, and it sometimes helps to think that way:
 
-P~1~⋅P~2~=P~3~
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> ⋅ <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+</ul>
+++++
 
 When you do lots of multiplying, that's the same as exponentiation.
 Scalar multiplication when we called it "point addition" becomes scalar exponentiation when thinking "point multiplication":
 
-P^7^=Q
+++++
+<ul class="simplelist">
+<li><em>P</em><sup>7</sup> = <em>Q</em></li>
+</ul>
+++++
 
 The Discrete Log problem in this context is the ability to reverse the above equation, which ends up being:
 
-log~P~Q=7
+++++
+<ul class="simplelist">
+<li>log<sub><em>P</em></sub><em>Q</em> = 7</li>
+</ul>
+++++
 
 The log equation on the left has no analytically calculable algorithm.
 That is, there is no known formula that you can plug in to get the answer generally.
