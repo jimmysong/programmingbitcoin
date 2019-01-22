@@ -677,10 +677,9 @@ In __F__~19~:
 
 This is a relatively expensive calculation as exponentiating grows very fast.
 Division is the most expensive operation for that reason.
-To lessen the expensiveness, we can utilize the `pow` function in Python.
-`pow` is a function that does exponentiation.
+To lessen the expensiveness, we can use the `pow` function in Python, which does exponentiation.
 Thus something like `pow(7,17)` does the same thing as `7**17`.
-The `pow` function, however, has an optional third argument which makes our calculation more efficient.
+The `pow` function, however, has an optional third argument that makes our calculation more efficient.
 Specifically, `pow` will modulo by the third argument.
 Thus, `pow(7,17,19)` will give the same result as `7**17%19` but do so faster because the modulo function is done after each round of multiplication.
 
@@ -690,26 +689,35 @@ include::code-ch01/answers.py[tag=exercise9,indent=0]
 
 === Redefining Exponentiation
 
-One last thing that we need to take care of before we leave this chapter is the `__pow__` method, which will need to take care of negative exponents.
-For example a^-3^ needs to be a Finite Field element, but the current code does not take care of this case.
-We want, for example something like this to work:
+One last thing that we need to take care of before we leave this chapter is the `__pow__` method, which needs to handle negative exponents.
+For example, __a__^–3^ needs to be a Finite Field element, but the current code does not take care of this case.
+We want, for example, something like this to work:
 
 [source,python]
 ----
 include::code-ch01/examples.py[tag=example7]
 ----
 
-Unfortunately, the way we've defined `__pow__` simply doesn't handle negative exponents as the second parameter of the built-in Python function `pow` is required to be positive.
+Unfortunately, the way we've defined `__pow__` simply doesn't handle negative exponents, because the second parameter of the built-in Python function `pow` is required to be positive.
 
 Thankfully, we can use some math we already know to solve this.
 We know from Fermat's Little Theorem that:
 
-a^p-1^ = 1
+++++
+<ul class="simplelist">
+<li><em>a</em><sup>p–1</sup> = 1</li>
+</ul>
+++++
 
-This fact means that we can multiply by a^p-1^ as many times as we want.
-So for a^-3^, for example, we can do:
 
-a^-3^=a^-3^⋅a^p-1^=a^p-4^
+This fact means that we can multiply by __a__^p–1^ as many times as we want.
+So for __a__^–3^, we can do:
+
+++++
+<ul class="simplelist">
+<li><em>a</em><sup>–3</sup> = <em>a</em><sup>–3</sup> ⋅ <em>a</em><sup>p–1</sup> = <em>a</em><sup>p–4</sup></li>
+</ul>
+++++
 
 This is a way we can do negative exponents.
 A naive implementation would do something like this:
@@ -725,12 +733,12 @@ class FieldElement:
         num = pow(self.num, n, self.prime) # <2>
         return self.__class__(num, self.prime)
 ----
-<1> We add until we get a positive exponent
-<2> We use the Python built-in `pow` to make this more efficient
+<1> We add until we get a positive exponent.
+<2> We use the Python built-in `pow` to make this more efficient.
 
 Thankfully, we can do even better.
 We already know how to force a number out of being negative, using our familiar friend `%`!
-As a bonus, we can also reduce very large exponents at the same time given that a^p-1^=1.
+As a bonus, we can also reduce very large exponents at the same time given that __a__^p–1^ = 1.
 This will make the `pow` function not work as hard.
 
 [source,python]
@@ -739,10 +747,10 @@ class FieldElement:
 ...
 include::code-ch01/ecc.py[tag=source3]
 ----
-<1> Make the exponent into something within the 0 to p-1 range
+<1> Make the exponent into something within the 0 to p-1 range.
 
 === Conclusion
 
 In this chapter we learned about Finite Fields and how to implement it in Python.
 We'll be using Finite Fields in <<chapter_elliptic_curve_cryptography>> for Elliptic Curve Cryptography.
-We turn next to the other mathematical component that we need for Elliptic Curve Cryptography and that's Elliptic Curves.
+We turn next to the other mathematical component that we need for Elliptic Curve Cryptography: Elliptic Curves.
