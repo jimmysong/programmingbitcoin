@@ -165,7 +165,7 @@ True
 # tag::exercise7[]
 ==== Exercise 7
 
-Sign the following message with the secret
+Sign the following message with the secret:
 
 ```
 e = 12345
