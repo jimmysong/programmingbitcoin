@@ -390,12 +390,16 @@ include::code-ch02/answers.py[tag=exercise5,indent=0]
 When the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
 We know that this means:
 
-__P__~1~ = –__P__~2~ or __P__~1~ + __P__~2~ = __I__
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = –<em>P</em><sub>2</sub> or <em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>I</em></li>
+</ul>
+++++
 
 We've already handled this in Exercise 3.
 
 What happens when __P__~1~ = __P__~2~?
-Visually, we have to calculate the line that's *tangent* to the curve at __P__~1~ and find the point at which the line intersects the curve.
+Visually, we have to calculate the line that's _tangent_ to the curve at __P__~1~ and find the point at which the line intersects the curve.
 The situation looks like this as we saw before (see <<line_thats_tangent_to_the_curve>>):
 
 [[line_thats_tangent_to_the_curve]]
