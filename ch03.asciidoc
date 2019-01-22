@@ -902,7 +902,7 @@ include::code-ch03/answers.py[tag=exercise7,indent=0]
 
 ==== Programming Message Signing
 
-In order to program message signing, we now create a `PrivateKey` class which will house our secret.
+To program message signing, we now create a `PrivateKey` class, which will house our secret.
 
 [source,python]
 ----
@@ -929,14 +929,14 @@ class PrivateKey:
 ----
 <1> `randint` chooses a random integer from `[0,n)`.
 Please don't use this function in production as the random number from this library is not nearly random enough.
-<2> `r` is the x-coordinate of kG
-<3> We use Fermat's Little Theorem again and `n`, which is prime
-<4> s = (z+re)/k
-<5> It turns out that using the low-s value will get nodes to relay our transactions easier.
-This is for malleability reasons
+<2> `r` is the _x_ coordinate of _kG_.
+<3> We use Fermat's Little Theorem again and `n`, which is prime.
+<4> _s_ = (_z_ + _re_)/_k_.
+<5> It turns out that using the low-_s_ value will get nodes to relay our transactions easier.
+This is for malleability reasons.
 <6> We return a `Signature` object from above.
 
-.Importance of a unique `k`
+.Importance of a Unique `k`
 ****
 There's an important rule in signatures that utilize a random component like we have here.
 The `k` needs to be unique per signature.
@@ -944,20 +944,20 @@ That is, it cannot get reused.
 In fact, a `k` that's reused will result in you revealing your secret!
 This is because:
 
-Our secret is `e`, we are reusing `k` to sign z~1~ and z~2~.
+Our secret is `e`, we are reusing `k` to sign __z__~1~ and __z__~2~.
 
-* kG=(r,y)
-* s~1~ = (z~1~+re) / k, s~2~ = (z~2~+re) / k
-* s~1~/s~2~ = (z~1~+re) / (z~2~+re)
-* s~1~(z~2~+re) = s~2~(z~1~+re)
-* s~1~z~2~ + s~1~re = s~2~z~1~ + s~2~re
-* s~1~re - s~2~re = s~2~z~1~ - s~1~z~2~
-* e = (s~2~z~1~ - s~1~z~2~) / (rs~1~ - rs~2~)
+* __kG__ = (__r__,__y__)
+* __s__~1~ = (__z__~1~ + __re__) / __k__, __s__~2~ = (__z__~2~ + __re__) / __k__
+* __s__~1~/__s__~2~ = (__z__~1~ + __re__) / (__z__~2~ + __re__)
+* __s__~1~(__z__~2~ + __re__) = __s__~2~(__z__~1~ + __re__)
+* __s__~1~__z__~2~ + __s__~1~__re__ = __s__~2~__z__~1~ + __s__~2~__re__
+* __s__~1~__re__ – __s__~2~__re__ = __s__~2~__z__~1~ – __s__~1~__z__~2~
+* __e__ = (__s__~2~__z__~1~ – __s__~1~__z__~2~) / (__rs__~1~ – __rs__~2~)
 
 If anyone sees both signatures, they can use this formula and find our secret!
 The Playstation 3 hack back in 2010 was due to the reuse of the `k` value in multiple signatures (https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/).
 
-To combat this, there is a deterministic `k` generation standard which uses our secret and `z` to create a unique, deterministic `k` every time.
+To combat this, there is a deterministic `k` generation standard that uses our secret and `z` to create a unique, deterministic `k` every time.
 The specification is in RFC6979 (https://tools.ietf.org/html/rfc6979) and the code changes to look like this:
 
 [source,python]
@@ -971,19 +971,19 @@ Everything else about `sign` remains the same.
 <2> This algorithm returns a candidate that's suitable.
 
 Deterministic `k` will be unique with very high probability.
-This is because sha256 is collision-resistant and no collisions to date have been found.
+This is because sha256 is collision resistant and no collisions to date have been found.
 
 Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time.
 This makes debugging much easier and unit tests a lot easier to write.
-In addition, transactions which use deterministic `k` will create the same transaction every time as the signature will not change.
-This makes transactions less malleable (more on that in <<chapter_segwit>>)
+In addition, transactions that use deterministic `k` will create the same transaction every time, as the signature will not change.
+This makes transactions less malleable (more on that in <<chapter_segwit>>).
 
 ****
 
 ### Conclusion
 
-We've covered Elliptic Curve Cryptography and we can now prove that we know a secret by signing something and we can also verify that the person with the secret actually signed a message.
-Even if you don't read another page in this book, you've learned to implement what was once considered "weapons grade munitions" (see https://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States).
+We've covered Elliptic Curve Cryptography and can now prove that we know a secret by signing something. We can also verify that the person with the secret actually signed a message.
+Even if you don't read another page in this book, you've learned to implement what was once considered https://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States["weapons-grade munitions"].
 This is a major step in your journey and will be essential for the rest of the book!
 
 We now turn to serializing a lot of these structures so that we can store them on disk and send them over the network.
