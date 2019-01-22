@@ -244,7 +244,7 @@ The depth-first ordering starts at the root, and traverses the left side at each
 
 In a Proof of Inclusion (see <<merkle_proof_two>>), the full node sends the green boxes, H~K~ and H~N~, along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The location of each hash is reconstructed using depth-first ordering from some flags.
-The process of reconstructing the tree, namely the dotted-edged boxes in [[merkle_proof_two]], is what we describe next.
+The process of reconstructing the tree, namely the dotted-edged boxes in <<merkle_proof_two>>, is what we describe next.
 
 [[merkle_proof_two]]
 .Merkle Proof
@@ -393,11 +393,13 @@ These are the items proven to be included in the Merkle Tree.
 image::images/prbc_1107.png[Merkle Blocks and Hashes]
 
 Given a tree from <<processing_a_merkle_block>>, the flag bit is 1 for the root node (1), since that hash is calculated by the light node.
+
 * The left child, H~ABCDEFGH~ (2), is included in the hashes field, so the flag is 0.
 * From here, we traverse to H~IJKLMNOP~ instead of H~ABCD~ or H~EFGH~ since H~ABCDEFGH~ represents both those nodes and we don't need them.
 * We don't need to traverse any descendants of H~ABCDEFGH~ and can go straight to H~IJKLMNOP~ instead.
 
 The right child, H~IJKLMNOP~ (3) is also calculated, so has a flag bit of 1.
+
 * To calculate H~IJKLMNOP~, we need the values for H~IJKL~ (4) and H~MNOP~ (9).
 * The next node in depth-first order is the left child, H~IJKL~ (4), which is where we traverse to next.
 * H~IJKL~ is an internal node that's calculated, so the flag bit is 1.

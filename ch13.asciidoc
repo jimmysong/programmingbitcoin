@@ -49,7 +49,7 @@ The previous transaction hash is uncertain, so the dependent transaction's trans
 This is not usually a problem as once a transaction enters the blockchain, the transaction ID is fixed and no longer malleable (at least without finding a proof-of-work!).
 However, with Payment Channels, there are dependent transactions created _before_ the funding transaction is added to the blockchain.
 
-=== Fixing malleability
+=== Fixing Malleability
 
 Transaction malleability is fixed by emptying the ScriptSig field and putting the data in another field that's not used for ID calculation.
 For p2wpkh, the signature and pubkey are the items from ScriptSig, so those get moved to the Witness field, which is not used for ID calculation.
