@@ -2,7 +2,7 @@
 # tag::exercise1[]
 ==== Exercise 1
 
-Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` hash function over a bit field of 10.
+Calculate the Bloom Filter for "hello world" and "goodbye" using the `hash160` hash function over a bit field of 10.
 # end::exercise1[]
 # tag::answer1[]
 >>> from helper import hash160
@@ -19,7 +19,7 @@ Calculate the Bloom Filter for 'hello world' and 'goodbye' using the `hash160` h
 # tag::exercise2[]
 ==== Exercise 2
 
-Given a Bloom Filter with size=10, function count=5, tweak=99, what are the bytes that are set after adding these items? (use `bit_field_to_bytes` to convert to bytes)
+Given a Bloom Filter with size = 10, function count = 5, tweak = 99, what are the bytes that are set after adding these items? (Use `bit_field_to_bytes` to convert to bytes.)
 
 * `b'Hello World'`
 * `b'Goodbye!'`
@@ -46,7 +46,7 @@ Given a Bloom Filter with size=10, function count=5, tweak=99, what are the byte
 # tag::exercise6[]
 ==== Exercise 6
 
-Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input and broadcast the `tx` message on the  testnet network.
+Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input, and broadcast the `tx` message on the  testnet network.
 # end::exercise6[]
 # tag::answer6[]
 >>> import time
@@ -202,7 +202,7 @@ from network import (
 # tag::exercise3[]
 ==== Exercise 3
 
-Write the `add` method for `BloomFilter`
+Write the `add` method for `BloomFilter`.
 # end::exercise3[]
 '''
 

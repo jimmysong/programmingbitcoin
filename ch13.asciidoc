@@ -58,7 +58,7 @@ The Witness field and the whole Segwit serialization of a transaction is only se
 In other words, old nodes that haven't upgraded to Segwit don't receive the Witness field and don't verify the pubkey and signature.
 
 If this sounds familiar, it should.
-This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do additional validation that older nodes do not, and is the basis for why Segwit is a soft fork (backward-compatible upgrade) and not a hard fork (backwards-incompatible upgrade).
+This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do additional validation that older nodes do not, and is the basis for why Segwit is a soft fork (backward-compatible upgrade) and not a hard fork (backward-incompatible upgrade).
 
 === Pay-to-Witness-Pubkey-Hash (p2wpkh)
 
@@ -145,7 +145,7 @@ Software that understands how to validate Segwit Version X will validate such tr
 p2wpkh is great, but unfortunately, this is a new type of Script and older wallets cannot send Bitcoins to p2wpkh ScriptPubKeys.
 p2wpkh uses a new address format called bech32, whose ScriptPubKeys older wallets don't know how to create.
 
-The Segwit authors found an ingenious way to make Segwit backwards compatible by using p2sh.
+The Segwit authors found an ingenious way to make Segwit backward compatible by using p2sh.
 We can "wrap" p2wpkh inside a p2sh.
 This is called "nested" Segwit as the Segwit Script is nested in a p2sh RedeemScript.
 
@@ -225,7 +225,7 @@ Assuming the signature and pubkey are valid, we are left with <<p2sh_p2wpkh_end>
 .p2sh-p2wpkh End
 image::images/prbc_1319.png[p2sh-p2wpkh End]
 
-As you can see, a p2sh-p2wpkh transaction is backwards compatible all the way to before BIP0016.
+As you can see, a p2sh-p2wpkh transaction is backward compatible all the way to before BIP0016.
 A node pre-BIP0016 would consider the Script valid once the RedeemScripts were equal and a post-BIP0016, pre-Segwit node would consider the Script valid at the 20-byte hash.
 Both would not do the full validation and would accept the transaction.
 A post-Segwit node would do the complete validation, including checking the signature and pubkey.
@@ -538,7 +538,7 @@ If the signatures are valid, we end like <<p2sh_p2wsh_end>>.
 .p2sh-p2wsh end
 image::images/prbc_1330.png[p2sh-p2wsh End]
 
-This makes p2wsh backwards compatible, allowing older wallets to send to p2sh ScriptPubKeys that they can handle.
+This makes p2wsh backward compatible, allowing older wallets to send to p2sh ScriptPubKeys that they can handle.
 
 ==== Coding p2wsh and p2sh-p2wsh
 

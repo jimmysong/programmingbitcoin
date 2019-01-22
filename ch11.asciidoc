@@ -242,13 +242,13 @@ image::images/prbc_1104.png[Depth First]
 
 The depth-first ordering starts at the root, and traverses the left side at each node before the right side.
 
-[[merkle_proof_two]]
-.Merkle Proof
-image::images/prbc_1102.png[Merkle Proof]
-
 In a Proof of Inclusion (see <<merkle_proof_two>>), the full node sends the green boxes, H~K~ and H~N~, along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The location of each hash is reconstructed using depth-first ordering from some flags.
 The process of reconstructing the tree, namely the dotted-edged boxes in [[merkle_proof_two]], is what we describe next.
+
+[[merkle_proof_two]]
+.Merkle Proof
+image::images/prbc_1102.png[Merkle Proof]
 
 ==== Merkle Tree Structure
 

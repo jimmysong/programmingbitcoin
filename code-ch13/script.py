@@ -229,9 +229,11 @@ class Script:
                     instructions.extend(witness[:-1])  # <3>
                     witness_script = witness[-1]  # <4>
                     if s256 != sha256(witness_script):  # <5>
-                        print('bad sha256 {} vs {}'.format(s256.hex(), sha256(witness_script).hex()))
+                        print('bad sha256 {} vs {}'.format
+                            (s256.hex(), sha256(witness_script).hex()))
                         return False
-                    stream = BytesIO(encode_varint(len(witness_script)) + witness_script)
+                    stream = BytesIO(encode_varint(len(witness_script)) 
+                        + witness_script)
                     witness_script_instructions = Script.parse(stream).instructions  # <6>
                     instructions.extend(witness_script_instructions)
                 # end::source6[]
