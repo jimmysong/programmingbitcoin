@@ -381,11 +381,11 @@ We have the formulas:
 * __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 * __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier..
+At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
 
 include::code-ch02/answers.py[tag=exercise5,indent=0]
 
-=== Point Addition for when __P__~1~ = __P__~2~
+=== Point Addition for When P~1~ = P~2~
 
 When the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
 We know that this means:
