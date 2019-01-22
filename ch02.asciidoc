@@ -3,60 +3,76 @@
 
 [.lead]
 In this chapter we're going to learn about Elliptic Curves.
-In the <<chapter_elliptic_curve_cryptography>>, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
+In <<chapter_elliptic_curve_cryptography>>, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
 
-As in the <<chapter_finite_fields>>, Elliptic Curves can look intimidating if you haven't seen them before.
+As in <<chapter_finite_fields>>, Elliptic Curves can look intimidating if you haven't seen them before.
 Also as in <<chapter_finite_fields>>, the actual math isn't very difficult.
-Most of Elliptic Curves could have been taught to you after Algebra.
+Most of Elliptic Curves could have been taught to you after algebra.
 In this chapter, we'll get to what these curves are and what we can do with them.
 
 === Definition
 
-Elliptic Curves are like many equations you've been seeing since pre-Algebra.
+Elliptic Curves are like many equations you've been seeing since pre-algebra.
 They have `y` on one side and `x` on the other in some form.
 Elliptic Curves have a form like this:
 
-y^2^=x^3^+ax+b
+++++
+<ul class="simplelist">
+<li>y<sup>2</sup> = x<sup>3</sup> + ax + b</li>
+</ul>
+++++
 
 You've worked with other equations that look similar.
-For example, you probably learned the linear equation back in pre-Algebra:
+For example, you probably learned the linear equation back in pre-algebra:
 
-y = mx + b
+++++
+<ul class="simplelist">
+<li>y = mx + b</li>
+</ul>
+++++
 
-You may even remember that *m* here has the name _slope_ and *b*, _y-intercept_.
-You can also graph linear equations like <<linear_equation>>:
+You may even remember that _m_ here has the name _slope_ and _b_, _y-intercept_.
+You can also graph linear equations, as shown in <<linear_equation>>.
 
 [[linear_equation]]
-.Linear Equation
-image::images/prbc_0201.png[Linear Equation]
+.Linear equation
+image::images/prbc_0201.png[Linear equation]
 
 Similarly, you're probably familiar with the quadratic equation and its graph (<<quadratic_equation>>):
 
-y = ax^2^+bx+c
+++++
+<ul class="simplelist">
+<li>y = ax<sup>2</sup> + bx + c</li>
+</ul>
+++++
 
 [[quadratic_equation]]
-.Quadratic Equation
-image::images/prbc_0202.png[Quadratic Equation]
+.Quadratic equation
+image::images/prbc_0202.png[Quadratic equation]
 
-And sometime around Algebra, you did even higher orders of `x`, something called the cubic equation and its graph (<<cubic_equation>>):
+And sometime around algebra, you did even higher orders of `x`, something called the cubic equation and its graph (<<cubic_equation>>):
 
-y = ax^3^+bx^2^+cx+d
+++++
+<ul class="simplelist">
+<li>y = ax<sup>3</sup> + bx<sup>2</sup> + cx + d</li>
+</ul>
+++++
 
 [[cubic_equation]]
-.Cubic Equation
-image::images/prbc_0203.png[Cubic Equation]
+.Cubic equation
+image::images/prbc_0203.png[Cubic equation]
 
 An Elliptic Curve isn't all that different.
-The only real difference between the Elliptic Curve and the cubic curve above is the *y^2^* term on the left side.
-This has the effect of making the graph symmetric over the x-axis, shown in <<continuous_elliptic_curve>>:
+The only real difference between the Elliptic Curve and the cubic curve in <<cubic_equation>> is the __y__^2^ term on the left side.
+This has the effect of making the graph symmetric over the x-axis, shown in <<continuous_elliptic_curve>>.
 
 [[continuous_elliptic_curve]]
 .Continuous Elliptic Curve
 image::images/prbc_0204.png[Elliptic Curve Equation]
 
 The Elliptic Curve is also less steep than the cubic curve.
-Again, this is because of the *y^2^* term on the left side.
-At times, the curve may even be disjoint like <<disjoint_elliptic_curve>>:
+Again, this is because of the __y__^2^ term on the left side.
+At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
 
 [[disjoint_elliptic_curve]]
 .Disjoint Elliptic Curve
@@ -272,7 +288,7 @@ include::code-ch02/answers.py[tag=exercise3,indent=0]
 Now that we've covered the vertical line, we're now proceeding to when the points are different.
 When we have points where the `x`'s differ, we can add using a fairly simple formula.
 To help with intuition, we'll first find the slope created by the two points.
-You can figure this out using a formula from pre-Algebra:
+You can figure this out using a formula from pre-algebra:
 
 * P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
 * P~1~+P~2~=P~3~
