@@ -3,14 +3,14 @@
 
 [.lead]
 The one block header field that we didn't investigate much in <<chapter_blocks>> is the Merkle Root.
-In order to understand what makes the Merkle Root useful, we first have to learn about Merkle Trees and what properties they have.
+To understand what makes the Merkle Root useful, we first have to learn about Merkle Trees and what properties they have.
 In this chapter, we're going to learn exactly what a Merkle Root is.
 This will be motivated by something called a Proof of Inclusion.
 
 === Motivation
 
-For a device that doesn't have much disk space, bandwidth or computing power like your phone, it's expensive to store, receive and validate the entire blockchain.
-As of this writing, the entire Bitcoin blockchain is around 200GB, which is more than many phones can store, can be very difficult to download efficiently and will certainly tax the CPU.
+For a device that doesn't have much disk space, bandwidth, or computing power, it's expensive to store, receive, and validate the entire blockchain.
+As of this writing, the entire Bitcoin blockchain is around 200GB, which is more than many phones can store; it can be very difficult to download efficiently and will certainly tax the CPU.
 If the entire blockchain cannot be put on the phone, what else can we do?
 Is it possible to create a Bitcoin wallet on a phone without having all the data?
 
@@ -20,17 +20,17 @@ For any wallet, there are two scenarios that we're concerned with:
 2. Getting paid by someone
 
 If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that they've been paid.
-Once they've verified that the transaction has been included in a block sufficiently deep, the other side of the trade, or the good or service will be given to you.
-Once you've sent the transaction to the other party, there really isn't anything for you to do than wait until you receive whatever it is you're exchanging the Bitcoins for.
+Once they've verified that the transaction has been included in a block sufficiently deep, the other side of the trade, or the good or service, will be given to you.
+Once you've sent the transaction to the other party, there really isn't anything for you to do other than wait until you receive whatever it is you're exchanging the Bitcoins for.
 
 When getting paid Bitcoins, however, we have a dilemma.
-If we are connected and have the full blockchain, we can easily see when the transaction is in a sufficiently deep block at which point we'd give them our goods or services.
+If we are connected and have the full blockchain, we can easily see when the transaction is in a sufficiently deep block, at which point we'd give them our goods or services.
 If we don't have the full blockchain, as with a phone, what can we do?
 
 The answer lies in the Merkle Root field from the Block header that we saw in <<chapter_blocks>>.
 As we saw in the last chapter, we can download the Block headers and verify that they meet the Bitcoin consensus rules.
-In this chapter we're going to work towards getting proof that a particular transaction is in a block that we know about.
-Since the block header is secured by proof-of-work, a transaction with a Proof of Inclusion in that block means at a minimum, there was a good deal of energy spent to produce that block.
+In this chapter we're going to work toward getting proof that a particular transaction is in a block that we know about.
+Since the block header is secured by proof-of-work, a transaction with a Proof of Inclusion in that block means, at a minimum, there was a good deal of energy spent to produce that block.
 This means that the cost to deceive you would be at least the cost of the proof-of-work for the block.
 The rest of this chapter goes into what the Proof of Inclusion is and how to verify it.
 
@@ -41,37 +41,37 @@ The prerequisites are an ordered list of items and a cryptographic hash function
 In our case, the ordered list of items are transactions in a block and the hash function, hash256.
 To construct the Merkle Tree, we follow this algorithm:
 
-1. Hash all the items of the ordered list with the provided hash function
-2. If there is exactly 1 hash, we are done
+1. Hash all the items of the ordered list with the provided hash function.
+2. If there is exactly 1 hash, we are done.
 3. If there is an odd number of hashes, we duplicate the last hash in the list and add it to the end so that we have an even number of hashes.
-4. We pair the hashes in order and hash the concatenation to get the parent level which should have half the number of hashes.
+4. We pair the hashes in order and hash the concatenation to get the parent level, which should have half the number of hashes.
 5. Go to 2.
 
 The idea is to come to a single hash that "represents" the entire ordered list.
-Visually, a Merkle Tree looks like <<merkle_tree_chap_eleven>>:
+Visually, a Merkle Tree looks like <<merkle_tree_chap_eleven>>.
 
 [[merkle_tree_chap_eleven]]
 .Merkle Tree
 image::images/prbc_1101.png[Merkle Tree]
 
 The bottom row is what we call the leaves of the tree.
-All other nodes besides the leaves are called *internal nodes*.
-The leaves get combined to produce its *parent level* (H~AB~ and H~CD~) and when we calculate the parent level of that, we get the Merkle Root.
+All other nodes besides the leaves are called _internal nodes_.
+The leaves get combined to produce its _parent level_ (H~AB~ and H~CD~) and when we calculate the parent level of that, we get the Merkle Root.
 
 We'll go through each part of this process below.
 
 [WARNING]
-.Be Careful With Merkle Trees!
+.Be Careful with Merkle Trees!
 ====
-There was a vulnerability in Bitcoin 0.4-0.6 which is detailed in CVE-2012-2459.
+There was a vulnerability in Bitcoin 0.4-0.6, which is detailed in CVE-2012-2459.
 There was a Denial of Service vector due to the duplication of the last item in Merkle Trees, which caused some nodes to invalidate blocks even if they were valid.
 ====
 
 === Merkle Parent
 
 Given two hashes, we produce another hash that represents both of them.
-As they are ordered, we will call the two hashes the *left* hash and the *right* hash.
-The hash of the left and right hashes is what we call the *parent* hash.
+As they are ordered, we will call the two hashes the _left_ hash and the _right_ hash.
+The hash of the left and right hashes is what we call the _parent_ hash.
 To clarify, here's the formula for the parent hash:
 
 `H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash`
@@ -98,27 +98,27 @@ include::code-ch11/answers.py[tag=exercise1,indent=0]
 
 === Merkle Parent Level
 
-Given an ordered list of more than two hashes, we can calculate the parents of each pair, or what we call the *Merkle Parent Level*.
+Given an ordered list of more than two hashes, we can calculate the parents of each pair, or what we call the _Merkle Parent Level_.
 If we have an even number of hashes, this is straightforward, as we can simply pair them up in order.
-If we have an odd number of hashes, then we need to do something as we have a lone hash at the end.
+If we have an odd number of hashes, then we need to do something, as we have a lone hash at the end.
 We can solve this by duplicating the last item.
 
-For a list like `[A, B, C]` what we add `C` again to get `[A, B, C, C]`.
+For a list like `[A, B, C]` we can add `C` again to get `[A, B, C, C]`.
 Now we can calculate the Merkle Parent of `A` and `B` and calculate the Merkle Parent of `C` and `C` to get:
 
 `[H(A||B), H(C||C)]`
 
-Since the Merkle Parent always consists of two hashes, the Merkle Parent Level always has exactly half the number of hashes, rounded up.
+Since the Merkle Parent always consists of two hashes, the Merkle Parent Level always has exactly half the number of hashes, rounded up. Here is how we calculate a Merkle Parent Level:
 
 [source,python]
 ----
 include::code-ch11/examples.py[tag=example2]
 ----
-<1> We add the last hash on the list, `hashes[-1]`, to the end of `hashes` to makes the length of `hashes` even.
+<1> We add the last hash on the list, `hashes[-1]`, to the end of `hashes` to make the length of `hashes` even.
 <2> This is how we skip by two in Python.
 `i` will be 0 the first time through the loop, 2 the second, 4 the third and so on.
 
-This code results in a new list of hashes that correspond to the Merkle Parent Level
+This code results in a new list of hashes that correspond to the Merkle Parent Level.
 
 include::code-ch11/answers.py[tag=exercise2,indent=0]
 
@@ -138,15 +138,14 @@ We are left with just 2 items, where we calculate the Merkle Parent Level one mo
 `H(H(H(A||B)||H(C||D))||H(H(E||F)||H(G||G)))`
 
 Since we are left with exactly one hash, we are done.
-The final single hash is called the *Merkle Root*.
-Each level will halve the number of hashes, so doing this process over and over will eventually result in a single item or the Merkle Root.
+Each level will halve the number of hashes, so doing this process over and over will eventually result in a final single item called the _Merkle Root_.
 
 [source,python]
 ----
 include::code-ch11/examples.py[tag=example3]
 ----
-<1> We loop until there's 1 hash left.
-<2> We've exited the loop so there should only be 1 item
+<1> We loop until there's one hash left.
+<2> We've exited the loop so there should only be one item.
 
 include::code-ch11/answers.py[tag=exercise3,indent=0]
 
@@ -184,10 +183,10 @@ Now that we know how a Merkle Tree is constructed, we can create and verify Proo
 Light nodes can get proofs that transactions of interest were included in a block without having to know all the transactions of a block (<<merkle_proof>>).
 
 [[merkle_proof]]
-.Merkle Proof
+.Merkle proof
 image::images/prbc_1102.png[Merkle Proof]
 
-Say that a light client has two transactions that are of interest, which would be the hashes represented by the green boxes, H~K~ and H~N~ above.
+Say that a light client has two transactions that are of interest, which would be the hashes represented by the green boxes, H~K~ and H~N~ in [[merkle_proof]].
 A full node can construct a Proof of Inclusion by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The light client would then perform these calculations:
 
@@ -198,58 +197,58 @@ The light client would then perform these calculations:
 * H~IJKLMNOP~ = merkle_parent(H~IJKL~, H~MNOP~)
 * H~ABCDEFGHIJKLMNOP~ = merkle_parent(H~ABCDEFGH~, H~IJKLMNOP~)
 
-The Merkle Root is H~ABCDEFGHIJKLMNOP~, which we can then be checked against the block header whose proof-of-work has been validated.
+You can see that Figure 11-2's dotted boxes correspond to the hashes that the light client calculates. In particular, the Merkle Root is H~ABCDEFGHIJKLMNOP~, which can then be checked against the block header whose proof-of-work has been validated.
 
 [NOTE]
-.How secure is an SPV proof?
+.How Secure Is an SPV Proof?
 ====
 The full node can send a limited amount of information about the block and the light client can recalculate the Merkle Root, which can then be verified against the Merkle Root in the block header.
 This does not guarantee that the transaction is in the longest blockchain, but it does assure the light client that the full node would have had to spend a lot of hashing power or energy creating a valid proof-of-work.
 As long as the reward for creating such a proof-of-work is greater than the amounts in the transactions, the light client can at least know that the full node has no clear economic incentive to lie.
 
 Since block headers can be requested from multiple nodes, light clients have a way to verify if one node is trying to show them block headers that are not the longest.
-It only takes a single honest node to invalidate 100 dishonest ones since proof-of-work is objective.
+It only takes a single honest node to invalidate one hundred dishonest ones, since proof-of-work is objective.
 Therefore, isolation of a light client (that is, control of who the light client is connected to) is required to deceive in this way.
 The security of SPV requires that there be lots of honest nodes on the network.
 
 In other words, light client security is based on a robust network of nodes and the economic cost of producing proof-of-work.
 For small transactions relative to the block subsidy (currently 12.5 BTC), there's probably little to worry about.
-For large transactions (say 100 BTC), the full nodes may have economic incentive to deceive you.
+For large transactions (say, one hundred BTC), the full nodes may have economic incentive to deceive you.
 Transactions that large should generally be validated using a full node.
 ====
 
 === Merkle Block
 
 When a full node sends a Proof of Inclusion, there are two pieces of information that need to be included.
-First, the light client needs the Merkle Tree structure and second, the light client needs to know which hash is at which position in the Merkle Tree.
+First, the light client needs the Merkle Tree structure, and second, the light client needs to know which hash is at which position in the Merkle Tree.
 Once both pieces of information are given, the light client can reconstruct the partial Merkle Tree to reconstruct the Merkle Root and validate the Proof of Inclusion.
 A full node communicates these two pieces of information to a light client using a Merkle Block.
 
 To understand what's in a Merkle Block, we need to understand a bit about how a Merkle Tree or more generally, Binary Trees, can be traversed.
 In a binary tree, nodes can be traversed breadth-first or depth-first.
-Breadth-first traversal would go level by level like <<bread_first_ordering>>:
+Breadth-first traversal would go level by level like <<bread_first_ordering>>.
 
 [[bread_first_ordering]]
-.Breadth-First Ordering
+.Breadth-first ordering
 image::images/prbc_1103.png[Breadth First]
 
 The breadth-first ordering starts at the root and goes from root to leaves, level by level, left to right.
 
-Depth-first ordering is a bit different and looks like <<depth_first_ordering>>:
+Depth-first ordering is a bit different and looks like <<depth_first_ordering>>.
 
 [[depth_first_ordering]]
-.Depth-First Ordering
+.Depth-first ordering
 image::images/prbc_1104.png[Depth First]
 
-The depth-first ordering starts at the root, traverses the left side at each node before the right side.
+The depth-first ordering starts at the root, and traverses the left side at each node before the right side.
 
 [[merkle_proof_two]]
 .Merkle Proof
 image::images/prbc_1102.png[Merkle Proof]
 
-In a Proof of Inclusion (see <<merkle_proof_two>>), the full node sends the green boxes, H~K~ and H~N~ along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
+In a Proof of Inclusion (see <<merkle_proof_two>>), the full node sends the green boxes, H~K~ and H~N~, along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The location of each hash is reconstructed using depth-first ordering from some flags.
-The process of reconstructing the tree is what we describe next.
+The process of reconstructing the tree, namely the dotted-edged boxes in [[merkle_proof_two]], is what we describe next.
 
 ==== Merkle Tree Structure
 
@@ -265,12 +264,12 @@ include::code-ch11/examples.py[tag=example5]
 <1> Since we halve at every level, log~2~ of the number of leaves is how many levels there are in the Merkle Tree.
 Note we round up using `math.ceil` as we round up for halving at each level.
 We could also be clever and use `len(bin(total))-2`.
-<2> The Merkle Tree will hold the root level at index 0, the level below at index 1 and so on.
+<2> The Merkle Tree will hold the root level at index 0, the level below at index 1, and so on.
 In other words, the index is the "depth" from the top.
 <3> There are levels 0 to `max_depth` in this Merkle Tree.
 <4> At any particular level, the number of nodes is the number of total leaves divided by 2 for every level above the leaf level.
-<5> We don't know yet what any of the hashes are, so we set them to `None`
-<6> Note `merkle_tree` is a list of lists of hashes, or a 2-dimensional array.
+<5> We don't know yet what any of the hashes are, so we set them to `None`.
+<6> Note `merkle_tree` is a list of lists of hashes, or a two-dimensional array.
 
 include::code-ch11/answers.py[tag=exercise5,indent=0]
 
@@ -285,7 +284,7 @@ include::code-ch11/merkleblock.py[tag=source1]
 <1> We keep a pointer to a particular node in the tree, which will come in handy later.
 <2> We print a representation of the tree.
 
-Now that we have an empty tree, we can go about fill it to calculate the Merkle Root.
+Now that we have an empty tree, we can go about filling it to calculate the Merkle Root.
 If we had every leaf hash, getting the Merkle Root would look like this:
 
 [source,python]
@@ -316,7 +315,7 @@ include::code-ch11/merkleblock.py[tag=source2]
 <2> We will want to know if we are a leaf node.
 <3> In certain situations, we won't have a right child because we may be at the right-most node of a level whose child level has an odd number of items.
 
-We have Merkle Tree traversal methods `left`, `right` and `up`.
+We have Merkle Tree traversal methods `left`, `right`, and `up`.
 Let's use these methods to populate the tree via depth-first traversal:
 
 [source,python]
@@ -327,12 +326,12 @@ include::code-ch11/examples.py[tag=example7]
 Each time through the loop, we are at a particular node.
 <2> If we are at a leaf node, we already have that hash, so we don't need to do anything but go back up.
 <3> If we don't have the left hash, then we calculate the value first before calculating the current node's hash.
-<4> If we don't have the right hash, we calculate the value first calculating the current node's hash.
-Note we already have the left one due to the depth-first traversal.
-<5> We have both the left and the right hash so we calculate the Merkle Parent value and set that to the current node.
+<4> If we don't have the right hash, we calculate the value before calculating the current node's hash.
+Note that we already have the left one due to the depth-first traversal.
+<5> We have both the left and the right hash, so we calculate the Merkle Parent value and set that to the current node.
 Once set, we can go back up.
 
-This code will only work when the number of leaves is a power of 2 as edge cases where there's an odd number of nodes on a level are not handled.
+This code will only work when the number of leaves is a power of two, as edge cases where there's an odd number of nodes on a level are not handled.
 
 We handle the case where the parent is the parent of the rightmost node on a level with an odd number of nodes:
 
@@ -340,7 +339,7 @@ We handle the case where the parent is the parent of the rightmost node on a lev
 ----
 include::code-ch11/examples.py[tag=example8]
 ----
-<1> If we don't have left node's value, we traverse to the left node since all internal nodes are guaranteed a left child.
+<1> If we don't have left node's value, we traverse to the left node, since all internal nodes are guaranteed a left child.
 <2> We check first if this node has a right child.
 This is true unless this node happens to be the right-most node and the child level has an odd number of nodes.
 <3> If we don't have the right node value, we traverse to that node.
@@ -348,25 +347,25 @@ This is true unless this node happens to be the right-most node and the child le
 <5> We have the left node value, but the right child doesn't exist.
 This is the right-most node of this level so we combine the left value twice.
 
-We can now traverse the tree for the number of leaves that aren't powers of 2.
+We can now traverse the tree for the number of leaves that aren't powers of two.
 
 ==== Merkle Block Command
 
 The full node communicating a Merkle Block sends all the information needed to verify that the interesting transaction is in the Merkle Tree.
-The `merkleblock` network command is what communicates this information and looks like <<parsed_merkleblock>>:
+The `merkleblock` network command is what communicates this information and looks like <<parsed_merkleblock>>.
 
 [[parsed_merkleblock]]
 .Parsed `merkleblock`
 image::images/prbc_1106.png[merkleblock command]
 
-The first 6 fields are exactly the same as the block header from <<chapter_blocks>>.
-The last 4 fields are the Proof of Inclusion.
+The first six fields are exactly the same as the block header from <<chapter_blocks>>.
+The last four fields are the Proof of Inclusion.
 
 The number of transactions field is how many leaves this particular Merkle Tree will have.
 This allows a light client to construct an empty Merkle Tree.
 The hashes field are the blue and green boxes from <<merkle_proof_two>>.
 Since the number of hashes in the hashes field is not fixed, it's prefixed with how many there are.
-Lastly, the flags field give information about where the hashes go within the Merkle Tree.
+Last, the flags field give information about where the hashes go within the Merkle Tree.
 The flags are parsed using `bytes_to_bits_field` to convert to a list of bits (1's and 0's):
 
 [source,python]
@@ -378,55 +377,55 @@ The ordering for the bytes are a bit strange, but meant to be easy to convert in
 
 include::code-ch11/answers.py[tag=exercise6,indent=0]
 
-==== Using Flag bits and Hashes
+==== Using Flag Bits and Hashes
 
 The flag bits inform where the hashes go using depth-first ordering.
 
 The rules for the flag bits are:
 
-1. If the node's value is given in the hashes field (blue box in the <<processing_a_merkle_block>>), the flag bit is 0.
-2. If the node's value is an internal node and the value is to be calculated by the light client (dotted outline in the <<processing_a_merkle_block>>), the flag bit is 1.
-3. If the node is a leaf node and is a transaction of interest (green box in the <<processing_a_merkle_block>>), the flag is 1 and also given in the hashes field.
-These are the items in the Merkle Tree being proven to be included.
+1. If the node's value is given in the hashes field (blue box in <<processing_a_merkle_block>>), the flag bit is 0.
+2. If the node's value is an internal node and the value is to be calculated by the light client (dotted outline in <<processing_a_merkle_block>>), the flag bit is 1.
+3. If the node is a leaf node and is a transaction of interest (green box in <<processing_a_merkle_block>>), the flag is 1 and also given in the hashes field.
+These are the items proven to be included in the Merkle Tree.
 
 [[processing_a_merkle_block]]
 .Processing a Merkle Block
 image::images/prbc_1107.png[Merkle Blocks and Hashes]
 
 Given a tree from <<processing_a_merkle_block>>, the flag bit is 1 for the root node (1), since that hash is calculated by the light node.
-The left child, H~ABCDEFGH~ (2), is included in the hashes field, so the flag is 0.
-From here, we traverse to H~IJKLMNOP~ instead of H~ABCD~ or H~EFGH~ since H~ABCDEFGH~ represents both those nodes and we don't need them.
-We don't need to traverse any of the descendants of H~ABCDEFGH~ and go straight to H~IJKLMNOP~ instead.
+* The left child, H~ABCDEFGH~ (2), is included in the hashes field, so the flag is 0.
+* From here, we traverse to H~IJKLMNOP~ instead of H~ABCD~ or H~EFGH~ since H~ABCDEFGH~ represents both those nodes and we don't need them.
+* We don't need to traverse any descendants of H~ABCDEFGH~ and can go straight to H~IJKLMNOP~ instead.
 
-The right child, H~IJKLMNOP~ (3) is also calculated so has a flag bit of 1.
-To calculate H~IJKLMNOP~, we need the values for H~IJKL~ (4) and H~MNOP~ (9).
-The next node in depth-first order is the left child, H~IJKL~ (4), which is where we traverse to next.
-H~IJKL~ is an internal node that's calculated, so the flag bit is 1.
-From here, we traverse to its left child H~IJ~ (5).
+The right child, H~IJKLMNOP~ (3) is also calculated, so has a flag bit of 1.
+* To calculate H~IJKLMNOP~, we need the values for H~IJKL~ (4) and H~MNOP~ (9).
+* The next node in depth-first order is the left child, H~IJKL~ (4), which is where we traverse to next.
+* H~IJKL~ is an internal node that's calculated, so the flag bit is 1.
+* From here, we traverse to its left child H~IJ~ (5).
 We will be traversing to H~KL~ (6) when we come back to this node.
-H~IJ~ (5) is next in depth-first ordering and that's hash is included in the hashes list and the flag is 0.
-H~KL~ (6) is an internal, calculated node so the flag is 1.
-H~K~ (7) is a leaf node whose presence in the block is being proved so the flag is 1.
-H~L~ (8) is a node whose value is included in the hashes field so the flag is 0.
-We traverse up to H~KL~ whose value can now be calculated since H~K~ and H~L~ are known.
-We traverse up to H~IJKL~ whose value can now be calculated since H~IJ~ and H~KL~ are known.
-We traverse up to H~IJKLMNOP~ whose value we can't calculate yet since we haven't been to H~MNOP~.
-We traverse to H~MNOP~ (9), which is another internal node so the flag is 1.
-H~MN~ (10) is another internal node that's calculated, so the flag is 1.
-H~M~ (11) is a node whose value is included in the hashes field, so the flag is 0.
-H~N~ (12) is of interest, so the flag is 1 and its value is in the hashes field.
-We traverse up to H~MN~ whose value can now be calculated.
-We traverse up again to H~MNOP~, whose value can not be calculated because we haven't been to H~OP~ yet.
-H~OP~ (13) is given, so the flag is 1 and its hash is the final hash in the hashes field.
-We traverse to H~MNOP~ which can now be calculated.
-We traverse to H~IJKLMNOP~ which can now be calculated.
-Finally, we traverse to H~ABCDEFGHIJKLMNOP~ which is the Merkle Root and calculate it!
+* H~IJ~ (5) is next in depth-first ordering; it's hash is included in the hashes list and the flag is 0.
+* H~KL~ (6) is an internal, calculated node so the flag is 1.
+* H~K~ (7) is a leaf node whose presence in the block is being proved so the flag is 1.
+* H~L~ (8) is a node whose value is included in the hashes field, so the flag is 0.
+* We traverse up to H~KL~ whose value can now be calculated since H~K~ and H~L~ are known.
+* We traverse up to H~IJKL~ whose value can now be calculated since H~IJ~ and H~KL~ are known.
+* We traverse up to H~IJKLMNOP~ whose value we can't calculate yet since we haven't been to H~MNOP~.
+* We traverse to H~MNOP~ (9), which is another internal node so the flag is 1.
+* H~MN~ (10) is another internal node that's calculated, so the flag is 1.
+* H~M~ (11) is a node whose value is included in the hashes field, so the flag is 0.
+* H~N~ (12) is of interest, so the flag is 1 and its value is in the hashes field.
+* We traverse up to H~MN~ whose value can now be calculated.
+* We traverse up again to H~MNOP~, whose value cannot be calculated because we haven't been to H~OP~ yet.
+* H~OP~ (13) is given, so the flag is 1 and its hash is the final hash in the hashes field.
+* We traverse to H~MNOP~, which can now be calculated.
+* We traverse to H~IJKLMNOP~, which can now be calculated.
+* Finally, we traverse to H~ABCDEFGHIJKLMNOP~, which is the Merkle Root, and calculate it!
 
-The flag bits for nodes (1) - (13) are:
+The flag bits for nodes (1) through (13) are:
 
 `1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0`
 
-There should be 7 hashes in the hashes field in this order:
+There should be seven hashes in the hashes field in this order:
 
 * H~ABCDEFGH~
 * H~IJ~
@@ -436,7 +435,7 @@ There should be 7 hashes in the hashes field in this order:
 * H~N~
 * H~OP~
 
-Notice that every letter is represented in the hashes above, A-P.
+Notice that every letter is represented in the hashes above, A to P.
 This information is sufficient to prove that H~K~ and H~N~ (green boxes in <<processing_a_merkle_block>>) are included in the block.
 
 As you can see from <<processing_a_merkle_block>>, the flag bits are given in depth-first order.
@@ -463,7 +462,7 @@ We need to set the current node to that hash.
 This node's value may be in the hashes field or this node's value might need calculation.
 <6> The next flag bit tells us whether we need to calculate this node or not.
 If the flag bit is 0, the next hash in the hashes field is this node's value.
-If the flag bit is 1, we need to calculate the left (and possibly the right)
+If the flag bit is 1, we need to calculate the left (and possibly the right).
 <7> We are guaranteed that there's a left child, so traverse to that node and get its value.
 <8> We check that the right node exists.
 <9> We have the left hash, but not the right.
@@ -478,9 +477,9 @@ include::code-ch11/answers.py[tag=exercise7,indent=0]
 
 === Conclusion
 
-Simplified Payment Verification is useful but not without some significant downsides.
-The full details are outside the scope of this book, but despite the programming being pretty straightforward, most light wallets do not use SPV and trust data from the wallet vendor servers.
+Simplified payment verification is useful but not without some significant downsides.
+The full details are outside the scope of this book, but despite the programming being pretty straightforward, most light wallets do not use SPV and instead trust data from the wallet vendor servers.
 The main drawback of SPV is that the nodes you are connecting to know something about the transactions you are interested in.
 That is, you lose some privacy by using SPV.
-This will be covered more in detail in the next chapter as we make Bloom Filters to tell nodes what transactions we are interested in.
+This will be covered in more detail in <<chapter_bloom_filters>> as we make Bloom Filters to tell nodes what transactions we are interested in.
 

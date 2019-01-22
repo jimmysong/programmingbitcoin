@@ -4,11 +4,11 @@
 If you've made it this far, congratulations!
 You've learned a lot about Bitcoin's inner workings and hopefully, you are inspired to learn a lot more.
 This book only scratches the surface and there's quite a bit more to learn.
-In this chapter, we'll go through what other things you can learn, how to bootstrap your career as a Bitcoin developer and ways to contribute to the community.
+In this chapter, we'll go through what other things you can learn, how to bootstrap your career as a Bitcoin developer, and ways to contribute to the community.
 
 === Wallets
 
-Creating a wallet is a difficult task because securing private keys is very difficult.
+Creating a wallet is a challenging task because securing private keys is very difficult.
 That said, there are a bunch of standards for creating wallets that can help.
 
 ==== Hierarchical Deterministic Wallets
@@ -24,7 +24,7 @@ What system can you use to ensure that the backups are current?
 
 To combat this problem, Armory, an early Bitcoin wallet, first implemented deterministic wallets.
 The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed.
-The Armory style deterministic wallets were great, except people wanted some grouping of addresses so the Hierarchical Deterministic wallet standard or BIP0032 was born.
+The Armory style deterministic wallets were great, except people wanted some grouping of addresses, so the Hierarchical Deterministic wallet standard or BIP0032 was born.
 BIP0032 wallets have multiple layers and keys, each with a unique derivation path.
 The specifications and test vectors are defined in the BIP0032 standard, so implementing your own HD wallet on testnet is a great way to learn.
 
@@ -36,18 +36,16 @@ While many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, so
 
 Writing down and transcribing a 256-bit seed is a pain and fraught with errors.
 To combat this, BIP0039 is a way to encode the seed into a bunch of English words.
-There are 2048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed.
+There are 2,048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed.
 The standard defines exactly how the mnemonic backup gets translated to a BIP0032 seed.
 BIP0039 along with BIP0032 and BIP0044 is how most wallets implement backup and restoration.
 Writing a testnet wallet that implements BIP0039 is another good way to get a taste for Bitcoin development.
 
 === Payment Channels and Lightning Network
 
-Payment Channels are the atomic unit of the Lightning Network and learning how they work is a good next step.
+Payment Channels are the atomic unit of the Lightning Network, and learning how they work is a good next step.
 There are many ways to implement Payment Channels, but the BOLT standard is the specification that lightning nodes use.
-The specifications are in progress as of this writing and are available at:
-
-https://github.com/lightningnetwork/lightning-rfc/
+The specifications are in progress as of this writing and are available at https://github.com/lightningnetwork/lightning-rfc/.
 
 === Contributing
 
@@ -55,16 +53,16 @@ A large part of the Bitcoin ethic is in contributing back to the community.
 The main way you can do that is through open source projects.
 There are almost too many to list, but here's a sample:
 
-* https://github.com/bitcoin/bitcoin - Bitcoin Core, or the reference client
-* https://github.com/libbitcoin/libbitcoin - An alternate implementation of Bitcoin in C++, 
-* https://github.com/btcsuite/btcd - A Golang-based implementation of Bitcoin
-* https://github.com/bcoin-org/bcoin - A Javascript-based implementation of Bitcoin, maintained by purse.io
-* https://github.com/richardkiss/pycoin - pycoin, a Python library for Bitcoin
-* https://github.com/bitcoinj/bitcoinj - BitcoinJ, a Java library for Bitcoin
-* https://github.com/bitcoinjs/bitcoinjs-lib - BitcoinJS, a Javascript library for Bitcoin
-* https://github.com/btcpayserver/btcpayserver - BTCPay, a bitcoin payment processing engine written in C#
+* https://github.com/bitcoin/bitcoin: Bitcoin Core, or the reference client
+* https://github.com/libbitcoin/libbitcoin: An alternate implementation of Bitcoin in C++
+* https://github.com/btcsuite/btcd: A Golang-based implementation of Bitcoin
+* https://github.com/bcoin-org/bcoin: A Javascript-based implementation of Bitcoin, maintained by purse.io
+* https://github.com/richardkiss/pycoin: pycoin, a Python library for Bitcoin
+* https://github.com/bitcoinj/bitcoinj: BitcoinJ, a Java library for Bitcoin
+* https://github.com/bitcoinjs/bitcoinjs-lib: BitcoinJS, a Javascript library for Bitcoin
+* https://github.com/btcpayserver/btcpayserver: BTCPay, a bitcoin payment processing engine written in C#
 
-Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas and so on.
+Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas, and so on.
 
 === Suggested Next Projects
 
@@ -74,8 +72,8 @@ If at this point, you're still wondering what projects would be beneficial for y
 
 It's hard to understate the importance of security in Bitcoin.
 Writing a wallet even on testnet will help you understand the various considerations that go into creating a wallet.
-UI, backups, address books and transaction histories are just some of the things that you have to deal with when creating a wallet.
-As this is the most popular application of Bitcoin, creating a wallet will give you a lot of insight into the needs of users.
+UI, backups, address books, and transaction histories are just some of the things that you have to deal with when creating a wallet.
+As this is the most popular application of Bitcoin, creating a wallet will give you a lot of insight into users needs.
 
 ==== Block Explorer
 
@@ -88,7 +86,7 @@ As Bitcoin Core does not have address indexes, adding one will make it possible 
 
 A Bitcoin-based shop is another project that helps you learn.
 This is particularly appropriate for web developers as they typically know how to create a web application.
-A web application with a Bitcoin backend can be a powerful way to not have third party dependencies for payment.
+A web application with a Bitcoin backend can be a powerful way to avoid third party dependencies for payment.
 Once again, it's advised that you start on testnet and use the cryptographically secure libraries that are available to hook up the plumbing on payments.
 
 ==== Utility Library
