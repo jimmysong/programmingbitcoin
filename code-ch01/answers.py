@@ -101,8 +101,8 @@ For _p_ = 7, 11, 17, 31, what is this set in __F~p~__?
 Solve the following equations in F~31~:
 
 * 3 / 24
-* 17^-3^
-* 4^-4^⋅11
+* 17^–3^
+* 4^–4^⋅11
 # end::exercise8[]
 # tag::answer8[]
 >>> prime = 31
@@ -184,9 +184,9 @@ def __mul__(self, other):
 # tag::exercise9[]
 ==== Exercise 9
 
-Write the corresponding `__truediv__` method which defines the division of two field elements.
+Write the corresponding `__truediv__` method that defines the division of two field elements.
 
-Note that in Python3, division is separated into `__truediv__` and `__floordiv__`. The first does normal division, the second does integer division.
+Note that in Python 3, division is separated into `__truediv__` and `__floordiv__`. The first does normal division, the second does integer division.
 # end::exercise9[]
 '''
 
