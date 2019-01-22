@@ -722,7 +722,7 @@ This is the basis of the signature algorithm, and the two numbers in a signature
 Verification is straightforward:
 
 * __uG__ + __vP__ where __u__,__v__ ≠ 0
-* __uG__ + __vP__ = (__z__/__s__)__G__ + (__re__/__s__)__G__ = ((__z__ + __re__)/__s__)__G__ = ((__z__ + __re__)/((__z__ + __re__)/__k__))__G__ = __kG__ = (__r__,__y__)
+* pass:[<em>uG</em> + <em>vP</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>re</em>/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/((<em>z</em> + <em>re</em>)/<em>k</em>))<em>G</em> = <em>kG</em> = (<em>r</em>,<em>y</em>)]
 
 [WARNING]
 .Why We Don't Reveal `k`
