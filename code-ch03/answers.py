@@ -34,7 +34,7 @@ False
 # tag::exercise2[]
 ==== Exercise 2
 
-For the curve y^2^=x^3^+7 over F~223~, find:
+For the curve __y__^2^ = __x__^3^ + 7 over __F__~223~, find:
 
 * (170,142) + (60,139)
 * (47,71) + (17,56)
