@@ -53,14 +53,14 @@ A large part of the Bitcoin ethic is in contributing back to the community.
 The main way you can do that is through open source projects.
 There are almost too many to list, but here's a sample:
 
-* https://github.com/bitcoin/bitcoin: Bitcoin Core, or the reference client
-* https://github.com/libbitcoin/libbitcoin: An alternate implementation of Bitcoin in C++
-* https://github.com/btcsuite/btcd: A Golang-based implementation of Bitcoin
-* https://github.com/bcoin-org/bcoin: A Javascript-based implementation of Bitcoin, maintained by purse.io
-* https://github.com/richardkiss/pycoin: pycoin, a Python library for Bitcoin
-* https://github.com/bitcoinj/bitcoinj: BitcoinJ, a Java library for Bitcoin
-* https://github.com/bitcoinjs/bitcoinjs-lib: BitcoinJS, a Javascript library for Bitcoin
-* https://github.com/btcpayserver/btcpayserver: BTCPay, a bitcoin payment processing engine written in C#
+* https://github.com/bitcoin/bitcoin[]: Bitcoin Core, or the reference client
+* https://github.com/libbitcoin/libbitcoin[]: An alternate implementation of Bitcoin in C++
+* https://github.com/btcsuite/btcd[]: A Golang-based implementation of Bitcoin
+* https://github.com/bcoin-org/bcoin[]: A Javascript-based implementation of Bitcoin, maintained by purse.io
+* https://github.com/richardkiss/pycoin[]: pycoin, a Python library for Bitcoin
+* https://github.com/bitcoinj/bitcoinj[]: BitcoinJ, a Java library for Bitcoin
+* https://github.com/bitcoinjs/bitcoinjs-lib[]: BitcoinJS, a Javascript library for Bitcoin
+* https://github.com/btcpayserver/btcpayserver[]: BTCPay, a bitcoin payment processing engine written in C#
 
 Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas, and so on.
 
