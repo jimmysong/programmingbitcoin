@@ -22,7 +22,8 @@ Point(FieldElement_223(192),FieldElement_223(105))_FieldElement_223(0)_FieldElem
 >>> p1 = Point(x1, y1, a, b)
 >>> p2 = Point(x2, y2, a, b)
 >>> print(p1+p2)
-Point(FieldElement_223(170),FieldElement_223(142))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(170),FieldElement_223(142))_FieldElement_223(0)_
+FieldElement_223(7)
 
 # end::example3[]
 # tag::example4[]

@@ -3,27 +3,27 @@
 == Serialization
 
 [.lead]
-We've created a lot of classes thus far, including `PrivateKey`, `S256Point` and `Signature`.
+We've created a lot of classes thus far, including `PrivateKey`, `S256Point`, and `Signature`.
 We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk.
 This is where serialization comes into play.
 We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`.
-Ideally, we want to do this efficiently for reasons we'll see in <<chapter_networking>> (Networking).
+Ideally, we want to do this efficiently, for reasons we'll see in <<chapter_networking>> (Networking).
 
 === Uncompressed SEC format
 
-We'll start with the `S256Point` class which is the public key class.
+We'll start with the `S256Point` class, which is the public key class.
 Recall that the public key in Elliptic Curve Cryptography is really a coordinate in the form of `(x,y)`.
 How can we serialize this data?
 
 It turns out there's already a standard for serializing ECDSA public keys called SEC.
-SEC stands for Standards for Efficient Cryptography and as the word "Efficient" in the name suggests, it's got minimal overhead.
-There are two forms of SEC format that we need to be concerned with and the first is the uncompressed SEC format and the second compressed SEC format.
+SEC stands for Standards for Efficient Cryptography, and as the word "Efficient" in the name suggests, it's got minimal overhead.
+There are two forms of SEC format that we need to be concerned with: uncompressed SEC format and the compressed SEC format.
 
-Here is how the uncompressed SEC format for a given point P=(x,y) is generated:
+Here is how the uncompressed SEC format for a given point _P_ = (_x_,_y_) is generated:
 
-1. Start with the prefix byte which is `0x04`.
-2. Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
-3. Next, append the y-coordinate in 32 bytes as a Big-Endian integer.
+1. Start with the prefix byte, which is `0x04`.
+2. Next, append the _x_ coordinate in 32 bytes as a Big-Endian integer.
+3. Next, append the _y_ coordinate in 32 bytes as a Big-Endian integer.
 
 The uncompressed SEC format is in <<uncompressed_sec_format>>:
 
@@ -32,27 +32,26 @@ The uncompressed SEC format is in <<uncompressed_sec_format>>:
 image::images/prbc_0401.png[Uncompressed SEC Format]
 
 [WARNING]
-.Big and Little Endian
+.Big- and Little-Endian
 ====
-The motivation for Big and Little Endian encodings is storing a number on disk.
-A number under 256 is easy enough to encode as a single byte (2^8^) is enough to hold it.
+The motivation for Big- and Little-Endian encodings is storing a number on disk.
+A number under 256 is easy enough to encode, as a single byte (2^8^) is enough to hold it.
 When it's bigger than 256, how do we serialize the number to bytes?
 
-Arabic numerals are read left-to-right.
+Arabic numerals are read left to right.
 A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300.
 This is what we call Big-Endian because the Big End starts first.
 
-Computers can sometimes be more efficient using the opposite order or, Little-Endian.
-That is, starting with the Little End first.
+Computers can sometimes be more efficient using the opposite order, or Little-Endian—that is, starting with the Little End first.
 
-Since Computers work in bytes, which have 8 bits, we have to think in Base-256.
+Since computers work in bytes, which have 8 bits, we have to think in base 256.
 This means that a number like 500 looks like `01f4` in Big-Endian.
-That is, 500 = 1*256 + 244 (`f4` in hexadecimal).
+That is, 500 = 1 &#xd7; 256 + 244 (`f4` in hexadecimal).
 The same number looks like `f401` in Little-Endian.
 
-Unfortunately, some serializations in Bitcoin (like the SEC format x and y coordinates) are Big-Endian.
+Unfortunately, some serializations in Bitcoin (like the SEC-format _x_ and _y_ coordinates) are Big-Endian.
 Other serializations in Bitcoin (like the transaction version number in <<chapter_tx_parsing>>) are in Little-Endian.
-This book will let you know which ones are Big vs Little Endian.
+This book will let you know which ones are Big- versus Little-Endian.
 ====
 
 Creating the uncompressed SEC format serialization is pretty straightforward.
@@ -75,7 +74,7 @@ include::code-ch04/answers.py[tag=exercise1,indent=0]
 
 === Compressed SEC Format
 
-Recall that for any x-coordinate, there are at most two y-coordinates due to the y^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>):
+Recall that for any _x_ coordinate, there are at most two _y_ coordinates due to the y^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>):
 
 [[the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve]]
 .The two possible values for y are where this vertical line intersects the curve.
@@ -86,21 +85,21 @@ It turns out that even over a Finite Field, we have the same symmetry.
 This is because for any (x,y) that satisfies y^2^=x^3^+ax+b, (x,-y) also satisfies the equation.
 Furthermore, in a Finite Field, -y (mod p) = p - y.
 Or more accurately, if (x,y) satisfies the elliptic curve equation, (x,p-y) also satisfies the equation.
-These are the only two solutions for a given x as shown above, so if we know x, we know y-coordinate has to be either `y` or `p-y`.
+These are the only two solutions for a given x as shown above, so if we know x, we know _y_ coordinate has to be either `y` or `p-y`.
 
 Since `p` is a prime number greater than 2, we know that `p` is odd.
 Thus, if `y` is even, `p-y` (odd minus even) will be odd.
 If `y` is odd, `p-y` will be even.
 In other words, between `y` and `p-y` exactly one will be even and one will be odd.
 This is something we can use to our advantage to shorten the Uncompressed SEC Format.
-We can provide the x-coordinate and the even-ness of the y-coordinate.
-We call this the *Compressed SEC format* because of how the y-coordinate is compressed into a single byte (namely, whether it's even or odd).
+We can provide the _x_ coordinate and the even-ness of the _y_ coordinate.
+We call this the *Compressed SEC format* because of how the _y_ coordinate is compressed into a single byte (namely, whether it's even or odd).
 
 Here is the serialization of the Compressed SEC format for a given point P=(x,y):
 
 1. Start with the prefix byte.
 If `y` is even, it's `0x02`, otherwise it's `0x03`.
-2. Next, append the x-coordinate in 32 bytes as a Big-Endian integer.
+2. Next, append the _x_ coordinate in 32 bytes as a Big-Endian integer.
 
 The Compressed SEC format is in <<compressed_sec_format>>:
 
@@ -121,7 +120,7 @@ include::code-ch04/ecc.py[tag=source1]
 The big advantage of the Compressed SEC format is that it only takes up 33 bytes instead of 65 bytes.
 This is a big savings when amortized over millions of transactions.
 
-At this point, you may be wondering how you can analytically calculate `y` given the x-coordinate.
+At this point, you may be wondering how you can analytically calculate `y` given the _x_ coordinate.
 This requires us to calculate a square-root in a Finite Field.
 
 Stated mathematically:
@@ -192,7 +191,7 @@ class S256Point:
 include::code-ch04/ecc.py[tag=source3]
 ----
 <1> The uncompressed is pretty straightforward.
-<2> The evenness of the y-coordinate is given in the first byte.
+<2> The evenness of the _y_ coordinate is given in the first byte.
 <3> We take the square-root of the right side of the Elliptic Curve equation to get the `y`.
 <4> Determine evenness and return the correct point.
 
