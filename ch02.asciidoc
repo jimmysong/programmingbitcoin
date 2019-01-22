@@ -350,21 +350,21 @@ From earlier, we know that:
 * __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
 There's a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
-The first coefficient that's interesting is the coefficient in front of x^2^:
+The first coefficient that's interesting is the coefficient in front of __x__^2^:
 
--s^2^=-(x~1~+x~2~+x~3~)
+* –__s__^2^ = –(__x__~1~ + __x__~2~ + __x__~3~)
 
-We can use this to derive the formula for x~3~:
+We can use this to derive the formula for __x__~3~:
 
-x~3~=s^2^-x~1~-x~2~
+* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 
 We can plug this in to the formula for the line above:
 
-y=s(x-x~1~)+y~1~
+* __y__ = __s__(__x__ – __x__~1~) + __y__~1~
 
 But we have to reflect over the x-axis, so the right side has to be negated:
 
-y~3~=-(s(x~3~-x~1~)+y~1~)=s(x~1~-x~3~)-y~1~
+* __y__~3~ = –(__s__(__x__~3~ – __x__~1~) + __y__~1~) = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
 QED
 ****
