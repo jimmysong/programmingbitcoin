@@ -153,7 +153,8 @@ class Point:
     # tag::source3[]
     def __add__(self, other):  # <2>
         if self.a != other.a or self.b != other.b:
-            raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
+            raise TypeError('Points {}, {} are not on the same curve'.format
+            (self, other))
 
         if self.x is None:  # <3>
             return other
