@@ -2,9 +2,15 @@
 # tag::exercise1[]
 ==== Exercise 1
 
-Evaluate whether these points are on the curve y^2^=x^3^+7 over F~223~
+Evaluate whether these points are on the curve __y__^2^ = __x__^3^ + 7 over __F__~223~:
 
-(192,105), (17,56), (200,119), (1,193), (42,99)
+++++
+<ul class="simplelist">
+<li>(192,105), (17,56), (200,119), (1,193), (42,99)</li>
+</ul>
+++++
+
+
 # end::exercise1[]
 # tag::answer1[]
 >>> from ecc import FieldElement
