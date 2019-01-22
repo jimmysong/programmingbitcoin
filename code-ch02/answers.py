@@ -2,9 +2,14 @@
 # tag::exercise1[]
 ==== Exercise 1
 
-Determine which of these points are on the curve y^2^=x^3^+5x+7:
+Determine which of these points are on the curve __y__^2^ = __x__^3^ + 5__x__ + 7:
 
-(2,4), (-1,-1), (18,77), (5,7)
+++++
+<ul class="simplelist">
+<li>(2,4), (–1,–1), (18,77), (5,7)</li>
+</ul>
+++++
+
 # end::exercise1[]
 # tag::answer1[]
 >>> def on_curve(x, y):
