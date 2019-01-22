@@ -62,14 +62,14 @@ Point(FieldElement_223(47),FieldElement_223(71))_FieldElement_223(0)_FieldElemen
 # tag::exercise4[]
 ==== Exercise 4
 
-For the curve y^2^=x^3^+7 over F~223~, find:
+For the curve __y__^2^ = __x__^3^ + 7 over __F__~223~, find:
 
-* 2⋅(192,105)
-* 2⋅(143,98)
-* 2⋅(47,71)
-* 4⋅(47,71)
-* 8⋅(47,71)
-* 21⋅(47,71)
+* 2 ⋅ (192,105)
+* 2 ⋅ (143,98)
+* 2 ⋅ (47,71)
+* 4 ⋅ (47,71)
+* 8 ⋅ (47,71)
+* 21 ⋅ (47,71)
 # end::exercise4[]
 # tag::answer4[]
 >>> from ecc import FieldElement, Point
