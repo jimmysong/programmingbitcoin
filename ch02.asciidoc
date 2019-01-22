@@ -18,7 +18,7 @@ Elliptic Curves have a form like this:
 
 ++++
 <ul class="simplelist">
-<li>y<sup>2</sup> = x<sup>3</sup> + ax + b</li>
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
 </ul>
 ++++
 
@@ -27,7 +27,7 @@ For example, you probably learned the linear equation back in pre-algebra:
 
 ++++
 <ul class="simplelist">
-<li>y = mx + b</li>
+<li><em>y</em> = <em>mx</em> + <em>b</em></li>
 </ul>
 ++++
 
@@ -42,7 +42,7 @@ Similarly, you're probably familiar with the quadratic equation and its graph (<
 
 ++++
 <ul class="simplelist">
-<li>y = ax<sup>2</sup> + bx + c</li>
+<li><em>y</em> = <em>ax</em><sup>2</sup> + <em>bx</em> + <em>c</em></li>
 </ul>
 ++++
 
@@ -54,7 +54,7 @@ And sometime around algebra, you did even higher orders of `x`, something called
 
 ++++
 <ul class="simplelist">
-<li>y = ax<sup>3</sup> + bx<sup>2</sup> + cx + d</li>
+<li><em>y</em> = <em>ax</em><sup>3</sup> + <em>bx</em><sup>2</sup> + <em>cx</em> + <em>d</em></li>
 </ul>
 ++++
 
@@ -78,37 +78,41 @@ At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
 .Disjoint Elliptic Curve
 image::images/prbc_0205.png[Elliptic Curve Equation]
 
-If it helps, an Elliptic Curve can be though of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), taking only the part above the x-axis, flattening it out (<<step_2_a_cubic_equation>>) and then mirroring the top half on the bottom half of the x-axis (<<step_3_a_cubic_equation>>).
+If it helps, an Elliptic Curve can be thought of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), taking only the part above the x-axis, flattening it out (<<step_2_a_cubic_equation>>), and then mirroring the top half on the bottom half of the x-axis (<<step_3_a_cubic_equation>>).
 
 [[step_1_a_cubic_equation]]
-.Step 1: A Cubic Equation
+.Step 1: A cubic equation
 image::images/prbc_0206.png[Start]
 
 [[step_2_a_cubic_equation]]
-.Step 2: Stretched Cubic Equation
+.Step 2: Stretched cubic equation
 image::images/prbc_0207.png[Stretch]
 
 [[step_3_a_cubic_equation]]
-.Step 3: Reflected over the X-Axis
+.Step 3: Reflected over the x-axis
 image::images/prbc_0208.png[Symmetric]
 
 Specifically, the Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
 
-y^2^=x^3^+7
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + 7</li>
+</ul>
+++++
 
-The canonical form is y^2^=x^3^+ax+b so the curve is defined by the constants `a=0`, `b=7`.
-The curve looks like <<secp256k1_curve>>:
+The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>] so the curve is defined by the constants `a=0`, `b=7`.
+The curve looks like <<secp256k1_curve>>.
 
 [[secp256k1_curve]]
-.secp256k1 Curve
-image::images/prbc_0209.png[secp256k1 Curve]
+.secp256k1 curve
+image::images/prbc_0209.png[secp256k1 curve]
 
 === Coding Elliptic Curves in Python
 
-For a variety of reasons which will be made clear later, we are not interested in the curve itself, but specific points on the curve.
-For example, in the curve y^2^=x^3^+5x+7, we are interested in the coordinate (-1,1).
+For a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
+For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (-1,1).
 We are thus going to define the class `Point` to be a _point_ on a specific curve.
-The curve has the form y^2^=x^3^+ax+b, so we can define the curve with just the two numbers `a` and `b`.
+The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`.
 
 [source,python]
 ----
