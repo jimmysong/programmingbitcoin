@@ -186,7 +186,7 @@ Light nodes can get proofs that transactions of interest were included in a bloc
 .Merkle proof
 image::images/prbc_1102.png[Merkle Proof]
 
-Say that a light client has two transactions that are of interest, which would be the hashes represented by the green boxes, H~K~ and H~N~ in [[merkle_proof]].
+Say that a light client has two transactions that are of interest, which would be the hashes represented by the green boxes, H~K~ and H~N~ in <<merkle_proof>>.
 A full node can construct a Proof of Inclusion by sending us all of the hashes marked by blue boxes, H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The light client would then perform these calculations:
 
