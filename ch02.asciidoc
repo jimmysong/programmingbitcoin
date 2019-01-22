@@ -285,71 +285,71 @@ include::code-ch02/ecc.py[tag=source2]
 
 include::code-ch02/ecc.py[tag=source3]
 ----
-<1> x-coordinate and y-coordinate being `None` is how we signify the point at infinity.
-Note that the next if statement will fail if we don't return here.
+<1> _x_ coordinate and _y_ coordinate being `None` is how we signify the point at infinity.
+Note that the next +if+ statement will fail if we don't return here.
 <2> We overload the `+` operator here
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity.
-Thus, we return `other`
+Thus, we return `other`.
 <4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity.
-Thus, we return `self`
+Thus, we return `self`.
 
 include::code-ch02/answers.py[tag=exercise3,indent=0]
 
 === Point Addition for when x~1~≠x~2~
 
-Now that we've covered the vertical line, we're now proceeding to when the points are different.
+Now that we've covered the vertical line, let's examine when the points are different.
 When we have points where the `x`'s differ, we can add using a fairly simple formula.
 To help with intuition, we'll first find the slope created by the two points.
 You can figure this out using a formula from pre-algebra:
 
-* P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-* P~1~+P~2~=P~3~
-* s=(y~2~-y~1~)/(x~2~-x~1~)
+* __P__~1~ = (__x__~1~,__y__~1~), __P__~2~=(__x__~2~,__y__~2~), __P__~3~=(__x__~3~,__y__~3~)
+* __P__~1~ + __P__~2~ = __P__~3~
+*_s_ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
 
-This is the slope and we can use the slope to calculate x~3~.
-Once we know x~3~, we can calculate y~3~.
-P~3~ can be derived using this formula:
+This is the _slope_, and we can use the slope to calculate __x__~3~.
+Once we know __x__~3~, we can calculate __y__~3~.
+__P__~3~ can be derived using this formula:
 
-* x~3~=s^2^-x~1~-x~2~
-* y~3~=s(x~1~-x~3~)-y~1~
+* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
+* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-Remember that y~3~ is the reflection over the x-axis.
+Remember that __y__~3~ is the reflection over the x-axis.
 
-.Deriving The Point Addition Formula
+.Deriving the Point Addition Formula
 ****
 
 Supposing:
 
-* P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-* P~1~ + P~2~ = P~3~
+* __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
+* __P__~1~ + __P__~2~ = __P__~3~
 
-We want to know what P~3~ is.
+We want to know what __P__~3~ is.
 
-Let's start with the fact that the line that goes through P~1~ and P~2~ has this formula:
+Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and has this formula:
 
-* s=(y~2~-y~1~)/(x~2~-x~1~)
-* y=s(x-x~1~)+y~1~
+* __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
+* __y__ = __s__(__x__ – __x__~1~) + __y__~1~
 
-The second formula above is the equation of the line that intersects at both P~1~ and P~2~.
-Now using this formula and plugging it into the Elliptic Curve equation, we get:
+The second formula is the equation of the line that intersects at both __P__~1~ and __P__~2~.
+Using this formula and plugging it into the Elliptic Curve equation, we get:
 
-* y^2^=x^3^+ax+b
-* y^2^=(s(x-x~1~)+y~1~)^2^=x^3^+ax+b
+* __y__^2^ = __x__^3^ + __ax__ + __b__
+* __y__^2^ = (__s__(__x__ – __x__~1~) + __y__~1~)^2^ = __x__^3^ + __ax__+ __b__
 
 Gathering all the terms, we have this polynomial equation:
 
-* x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
+* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
-We also know that x~1~, x~2~ and x~3~ are solutions to this equation, thus:
+We also know that __x__~1~, __x__~2~, and __x__~3~ are solutions to this equation, thus:
 
-* (x-x~1~)(x-x~2~)(x-x~3~)=0
-* x^3^-(x~1~+x~2~+x~3~)x^2^ +(x~1~x~2~+x~1~x~3~+x~2~x~3~)x-x~1~x~2~x~3~=0
+* (__x__ – __x__~1~)(__x__ – __x__~2~)(__x__ – __x__~3~) = 0
+* __x__^3^ – (__x__~1~ + __x__~2~ + __x__~3~)__x__^2^ + (__x__~1~__x__~2~ + __x__~1~__x__~3~ + __x__~2~__x__~3~)__x__ – __x__~1~__x__~2~__x__~3~ = 0
 
-From above, we know that:
+From earlier, we know that:
 
-* x^3^-s^2^x^2^+(a+2s^2^x~1~-2sy~1~)x+b-x~1~^2^+2sx~1~y~1~-y~1~^2^=0
+* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
-There's a result from called the Vieta's Formula (https://en.wikipedia.org/wiki/Vieta%27s_formulas), which states that the coefficients have to equal each other if the roots are the same.
+There's a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
 The first coefficient that's interesting is the coefficient in front of x^2^:
 
 -s^2^=-(x~1~+x~2~+x~3~)
