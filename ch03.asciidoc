@@ -256,10 +256,10 @@ include::code-ch03/answers.py[tag=exercise4,indent=0]
 
 === Scalar Multiplication Redux
 
-Scalar Multiplication is adding the same point to itself some number of times.
-The key making scalar multiplication into Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse.
+_Scalar multiplication_ is adding the same point to itself some number of times.
+The key to making scalar multiplication into Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse.
 Note the previous exercise.
-Most likely, you calculated the point s⋅(47,71) in F~223~ for `s` from 1 until 21.
+Most likely, you calculated the point _s_ ⋅ (47,71) in __F__~223~ for `s` from 1 until 21.
 Here are the results:
 
 [source,python]
@@ -268,44 +268,53 @@ include::code-ch03/examples.py[tag=example4]
 ----
 
 If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication.
-The x-coordinates don't always increase or decrease and neither do the y-coordinates.
-About the only pattern is that between 10 and 11, the x-coordinates are equal (10 and 11 have the same x, as do 9 and 12, 8 and 13 and so on).
-This is due to the fact that 21⋅(47,71)=0.
+The _x_ coordinates don't always increase or decrease and neither do the _y_ coordinates.
+About the only pattern is that between 10 and 11, the _x_ coordinates are equal (10 and 11 have the same _x_, as do 9 and 12, 8 and 13, and so on).
+This is due to the fact that 21 ⋅ (47,71) = 0.
 
-Scalar multiplication looks really random and that's what gives this equation *asymmetry*.
-An *asymmetric* problem is one that's easy to calculate in one direction, but hard to reverse.
-For example, it's easy enough to calculate 12⋅(47,71).
+Scalar multiplication looks really random and that's what gives this equation _asymmetry_.
+An _asymmetric_ problem is one that's easy to calculate in one direction, but hard to reverse.
+For example, it's easy enough to calculate 12 ⋅ (47,71).
 But if we were presented this:
 
-s⋅(47,71)=(194,172)
+++++
+<ul class="simplelist">
+<li><em>s</em> ⋅ (47,71)=(194,172)</li>
+</ul>
+++++
 
-Would you be able to solve for `s`?
-We can look up the table above, but that's because we have a small group.
-We'll see later that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.
+would you be able to solve for _s_?
+We can look up the results show earlier, but that's because we have a small group.
+We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.
 
 === Mathematical Groups
 
 The preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point.
-What we really want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate a Finite Cyclic Group.
+What we actually want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups, and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate a Finite Cyclic Group.
 
 Unlike fields, groups have only a single operation.
 In our case, Point Addition is our operation.
-We also have a few other properties like closure, invertibility, commutativity and associativity.
+We also have a few other properties like closure, invertibility, commutativity, and associativity.
 Lastly, we need the identity.
 
 Let's look at each property.
 
 ==== Identity
 
-If you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group since we generate the group when we get to the point at infinity.
+If you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group, since we generate the group when we get to the point at infinity.
 So:
 
-0 + A = A
+++++
+<ul class="simplelist">
+<li>0 + <em>A</em> = <em>A</em></li>
+</ul>
+++++
 
-We call 0 the point at infinity because visually, it's the point that exists to help the math work out (<<vertical_line_intersects_a_third_time>>):
+
+We call 0 the point at infinity because visually, it's the point that exists to help the math work out (<<vertical_line_intersects_a_third_time>>).
 
 [[vertical_line_intersects_a_third_time]]
-.Vertical Line "intersects" a third time at the point at infinity
+.Vertical line "intersects" a third time at the point at infinity
 image::images/prbc_0212.png[Vertical Line]
 
 ==== Closure
@@ -313,56 +322,70 @@ image::images/prbc_0212.png[Vertical Line]
 This is perhaps the easiest to prove since we generated the group in the first place by adding G over and over.
 Thus, two different elements look like this:
 
-aG + bG
+++++
+<ul class="simplelist">
+<li><em>aG</em> + <em>bG</em></li>
+</ul>
+++++
+
 
 We know that the result is going to be:
 
-(a+b)G
+++++
+<ul class="simplelist">
+<li>(<em>a</em> + <em>b</em>)<em>G</em></li>
+</ul>
+++++
+
 
 How do we know if this element is in the group?
 If `a+b < n` (where `n` is the order of the group), then we know it's in the group by definition.
-If `a+b >= n`, then we know `a < n` and `b < n`, so `a+b<2n` so `a+b-n<n`.
+If `a+b >= n`, then we know `a < n` and `b < n`, so `a+b<2n` so `a+b-n<n`:
 
-(a+b-n)G=aG+bG-nG=aG+bG-0=aG+bG
+++++
+<ul class="simplelist">
+<li>(<em>a</em> + <em>b</em> – <em>n</em>)<em>G</em> = <em>aG</em> + <em>bG</em> – <em>nG</em> = <em>aG</em> + <em>bG</em> – 0 = <em>aG</em> + <em>bG</em></li>
+</ul>
+++++
 
-More generally (a+b)G=((a+b)%n)G where n is the order of the group.
+More generally (__a__ + __b__)__G__ = ((__a__ + _b_) % __n__)__G__ where _n_ is the order of the group.
 
 So we know that this element is in the group, proving closure.
 
 ==== Invertibility
 
-Visually, invertibility is easy to see (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>):
+Invertibility is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
 
 [[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
 .Each point is invertible by taking the reflection over the x-axis
 image::images/prbc_0212.png[Vertical Line]
 
-Mathematically, we know that if aG is in the group, (n-a)G is also in the group.
-You can add them together to get aG+(n-a)G=(a+n-a)G=nG=0.
+Mathematically, we know that if _aG_ is in the group, (__n__ – __a__)__G__ is also in the group.
+You can add them together to get __aG__ + (__n__ – __a__)__G__ = (__a__ + __n__ – __a__)__G__ = _nG_ = 0.
 
 ==== Commutativity
 
-We know from Point Addition that A+B=B+A (<<the_line_through_the_points_doesnt_change>>):
+We know from Point Addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>):
 
 [[the_line_through_the_points_doesnt_change]]
-.The Line through the points doesn't change
+.The line through the points doesn't change
 image::images/prbc_0214.png[Point Addition]
 
-This means that aG+bG=bG+aG, which proves commutativity.
+This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
 
 ==== Associativity
 
-We know from Point Addition that A+(B+C)=(A+B)+C (see Figure pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>])
+We know from Point Addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
 
 [[a_b_c_case_one]]
-.(A+B)+C
+.(A + B) + C. A + B is computed first before C is added.
 image::images/prbc_0216.png[Case 1]
 
 [[a_b_c_case_two]]
-.A+(B+C)
+.A + (B + C). B + C is added first before adding A. Note that this results in the same point as in <<a_b_c_case_one>>.
 image::images/prbc_0217.png[Case 2]
 
-Thus, aG+(bG+cG)=(aG+bG)+cG proving associativity.
+Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_ proving associativity.
 
 include::code-ch03/answers.py[tag=exercise5,indent=0]
 
@@ -419,6 +442,7 @@ This is an advanced technique and if you don't understand bitwise operators, thi
 
 With `__add__` and `__rmul__`, we can start defining some more complicated Elliptic Curves.
 
+[[definingCurveBC]]
 === Defining the curve for Bitcoin
 
 While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
