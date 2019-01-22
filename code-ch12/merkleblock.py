@@ -221,10 +221,10 @@ class MerkleBlock:
         # total transactions in block - 4 bytes, Little-Endian integer
         total = little_endian_to_int(s.read(4))
         # number of transaction hashes - varint
-        num_txs = read_varint(s)
+        num_hashes = read_varint(s)
         # each transaction is 32 bytes, Little-Endian
         hashes = []
-        for _ in range(num_txs):
+        for _ in range(num_hashes):
             hashes.append(s.read(32)[::-1])
         # length of flags field - varint
         flags_length = read_varint(s)

@@ -290,7 +290,7 @@ Note that the next +if+ statement will fail if we don't return here.
 <2> We overload the `+` operator here
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity.
 Thus, we return `other`.
-<4> `self.x` being `None` means that `other` is the point at infinity, or the additive identity.
+<4> `other.x` being `None` means that `other` is the point at infinity, or the additive identity.
 Thus, we return `self`.
 
 include::code-ch02/answers.py[tag=exercise3,indent=0]
@@ -338,7 +338,7 @@ Using this formula and plugging it into the Elliptic Curve equation, we get:
 
 Gathering all the terms, we have this polynomial equation:
 
-* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
+* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __s__^2^__x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
 We also know that __x__~1~, __x__~2~, and __x__~3~ are solutions to this equation, thus:
 
@@ -347,7 +347,7 @@ We also know that __x__~1~, __x__~2~, and __x__~3~ are solutions to this equatio
 
 From earlier, we know that:
 
-* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
+* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __s__^2^__x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
 There's a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
 The first coefficient that's interesting is the coefficient in front of __x__^2^:

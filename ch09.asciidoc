@@ -248,7 +248,7 @@ To find a proof-of-work, the miners on the Bitcoin network have to churn through
 Like gold, verifying proof-of-work is much cheaper than actually finding it.
 
 So what is proof-of-work?
-Let's look at the hash256 of the block we saw before to find out:
+Let's look at the hash256 of the block header we saw before to find out:
 
 ```
 020000208ec39428b17323fa0ddec8e887b4a7c53b8c0a0a220cfd000000000000000000
@@ -293,7 +293,7 @@ The mechanics of how the Merkle Root changes whenever any transaction in the blo
 
 ==== Target
 
-Proof-of-work is the requirement that every block in Bitcoin must be below a certain *target*.
+Proof-of-work is the requirement that the hash of every block header in Bitcoin must be below a certain *target*.
 Target is a 256-bit number that is computed directly from the bits field.
 The target is very small compared to an average 256-bit number.
 
@@ -314,12 +314,12 @@ include::code-ch09/examples.py[tag=example6]
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small the number is in 256-bit terms.
 
-A valid proof-of-work is a hash of the block which, when interpreted as a Little-Endian integer, is below the target number.
+A valid proof-of-work is a hash of the block header which, when interpreted as a Little-Endian integer, is below the target number.
 Proof-of-work hashes are exceedingly rare and the process of mining is the process of finding one of these hashes.
 To find a single proof-of-work with the above target, the network as a whole must calculate 3.8 * 10^21^ hashes, which, when this block was found, was roughly every 10 minutes.
 To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof-of-work below this target.
 
-We can check that this block's hash satisfies the proof-of-work:
+We can check that this block header's hash satisfies the proof-of-work:
 
 [source,python]
 ----

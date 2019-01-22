@@ -1,12 +1,12 @@
 '''
-# tag::exercise1[]
-==== Exercise 1
+# tag::exercise2[]
+==== Exercise 2
 
 Determine what this network message is:
 
 `f9beb4d976657261636b000000000000000000005df6e0e2`
-# end::exercise1[]
-# tag::answer1[]
+# end::exercise2[]
+# tag::answer2[]
 >>> from network import NetworkEnvelope
 >>> from io import BytesIO
 >>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
@@ -17,7 +17,7 @@ b'verack'
 >>> print(envelope.payload)
 b''
 
-# end::answer1[]
+# end::answer2[]
 '''
 
 
@@ -44,15 +44,15 @@ methods = []
 
 
 '''
-# tag::exercise2[]
-==== Exercise 2
+# tag::exercise1[]
+==== Exercise 1
 
 Write the `parse` method for `NetworkEnvelope`.
-# end::exercise2[]
+# end::exercise1[]
 '''
 
 
-# tag::answer2[]
+# tag::answer1[]
 @classmethod
 def parse(cls, s, testnet=False):
     magic = s.read(4)
@@ -73,7 +73,7 @@ def parse(cls, s, testnet=False):
     if calculated_checksum != checksum:
         raise IOError('checksum does not match')
     return cls(command, payload, testnet=testnet)
-# end::answer2[]
+# end::answer1[]
 
 
 '''

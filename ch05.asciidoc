@@ -307,11 +307,17 @@ include::code-ch05/answers.py[tag=exercise3,indent=0]
 === Locktime
 
 Locktime is a way to time-delay a transaction.
-A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,000.
+A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,001.
 This was originally construed as a way to do "high frequency trades" (see _Sequence and Locktime_), which turned out to be insecure.
 If the Locktime is greater or equal to 500,000,000, Locktime is a UNIX timestamp.
 If Locktime is less than 500,000,000, it is a block number.
 This way, transactions can be signed, but unspendable until a certain point in UNIX time or block height.
+
+.When Locktime is Ignored
+[WARNING]
+====
+Note that Locktime is ignored if the sequence numbers for every input is `ffffffff`.
+====
 
 The serialization is in Little-Endian and 4-bytes (<<locktime>>).
 

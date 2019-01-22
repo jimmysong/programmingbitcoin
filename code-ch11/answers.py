@@ -146,9 +146,9 @@ def parse(cls, s):
     bits = s.read(4)
     nonce = s.read(4)
     total = little_endian_to_int(s.read(4))
-    num_txs = read_varint(s)
+    num_hashes = read_varint(s)
     hashes = []
-    for _ in range(num_txs):
+    for _ in range(num_hashes):
         hashes.append(s.read(32)[::-1])
     flags_length = read_varint(s)
     flags = s.read(flags_length)
