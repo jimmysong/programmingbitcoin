@@ -860,16 +860,16 @@ So given a public key, which is a point on the secp256k1 curve and a signature h
 ==== Signing In Depth
 
 Given that we know how verification should work, signing is straightforward.
-The only missing step is figuring out what `k`, and thus R=kG to use.
+The only missing step is figuring out what `k`, and thus _R_ = _kG_ to use.
 We do this by choosing a random `k`.
 
-Signing Procedure:
+The signing procedure is as follows:
 
-1. We are given `z` and know `e` such that eG=P.
-2. Choose a random `k`
-3. Calculate R=kG and r=x-coordinate of R
-4. Calculate s = (z+re)/k
-5. Signature is (r,s)
+1. We are given `z` and know `e` such that _eG_ = _P_.
+2. Choose a random `k`.
+3. Calculate _R_ = _kG_ and _r_ = _x_ coordinate of _R_.
+4. Calculate _s_ = (_z_ + _re_)/_k_.
+5. Signature is (_r_,_s_).
 
 Note that the pubkey `P` has to be transmitted to whoever wants to verify and `z` must be known by the verifier.
 We'll see later that `z` is computed and P is sent along with the signature.
@@ -878,6 +878,7 @@ We'll see later that `z` is computed and P is sent along with the signature.
 
 We can now create a signature using some of the primitives that we have.
 
+.Be Careful with Random Number Generation
 [WARNING]
 ====
 Note that using something like the `random` library from Python to do cryptography is generally not a good idea.
@@ -888,14 +889,14 @@ This library is for teaching purposes only, so please don't use any of the code 
 ----
 include::code-ch03/examples.py[tag=example10]
 ----
-<1> This is an example of a "brain wallet" which is a way to keep the private key in your head without having to memorize something too difficult.
+<1> This is an example of a "brain wallet," which is a way to keep the private key in your head without having to memorize something too difficult.
 Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.
 <3> We're going to use a fixed `k` here for demonstration purposes.
-<4> kG = (r,y) so we take the `x` coordinate only
-<5> s = (z+re)/k.
+<4> _kG_ = (_r_,_y_) so we take the `x` coordinate only.
+<5> _s_ = (_z_ + _re_)/_k_.
 We can mod by `n` because we know this is a cyclical group of order `n`.
-<6> The public point needs to be known by the verifier
+<6> The public point needs to be known by the verifier.
 
 include::code-ch03/answers.py[tag=exercise7,indent=0]
 
