@@ -377,25 +377,25 @@ We now code this into our library.
 That means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
 We have the formulas:
 
-* s=(y~2~-y~1~)/(x~2~-x~1~)
-* x~3~=s^2^-x~1~-x~2~
-* y~3~=s(x~1~-x~3~)-y~1~
+* __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
+* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
+* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
 At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier..
 
 include::code-ch02/answers.py[tag=exercise5,indent=0]
 
-=== Point Addition for when P~1~=P~2~
+=== Point Addition for when __P__~1~ = __P__~2~
 
 When the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
 We know that this means:
 
-P~1~=-P~2~ or P~1~+P~2~=I
+__P__~1~ = –__P__~2~ or __P__~1~ + __P__~2~ = __I__
 
 We've already handled this in Exercise 3.
 
-What happens when P~1~=P~2~?
-Visually, we have to calculate the line that's *tangent* to the curve at P~1~ and find the point at which the line intersects the curve.
+What happens when __P__~1~ = __P__~2~?
+Visually, we have to calculate the line that's *tangent* to the curve at __P__~1~ and find the point at which the line intersects the curve.
 The situation looks like this as we saw before (see <<line_thats_tangent_to_the_curve>>):
 
 [[line_thats_tangent_to_the_curve]]
@@ -404,14 +404,14 @@ image::images/prbc_0213.png[Tangent Line]
 
 Once again, we'll find the slope of the tangent point.
 
-* P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
-* P~1~+P~1~=P~3~
-* s=(3x~1~^2^+a)/(2y~1~)
+* __P__~1~ = (__x__~1~,__y__~1~), __P__~3~ = (__x__~3~,__y__~3~)
+* __P__~1~ + __P__~1~ = __P__~3~
+* __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
 
-The rest of the formula goes through as before, except x~1~=x~2~, so we can combine them:
+The rest of the formula goes through as before, except __x__~1~ = __x__~2~, so we can combine them:
 
-* x~3~=s^2^-2x~1~
-* y~3~=s(x~1~-x~3~)-y~1~
+* __x__~3~ = __s__^2^ – 2__x__~1~
+* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
 [NOTE]
 .Deriving the Slope Tangent to the Curve
@@ -419,19 +419,40 @@ The rest of the formula goes through as before, except x~1~=x~2~, so we can comb
 We can derive the slope of the tangent line using some slightly more advanced math: calculus.
 We know that the slope at a given point is
 
-dy/dx
+++++
+<ul class="simplelist">
+<li><em>dy</em>/<em>dx</em></li>
+</ul>
+++++
+
 
 To get this, we need to take the derivative of both sides of the Elliptic Curve equation:
 
-y^2^=x^3^+ax+b
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
+
+
 
 Taking the derivative of both sides, we get:
 
-2y dy=(3x^2^+a) dx
+++++
+<ul class="simplelist">
+<li>2<em>y dy</em> = (3<em>x</em><sup>2</sup> + <em>a</em>) <em>dx</em></li>
+</ul>
+++++
 
-Solving for dy/dx, we get:
 
-dy/dx=(3x^2^+a)/(2y)
+Solving for __dy__/__dx__, we get:
+
+++++
+<ul class="simplelist">
+<li><em>dy</em>/<em>dx</em> = (3<em>x</em><sup>2</sup> + <em>a</em>)/(2<em>y</em>)</li>
+</ul>
+++++
+
 
 That's how we arrive at the slope formula.
 The rest of the results from the point addition formula derivation hold.
@@ -439,14 +460,14 @@ The rest of the results from the point addition formula derivation hold.
 
 include::code-ch02/answers.py[tag=exercise6,indent=0]
 
-=== Coding Point Addition for when P~1~=P~2~
+=== Coding Point Addition for when __P__~1~ = __P__~2~
 
 We adjust the `__add__` method to account for this particular case.
 We have the formulas, we now implement them.
 
-* s=(3x~1~^2^+a)/(2y~1~)
-* x~3~=s^2^-2x~1~
-* y~3~=s(x~1~-x~3~)-y~1~
+* __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
+* __x__~3~ = __s__^2^ – 2__x__~1~
+* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
 include::code-ch02/answers.py[tag=exercise7,indent=0]
 
@@ -458,7 +479,7 @@ There is one more exception and this involves the case where the tangent line is
 .Vertical and Tangent to the curve
 image::images/prbc_0219.png[Tangent Vertical]
 
-This can only happen if P~1~=P~2~ and the y-coordinate is 0, in which case the slope calculation will end up with a 0 in the denominator.
+This can only happen if __P__~1~ = __P__~2~ and the y-coordinate is 0, in which case the slope calculation will end up with a 0 in the denominator.
 
 We handle this with a special case:
 
