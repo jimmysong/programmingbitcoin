@@ -110,9 +110,9 @@ image::images/prbc_0209.png[secp256k1 curve]
 === Coding Elliptic Curves in Python
 
 For a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
-For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (-1,1).
+For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (–1,1).
 We are thus going to define the class `Point` to be a _point_ on a specific curve.
-The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`.
+The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`:
 
 [source,python]
 ----
@@ -138,7 +138,7 @@ include::code-ch02/answers.py[tag=exercise2,indent=0]
 
 Elliptic Curves are useful because of something called Point Addition.
 Point Addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
-This is called "addition" because the operation has a lot of the intuitions we associate with what we call "addition".
+This is called _addition_ because the operation has a lot of the intuitions we associate with the mathematical operation of addition.
 For example, Point Addition is commutative.
 That is, adding point A to point B is the same as adding point B to point A.
 
@@ -146,51 +146,50 @@ The way we define Point Addition is as follows.
 It turns out that for every Elliptic Curve, a line will intersect it at either 1 point (<<line_intersects_at_only_1_point>>) or 3 points (<<line_intersects_at_3_points>>), except for a couple of special cases.
 
 [[line_intersects_at_only_1_point]]
-.Line intersects at only 1 point
-image::images/prbc_0210.png[Line intersecting at 1 point]
+.Line intersects at only one point
+image::images/prbc_0210.png[Line intersecting at one point]
 
 [[line_intersects_at_3_points]]
-.Line intersects at 3 points
-image::images/prbc_0211.png[Line intersecting at 3 points]
+.Line intersects at three points
+image::images/prbc_0211.png[Line intersecting at three points]
 
-The two exceptions are when a line is _tangent_ to the curve (<<line_intersects_at_2_points_because_its_tangent_to_the_curve>>) and when a line is exactly vertical (<<line_intersects_at_2_points_because_its_vertical>>).
+The two exceptions are when a line is exactly vertical (<<line_intersects_at_2_points_because_its_vertical>>) and when a line is _tangent_ to the curve (<<line_intersects_at_2_points_because_its_tangent_to_the_curve>>).
 
 [[line_intersects_at_2_points_because_its_vertical]]
-.Line intersects at 2 points because it's vertical
+.Line intersects at two points because it's vertical
 image::images/prbc_0212.png[Vertical Line]
 
 [[line_intersects_at_2_points_because_its_tangent_to_the_curve]]
-.Line intersects at 2 points because it's tangent to the curve
+.Line intersects at two points because it's tangent to the curve
 image::images/prbc_0213.png[Tangent Line]
 
 We will come back to these two cases later.
 
-We can define *point addition* using the fact that lines intersect one or three times with the Elliptic Curve.
-Two points define a line, so since that line must intersect the curve at some point one more time.
-That third point reflected over the x-axis is the result of the point addition.
+We can define _point addition_ using the fact that lines intersect one or three times with the Elliptic Curve.
+Two points define a line, so since that line must intersect the curve at some point one more time, that third point reflected over the x-axis is the result of the point addition.
 
 Like Finite Field Addition, we are going to define point addition.
 In our case, point addition is defined this way:
 
-For any two points P~1~=(x~1~,y~1~) and P~2~=(x~2~,y~2~), we get P~1~+P~2~ by:
+For any two points __P__~1~ = (__x__~1~,__y__~1~) and __P__~2~ = (__x__~2~,__y__~2~), we get __P__~1~ + __P__~2~ as follows:
 
-* Find the point intersecting the Elliptic Curve a third time by drawing a line through P~1~ and P~2~
-* Reflect the resulting point over the x-axis
+* Find the point intersecting the Elliptic Curve a third time by drawing a line through __P__~1~ and __P__~2~.
+* Reflect the resulting point over the x-axis.
 
-Visually, it looks like <<point_addition>>:
+Visually, it looks like <<point_addition>>.
 
 [[point_addition]]
-.Point Addition
-image::images/prbc_0214.png[Point Addition]
+.Point addition
+image::images/prbc_0214.png[Point addition]
 
 We first draw a line through the two points we're adding (A and B).
 The third intersection point is C.
-We then reflect that point over the x-axis, which puts us at the A+B point in <<point_addition>>.
+We then reflect that point over the x-axis, which puts us at the A + B point in <<point_addition>>.
 
 One of the properties that we are going to use is that point addition is not easily predictable.
 We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
-Going back to <<point_addition>>, A+B is to the right of both points, A+C would be somewhere between A and C on the x-axis, and B+C would be to the left of both points.
-In mathematics parlance, point addition is _non-linear_.
+Going back to <<point_addition>>, A + B is to the right of both points, A + C would be somewhere between A and C on the x-axis, and B + C would be to the left of both points.
+In mathematics parlance, point addition is _nonlinear_.
 
 === Math of Point Addition
 
@@ -199,50 +198,59 @@ In mathematics parlance, point addition is _non-linear_.
 * Identity
 * Commutativity
 * Associativity
-* Invertibiltiy
+* Invertibility
 
-Identity here means that there's a zero.
-That is, there exists some point (I) which when added to a point (A) results in A.
-We'll call this point the point at infinity (reasons for this will become clear in a bit).
+_Identity_ here means that there's a zero.
+That is, there exists some point (_I_) that, when added to a point (_A_), results in _A_.
+We'll call this point the _point at infinity_ (reasons for this will become clear in a bit).
 That is:
 
-I + A = A
+++++
+<ul class="simplelist">
+<li><em>I</em> + <em>A</em> = <em>A</em></li>
+</ul>
+++++
 
-This is also related to invertibility.
-For some point A, there's some other point -A which results in the Identity point.
+This is also related to _invertibility_.
+For some point _A_, there's some other point –_A_ that results in the identity point.
 That is:
 
-A + (-A) = I
+++++
+<ul class="simplelist">
+<li><em>A</em> + (–<em>A</em>) = <em>I</em></li>
+</ul>
+++++
 
 Visually, these are points opposite the x-axis on the curve (see <<vertical_line_intersection>>).
 
 [[vertical_line_intersection]]
-.Vertical Line Intersection
+.Vertical line intersection
 image::images/prbc_0212.png[Vertical Line]
 
 This is why we call this point the point at infinity.
-We have one extra point in the Elliptic Curve which makes the vertical line intersect the curve a third time.
+We have one extra point in the Elliptic Curve, which makes the vertical line intersect the curve a third time.
 
-Commutativity means that A+B=B+A.
-This is obvious since the line going through A and B will intersect the curve a third time in the same place no matter the order.
+_Commutativity_ means that _A_ + _B_ = _B_ + _A_.
+This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place no matter the order.
 
-Associativity means that (A+B) + C = A + (B+C).
-This isn't obvious and is the reason for flipping over the x-axis.
+_Associativity_ means that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
+This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
+<a data-type="xref" href="#a_b_c_case_2" data-xrefstyle="select:labelnumber">#a_b_c_case_2</a>.]
 
 [[a_b_c_case_1]]
-.(A+B)+C
+.(A + B) + C
 image::images/prbc_0216.png[Case 1]
 
 [[a_b_c_case_2]]
-.A+(B+C)
+.A + (B + C)
 image::images/prbc_0217.png[Case 2]
 
 You can see that in both <<a_b_c_case_1>> and <<a_b_c_case_2>>, the final point is the same.
 While this doesn't prove the associativity of point addition, the visual should at least give you the intuition that this is true.
 
-To code point addition, we're going to split it up into 3 steps:
+To code point addition, we're going to split it up into three steps:
 
-1. Where the points are in a vertical line or using the Identity.
+1. Where the points are in a vertical line or using the identity point.
 2. Where the points are not in a vertical line, but are different.
 3. Where the two points are the same.
 
@@ -257,7 +265,7 @@ What we want is this to work:
 include::code-ch02/examples.py[tag=example2]
 ----
 
-In order to make this work, we have to do two things:
+To make this work, we have to do two things:
 
 First, we have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
 Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class.
