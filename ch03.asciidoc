@@ -63,7 +63,7 @@ include::code-ch03/answers.py[tag=exercise1,indent=0]
 
 === Coding Elliptic Curves over Finite Fields
 
-Because we defined an Elliptic Curve point and we defined the `+`, `-` ,`*` and `/` operators for Finite Fields, we can combine the two classes to create Elliptic Curve points over a Finite Field.
+Because we defined an Elliptic Curve point and defined the `+`, `-` ,`*` and `/` operators for Finite Fields, we can combine the two classes to create Elliptic Curve points over a Finite Field.
 
 [source,python]
 ----
@@ -77,7 +77,7 @@ When initializing `Point`, we will run through this part of the code:
 include::code-ch03/ecc.py[tag=source1]
 ----
 
-The addition (`+`), multiplication (`*`), exponentiation (`**`) and equality (`!=`) here use the `__add__`, `__mul__`, `__pow__` and `__ne__` methods from `FiniteField` respectively and _not_ the integer equivalents.
+The addition (`+`), multiplication (`*`), exponentiation (`**`), and equality (`!=`) here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField` respectively and _not_ the integer equivalents.
 Being able to do the same equation but with different definitions for the basic arithmetic operators is how we construct an Elliptic Curve Cryptography library.
 
 We've already coded the two classes that we need to implement Elliptic Curve points over a Finite Field.
@@ -89,7 +89,7 @@ We will do this using the results of Exercise 2.
 include::code-ch03/ecc.py[tag=source2]
 ----
 <1> We pass in `FieldElement` objects into the `Point` class for initialization.
-This will, in turn, use all the overloaded math operations in `FieldElement`
+This will, in turn, use all the overloaded math operations in `FieldElement`.
 
 We can now run this test like so:
 
@@ -110,9 +110,13 @@ OK
 
 We can use all the same equations over Finite Fields, including the linear equation:
 
-y=mx+b
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>mx</em> + <em>b</em></li>
+</ul>
+++++
 
-It turns out that a "line" in a Finite Field is not quite what you'd expect (<<line_over_a_finite_field>>):
+It turns out that a "line" in a Finite Field is not quite what you'd expect (<<line_over_a_finite_field>>).
 
 [[line_over_a_finite_field]]
 .Line over a Finite Field
@@ -125,27 +129,27 @@ This is because the Elliptic Curve point addition works over all fields!
 The same exact formulas we used to calculate point addition over reals work over Finite Fields.
 Specifically:
 
-when x~1~≠x~2~:
+when __x__~1~ ≠ __x__~2~:
 
-* P~1~=(x~1~,y~1~), P~2~=(x~2~,y~2~), P~3~=(x~3~,y~3~)
-* P~1~+P~2~=P~3~
-* s=(y~2~-y~1~)/(x~2~-x~1~)
-* x~3~=s^2^-x~1~-x~2~
-* y~3~=s(x~1~-x~3~)-y~1~
+* __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
+* __P__~1~ + __P__~2~ = __P__~3~
+* __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
+* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
+* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-when P~1~=P~2~:
+when __P__~1~ = __P__~2~:
 
-* P~1~=(x~1~,y~1~), P~3~=(x~3~,y~3~)
-* P~1~+P~1~=P~3~
-* s=(3x~1~^2^+a)/(2y~1~)
-* x~3~=s^2^-2x~1~
-* y~3~=s(x~1~-x~3~)-y~1~
+* __P__~1~ = (__x__~1~,__y__~1~), __P__~3~ = (__x__~3~,__y__~3~)
+* __P__~1~ + __P__~1~ = __P__~3~
+* __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
+* __x__~3~ = __s__^2^ – 2__x__~1~
+* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-All of the equations for Elliptic Curves work over Finite Fields and that sets us up to create some cryptographic primitives.
+All of the equations for Elliptic Curves work over Finite Fields, which sets us up to create some cryptographic primitives.
 
 === Coding Point Addition over Finite Fields
 
-Because we coded FieldElement in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__` and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will work:
+Because we coded FieldElement in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__`, and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will work:
 
 [source,python]
 ----
