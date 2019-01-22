@@ -27,7 +27,7 @@ False
 # tag::exercise4[]
 ==== Exercise 4
 
-For the curve y^2^=x^3^+5x+7, what is (2,5) + (-1,-1)?
+For the curve __y__^2^ = __x__^3^ + 5__x__ + 7, what is (2,5) + (–1,-1)?
 # end::exercise4[]
 # tag::answer4[]
 >>> x1, y1 = 2, 5
