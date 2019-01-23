@@ -354,7 +354,7 @@ The specific formula is:
 <div data-type="equation">
 <math xmlns="http://www.w3.org/1998/Math/MathML">
 <mi>difficulty</mi>
-<mo>=<mo>
+<mo>=</mo>
 <mi>0xffff</mi> <mo>&#215;</mo> <msup><mn>256</mn> <mrow><mi>0x1d</mi> <mo>–</mo> <mn>3</mn></mrow></msup> <mo>&#8725;</mo> <mi>target</mi>
 </math>
 </div>
