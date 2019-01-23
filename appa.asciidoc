@@ -398,7 +398,7 @@ include::code-ch07/answers.py[tag=exercise5,indent=0]
 include::code-ch07/answers.py[tag=answer5,indent=0]
 ----
 
-=== <<chapter_p2sh>>: Pay To Script Hash
+=== <<chapter_p2sh>>: Pay to Script Hash
 
 include::code-ch08/answers.py[tag=exercise1,indent=0]
 
