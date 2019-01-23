@@ -140,7 +140,7 @@ OP_CODE_FUNCTIONS = {
 
 include::code-ch06/answers.py[tag=exercise1,indent=0]
 
-=== Parsing the Script fields
+=== Parsing the Script Fields
 
 Both ScriptPubKey and ScriptSig are parsed the same way.
 If the byte is between `0x01` and `0x4b` (which we call `n`), we read the next `n` bytes as an element.
@@ -156,17 +156,17 @@ Here are some operations and their byte codes:
 * `0xac` - `OP_CHECKSIG`
 
 [NOTE]
-.Longer than 75-byte elements
+.Elements Longer Than 75 Bytes
 ====
 You might be wondering what would happen if you had an element that's greater than `0x4b` (75 in decimal).
-There are 3 specific opcodes for handling elements with length greater than 75, namely, `OP_PUSHDATA1`, `OP_PUSHDATA2` and `OP_PUSHDATA4`.
+There are three specific opcodes for handling elements with length greater than 75: `OP_PUSHDATA1`, `OP_PUSHDATA2`, and `OP_PUSHDATA4`.
 `OP_PUSHDATA1` means that the next byte contains how many bytes we need to read for the element.
 `OP_PUSHDATA2` means that the next 2 bytes contain how many bytes we need to read for the element.
 `OP_PUSHDATA4` means that the next 4 bytes contain how many bytes we need to read for the element.
 
-Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use `OP_PUSHDATA1` `<1-byte length of the element>` `<element>`.
-For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` `<2-byte length of the element in Little-Endian>` `<element>`.
-Anything larger than 520 bytes is not allowed on the network, so `OP_PUSHDATA4` is unnecessary, though `OP_PUSHDATA4` `<4-byte length of the element in Little-Endian, but value less than or equal to 520>` `<element>` is still legal.
+Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use `OP_PUSHDATA1` ++<__1-byte length of the element__>++ ++<__element__>++.
+For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` ++<__2-byte length of the element in Little-Endian>__>++ ++<__element__>++.
+Anything larger than 520 bytes is not allowed on the network, so `OP_PUSHDATA4` is unnecessary, though `OP_PUSHDATA4` ++<__4-byte length of the element in Little-Endian, but value less than or equal to 520__>++ ++<__element__>++ is still legal.
 
 It is possible to encode a number below 76 using `OP_PUSHDATA1` or a number below 256 using `OP_PUSHDATA2` or even any number 520 and below using `OP_PUSHDATA4`.
 These are considered non-standard transactions, meaning most bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
