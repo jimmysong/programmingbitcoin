@@ -500,58 +500,58 @@ Like p2pk, the ScriptSig has the DER signature.
 Unlike p2pk, the ScriptSig also has the SEC pubkey.
 The main difference between p2pk and p2pkh ScriptSigs is that the SEC pubkey has moved from ScriptPubKey to ScriptSig.
 
-The ScriptPubKey and ScriptSig combine to a list of instructions that looks like <<p2pkh_combined>>:
+The ScriptPubKey and ScriptSig combine to a list of instructions that looks like <<p2pkh_combined>>.
 
 [[p2pkh_combined]]
-.p2pkh Combined
+.p2pkh combined
 image::images/prbc_0617.png[P2PKH Combination]
 
 At this point, the Script is processed one instruction at a time.
-We start with the instructions as above (<<p2pkh_start>>).
+We start with the instructions as in <<p2pkh_start>>.
 
 [[p2pkh_start]]
-.p2pkh Start
+.p2pkh start
 image::images/prbc_0618.png[P2PKH Start]
 
 The first two instructions are elements, so they are pushed to the stack (<<p2pkh_step_1>>).
 
 [[p2pkh_step_1]]
-.p2pkh Step 1
+.p2pkh step 1
 image::images/prbc_0619.png[P2PKH Step 1]
 
-`OP_DUP` duplicates the top element, so the pubkey gets duplicated (<<p2pkh_step_2>>):
+`OP_DUP` duplicates the top element, so the pubkey gets duplicated (<<p2pkh_step_2>>).
 
 [[p2pkh_step_2]]
-.p2pkh Step 2
+.p2pkh step 2
 image::images/prbc_0620.png[P2PKH Step 2]
 
-`OP_HASH160` takes the top element and performs the hash160 operation on it (sha256 followed by ripemd160), creating a 20-byte hash (<<p2pkh_step_3>>):
+`OP_HASH160` takes the top element and performs the hash160 operation on it (sha256 followed by ripemd160), creating a 20-byte hash (<<p2pkh_step_3>>).
 
 [[p2pkh_step_3]]
-.p2pkh Step 3
+.p2pkh step 3
 image::images/prbc_0621.png[P2PKH Step 3]
 
 The 20-byte hash is an element and is pushed to the stack (<<p2pkh_step_4>>).
 
 [[p2pkh_step_4]]
-.p2pkh Step 4
+.p2pkh step 4
 image::images/prbc_0622.png[P2PKH Step 4]
 
 We are now at `OP_EQUALVERIFY`.
 This opcode consumes the top two elements and checks if they're equal.
 If they are equal, the Script continues execution.
 If they are not equal, the Script stops immediately and fails.
-We assume here that they're equal, leading to <<p2pkh_step_5>>:
+We assume here that they're equal, leading to <<p2pkh_step_5>>.
 
 [[p2pkh_step_5]]
-.p2pkh Step 5
+.p2pkh step 5
 image::images/prbc_0623.png[P2PKH Step 5]
 
 We are now exactly where we were during the `OP_CHECKSIG` part of processing p2pk.
-Once again, we assume that the signature is valid (<<p2pkh_end>>):
+Once again, we assume that the signature is valid (<<p2pkh_end>>).
 
 [[p2pkh_end]]
-.p2pkh End
+.p2pkh end
 image::images/prbc_0624.png[P2PKH End]
 
 There are two ways this Script can fail.
@@ -565,11 +565,11 @@ We are locking Bitcoins to a _hash_ of the public key and the spender is respons
 
 The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.
 
-=== Scripts can be Arbitrarily Constructed
+=== Scripts Can Be Arbitrarily Constructed
 
 Note that Scripts can be any arbitrary program.
 Script is a smart contract language and can lock Bitcoins in many different ways.
-<<example_scriptpubkey>> is an example ScriptPubKey:
+<<example_scriptpubkey>> is an example ScriptPubKey.
 
 [[example_scriptpubkey]]
 .Example ScriptPubKey
@@ -581,46 +581,46 @@ image::images/prbc_0625.png[Example 1 ScriptPubKey]
 .Example ScriptSig
 image::images/prbc_0626.png[Example 1 ScriptSig]
 
-The combined Script is shown in <<example_combined>>:
+The combined Script is shown in <<example_combined>>.
 
 [[example_combined]]
-.Example Combined
+.Example combined
 image::images/prbc_0627.png[Example 1 Combination]
 
-Script evaluation will start like <<example_start>>:
+Script evaluation will start as shown in <<example_start>>.
 
 [[example_start]]
-.Example Start
+.Example start
 image::images/prbc_0628.png[Example 1 Start]
 
 `OP_4` will push a 4 to the stack (<<example_step_1>>).
 
 [[example_step_1]]
-.Example Step 1
+.Example step 1
 image::images/prbc_0629.png[Example 1 Step 1]
 
 `OP_5` will likewise push a 5 to the stack (<<example_step_2>>).
 
 [[example_step_2]]
-.Example Step 2
+.Example step 2
 image::images/prbc_0630.png[Example 1 Step 2]
 
-`OP_ADD` will consume the top two elements of the stack, add them together and push the sum to the stack (<<example_step_3>>).
+`OP_ADD` will consume the top two elements of the stack, add them together, and push the sum to the stack (<<example_step_3>>).
 
 [[example_step_3]]
-.Example Step 3
+.Example step 3
 image::images/prbc_0631.png[Example 1 Step 3]
 
 `OP_9` will push a 9 to the stack (<<example_step_4>>).
 
 [[example_step_4]]
-.Example Step 4
+.Example step 4
 image::images/prbc_0632.png[Example 1 Step 4]
 
-`OP_EQUAL` will consume 2 elements and push a 1 if equal, 0 if not (<<example_end>>).
+`OP_EQUAL` will consume two elements and push a 1 if equal, 0 if not (<<example_end>>).
 
 [[example_end]]
-.Example End
+.Example end
 image::images/prbc_0633.png[Example 1 End]
 
 Note that the ScriptSig isn't particularly hard to figure out and contains no signature.
@@ -628,7 +628,7 @@ As a result, ScriptPubKey is vulnerable to being taken by anyone who can solve i
 Think of this ScriptPubKey as a lockbox with a very flimsy lock that anyone can break into.
 It is for this reason that most transactions have a signature requirement in the ScriptSig.
 
-Once a UTXO has been spent, included in a block and secured by proof-of-work, the coins are locked to a different ScriptPubKey and no longer as easily spendable.
+Once a UTXO has been spent, included in a block, and secured by proof-of-work, the coins are locked to a different ScriptPubKey and no longer as easily spendable.
 Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (see <<chapter_blocks>>).
 
 include::code-ch06/answers.py[tag=exercise3,indent=0]
@@ -636,23 +636,23 @@ include::code-ch06/answers.py[tag=exercise3,indent=0]
 ==== Utility of Scripts
 
 The previous exercise was a bit of a cheat as `OP_MUL` is no longer allowed on the Bitcoin network.
-Version 0.3.5 of Bitcoin disabled a lot of different opcodes as anything that had even a little bit of potential to create vulnerabilities on the network were disabled.
+Version 0.3.5 of Bitcoin disabled a lot of different opcodes, as anything that had even a little bit of potential to create vulnerabilities on the network were disabled.
 
-This is just as well since most of the functionality in Script is actually not used much.
+This is just as well, since most of the functionality in Script is actually not used much.
 From a software maintenance standpoint, this is not a great situation as the code has to be maintained despite its lack of usage.
 Simplifying and getting rid of certain capabilities can be seen as a way to make Bitcoin more secure.
 
-This is in stark contrast to other projects which try to expand their smart contract languages, often increasing the attack surface along with new features.
+This is in stark contrast to other projects, which try to expand their smart contract languages, often increasing the attack surface along with new features.
 
 include::code-ch06/answers.py[tag=exercise4,indent=0]
 
-==== Sha1 Piñata
+==== SHA-1 Piñata
 
 In 2013, Peter Todd created a Script very similar to the Script in Exercise 4 and put some Bitcoins into it to create an economic incentive for people to find hash collisions.
-The donations reached 2.49153717 BTC and when Google actually found a hash collision for sha1 in February of 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html), this Script was promptly redeemed.
-The transaction output was 2.48 Bitcoins which was $2848.88 USD at the time.
+The donations reached 2.49153717 BTC, and when Google actually found a https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[hash collision for SHA-1 in February 2017], this Script was promptly redeemed.
+The transaction output was 2.48 BTC, which was $2,848.88 USD at the time.
 
-Peter created more piñatas for sha256, hash256 and hash160, which add economic incentives to find collisions for these hashing functions.
+Peter created more piñatas for sha256, hash256, and hash160, which add economic incentives to find collisions for these hashing functions.
 
 === Conclusion
 
