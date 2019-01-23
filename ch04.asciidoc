@@ -239,26 +239,26 @@ Unfortunately, unlike `S256Point`, `Signature` cannot be compressed as `s` canno
 
 The standard for serializing signatures (and lots of other things, for that matter) is called DER format.
 DER stands for Distinguished Encoding Rules and was used by Satoshi to serialize signatures.
-This was most likely because the standard was already defined in 2008, supported in the OpenSSL library (used in Bitcoin at the time) and was easy enough to adopt, rather than creating a new standard.
+This was most likely because the standard was already defined in 2008, supported in the OpenSSL library (used in Bitcoin at the time), and was easy enough to adopt, rather than creating a new standard.
 
 DER Signature format is defined like this:
 
-1. Start with the `0x30` byte
-2. Encode the length of the rest of the signature (usually `0x44` or `0x45`) and append
-3. Append the marker byte `0x02`
-4. Encode `r` as a Big-Endian integer, but prepend with `0x00` byte if `r`'s first byte >= `0x80`.
+1. Start with the `0x30` byte.
+2. Encode the length of the rest of the signature (usually `0x44` or `0x45`) and append.
+3. Append the marker byte `0x02`.
+4. Encode `r` as a Big-Endian integer, but prepend with `0x00` byte if `r`'s first byte &ge; `0x80`.
 Prepend the resulting length to `r`.
 Add this to the result.
-5. Append the marker byte `0x02`
-6. Encode `s` as a Big-Endian integer, but prepend with `0x00` byte if `s`'s first byte >= `0x80`.
+5. Append the marker byte `0x02`.
+6. Encode `s` as a Big-Endian integer, but prepend with `0x00` byte if `s`'s first byte &ge; `0x80`.
 Prepend the resulting length to `s`.
 Add this to the result.
 
 The rules for #4 and #6 with the first byte starting with something greater than or equal to `0x80` is because DER is a general encoding and allows for negative numbers to be encoded.
 The first bit being 1 means that the number is negative.
-All numbers in an ECDSA signature are positive, so we have to prepend with `0x00` if the first bit is zero which is equivalent to first byte >= `0x80`.
+All numbers in an ECDSA signature are positive, so we have to prepend with `0x00` if the first bit is zero which is equivalent to first byte &ge; `0x80`.
 
-The DER format is in <<der_format>>:
+The DER format is shown in <<der_format>>.
 
 [[der_format]]
 .DER Format
