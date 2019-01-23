@@ -35,7 +35,7 @@ Figure out what this Script is doing:
 * `91 = OP_NOT`
 * `a7 = OP_SHA1`
 
-Use the `Script.parse` method and look up what various opcodes do at https://en.bitcoin.it/wiki/Script
+Use the `Script.parse` method and look up what various opcodes do at https://en.bitcoin.it/wiki/Script[].
 
 # end::exercise4[]
 # tag::answer4[]
