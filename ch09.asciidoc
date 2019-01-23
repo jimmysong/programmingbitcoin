@@ -70,6 +70,7 @@ This was the headline from the _Times_ of London on January 3, 2009.
 This proves that the Genesis Block was created some time _at or after_ that date, and not _before_.
 Other Coinbase Transactions' ScriptSigs contain similarly arbitrary data.
 
+[[BIP0034]]
 ==== BIP0034
 
 BIP0034 regulates the first element of the ScriptSig of Coinbase Transactions.
