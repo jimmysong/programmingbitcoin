@@ -300,7 +300,16 @@ The first is the exponent, which is the last byte.
 The second is the coefficient, which is the other three bytes in Little-Endian.
 The formula for calculating the target from these two numbers is:
 
-target = coefficient * 256^exponent–3^
+++++
+<div data-type="equation">
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+<mi>target</mi>
+<mo>=</mo>
+<mi>coefficient</mi> <mo>&#215;</mo> <msup><mn>256</mn><mrow><mi>exponent</mi> <mo>–</mo> <mn>3</mn></mrow></msup>
+</math>
+</div>
+++++
+
 
 This is how we calculate the target given the bits field in Python:
 
@@ -341,7 +350,15 @@ To make different targets easier to compare, the concept of difficulty was born.
 The trick is that difficulty is inversely proportional to target to make comparisons easier.
 The specific formula is:
 
-difficulty = 0xffff * 256^0x1d-3^ / target
+++++
+<div data-type="equation">
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+<mi>difficulty</mi>
+<mo>=<mo>
+<mi>0xffff</mi> <mo>&#215;</mo> <msup><mn>256</mn> <mrow><mi>0x1d</mi> <mo>–</mo> <mn>3</mn></mrow></msup> <mo>&#8725;</mo> <mi>target</mi>
+</math>
+</div>
+++++
 
 The code looks like this:
 
