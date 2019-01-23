@@ -351,9 +351,9 @@ include::code-ch06/answers.py[tag=exercise4,indent=0]
 ----
 include::code-ch06/answers.py[tag=answer4,indent=0]
 ----
-<1> `collision1` and `collision2` are from the sha1 preimages that were found to collide from Google. (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html)
+<1> `collision1` and `collision2` are from the SHA-1 preimages that were https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[found to collide from Google].
 
-This is looking for a sha1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
+This is looking for a SHA-1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
 
 === <<chapter_tx>>: Transaction Creation and Validation
 
