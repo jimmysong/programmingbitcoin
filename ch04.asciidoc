@@ -402,20 +402,20 @@ include::code-ch04/answers.py[tag=exercise5,indent=0]
 
 === WIF Format
 
-The Private Key in our case is a 256-bit number.
-Generally, we are not going to need to serialize our secret that often as it doesn't get broadcast (that would be a bad idea!).
+The private key in our case is a 256-bit number.
+Generally, we are not going to need to serialize our secret that often, as it doesn't get broadcast (that would be a bad idea!).
 That said, there are instances where we may want to transfer your private key from one wallet to another, for example, from a paper wallet to a software wallet.
 
 For this purpose, there is a format called WIF, which stands for Wallet Import Format.
-WIF is a serialization of the private key that's meant to be human-readable.
+WIF is a serialization of the private key that's meant to be human readable.
 WIF uses the same Base58 encoding that addresses use.
 
 Here is how the WIF format is created:
 
 1. For mainnet private keys, start with the prefix `0x80`, for testnet `0xef`.
 2. Encode the secret in 32-byte Big-Endian.
-3. If the SEC format used for the public key address was compressed add a suffix of `0x01`.
-4. Combine the prefix from #1, serialized secret from #2 and suffix from #3
+3. If the SEC format used for the public key address was compressed, add a suffix of `0x01`.
+4. Combine the prefix from #1, serialized secret from #2, and suffix from #3.
 5. Do a hash256 of the result from #4 and get the first 4 bytes.
 6. Take the combination of #4 and #5 and encode in Base58.
 
