@@ -343,7 +343,7 @@ include::code-ch06/answers.py[tag=exercise3,indent=0]
 include::code-ch06/answers.py[tag=answer3,indent=0]
 ----
 
-OP_2 or `52` will satisfy the equation x^2^+x-6=0.
+`OP_2` or `52` will satisfy the equation __x__^2^ + _x_ – 6 = 0.
 
 include::code-ch06/answers.py[tag=exercise4,indent=0]
 
