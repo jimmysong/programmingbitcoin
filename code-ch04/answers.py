@@ -158,7 +158,7 @@ import helper
 # tag::exercise7[]
 ==== Exercise 7
 
-Write a function `little_endian_to_int` which takes Python bytes, interprets those bytes in Little-Endian and returns the number.
+Write a function `little_endian_to_int` that takes Python bytes, interprets those bytes in Little-Endian, and returns the number.
 # end::exercise7[]
 '''
 
@@ -175,7 +175,7 @@ def little_endian_to_int(b):
 # tag::exercise8[]
 ==== Exercise 8
 
-Write a function `int_to_little_endian` which does the reverse of the last exercise.
+Write a function `int_to_little_endian` that does the reverse of the last exercise.
 # end::exercise8[]
 '''
 
