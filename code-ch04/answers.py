@@ -27,10 +27,10 @@ c13b4a4994f17691895806e1b40b57f4fd22581a4f46851f3b06
 # tag::exercise2[]
 ==== Exercise 2
 
-Find the Compressed SEC format for the Public Key where the Private Key secrets are:
+Find the Compressed SEC format for the public key where the private key secrets are:
 
-* 5001
-* 2019^5^
+* 5,001
+* 2,019^5^
 * 0xdeadbeef54321
 # end::exercise2[]
 # tag::answer2[]
