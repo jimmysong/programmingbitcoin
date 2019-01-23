@@ -48,7 +48,7 @@ c5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca539012103\
 
 Advanced: get some more testnet coins from a testnet faucet and create a two-input, one-output transaction. One input should be from the faucet, the other should be from the previous exercise; the output can be your own address.
 
-You can broadcast the transaction at https://testnet.blockchain.info/pushtx
+You can broadcast the transaction at https://testnet.blockchain.info/pushtx[].
 # end::exercise5[]
 # tag::answer5[]
 >>> from ecc import PrivateKey
