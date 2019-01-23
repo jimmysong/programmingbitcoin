@@ -2,7 +2,7 @@
 # tag::exercise4[]
 ==== Exercise 4
 
-Validate the second signature from the transaction above.
+Validate the second signature from the preceding transaction.
 # end::exercise4[]
 # tag::answer4[]
 >>> from io import BytesIO
@@ -74,7 +74,7 @@ from tx import Tx, TxIn, SIGHASH_ALL
 # tag::exercise1[]
 ==== Exercise 1
 
-Write the `op_checkmultisig` function of `op.py`.
+Write the `op_checkmultisig` function of _op.py_.
 # end::exercise1[]
 '''
 

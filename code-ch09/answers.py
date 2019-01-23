@@ -2,7 +2,7 @@
 # tag::exercise12[]
 ==== Exercise 12
 
-Calculate the new bits given the first and last blocks of this 2016 block difficulty adjustment period:
+Calculate the new bits given the first and last blocks of this 2,016 block difficulty adjustment period:
 
 Block 471744:
 
@@ -211,7 +211,7 @@ def bip141(self):
 # tag::exercise9[]
 ==== Exercise 9
 
-Write the `bits_to_target` function in `helper.py`.
+Write the `bits_to_target` function in _helper.py_.
 # end::exercise9[]
 '''
 
@@ -232,7 +232,7 @@ def target(self):
 # tag::exercise10[]
 ==== Exercise 10
 
-Write the `difficulty` method for `Block`
+Write the `difficulty` method for `Block`.
 # end::exercise10[]
 '''
 
@@ -266,7 +266,7 @@ def check_pow(self):
 # tag::exercise13[]
 ==== Exercise 13
 
-Write the `calculate_new_bits` function in `helper.py`
+Write the `calculate_new_bits` function in _helper.py_.
 # end::exercise13[]
 '''
 
