@@ -601,7 +601,7 @@ We can then multiply every element in both sets to get this equality:
 ++++
 
 The left side is the same as `(p-1)! % p` where `!` is the factorial (e.g.,
-`5! = 5 ⋅ 4 ⋅ 3 ⋅ 2 ⋅ 1`). On the right side, we can gather up all the `n`'s and get:
+`5! = 5` ⋅ `4` ⋅ `3` ⋅ `2` ⋅ `1`). On the right side, we can gather up all the `n`'s and get:
 
 ++++
 <ul class="simplelist">
