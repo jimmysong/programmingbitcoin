@@ -103,7 +103,7 @@ def op_hash160(stack):
 # tag::exercise2[]
 ==== Exercise 2
 
-Write the `op_checksig` function in `op.py`
+Write the `op_checksig` function in _op.py_.
 # end::exercise2[]
 '''
 
