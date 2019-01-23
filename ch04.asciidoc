@@ -285,11 +285,11 @@ include::code-ch04/answers.py[tag=exercise3,indent=0]
 
 === Base58
 
-In the early days of Bitcoin, Bitcoins were assigned to Public Keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
-For reasons we'll get to in <<chapter_script>>, using this particular very simple Script turned to be both wasteful for storing UTXOs and a little less secure than the Scripts in more prominent use now.
+In the early days of Bitcoin, Bitcoins were assigned to public keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
+For reasons we'll get to in <<chapter_script>>, using this particular very simple script turned out to be both wasteful for storing UTXOs and a little less secure than the scripts in more prominent use now.
 For now, we'll go through what addresses are and how they are encoded.
 
-=== Transmitting your Public Key
+=== Transmitting Your Public Key
 
 In order for Alice to pay Bob, she has to know where to send the money.
 This is true not just in Bitcoin, but any method of payment.
@@ -298,16 +298,16 @@ Unfortunately, SEC format, especially uncompressed is a bit long (65 or 33 bytes
 Furthermore, the 65 or 33 bytes are in binary format, not something that's easy to read, at least raw.
 
 There are three major considerations.
-The first is that the public key be readable (easy to hand write and not too difficult to mistake say over the phone).
+The first is that the public key be readable (easy to hand-write and not too difficult to mistake, say, over the phone).
 The second is that it's short (not be so long that it's cumbersome).
 The third is that it's secure (harder to make mistakes).
 
-So how do we get readability, compression and security?
+So how do we get readability, compression, and security?
 If we express the SEC format in hexadecimal (4 bits per character), it's double the length (130 or 66 characters).
 Can we do better?
 
-We can use something like Base64 which can express 6 bits per character and becomes 87 characters for uncompressed SEC and 44 characters for compressed SEC.
-Unfortunately, Base64 is prone to mistakes as a lot of letters and numbers look similar (`0` and `O`, `l` and `I`, `-` and `_`).
+We can use something like Base64, which can express 6 bits per character and becomes 87 characters for uncompressed SEC and 44 characters for compressed SEC.
+Unfortunately, Base64 is prone to mistakes, as a lot of letters and numbers look similar (`0` and `O`, `l` and `I`, `-` and `_`).
 If we remove these characters, we can have something that's got good readability and decent compression (around 5.86 bits per character).
 Lastly, we can add a checksum at the end to ensure that mistakes are easy to detect.
 
@@ -316,8 +316,8 @@ Instead of hexadecimal (base 16) or Base64, we're encoding numbers in Base58.
 
 The actual mechanics of doing the Base58 encoding are as follows.
 
-All numbers, upper case letters and lower case letters are utilized except for the aforementioned `0/O` and `l/I`.
-That leaves us with 10 + 26 + 26 - 4 = 58.
+All numbers, uppercase letters, and lowercase letters are utilized except for the aforementioned `0/O` and `l/I`.
+That leaves us with 10 + 26 + 26 – 4 = 58.
 Each of these characters represents a digit in base 58.
 We can encode with a function that does exactly this:
 
@@ -330,20 +330,20 @@ include::code-ch04/helper.py[tag=source2]
 <1> The purpose of this loop is to determine how many of the bytes at the front are 0 bytes.
 We want to add them back at the end.
 <2> This is the loop that figures out what Base58 digit to use.
-<3> Finally, we prepend all the zeros that we counted at the front because otherwise, they wouldn't show up as prefixed 1's.
+<3> Finally, we prepend all the zeros that we counted at the front because otherwise, they wouldn't show up as prefixed ones.
 This annoyingly happens with pay-to-pubkey-hash (p2pkh).
 More on that in <<chapter_script>>.
 
 This function will take any bytes in Python 3 and convert it to Base58.
 
 [NOTE]
-.Why Base58 is on the way out
+.Why Base58 Is on the Way Out
 ====
-Base58 has been used for a long time and while it does make it somewhat easier than something like Base64 to communicate, it's not really that convenient.
-Most people prefer to copy and paste the addresses and if you've ever tried to communicate a Base58 address over voice, you know it can be a nightmare.
+Base58 has been used for a long time, and while it does make it somewhat easier than something like Base64 to communicate, it's not really that convenient.
+Most people prefer to copy and paste the addresses, and if you've ever tried to communicate a Base58 address over voice, you know it can be a nightmare.
 
-What's much better is the new Bech32 standard which is defined in BIP0173.
-Bech32 uses a 32-character alphabet that's just numbers and lower case letters except `1`, `b`, `i` and `o`.
+What's much better is the new Bech32 standard, which is defined in BIP0173.
+Bech32 uses a 32-character alphabet that's just numbers and lowercase letters except `1`, `b`, `i` and `o`.
 These are thus far only used for Segwit (<<chapter_segwit>>).
 ====
 
@@ -351,7 +351,7 @@ include::code-ch04/answers.py[tag=exercise4,indent=0]
 
 === Address Format
 
-The 264 bits from a compressed SEC format is still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
+The 264 bits from a compressed SEC format are still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
 To both shorten and increase security, we can use the ripemd160 hash to reduce the size to a 20-byte hash.
 
 By not using the SEC format directly, we can go from 33 bytes to 20 bytes, shortening the address significantly.
@@ -359,7 +359,7 @@ Here is how a Bitcoin address is created:
 
 1. For mainnet addresses, start with the prefix `0x00`, for testnet `0x6f`.
 2. Take the SEC format (compressed or uncompressed) and do a sha256 operation followed by the ripemd160 hash operation, the combination which is called a hash160 operation.
-3. Combine the prefix from #1 and resulting hash from #2
+3. Combine the prefix from #1 and resulting hash from #2.
 4. Do a hash256 of the result from #3 and get the first 4 bytes.
 5. Take the combination of #3 and #4 and encode in Base58.
 
@@ -373,15 +373,15 @@ include::code-ch04/helper.py[tag=source3]
 <1> Note that the `.decode('ascii')` part is necessary to convert from Python 3 bytes to a Python 3 string.
 
 [NOTE]
-.What is testnet?
+.What Is Testnet?
 ====
 Testnet is a parallel bitcoin network that's meant to be used by developers.
-The coins on there are not worth anything and the proof-of-work required to find a block relatively easy.
-The mainnet chain as of this writing has around 550,000 blocks, testnet has around 1,450,000 blocks, which is significantly more.
+The coins on there are not worth anything and the proof-of-work required to find a block is relatively easy.
+The mainnet chain as of this writing has around 550,000 blocks, while testnet has significantly more (around 1,450,000 blocks).
 ====
 
 The process of doing a sha256 operation followed by a ripemd160 operation is called a hash160 operation in Bitcoin.
-We can implement this in `helper.py`.
+We can implement this in _helper.py_.
 
 [source,python]
 ----
