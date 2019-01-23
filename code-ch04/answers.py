@@ -2,10 +2,10 @@
 # tag::exercise1[]
 ==== Exercise 1
 
-Find the uncompressed SEC format for the Public Key where the Private Key secrets are:
+Find the uncompressed SEC format for the public key where the private key secrets are:
 
-* 5000
-* 2018^5^
+* 5,000
+* 2,018^5^
 * 0xdeadbeef12345
 # end::exercise1[]
 # tag::answer1[]
