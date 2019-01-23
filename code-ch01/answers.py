@@ -4,10 +4,10 @@
 
 Solve these problems in __F__~57~ (assume all pass:[+s] here are pass:[+<sub><em>f</em></sub>] and –s here are pass:[–<sub><em>f</em></sub>])
 
-* 44+33
-* 9-29
-* 17+42+49
-* 52-30-38
+* 44 + 33
+* 9 – 29
+* 17 + 42 + 49
+* 52 – 30 – 38
 # end::exercise2[]
 # tag::answer2[]
 >>> prime = 57
@@ -79,7 +79,7 @@ For _p_ = 7, 11, 17, 31, what is this set in __F~p~__?
 
 ++++
 <ul class="simplelist">
-<li>{1<sup>(p-1)</sup>, 2<sup>(p-1)</sup>, 3<sup>(p-1)</sup>, 4<sup>(p-1)</sup>, ... (p-1)<sup>(p-1)</sup>}</li>
+<li>{1<sup>(<em>p</em> – 1)</sup>, 2<sup>(<em>p</em> – 1)</sup>, 3<sup>(<em>p</em> – 1)</sup>, 4<sup>(<em>p</em> – 1)</sup>, ... (<em>p</em> – 1)<sup>(<em>p</em> – 1)</sup>}</li>
 </ul>
 ++++
 
@@ -98,11 +98,11 @@ For _p_ = 7, 11, 17, 31, what is this set in __F~p~__?
 # tag::exercise8[]
 ==== Exercise 8
 
-Solve the following equations in F~31~:
+Solve the following equations in __F__~31~:
 
 * 3 / 24
 * 17^–3^
-* 4^–4^⋅11
+* 4^–4^ ⋅ 11
 # end::exercise8[]
 # tag::answer8[]
 >>> prime = 31
