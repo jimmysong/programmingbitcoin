@@ -2,7 +2,7 @@
 # tag::exercise12[]
 ==== Exercise 12
 
-Calculate the new bits given the first and last blocks of this 2,016 block difficulty adjustment period:
+Calculate the new bits given the first and last blocks of this 2,016-block difficulty adjustment period:
 
 Block 471744:
 
