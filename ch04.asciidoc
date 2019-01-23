@@ -74,17 +74,17 @@ include::code-ch04/answers.py[tag=exercise1,indent=0]
 
 === Compressed SEC Format
 
-Recall that for any _x_ coordinate, there are at most two _y_ coordinates due to the y^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>):
+Recall that for any _x_ coordinate, there are at most two _y_ coordinates due to the __y__^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>):
 
 [[the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve]]
-.The two possible values for y are where this vertical line intersects the curve.
+.The two possible values for y are where this vertical line intersects the curve
 image::images/prbc_0212.png[Elliptic Curve Vertical Line]
 
 It turns out that even over a Finite Field, we have the same symmetry.
 
-This is because for any (x,y) that satisfies y^2^=x^3^+ax+b, (x,-y) also satisfies the equation.
-Furthermore, in a Finite Field, -y (mod p) = p - y.
-Or more accurately, if (x,y) satisfies the elliptic curve equation, (x,p-y) also satisfies the equation.
+This is because for any (_x_,_y_) that satisfies __y__^2^ = __x__^3^ + __ax__ + __b__, (_x_,–__y__) also satisfies the equation.
+Furthermore, in a Finite Field, –__y__ (mod _p_) = _p_ – _y_.
+Or more accurately, if (_x_,_y_) satisfies the elliptic curve equation, (_x_,_p_ – _y_) also satisfies the equation.
 These are the only two solutions for a given x as shown above, so if we know x, we know _y_ coordinate has to be either `y` or `p-y`.
 
 Since `p` is a prime number greater than 2, we know that `p` is odd.
@@ -93,7 +93,7 @@ If `y` is odd, `p-y` will be even.
 In other words, between `y` and `p-y` exactly one will be even and one will be odd.
 This is something we can use to our advantage to shorten the Uncompressed SEC Format.
 We can provide the _x_ coordinate and the even-ness of the _y_ coordinate.
-We call this the *Compressed SEC format* because of how the _y_ coordinate is compressed into a single byte (namely, whether it's even or odd).
+We call this the _Compressed SEC format_ because of how the _y_ coordinate is compressed into a single byte (namely, whether it's even or odd).
 
 Here is the serialization of the Compressed SEC format for a given point P=(x,y):
 
@@ -104,8 +104,8 @@ If `y` is even, it's `0x02`, otherwise it's `0x03`.
 The Compressed SEC format is in <<compressed_sec_format>>:
 
 [[compressed_sec_format]]
-.Compressed SEC Format
-image::images/prbc_0403.png[Compressed SEC Format]
+.Compressed SEC format
+image::images/prbc_0403.png[Compressed SEC format]
 
 Again, the procedure is pretty straightforward.
 We can update the `sec` method to handle compressed SEC keys.
@@ -121,51 +121,85 @@ The big advantage of the Compressed SEC format is that it only takes up 33 bytes
 This is a big savings when amortized over millions of transactions.
 
 At this point, you may be wondering how you can analytically calculate `y` given the _x_ coordinate.
-This requires us to calculate a square-root in a Finite Field.
+This requires us to calculate a square root in a Finite Field.
 
 Stated mathematically:
 
-Find w such that w^2^ = v when we know v.
+Find _w_ such that __w__^2^ = _v_ when we know _v_.
 
-It turns out that if the Finite Field prime p % 4 = 3, we can do this rather easily.
+It turns out that if the Finite Field prime _p_ % 4 = 3, we can do this rather easily.
 Here's how.
 
 First, we know:
 
-p % 4 == 3
+++++
+<ul class="simplelist">
+<li><em>p</em> % 4 == 3</li>
+</ul>
+++++
 
-Which implies
+which implies
 
-(p + 1) % 4 == 0
+++++
+<ul class="simplelist">
+<li>(<em>p</em> + 1) % 4 == 0</li>
+</ul>
+++++
 
-That is (p+1)/4 is an integer.
+That is, (__p__ + 1)/4 is an integer.
 
 By definition,
 
-w^2^ = v
 
-We are looking for a formula to calculate w.
+++++
+<ul class="simplelist">
+<li><em>w</em><sup>2</sup> = <em>v</em></li>
+</ul>
+++++
+
+We are looking for a formula to calculate _w_.
 From Fermat's Little Theorem:
 
-w^p-1^ % p = 1
 
-Which means:
+++++
+<ul class="simplelist">
+<li><em>w</em><sup><em>p</em>–1</sup> % <em>p</em> = 1</li>
+</ul>
+++++
 
-w^2^=w^2^⋅1=w^2^⋅w^p-1^=w^(p+1)^
+which means:
 
-Since p is odd (recall p is prime), we know we can divide (p+1) by two and still get an integer implying
+++++
+<ul class="simplelist">
+<li><em>w</em><sup>2</sup>=<em>w</em><sup>2</sup> ⋅ 1 = <em>w</em><sup>2</sup> ⋅ <em>w</em><sup><em>p</em>–1</sup>=<em>w</em><sup>(<em>p</em>+1)</sup></li>
+</ul>
+++++
 
-w=w^(p+1)/2^
+Since _p_ is odd (recall _p_ is prime), we know we can divide (_p_+1) by 2 and still get an integer implying
 
-Now we can use (p+1)/4 being an integer this way:
+++++
+<ul class="simplelist">
+<li><em>w</em> = <em>w</em><sup>(<em>p</em>+1)/2</sup></li>
+</ul>
+++++
 
-w=w^(p+1)/2^=w^2(p+1)/4^=(w^2^)^(p+1)/4^=v^(p+1)/4^
+Now we can use (_p_+1)/4 being an integer this way:
+
+++++
+<ul class="simplelist">
+<li><em>w</em> = <em>w</em><sup>(<em>p</em>+1)/2</sup> = <em>w</em><sup>2(<em>p</em>+1)/4</sup> = (<em>w</em><sup>2</sup>)<sup>(<em>p</em>+1)/4</sup> = <em>v</em><sup>(<em>p</em>+1)/4</sup></li>
+</ul>
+++++
 
 So our formula for finding the square root becomes:
 
-if w^2^ = v and p % 4 = 3, w = v^(p+1)/4^
+++++
+<ul class="simplelist">
+<li>if <em>w</em><sup>2</sup> = <em>v</em> and <em>p</em> % 4 = 3, <em>w</em> = <em>v</em><sup>(<em>p</em>+1)/4</sup></li>
+</ul>
+++++
 
-It turns out that the `p` used in secp256k1 is such that p % 4 == 3, so we can use this formula:
+It turns out that the `p` used in secp256k1 is such that _p_ % 4 == 3, so we can use this formula:
 
 * w^2^=v
 * w=v^(p+1)/4^
