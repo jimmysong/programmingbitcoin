@@ -293,7 +293,7 @@ image::images/prbc_0608.png[P2PK ScriptSig]
 The ScriptPubKey and ScriptSig combine to make an instruction set that looks like <<p2pk_combined>>.
 
 [[p2pk_combined]]
-.p2pk Combined
+.p2pk combined
 image::images/prbc_0609.png[P2PK Combination]
 
 The two columns in <<p2pk_start>> are instructions of Script and the elements stack.
@@ -302,21 +302,21 @@ The Script instructions are processed one instruction at a time.
 In <<p2pk_start>>, we start with the instructions as combined in <<p2pk_combined>>.
 
 [[p2pk_start]]
-.p2pk Start
+.p2pk start
 image::images/prbc_0610.png[P2PK Start]
 
 The first instruction is the signature, which is an element.
 This is data that is pushed to the stack (<<pspk_step_1>>).
 
 [[pspk_step_1]]
-.p2pk Step 1
+.p2pk step 1
 image::images/prbc_0611.png[P2PK Step 1]
 
 The second instruction is the pubkey, which is also an element.
 Again, this is data that is pushed to the stack (<<pspk_step_2>>).
 
 [[pspk_step_2]]
-.p2pk Step 2
+.p2pk step 2
 image::images/prbc_0612.png[P2PK Step 2]
 
 `OP_CHECKSIG` consumes two stack instructions (pubkey and signature) and determines if they are valid for this transaction.
@@ -324,19 +324,19 @@ image::images/prbc_0612.png[P2PK Step 2]
 Assuming that the signature is valid for this public key, we have the situation shown in <<pspk_step_3>>.
 
 [[pspk_step_3]]
-.p2pk Step 3
+.p2pk step 3
 image::images/prbc_0613.png[P2PK End 1]
 
 We're finished processing all the instructions of Script and we've ended with a single element on the stack.
-Since the top element is not zero, (1 is definitely not 0), this Script is valid.
+Since the top element is not zero (1 is definitely not 0), this Script is valid.
 
-If this transaction instead had an invalid signature, the result from `OP_CHECKSIG` would be zero, ending our Script processing like <<p2pk_end>>:
+If this transaction instead had an invalid signature, the result from `OP_CHECKSIG` would be zero, ending our Script processing as shown in <<p2pk_end>>.
 
 [[p2pk_end]]
-.p2pk End
+.p2pk end
 image::images/prbc_0614.png[P2PK End 2]
 
-We end with a single element on the stack which is zero.
+We end with a single element on the stack, which is zero.
 Since the top element is zero, the combined Script is invalid and a transaction with this ScriptSig in the input is invalid.
 
 The combined Script will validate if the signature is valid, but fail if the signature is invalid.
@@ -357,11 +357,11 @@ What we want to be able to do is this:
 ----
 include::code-ch06/examples.py[tag=example1]
 ----
-<1> p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG` which is `0xac` or 170.
-<2> We can do this because of the `__add__` method we created above.
+<1> p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG`, which is `0xac` or 170.
+<2> We can do this because of the `__add__` method we just created.
 <3> We want to evaluate the instructions and see if the Script validates.
 
-Here is the method that we'll use for the _combined_ instruction set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current transaction).
+Here is the method that we'll use for the _combined_ instruction set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current transaction):
 
 [source,python]
 ----
@@ -371,15 +371,15 @@ class Script:
 ...
 include::code-ch06/script.py[tag=source5]
 ----
-<1> As the instructions list will change, we make a copy
-<2> We execute until the instructions list is empty
-<3> The function that executes the opcode is in the `OP_CODE_FUNCTIONS` array (e.g.
-`OP_DUP`, `OP_CHECKSIG`, etc)
+<1> As the instructions list will change, we make a copy.
+<2> We execute until the instructions list is empty.
+<3> The function that executes the opcode is in the `OP_CODE_FUNCTIONS` array (e.g.,
+`OP_DUP`, `OP_CHECKSIG`, etc.).
 <4> 99 and 100 are `OP_IF` and `OP_NOTIF` respectively.
 They require manipulation of the instructions array based on the top element of the stack.
 <5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK` respectively.
-They move stack elements to/from an "alternate" stack, which we call altstack.
-<6> 172, 173, 174 and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from <<chapter_elliptic_curve_cryptography>> for signature validation.
+They move stack elements to/from an "alternate" stack, which we call _altstack_.
+<6> 172, 173, 174, and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from <<chapter_elliptic_curve_cryptography>> for signature validation.
 <7> If the instruction is not an opcode, it's an element, so we push that element to the stack.
 <8> If the stack is empty at the end of processing all the instructions, we fail the Script by returning `False`.
 <9> If the stack's top element is an empty byte string (which is how the stack stores a 0), then we also fail the Script by returning `False`.
@@ -388,22 +388,22 @@ They move stack elements to/from an "alternate" stack, which we call altstack.
 [WARNING]
 .Making Script Evaluation Safe
 ====
-The code shown here is a little bit of a cheat as the combined Script is not executed this way exactly.
+The code shown here is a little bit of a cheat, as the combined Script is not exactly executed this way.
 The ScriptSig is evaluated separately from the ScriptPubKey as to not allow operations from ScriptSig to affect the ScriptPubKey instructions.
 
 Specifically, the stack after all the ScriptSig instructions are evaluated are stored and then the ScriptPubkey instructions are evaluated on their own with the stack from the first execution.
 ====
 
 
-==== Stack elements under the hood
+==== Stack Elements Under the Hood
 
 It may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte-strings like a DER signature or SEC pubkey.
 Under the hood, they're all bytes, but some are interpreted as numbers for certain opcodes.
 For example, 1 is stored on the stack as the `01` byte, 2 is stored as the `02` byte, 999 as the `e703` and so on.
 Any byte-string is interpreted as a Little-Endian number for arithmetic opcodes.
-The integer 0 is *not* stored as the `00` byte, but as the empty byte-string.
+The integer 0 is _not_ stored as the `00` byte, but as the empty byte-string.
 
-The code in `op.py` can clarify what's going on:
+The code in _op.py_ can clarify what's going on:
 
 [source,python]
 ----
@@ -423,28 +423,27 @@ This works well, but there are some problems.
 First, the public keys are long.
 We know from <<chapter_serialization>> that secp256k1 public points are 33 bytes in compressed SEC and 65 bytes in uncompressed SEC.
 Unfortunately, humans can't interpret 33 or 65 raw bytes easily.
-Most character encodings don't render certain byte ranges as they are control characters, newlines or similar.
+Most character encodings don't render certain byte ranges as they are control characters, newlines, or similar.
 The SEC format is typically encoded instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8).
 This makes the compressed and uncompressed SEC formats 66 and 130 characters respectively, which is bigger than most identifiers (your username on a website, for instance, is usually less than 20).
-To compound this, early Bitcoin transactions didn't use the compressed versions so the hexadecimal addresses were 130 characters each!
+To compound this, early Bitcoin transactions didn't use the compressed versions, so the hexadecimal addresses were 130 characters each!
 This is not fun or easy for people to transcribe, much less communicate by voice.
 
-That said, the original use-cases for p2pk were for IP-to-IP payments and mining outputs.
+That said, the original use cases for p2pk were for IP-to-IP payments and mining outputs.
 For IP-to-IP payments, IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that human communication wasn't necessarily a problem.
-Use for mining outputs also don't require human communication.
-Incidentally, this IP-to-IP payment system was phased out as it's not secure and prone to man-in-the-middle attacks.
+Use for mining outputs also doesn't require human communication.
+Incidentally, this IP-to-IP payment system was phased out because it's not secure and prone to man-in-the-middle attacks.
 
-.Why did Satoshi use the uncompressed SEC format?
+.Why Did Satoshi Use the Uncompressed SEC Format?
 ****
-It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium, so why did Satoshi use it?
-Satoshi was using the OpenSSL library to do the SEC format conversions and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
+It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium. So why did Satoshi use it?
+Satoshi was using the OpenSSL library to do the SEC format conversions, and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
 It's speculated this is why Satoshi used the uncompressed SEC format.
 
 When Pieter Wuille discovered that the compressed SEC format existed in OpenSSL, more people started using the compressed SEC format in Bitcoin.
 ****
 
-Second, because the public keys are long, this causes a more subtle problem.
-The UTXO set becomes bigger since this large public key has to be kept around and indexed to see if it's spendable.
+Second, because the public keys are long, this causes a more subtle problem: since this large public key has to be kept around and indexed to see if it's spendable, the UTXO set becomes bigger.
 This requires more resources on the part of full nodes.
 
 Third, because we're storing the public key in the ScriptPubKey field, it's known to everyone.
@@ -452,16 +451,16 @@ That means should ECDSA someday be broken, these outputs could be stolen.
 This is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and would affect all of those things, too.
 For example, quantum computing has the potential to reduce the calculation times significantly for RSA and ECDSA, so having something else in addition to protect these outputs would be more secure.
 
-=== Solving the problems with p2pkh
+=== Solving the Problems with p2pkh
 
 Pay-to-pubkey-hash (p2pkh) is an alternative Script that has advantages over p2pk:
 
 1. The addresses are shorter.
 2. It's additionally protected by sha256 and ripemd160.
 
-Addresses are shorter due to the use of the sha256 and ripemd160 hashing algorithms.
+Addresses are shorter because it uses the sha256 and ripemd160 hashing algorithms.
 We do both in succession and call that hash160.
-The result of hash160 is 160-bits or 20 bytes, which are encoded into an address.
+The result of hash160 is 160 bits or 20 bytes, which are encoded into an address.
 
 The result is what you may have seen on the Bitcoin network and coded in <<chapter_serialization>>:
 
@@ -479,19 +478,19 @@ Given p2pkh is shorter and more secure, p2pk use declined significantly after 20
 
 === p2pkh
 
-Pay-to-pubkey-hash was used during the early days of bitcoin, though not as much as p2pk.
+Pay-to-pubkey-hash was used during the early days of Bitcoin, though not as much as p2pk.
 
-The p2pkh ScriptPubKey, or locking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptpubkey>>:
+The p2pkh ScriptPubKey, or locking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptpubkey>>.
 
 [[pay_to_pubkey_hash_p2pkh_scriptpubkey]]
 .Pay-to-pubkey-hash (p2pkh) ScriptPubKey
 image::images/prbc_0615.png[P2PKH ScriptPubKey]
 
 Like p2pk, `OP_CHECKSIG` is here and `OP_HASH160` makes an appearance.
-Unlike p2pk, the SEC pubkey is not here but a 20 byte hash is.
+Unlike p2pk, the SEC pubkey is not here, but a 20-byte hash is.
 There is also a new opcode here: `OP_EQUALVERIFY`.
 
-The p2pkh ScriptSig, or the unlocking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptsig>>:
+The p2pkh ScriptSig, or the unlocking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptsig>>.
 
 [[pay_to_pubkey_hash_p2pkh_scriptsig]]
 .Pay-to-pubkey-hash (p2pkh) ScriptSig
