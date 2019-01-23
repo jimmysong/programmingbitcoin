@@ -261,11 +261,11 @@ All numbers in an ECDSA signature are positive, so we have to prepend with `0x00
 The DER format is shown in <<der_format>>.
 
 [[der_format]]
-.DER Format
+.DER format
 image::images/prbc_0404.png[DER format]
 
-Because we know `r` is a 256-bit integer, `r` will be at most 32-bytes expressed as Big-Endian.
-It's also possible the first byte could be >= 0x80, so part 4 can be at most 33-bytes.
+Because we know `r` is a 256-bit integer, `r` will be at most 32 bytes expressed as Big-Endian.
+It's also possible the first byte could be &ge; 0x80, so part 4 can be at most 33 bytes.
 However, if `r` is a relatively small number, it could be less than 32 bytes.
 Same goes for `s` and part 6.
 
