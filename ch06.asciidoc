@@ -169,12 +169,12 @@ For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` ++
 Anything larger than 520 bytes is not allowed on the network, so `OP_PUSHDATA4` is unnecessary, though `OP_PUSHDATA4` ++<__4-byte length of the element in Little-Endian, but value less than or equal to 520__>++ ++<__element__>++ is still legal.
 
 It is possible to encode a number below 76 using `OP_PUSHDATA1` or a number below 256 using `OP_PUSHDATA2` or even any number 520 and below using `OP_PUSHDATA4`.
-These are considered non-standard transactions, meaning most bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
+These are considered nonstandard transactions, meaning most bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
 ====
 
-There are many more opcodes, which are coded in `op.py` and the full list can be found at http://wiki.bitcoin.it.
+There are many more opcodes, which are coded in _op.py_, and the full list can be found at https://en.bitcoin.it/wiki/Script.[].
 
-==== Coding a Script parser and serializer
+==== Coding a Script Parser and Serializer
 
 Now that we know how Script works, we can write a Script parser.
 
@@ -189,7 +189,7 @@ include::code-ch06/script.py[tag=source2]
 <3> We parse until the right amount of bytes are consumed.
 <4> The byte determines if we have an opcode or element.
 <5> This converts the byte into an integer in Python.
-<6> For a number between 1 to 75, we know the next n bytes are an element
+<6> For a number between 1 and 75 inclusive, we know the next +n+ bytes are an element
 <7> 76 is `OP_PUSHDATA1`, so the next byte tells us how many bytes to read
 <8> 77 is `OP_PUSHDATA2`, so the next two bytes tell us how many bytes to read
 <9> We have an opcode that we store.
@@ -204,36 +204,36 @@ class Script:
 include::code-ch06/script.py[tag=source3]
 ----
 <1> If the instruction is an integer, we know that's an opcode.
-<2> If the byte is between 1 and 75 inclusive, we encode the length as a single byte
+<2> If the byte is between 1 and 75 inclusive, we encode the length as a single byte.
 <3> For any element with length from 76 to 255, we put `OP_PUSHDATA1` first, then encode the length as a single byte and finally, the element.
-<4> For anything from 256 to 520, we put `OP_PUSHDATA2` first, then encode the length as two bytes in little Endian and finally, the element
+<4> For anything from 256 to 520, we put `OP_PUSHDATA2` first, then encode the length as two bytes in Little Endian and finally, the element.
 <5> Any element longer than 520 bytes cannot be serialized.
 <6> Script serialization starts with the length of the entire Script.
 
-Note that both the parser and serializer were used in <<chapter_tx_parsing>> parsing/serializing the ScriptSig and ScriptPubKey fields.
+Note that both the parser and serializer were used in <<chapter_tx_parsing>>, parsing/serializing the ScriptSig and ScriptPubKey fields.
 
-=== Combining the Script fields
+=== Combining the Script Fields
 
 The Script object represents the instruction set that requires evaluation.
 To evaluate Script, we need to combine the ScriptPubKey and ScriptSig fields.
 The lockbox (ScriptPubKey) and the unlocking (ScriptSig) are in _different_ transactions.
 Specifically, the lockbox is where the bitcoins are received, the unlocking is where the bitcoins are spent.
 The input in the spending transaction _points to the receiving transaction_.
-Essentially, we have a situation like <<scriptpubkey_and_scriptsig>>:
+Essentially, we have a situation like <<scriptpubkey_and_scriptsig>>.
 
 [[scriptpubkey_and_scriptsig]]
 .ScriptPubKey and ScriptSig
 image::images/prbc_0606.png[ScriptPubKey and ScriptSig]
 
 Since ScriptSig unlocks ScriptPubKey, we need a mechanism by which the two Scripts combine.
-To evaluate the two together, we take the instructions from ScriptSig and ScriptPubKey and combine them as above.
+To evaluate the two together, we take the instructions from ScriptSig and ScriptPubKey and combine them as in <<scriptpubkey_and_scriptsig>>.
 The instructions from the ScriptSig go on top of all the instructions from ScriptPubKey.
 Instructions are processed one at a time until no instructions are left to be processed or if the Script fails early.
 
-==== Coding the combined instruction set
+==== Coding the Combined Instruction Set
 
-The evaluation of Script requires that we take the ScriptSig and ScriptPubKey, combine them into a single instruction set and execute the instructions.
-In order to do this, we require a way to combine the Scripts.
+The evaluation of Script requires that we take the ScriptSig and ScriptPubKey, combine them into a single instruction set, and execute the instructions.
+To do this, we require a way to combine the Scripts.
 
 [source,python]
 ----
@@ -247,13 +247,13 @@ We will use this ability to combine Scripts for evaluation later in this chapter
 
 === Standard Scripts
 
-There are many types of standard Scripts in Bitcoin including the following:
+There are many types of standard Scripts in Bitcoin, including the following:
 
-* p2pk - Pay-to-pubkey
-* p2pkh - Pay-to-pubkey-hash
-* p2sh - Pay-to-Script-hash
-* p2wpkh - Pay-to-witness-pubkey-hash
-* p2wsh - Pay-to-witness-Script-hash
+p2pk:: Pay-to-pubkey
+p2pkh:: Pay-to-pubkey-hash
+p2sh:: Pay-to-Script-hash
+p2wpkh:: Pay-to-witness-pubkey-hash
+p2wsh:: Pay-to-witness-Script-hash
 
 Addresses are data that fit into known Script templates like these.
 Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKey.
@@ -263,19 +263,18 @@ To show exactly how all this works, we'll start with one of the original Scripts
 
 === p2pk
 
-Pay-to-pubkey (p2pk) was used largely during the early days of bitcoin.
-Most coins thought to belong to Satoshi are in p2pk UTXOs.
-That is, transaction outputs whose ScriptPubKeys have the p2pk form.
-There are some limitations that we'll discuss later, but first, let's look at how p2pk works.
+Pay-to-pubkey (p2pk) was used largely during the early days of Bitcoin.
+Most coins thought to belong to Satoshi are in p2pk UTXOs—that is, transaction outputs whose ScriptPubKeys have the p2pk form.
+There are some limitations that we'll discuss in <<problemsp2pk>>, but first, let's look at how p2pk works.
 
 Back in <<chapter_elliptic_curve_cryptography>>, we learned both ECDSA signing and verification.
-In order to verify an ECDSA signature, we need the message, `z`, the public key, `P` and the signature, `r` and `s`.
-In p2pk, Bitcoins are sent to a public key and the owner of the private key can unlock, or spend the Bitcoins by creating a signature.
+To verify an ECDSA signature, we need the message, `z`, the public key, `P`, and the signature, `r` and `s`.
+In p2pk, Bitcoins are sent to a public key, and the owner of the private key can unlock or spend the Bitcoins by creating a signature.
 The ScriptPubKey of a Transaction puts the assigned Bitcoins under the control of the private key owner.
 
 Specifying where the Bitcoins go is the job of the ScriptPubKey.
-ScriptPubKey is the lockbox that receives the bitcoins.
-The p2pk ScriptPubKey looks like <<pay_to_pubkey_p2pk_scriptpubkey>>:
+ScriptPubKey is the lockbox that receives the Bitcoins.
+The p2pk ScriptPubKey looks like <<pay_to_pubkey_p2pk_scriptpubkey>>.
 
 [[pay_to_pubkey_p2pk_scriptpubkey]]
 .Pay-to-pubkey (p2pk) ScriptPubKey
@@ -285,7 +284,7 @@ Note the `OP_CHECKSIG`, as that will be very important.
 The ScriptSig is the part that unlocks the received bitcoins.
 The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see <<chapter_serialization>>).
 
-For p2pk, the ScriptSig required to unlock the corresponding ScriptPubKey is just the signature as shown in <<pay_to_pubkey_p2pk_scriptsig>>:
+For p2pk, the ScriptSig required to unlock the corresponding ScriptPubKey is just the signature as shown in <<pay_to_pubkey_p2pk_scriptsig>>.
 
 [[pay_to_pubkey_p2pk_scriptsig]]
 .Pay-to-pubkey (p2pk) ScriptSig
@@ -415,6 +414,7 @@ Numbers being pushed to the stack are encoded into bytes and decoded from bytes 
 
 include::code-ch06/answers.py[tag=exercise2,indent=0]
 
+[[problemsp2pk]]
 === Problems with p2pk
 
 Pay-to-pub-key is intuitive in the sense that there is a public key that anyone can send Bitcoins to and a signature that can only be produced by the owner of the private key.
