@@ -290,16 +290,16 @@ For p2pk, the ScriptSig required to unlock the corresponding ScriptPubKey is jus
 .Pay-to-pubkey (p2pk) ScriptSig
 image::images/prbc_0608.png[P2PK ScriptSig]
 
-The ScriptPubKey and ScriptSig combine to make an instruction set that looks like <<p2pk_combined>>:
+The ScriptPubKey and ScriptSig combine to make an instruction set that looks like <<p2pk_combined>>.
 
 [[p2pk_combined]]
 .p2pk Combined
 image::images/prbc_0609.png[P2PK Combination]
 
-The two columns below are instructions of Script and the elements stack.
-At the end of this processing, the top element of the stack must be non-zero to be considered a valid ScriptSig.
+The two columns in <<p2pk_start>> are instructions of Script and the elements stack.
+At the end of this processing, the top element of the stack must be nonzero to be considered a valid ScriptSig.
 The Script instructions are processed one instruction at a time.
-We start with the instructions as combined above (<<p2pk_start>>):
+In <<p2pk_start>>, we start with the instructions as combined in <<p2pk_combined>>.
 
 [[p2pk_start]]
 .p2pk Start
@@ -313,15 +313,15 @@ This is data that is pushed to the stack (<<pspk_step_1>>).
 image::images/prbc_0611.png[P2PK Step 1]
 
 The second instruction is the pubkey, which is also an element.
-This is again, data is pushed to the stack (<<pspk_step_2>>).
+Again, this is data that is pushed to the stack (<<pspk_step_2>>).
 
 [[pspk_step_2]]
 .p2pk Step 2
 image::images/prbc_0612.png[P2PK Step 2]
 
-`OP_CHECKSIG` consumes 2 stack instructions (pubkey and signature) and determines if they are valid for this transaction.
+`OP_CHECKSIG` consumes two stack instructions (pubkey and signature) and determines if they are valid for this transaction.
 `OP_CHECKSIG` will push a 1 to the stack if the signature is valid, 0 if not.
-Assuming that the signature is valid for this public key, we have this situation (<<pspk_step_3>>):
+Assuming that the signature is valid for this public key, we have the situation shown in <<pspk_step_3>>.
 
 [[pspk_step_3]]
 .p2pk Step 3
