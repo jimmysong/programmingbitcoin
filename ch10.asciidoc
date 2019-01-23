@@ -190,7 +190,7 @@ include::code-ch10/answers.py[tag=exercise5,indent=0]
 
 Now that we have code to connect to a node, what can we do?
 When any node first connects to the network, the data that's most crucial to get and verify are the block headers.
-For full nodes, downloading the Block headers allows them to asynchronously ask for full blocks from multiple nodes, parallelizing the download of the blocks.
+For full nodes, downloading the block headers allows them to asynchronously ask for full blocks from multiple nodes, parallelizing the download of the blocks.
 For light clients, downloading headers allows them to verify the proof-of-work in each block.
 As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network, but that requires the light clients to have the block headers.
 

@@ -27,8 +27,8 @@ When getting paid Bitcoins, however, we have a dilemma.
 If we are connected and have the full blockchain, we can easily see when the transaction is in a sufficiently deep block, at which point we'd give them our goods or services.
 If we don't have the full blockchain, as with a phone, what can we do?
 
-The answer lies in the Merkle Root field from the Block header that we saw in <<chapter_blocks>>.
-As we saw in the last chapter, we can download the Block headers and verify that they meet the Bitcoin consensus rules.
+The answer lies in the Merkle Root field from the block header that we saw in <<chapter_blocks>>.
+As we saw in the last chapter, we can download the block headers and verify that they meet the Bitcoin consensus rules.
 In this chapter we're going to work toward getting proof that a particular transaction is in a block that we know about.
 Since the block header is secured by proof-of-work, a transaction with a Proof of Inclusion in that block means, at a minimum, there was a good deal of energy spent to produce that block.
 This means that the cost to deceive you would be at least the cost of the proof-of-work for the block.
