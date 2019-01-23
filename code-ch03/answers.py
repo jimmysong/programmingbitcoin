@@ -48,15 +48,18 @@ For the curve __y__^2^ = __x__^3^ + 7 over __F__~223~, find:
 >>> p1 = Point(FieldElement(170, prime), FieldElement(142, prime), a, b)
 >>> p2 = Point(FieldElement(60, prime), FieldElement(139, prime), a, b)
 >>> print(p1+p2)
-Point(FieldElement_223(220),FieldElement_223(181))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(220),FieldElement_223(181))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> p1 = Point(FieldElement(47, prime), FieldElement(71, prime), a, b)
 >>> p2 = Point(FieldElement(17, prime), FieldElement(56, prime), a, b)
 >>> print(p1+p2)
-Point(FieldElement_223(215),FieldElement_223(68))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(215),FieldElement_223(68))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> p1 = Point(FieldElement(143, prime), FieldElement(98, prime), a, b)
 >>> p2 = Point(FieldElement(76, prime), FieldElement(66, prime), a, b)
 >>> print(p1+p2)
-Point(FieldElement_223(47),FieldElement_223(71))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(47),FieldElement_223(71))_FieldElement_223(0)_
+  FieldElement_223(7)
 
 # end::answer2[]
 # tag::exercise4[]
@@ -80,21 +83,26 @@ For the curve __y__^2^ = __x__^3^ + 7 over __F__~223~, find:
 >>> y1 = FieldElement(num=105, prime=prime)
 >>> p = Point(x1,y1,a,b)
 >>> print(p+p)
-Point(FieldElement_223(49),FieldElement_223(71))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(49),FieldElement_223(71))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> x1 = FieldElement(num=143, prime=prime)
 >>> y1 = FieldElement(num=98, prime=prime)
 >>> p = Point(x1,y1,a,b)
 >>> print(p+p)
-Point(FieldElement_223(64),FieldElement_223(168))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(64),FieldElement_223(168))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> x1 = FieldElement(num=47, prime=prime)
 >>> y1 = FieldElement(num=71, prime=prime)
 >>> p = Point(x1,y1,a,b)
 >>> print(p+p)
-Point(FieldElement_223(36),FieldElement_223(111))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(36),FieldElement_223(111))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> print(p+p+p+p)
-Point(FieldElement_223(194),FieldElement_223(51))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(194),FieldElement_223(51))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> print(p+p+p+p+p+p+p+p)
-Point(FieldElement_223(116),FieldElement_223(55))_FieldElement_223(0)_FieldElement_223(7)
+Point(FieldElement_223(116),FieldElement_223(55))_FieldElement_223(0)_
+  FieldElement_223(7)
 >>> print(p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p+p)
 Point(infinity)
 
