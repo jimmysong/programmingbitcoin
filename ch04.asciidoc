@@ -201,13 +201,13 @@ So our formula for finding the square root becomes:
 
 It turns out that the `p` used in secp256k1 is such that _p_ % 4 == 3, so we can use this formula:
 
-* w^2^=v
-* w=v^(p+1)/4^
+* __w__^2^ = _v_
+* __w__ = __v__^(__p__+1)/4^
 
-That will be one of the two possible w's the other will be p-w.
+That will be one of the two possible __w__'s; the other will be _p_ – _w_.
 This is due to taking the square root means that both the positive and negative will work.
 
-We can add this as a general method in the S256Field
+We can add this as a general method in the S256Field:
 
 [source,python]
 ----
@@ -226,7 +226,7 @@ include::code-ch04/ecc.py[tag=source3]
 ----
 <1> The uncompressed is pretty straightforward.
 <2> The evenness of the _y_ coordinate is given in the first byte.
-<3> We take the square-root of the right side of the Elliptic Curve equation to get the `y`.
+<3> We take the square root of the right side of the Elliptic Curve equation to get the `y`.
 <4> Determine evenness and return the correct point.
 
 include::code-ch04/answers.py[tag=exercise2,indent=0]
