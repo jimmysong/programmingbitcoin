@@ -4,19 +4,19 @@
 
 [.lead]
 The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin.
-Locking is giving some Bitcoins to some entity.
-Unlocking is spending some Bitcoins that you have received.
+_Locking_ is giving some Bitcoins to some entity.
+_Unlocking_ is spending some Bitcoins that you have received.
 
 In this chapter we examine this locking/unlocking mechanism, which is often called a _smart contract_.
-Elliptic Curve Cryptography (<<chapter_elliptic_curve_cryptography>>) is used to Script to validate that the transaction was properly authorized (<<chapter_tx_parsing>>).
-Script essentially allows people to be able to prove that they have the right to spend certain UTXOs.
+Elliptic Curve Cryptography (<<chapter_elliptic_curve_cryptography>>) is used by Script to validate that the transaction was properly authorized (<<chapter_tx_parsing>>).
+Script essentially allows people to prove that they have the right to spend certain UTXOs.
 We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
 
 === Mechanics of Script
 
 If you are confused about what a "smart contract" is, don't worry.
-"Smart contract" is a fancy way of saying "programmable" and the "smart contract language" is simply a programming language.
-In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which bitcoins are spendable.
+"Smart contract" is a fancy way of saying "programmable," and the "smart contract language" is simply a programming language.
+In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which Bitcoins are spendable.
 
 Bitcoin has the digital equivalent of a contract in Script.
 Script is a stack-based language similar to Forth.
@@ -24,37 +24,37 @@ Script is intentionally limited in the sense that Script avoids certain features
 Specifically, Script avoids any mechanism for loops and is therefore not Turing complete.
 
 [NOTE]
-.Why Bitcoin isn't Turing Complete
+.Why Bitcoin Isn't Turing Complete
 ====
-Turing completeness in a programming language essentially means that the program has the ability to loop.
+Turing Completeness in a programming language essentially means that the program has the ability to loop.
 Loops are a useful construct in programming, so you may be wondering at this point why Script doesn't have the ability to loop.
 
 There are a lot of reasons for this, but let's start with program execution.
 Anyone can create a Script program that every full node on the network executes.
 If Script were Turing Complete, it would be possible for the loop to go on executing forever.
-This would validating node to enter and never leave that loop.
+This would cause validating nodes to enter and never leave that loop.
 This would be an easy way to attack the network through what would be called a Denial of Service attack (DoS).
 A single Script that has an infinite loop could take down Bitcoin!
-This would be a large systematic vulnerability and protecting against this vulnerability is one of the major reasons why Turing-completeness is avoided.
-Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas".
-An infinite loop will exhaust whatever gas is in the contract as by definition, it will run an infinite number of times.
+This would be a large systematic vulnerability and protecting against this vulnerability is one of the major reasons why Turing Completeness is avoided.
+Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas."
+An infinite loop will exhaust whatever gas is in the contract because, by definition, it will run an infinite number of times.
 
-There are other reasons to avoid Turing Completeness and that's because smart contracts with Turing Completeness are very difficult to analyze.
-A Turing Complete smart contract's execution conditions are very difficult to enumerate and thus it's easy to create unintended behavior, causing bugs.
+There are other reasons to avoid Turing Completeness, and that's because smart contracts with Turing Completeness are very difficult to analyze.
+A Turing Complete smart contract's execution conditions are very difficult to enumerate, and thus it's easy to create unintended behavior, causing bugs.
 Bugs in a smart contract mean that it's vulnerable to being unintentionally spent, which means the contract participants could lose money.
-Such bugs are not just theoretical: this was the major problem in the DAO (Decentralized Autonomous Organization), a Turing Complete smart contract which ended with the Ethereum Classic hard fork.
+Such bugs are not just theoretical: this was the major problem in the DAO (Decentralized Autonomous Organization), a Turing Complete smart contract that ended with the Ethereum Classic hard fork.
 ====
 
-Transactions assign Bitcoins to a *locking* Script.
+Transactions assign Bitcoins to a _locking_ Script.
 The locking Script is what's specified in ScriptPubKey (see <<chapter_tx_parsing>>).
-Think of this as the lockbox where some money is deposited which only a particular key can open.
+Think of this as a lockbox where some money is deposited that only a particular key can open.
 The money inside, of course, can only be accessed by the owner who has the key.
 
-The unlocking of the lockbox is done in the ScriptSig field (see <<chapter_tx_parsing>>) and proves ownership of the locked box which authorizes spending of the funds.
+The unlocking of the lockbox is done in the ScriptSig field (see <<chapter_tx_parsing>>) and proves ownership of the locked box, which authorizes spending of the funds.
 
-=== How Script works
+=== How Script Works
 
-Script is a programming language and like most programming languages, processes one instruction at a time.
+Script is a programming language, and, like most programming languages, processes one instruction at a time.
 The instructions operate on a stack of elements.
 There are two possible types of instructions: elements and operations.
 
@@ -74,15 +74,15 @@ They consume zero or more elements from the processing stack and push zero or mo
 .Operations
 image::images/prbc_0602.png[Script Operations]
 
-A typical operation is `OP_DUP` (<<op_dup_duplicates_the_top_element>>), which will duplicate the top element (consuming 0) and pushing the new element to the stack (pushing 1).
+A typical operation is `OP_DUP` (<<op_dup_duplicates_the_top_element>>), which will duplicate the top element (consuming 0) and push the new element to the stack (pushing 1).
 
 [[op_dup_duplicates_the_top_element]]
 .`OP_DUP` duplicates the top element
 image::images/prbc_0603.png[OP_DUP]
 
-At the end of evaluating all the instructions, the top element of the stack must be non-zero for the Script to resolve as valid.
+At the end of evaluating all the instructions, the top element of the stack must be nonzero for the Script to resolve as valid.
 Having no elements in the stack or the top element being zero would resolve as invalid.
-Resolving as invalid means that the transaction which includes the unlocking Script is not accepted on the network.
+Resolving as invalid means that the transaction that includes the unlocking Script is not accepted on the network.
 
 === Example Operations
 
@@ -95,14 +95,14 @@ Note in the diagram that `y = hash160(x)`.
 image::images/prbc_0604.png[OP_HASH160]
 
 Another very important operation is `OP_CHECKSIG` (<<op_checksig_checks_if_the_signature_for_the_pubkey_is_valid_or_not>>).
-`OP_CHECKSIG` consumes 2 elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey.
-If so, `OP_CHECKSIG` pushes a 1 to the stack, otherwise pushes a 0 to the stack.
+`OP_CHECKSIG` consumes two elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey.
+If so, `OP_CHECKSIG` pushes a 1 to the stack; otherwise, it pushes a 0 to the stack.
 
 [[op_checksig_checks_if_the_signature_for_the_pubkey_is_valid_or_not]]
 .`OP_CHECKSIG` checks if the signature for the pubkey is valid or not
 image::images/prbc_0605.png[OP_CHECKSIG]
 
-==== Coding opcodes
+==== Coding Opcodes
 
 We can now code `OP_DUP`, given a stack.
 `OP_DUP` simply duplicates the top element of the stack.
@@ -117,15 +117,15 @@ OP_CODE_FUNCTIONS = {
 ...
 }
 ----
-<1> We have to have at least one element to duplicate, otherwise, we can't execute this opcode.
+<1> We have to have at least one element to duplicate; otherwise, we can't execute this opcode.
 <2> This is how we duplicate the top element of the stack.
-<3> `118 = 0x76` which is the code for `OP_DUP`
+<3> `118 = 0x76`, which is the code for `OP_DUP`
 
 Note that we return a boolean with this opcode, as a way to tell whether the operation was successful.
 A failed operation automatically fails Script evaluation.
 
 Here's another one for `OP_HASH256`.
-This opcode will consume the top element, perform a hash256 operation on it and push the result on the stack.
+This opcode will consume the top element, perform a hash256 operation on it, and push the result on the stack.
 
 [source,python]
 ----
