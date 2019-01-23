@@ -63,7 +63,8 @@ def parse(cls, s, testnet=False):
     else:
         expected_magic = NETWORK_MAGIC
     if magic != expected_magic:
-        raise SyntaxError('magic is not right {} vs {}'.format(magic.hex(), expected_magic.hex()))
+        raise SyntaxError('magic is not right {} vs {}'.format(magic.hex(), 
+          expected_magic.hex()))
     command = s.read(12)
     command = command.strip(b'\x00')
     payload_length = little_endian_to_int(s.read(4))
