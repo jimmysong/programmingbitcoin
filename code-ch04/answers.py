@@ -90,7 +90,7 @@ EQJsjkd6JaGwxrjEhfeqPenqHwrBmPQZjJGNSCHBkcF7
 # tag::exercise5[]
 ==== Exercise 5
 
-Find the address corresponding to Public Keys whose Private Key secrets are:
+Find the address corresponding to public keys whose private key secrets are:
 
 * 5002 (use uncompressed SEC, on testnet)
 * 2020^5^ (use compressed SEC, on testnet)
@@ -112,7 +112,7 @@ mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH
 # tag::exercise6[]
 ==== Exercise 6
 
-Find the WIF for Private Key whose secrets are:
+Find the WIF for private key whose secrets are:
 
 * 5003 (compressed, testnet)
 * 2021^5^ (uncompressed, testnet)
