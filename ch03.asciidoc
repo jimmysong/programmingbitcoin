@@ -806,7 +806,7 @@ The reason is for security.
 
 There is a well-known hash collision attack on SHA-1 called a _birthday attack_ that makes finding collisions much easier.
 Google found a SHA-1 collision using some modifications of a birthday attack and a lot of other things in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html).
-Using SHA-1 twice, or double-SHA-1, is the way to defeat slow down some forms of this attack.
+Using SHA-1 twice, or double-SHA-1, is the way to defeat or slow down some forms of this attack.
 
 Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential weaknesses.
 ====
