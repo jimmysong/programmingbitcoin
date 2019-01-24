@@ -290,7 +290,7 @@ For p2pk, the ScriptSig required to unlock the corresponding ScriptPubKey is the
 .Pay-to-pubkey (p2pk) ScriptSig
 image::images/prbc_0608.png[P2PK ScriptSig]
 
-The ScriptPubKey and ScriptSig combine to make an command set that looks like <<p2pk_combined>>.
+The ScriptPubKey and ScriptSig combine to make a command set that looks like <<p2pk_combined>>.
 
 [[p2pk_combined]]
 .p2pk combined
