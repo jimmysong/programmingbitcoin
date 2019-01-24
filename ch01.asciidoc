@@ -43,7 +43,7 @@ This is what we call the _additive inverse_.
 5. If _a_ is in the set and is not 0, __a^–1^__ is in the set, which is defined as the value that makes __a ⋅ a^–1^ = 1__.
 This is what we call the _multiplicative inverse_.
 
-Let's unpack each of the above.
+Let's unpack each of these criteria.
 
 We have a set of numbers that's finite.
 Because the set is finite, we can designate a number _p_, which is how big the set is.
@@ -747,7 +747,7 @@ class FieldElement:
 ...
 include::code-ch01/ecc.py[tag=source3]
 ----
-<1> Make the exponent into something within the 0 to p-2 range, inclusive.
+<1> Make the exponent into something within the 0 to __p__–2 range, inclusive.
 
 === Conclusion
 
