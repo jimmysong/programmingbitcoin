@@ -20,36 +20,36 @@ LOGGER = getLogger(__name__)
 # tag::source1[]
 class Script:
 
-    def __init__(self, instructions=None):
-        if instructions is None:
-            self.instructions = []
+    def __init__(self, cmds=None):
+        if cmds is None:
+            self.cmds = []
         else:
-            self.instructions = instructions  # <1>
+            self.cmds = cmds  # <1>
     # end::source1[]
 
     def __repr__(self):
         result = []
-        for instruction in self.instructions:
-            if type(instruction) == int:
-                if OP_CODE_NAMES.get(instruction):
-                    name = OP_CODE_NAMES.get(instruction)
+        for cmd in self.cmds:
+            if type(cmd) == int:
+                if OP_CODE_NAMES.get(cmd):
+                    name = OP_CODE_NAMES.get(cmd)
                 else:
-                    name = 'OP_[{}]'.format(instruction)
+                    name = 'OP_[{}]'.format(cmd)
                 result.append(name)
             else:
-                result.append(instruction.hex())
+                result.append(cmd.hex())
         return ' '.join(result)
 
     # tag::source4[]
     def __add__(self, other):
-        return Script(self.instructions + other.instructions)  # <1>
+        return Script(self.cmds + other.cmds)  # <1>
     # end::source4[]
 
     # tag::source2[]
     @classmethod
     def parse(cls, s):
         length = read_varint(s)  # <2>
-        instructions = []
+        cmds = []
         count = 0
         while count < length:  # <3>
             current = s.read(1)  # <4>
@@ -57,32 +57,32 @@ class Script:
             current_byte = current[0]  # <5>
             if current_byte >= 1 and current_byte <= 75:  # <6>
                 n = current_byte
-                instructions.append(s.read(n))
+                cmds.append(s.read(n))
                 count += n
             elif current_byte == 76:  # <7>
                 data_length = little_endian_to_int(s.read(1))
-                instructions.append(s.read(data_length))
+                cmds.append(s.read(data_length))
                 count += data_length + 1
             elif current_byte == 77:  # <8>
                 data_length = little_endian_to_int(s.read(2))
-                instructions.append(s.read(data_length))
+                cmds.append(s.read(data_length))
                 count += data_length + 2
             else:  # <9>
                 op_code = current_byte
-                instructions.append(op_code)
+                cmds.append(op_code)
         if count != length:  # <10>
             raise SyntaxError('parsing script failed')
-        return cls(instructions)
+        return cls(cmds)
     # end::source2[]
 
     # tag::source3[]
     def raw_serialize(self):
         result = b''
-        for instruction in self.instructions:
-            if type(instruction) == int:  # <1>
-                result += int_to_little_endian(instruction, 1)
+        for cmd in self.cmds:
+            if type(cmd) == int:  # <1>
+                result += int_to_little_endian(cmd, 1)
             else:
-                length = len(instruction)
+                length = len(cmd)
                 if length < 75:  # <2>
                     result += int_to_little_endian(length, 1)
                 elif length > 75 and length < 0x100:  # <3>
@@ -92,8 +92,8 @@ class Script:
                     result += int_to_little_endian(77, 1)
                     result += int_to_little_endian(length, 2)
                 else:  # <5>
-                    raise ValueError('too long an instruction')
-                result += instruction
+                    raise ValueError('too long an cmd')
+                result += cmd
         return result
 
     def serialize(self):
@@ -104,31 +104,31 @@ class Script:
 
     # tag::source5[]
     def evaluate(self, z):
-        instructions = self.instructions[:]  # <1>
+        cmds = self.cmds[:]  # <1>
         stack = []
         altstack = []
-        while len(instructions) > 0:  # <2>
-            instruction = instructions.pop(0)
-            if type(instruction) == int:
-                operation = OP_CODE_FUNCTIONS[instruction]  # <3>
-                if instruction in (99, 100):  # <4>
-                    if not operation(stack, instructions):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+        while len(cmds) > 0:  # <2>
+            cmd = cmds.pop(0)
+            if type(cmd) == int:
+                operation = OP_CODE_FUNCTIONS[cmd]  # <3>
+                if cmd in (99, 100):  # <4>
+                    if not operation(stack, cmds):
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
-                elif instruction in (107, 108):  # <5>
+                elif cmd in (107, 108):  # <5>
                     if not operation(stack, altstack):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
-                elif instruction in (172, 173, 174, 175):  # <6>
+                elif cmd in (172, 173, 174, 175):  # <6>
                     if not operation(stack, z):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
                 else:
                     if not operation(stack):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
             else:
-                stack.append(instruction)  # <7>
+                stack.append(cmd)  # <7>
         if len(stack) == 0:
             return False  # <8>
         if stack.pop() == b'':
@@ -143,9 +143,9 @@ class ScriptTest(TestCase):
         script_pubkey = BytesIO(bytes.fromhex('6a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937'))
         script = Script.parse(script_pubkey)
         want = bytes.fromhex('304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601')
-        self.assertEqual(script.instructions[0].hex(), want.hex())
+        self.assertEqual(script.cmds[0].hex(), want.hex())
         want = bytes.fromhex('035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937')
-        self.assertEqual(script.instructions[1], want)
+        self.assertEqual(script.cmds[1], want)
 
     def test_serialize(self):
         want = '6a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937'

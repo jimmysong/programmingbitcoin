@@ -246,6 +246,7 @@ image::images/prbc_0216.png[Case 1]
 image::images/prbc_0217.png[Case 2]
 
 You can see that in both <<a_b_c_case_1>> and <<a_b_c_case_2>>, the final point is the same.
+In other words, we have good reason to believe that (A + B) + C = A + (B + C).
 While this doesn't prove the associativity of point addition, the visual should at least give you the intuition that this is true.
 
 To code point addition, we're going to split it up into three steps:

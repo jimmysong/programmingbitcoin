@@ -100,7 +100,7 @@ Once these are known, the process of verifying the signature is pretty simple as
 include::code-ch07/examples.py[tag=example2]
 ----
 
-SEC public keys and DER signatures are in the stack when an instruction like `OP_CHECKSIG` is executed, to make getting the public key `P` and signature `(r,s)` pretty straightforward (see <<chapter_script>>).
+SEC public keys and DER signatures are in the stack when an command like `OP_CHECKSIG` is executed, to make getting the public key `P` and signature `(r,s)` pretty straightforward (see <<chapter_script>>).
 The hard part is getting the signature hash, `z`.
 A naive way to get the signature hash would be to hash the transaction serialization as shown in <<a_signature_is_in_the_yellow_highlighted_part_or_the_scriptsig>>.
 Unfortunately, we can't do that, since the signature is part of the ScriptSig and a signature can't sign itself.
@@ -318,7 +318,7 @@ include::code-ch07/script.py[tag=source1]
 ----
 
 Note that `0x76` is `OP_DUP`, `0xa9` is `OP_HASH160`, `h160` is a 20-byte element, `0x88` is `OP_EQUALVERIFY`, and `0xac` is `OP_CHECKSIG`.
-This is the p2pkh ScriptPubKey instruction set from <<chapter_script>>.
+This is the p2pkh ScriptPubKey command set from <<chapter_script>>.
 
 Given these tools, we can proceed to transaction creation.
 

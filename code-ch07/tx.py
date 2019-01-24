@@ -201,7 +201,7 @@ class Tx:
         # get der signature of z from private key
         # append the SIGHASH_ALL to der (use SIGHASH_ALL.to_bytes(1, 'big'))
         # calculate the sec
-        # initialize a new script with [sig, sec] as the instructions
+        # initialize a new script with [sig, sec] as the cmds
         # change input's script_sig to new script
         # return whether sig is valid using self.verify_input
         raise NotImplementedError

@@ -71,7 +71,7 @@ To aid your progress, we will be looking at a lot of code and diagrams throughou
 === Setting Up
 
 To get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
-Here are the instructions for setting everything up.
+Here are the commands for setting everything up.
 
 Install Python 3.5 or higher on your machine:
 
@@ -94,7 +94,7 @@ $ python3 get-pip.py
 
 Install git:
 
-The instructions for downloading and installing are at https://git-scm.com/downloads[].
+The commands for downloading and installing are at https://git-scm.com/downloads[].
 
 Download the source code for this book:
 

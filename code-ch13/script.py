@@ -50,34 +50,34 @@ LOGGER = getLogger(__name__)
 
 class Script:
 
-    def __init__(self, instructions=None):
-        if instructions is None:
-            self.instructions = []
+    def __init__(self, cmds=None):
+        if cmds is None:
+            self.cmds = []
         else:
-            self.instructions = instructions
+            self.cmds = cmds
 
     def __repr__(self):
         result = []
-        for instruction in self.instructions:
-            if type(instruction) == int:
-                if OP_CODE_NAMES.get(instruction):
-                    name = OP_CODE_NAMES.get(instruction)
+        for cmd in self.cmds:
+            if type(cmd) == int:
+                if OP_CODE_NAMES.get(cmd):
+                    name = OP_CODE_NAMES.get(cmd)
                 else:
-                    name = 'OP_[{}]'.format(instruction)
+                    name = 'OP_[{}]'.format(cmd)
                 result.append(name)
             else:
-                result.append(instruction.hex())
+                result.append(cmd.hex())
         return ' '.join(result)
 
     def __add__(self, other):
-        return Script(self.instructions + other.instructions)
+        return Script(self.cmds + other.cmds)
 
     @classmethod
     def parse(cls, s):
         # get the length of the entire field
         length = read_varint(s)
-        # initialize the instructions array
-        instructions = []
+        # initialize the cmds array
+        cmds = []
         # initialize the number of bytes we've read to 0
         count = 0
         # loop until we've read length bytes
@@ -90,44 +90,44 @@ class Script:
             current_byte = current[0]
             # if the current byte is between 1 and 75 inclusive
             if current_byte >= 1 and current_byte <= 75:
-                # we have an instruction set n to be the current byte
+                # we have an cmd set n to be the current byte
                 n = current_byte
-                # add the next n bytes as an instruction
-                instructions.append(s.read(n))
+                # add the next n bytes as an cmd
+                cmds.append(s.read(n))
                 # increase the count by n
                 count += n
             elif current_byte == 76:
                 # op_pushdata1
                 data_length = little_endian_to_int(s.read(1))
-                instructions.append(s.read(data_length))
+                cmds.append(s.read(data_length))
                 count += data_length + 1
             elif current_byte == 77:
                 # op_pushdata2
                 data_length = little_endian_to_int(s.read(2))
-                instructions.append(s.read(data_length))
+                cmds.append(s.read(data_length))
                 count += data_length + 2
             else:
                 # we have an opcode. set the current byte to op_code
                 op_code = current_byte
-                # add the op_code to the list of instructions
-                instructions.append(op_code)
+                # add the op_code to the list of cmds
+                cmds.append(op_code)
         if count != length:
             raise SyntaxError('parsing script failed')
-        return cls(instructions)
+        return cls(cmds)
 
     def raw_serialize(self):
         # initialize what we'll send back
         result = b''
-        # go through each instruction
-        for instruction in self.instructions:
-            # if the instruction is an integer, it's an opcode
-            if type(instruction) == int:
-                # turn the instruction into a single byte integer using int_to_little_endian
-                result += int_to_little_endian(instruction, 1)
+        # go through each cmd
+        for cmd in self.cmds:
+            # if the cmd is an integer, it's an opcode
+            if type(cmd) == int:
+                # turn the cmd into a single byte integer using int_to_little_endian
+                result += int_to_little_endian(cmd, 1)
             else:
                 # otherwise, this is an element
                 # get the length in bytes
-                length = len(instruction)
+                length = len(cmd)
                 # for large lengths, we have to use a pushdata opcode
                 if length < 75:
                     # turn the length into a single byte integer
@@ -141,8 +141,8 @@ class Script:
                     result += int_to_little_endian(77, 1)
                     result += int_to_little_endian(length, 2)
                 else:
-                    raise ValueError('too long an instruction')
-                result += instruction
+                    raise ValueError('too long an cmd')
+                result += cmd
         return result
 
     def serialize(self):
@@ -156,48 +156,48 @@ class Script:
     def evaluate(self, z, witness):
         # create a copy as we may need to add to this list if we have a
         # RedeemScript
-        instructions = self.instructions[:]
+        cmds = self.cmds[:]
         stack = []
         altstack = []
-        while len(instructions) > 0:
-            instruction = instructions.pop(0)
-            if type(instruction) == int:
+        while len(cmds) > 0:
+            cmd = cmds.pop(0)
+            if type(cmd) == int:
                 # do what the opcode says
-                operation = OP_CODE_FUNCTIONS[instruction]
-                if instruction in (99, 100):
-                    # op_if/op_notif require the instructions array
-                    if not operation(stack, instructions):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                operation = OP_CODE_FUNCTIONS[cmd]
+                if cmd in (99, 100):
+                    # op_if/op_notif require the cmds array
+                    if not operation(stack, cmds):
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
-                elif instruction in (107, 108):
+                elif cmd in (107, 108):
                     # op_toaltstack/op_fromaltstack require the altstack
                     if not operation(stack, altstack):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
-                elif instruction in (172, 173, 174, 175):
+                elif cmd in (172, 173, 174, 175):
                     # these are signing operations, they need a sig_hash
                     # to check against
                     if not operation(stack, z):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
                 else:
                     if not operation(stack):
-                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[instruction]))
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
                         return False
             else:
-                # add the instruction to the stack
-                stack.append(instruction)
-                # p2sh rule. if the next three instructions are:
+                # add the cmd to the stack
+                stack.append(cmd)
+                # p2sh rule. if the next three cmds are:
                 # OP_HASH160 <20 byte hash> OP_EQUAL this is the RedeemScript
                 # OP_HASH160 == 0xa9 and OP_EQUAL == 0x87
-                if len(instructions) == 3 and instructions[0] == 0xa9 \
-                    and type(instructions[1]) == bytes and len(instructions[1]) == 20 \
-                    and instructions[2] == 0x87:
-                    redeem_script = encode_varint(len(instruction)) + instruction
+                if len(cmds) == 3 and cmds[0] == 0xa9 \
+                    and type(cmds[1]) == bytes and len(cmds[1]) == 20 \
+                    and cmds[2] == 0x87:
+                    redeem_script = encode_varint(len(cmd)) + cmd
                     # we execute the next three opcodes
-                    instructions.pop()
-                    h160 = instructions.pop()
-                    instructions.pop()
+                    cmds.pop()
+                    h160 = cmds.pop()
+                    cmds.pop()
                     if not op_hash160(stack):
                         return False
                     stack.append(h160)
@@ -208,25 +208,25 @@ class Script:
                         LOGGER.info('bad p2sh h160')
                         return False
                     # hashes match! now add the RedeemScript
-                    redeem_script = encode_varint(len(instruction)) + instruction
+                    redeem_script = encode_varint(len(cmd)) + cmd
                     stream = BytesIO(redeem_script)
-                    instructions.extend(Script.parse(stream).instructions)
-                # witness program version 0 rule. if stack instructions are:
+                    cmds.extend(Script.parse(stream).cmds)
+                # witness program version 0 rule. if stack cmds are:
                 # 0 <20 byte hash> this is p2wpkh
                 # tag::source3[]
                 if len(stack) == 2 and stack[0] == b'' and len(stack[1]) == 20:  # <1>
                     h160 = stack.pop()
                     stack.pop()
-                    instructions.extend(witness)
-                    instructions.extend(p2pkh_script(h160).instructions)
+                    cmds.extend(witness)
+                    cmds.extend(p2pkh_script(h160).cmds)
                 # end::source3[]
-                # witness program version 0 rule. if stack instructions are:
+                # witness program version 0 rule. if stack cmds are:
                 # 0 <32 byte hash> this is p2wsh
                 # tag::source6[]
                 if len(stack) == 2 and stack[0] == b'' and len(stack[1]) == 32:
                     s256 = stack.pop()  # <1>
                     stack.pop()  # <2>
-                    instructions.extend(witness[:-1])  # <3>
+                    cmds.extend(witness[:-1])  # <3>
                     witness_script = witness[-1]  # <4>
                     if s256 != sha256(witness_script):  # <5>
                         print('bad sha256 {} vs {}'.format
@@ -234,8 +234,8 @@ class Script:
                         return False
                     stream = BytesIO(encode_varint(len(witness_script)) 
                         + witness_script)
-                    witness_script_instructions = Script.parse(stream).instructions  # <6>
-                    instructions.extend(witness_script_instructions)
+                    witness_script_cmds = Script.parse(stream).cmds  # <6>
+                    cmds.extend(witness_script_cmds)
                 # end::source6[]
         if len(stack) == 0:
             return False
@@ -246,45 +246,45 @@ class Script:
     def is_p2pkh_script_pubkey(self):
         '''Returns whether this follows the
         OP_DUP OP_HASH160 <20 byte hash> OP_EQUALVERIFY OP_CHECKSIG pattern.'''
-        # there should be exactly 5 instructions
+        # there should be exactly 5 cmds
         # OP_DUP (0x76), OP_HASH160 (0xa9), 20-byte hash, OP_EQUALVERIFY (0x88),
         # OP_CHECKSIG (0xac)
-        return len(self.instructions) == 5 and self.instructions[0] == 0x76 \
-            and self.instructions[1] == 0xa9 \
-            and type(self.instructions[2]) == bytes and len(self.instructions[2]) == 20 \
-            and self.instructions[3] == 0x88 and self.instructions[4] == 0xac
+        return len(self.cmds) == 5 and self.cmds[0] == 0x76 \
+            and self.cmds[1] == 0xa9 \
+            and type(self.cmds[2]) == bytes and len(self.cmds[2]) == 20 \
+            and self.cmds[3] == 0x88 and self.cmds[4] == 0xac
 
     def is_p2sh_script_pubkey(self):
         '''Returns whether this follows the
         OP_HASH160 <20 byte hash> OP_EQUAL pattern.'''
-        # there should be exactly 3 instructions
+        # there should be exactly 3 cmds
         # OP_HASH160 (0xa9), 20-byte hash, OP_EQUAL (0x87)
-        return len(self.instructions) == 3 and self.instructions[0] == 0xa9 \
-            and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 20 \
-            and self.instructions[2] == 0x87
+        return len(self.cmds) == 3 and self.cmds[0] == 0xa9 \
+            and type(self.cmds[1]) == bytes and len(self.cmds[1]) == 20 \
+            and self.cmds[2] == 0x87
 
     # tag::source2[]
     def is_p2wpkh_script_pubkey(self):  # <2>
-        return len(self.instructions) == 2 and self.instructions[0] == 0x00 \
-            and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 20
+        return len(self.cmds) == 2 and self.cmds[0] == 0x00 \
+            and type(self.cmds[1]) == bytes and len(self.cmds[1]) == 20
     # end::source2[]
 
     # tag::source5[]
     def is_p2wsh_script_pubkey(self):
-        return len(self.instructions) == 2 and self.instructions[0] == 0x00 \
-            and type(self.instructions[1]) == bytes and len(self.instructions[1]) == 32
+        return len(self.cmds) == 2 and self.cmds[0] == 0x00 \
+            and type(self.cmds[1]) == bytes and len(self.cmds[1]) == 32
     # end::source5[]
 
     def address(self, testnet=False):
         '''Returns the address corresponding to the script'''
         if self.is_p2pkh_script_pubkey():  # p2pkh
-            # hash160 is the 3rd instruction
-            h160 = self.instructions[2]
+            # hash160 is the 3rd cmd
+            h160 = self.cmds[2]
             # convert to p2pkh address using h160_to_p2pkh_address (remember testnet)
             return h160_to_p2pkh_address(h160, testnet)
         elif self.is_p2sh_script_pubkey():  # p2sh
-            # hash160 is the 2nd instruction
-            h160 = self.instructions[1]
+            # hash160 is the 2nd cmd
+            h160 = self.cmds[1]
             # convert to p2sh address using h160_to_p2sh_address (remember testnet)
             return h160_to_p2sh_address(h160, testnet)
         raise ValueError('Unknown ScriptPubKey')
@@ -296,9 +296,9 @@ class ScriptTest(TestCase):
         script_pubkey = BytesIO(bytes.fromhex('6a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937'))
         script = Script.parse(script_pubkey)
         want = bytes.fromhex('304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601')
-        self.assertEqual(script.instructions[0].hex(), want.hex())
+        self.assertEqual(script.cmds[0].hex(), want.hex())
         want = bytes.fromhex('035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937')
-        self.assertEqual(script.instructions[1], want)
+        self.assertEqual(script.cmds[1], want)
 
     def test_serialize(self):
         want = '6a47304402207899531a52d59a6de200179928ca900254a36b8dff8bb75f5f5d71b1cdc26125022008b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a7160121035d5c93d9ac96881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937'

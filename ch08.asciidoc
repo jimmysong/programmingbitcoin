@@ -144,7 +144,7 @@ To mitigate these problems, pay-to-script-hash (p2sh) was born.
 Pay-to-script-hash (p2sh) is a general solution to the long address/ScriptPubKey problem.
 More complicated ScriptPubKeys than Bare Multisig can easily be made and they have the same problems as Bare Multisig.
 
-The solution that p2sh implements is to take the hash of some Script instructions and then reveal the pre-image Script instructions later.
+The solution that p2sh implements is to take the hash of some Script commands and then reveal the pre-image Script commands later.
 Pay-to-script-hash was introduced in 2011 to a lot of controversy.
 There were multiple proposals, but as we'll see, p2sh is kludgy, but works.
 
@@ -154,9 +154,9 @@ In p2sh, a special rule gets executed only when the pattern shown in <<pay_to_sc
 .Pay-to-script-hash pattern that executes the special rule
 image::images/prbc_0809.png[p2sh Pattern]
 
-If this exact instruction set ends with a `1` on the stack, then the RedeemScript (top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script instruction set.
+If this exact command set ends with a `1` on the stack, then the RedeemScript (top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
 This special pattern was introduced in BIP0016 and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
-The RedeemScript does not add new Script instructions for processing unless this _exact_ sequence is encountered and ends with a `1`.
+The RedeemScript does not add new Script commands for processing unless this _exact_ sequence is encountered and ends with a `1`.
 
 If this sounds hacky, it is.
 But before we get to that, let's look a little closer at exactly how this plays out.
@@ -210,13 +210,13 @@ The key to understanding p2sh is the execution of the exact sequence shown in <<
 .p2sh pattern that executes the special rule
 image::images/prbc_0809.png[p2sh Pattern]
 
-Upon execution of this sequence, if the stack is left with a `1`, the RedeemScript is inserted into the Script instruction set.
+Upon execution of this sequence, if the stack is left with a `1`, the RedeemScript is inserted into the Script command set.
 In other words, if we reveal a RedeemScript whose hash160 is the same hash160 in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead.
 We hash the Script that locks the funds and put that into the blockchain instead of the Script itself.
 This is why we call this ScriptPubKey pay-to-script-_hash_.
 
 Let's go through exactly how this works.
-We start with the Script instructions (<<p2sh_start>>).
+We start with the Script commands (<<p2sh_start>>).
 
 [[p2sh_start]]
 .p2sh Start
@@ -249,13 +249,13 @@ image::images/prbc_0819.png[p2sh pre-BIP0016 End]
 
 This would end evaluation for pre-BIP0016 nodes and the result would be valid, assuming the hashes are equal.
 
-On the other hand, BIP0016 nodes, which as of this writing are the vast majority, will parse the RedeemScript as Script instructions (<<p2sh_redeemscript>>).
+On the other hand, BIP0016 nodes, which as of this writing are the vast majority, will parse the RedeemScript as Script commands (<<p2sh_redeemscript>>).
 
 [[p2sh_redeemscript]]
 .p2sh RedeemScript
 image::images/prbc_0810.png[p2sh RedeemScript]
 
-These go into the Script column as instructions (<<p2sh_step_4>>).
+These go into the Script column as commands (<<p2sh_step_4>>).
 
 [[p2sh_step_4]]
 .p2sh Step 4
@@ -276,13 +276,13 @@ image::images/prbc_0823.png[p2sh End]
 The RedeemScript substitution is a bit hacky and there's special-cased code in Bitcoin software to handle this.
 Why wasn't something a lot less hacky and more intuitive chosen?
 BIP0012 was a competing proposal at the time that used `OP_EVAL` and was considered more elegant.
-A ScriptPubKey like <<op_eval_would_have_been_an_instruction_which_adds_additional_instructions_based_on_the_top_element>> would have worked with BIP0012.
+A ScriptPubKey like <<op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element>> would have worked with BIP0012.
 
-[[op_eval_would_have_been_an_instruction_which_adds_additional_instructions_based_on_the_top_element]]
-.`OP_EVAL` would have been an instruction that adds additional instructions based on the top element
+[[op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element]]
+.`OP_EVAL` would have been an command that adds additional commands based on the top element
 image::images/prbc_0824.png[`OP_EVAL`]
 
-`OP_EVAL` would have consumed the top element of the stack and interpreted that as Script instructions to be put into the Script column.
+`OP_EVAL` would have consumed the top element of the stack and interpreted that as Script commands to be put into the Script column.
 
 Unfortunately, this more elegant solution comes with an unwanted side effect, namely Turing Completeness.
 Turing Completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see <<chapter_script>>).
@@ -300,20 +300,20 @@ class Script:
 ...
     def evaluate(self, z):
 ...
-        while len(instructions) > 0:
-            instruction = instructions.pop(0)
-            if type(instruction) == int:
+        while len(commands) > 0:
+            command = commands.pop(0)
+            if type(command) == int:
 ...
 include::code-ch08/script.py[tag=source1]
 ----
 <1> `0xa9` is `OP_HASH160`, `0x87` is `OP_EQUAL`.
-We're checking that the next three instructions conform to the BIP0016 special pattern.
+We're checking that the next three commands conform to the BIP0016 special pattern.
 <2> We know that this is `OP_HASH160`, so we just pop it off.
-Similarly, we know the next instruction is the 20-byte hash value and the third instruction is `OP_EQUAL`, which is what we tested for in the `if` statement above it.
+Similarly, we know the next command is the 20-byte hash value and the third command is `OP_EQUAL`, which is what we tested for in the `if` statement above it.
 <3> We run the `OP_HASH160`, 20-byte hash push on the stack and `OP_EQUAL` as normal.
 <4> There should be a `1` remaining, which is what `op_verify` checks for (`OP_VERIFY` consumes one element and does not put anything back).
 <5> Because we want to parse the RedeemScript, we need to prepend the length.
-<6> We extend the instruction set with the parsed instructions from the RedeemScript.
+<6> We extend the command set with the parsed commands from the RedeemScript.
 
 ==== More Complicated Scripts
 

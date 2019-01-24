@@ -193,8 +193,8 @@ def verify_input(self, input_index):
     tx_in = self.tx_ins[input_index]
     script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
     if script_pubkey.is_p2sh_script_pubkey():
-        instruction = tx_in.script_sig.instructions[-1]
-        raw_redeem = encode_varint(len(instruction)) + instruction
+        cmd = tx_in.script_sig.cmds[-1]
+        raw_redeem = encode_varint(len(cmd)) + cmd
         redeem_script = Script.parse(BytesIO(raw_redeem))
     else:
         redeem_script = None

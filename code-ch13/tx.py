@@ -285,9 +285,9 @@ class Tx:
         if witness_script:
             script_code = witness_script.serialize()
         elif redeem_script:
-            script_code = p2pkh_script(redeem_script.instructions[1]).serialize()
+            script_code = p2pkh_script(redeem_script.cmds[1]).serialize()
         else:
-            script_code = p2pkh_script(tx_in.script_pubkey(self.testnet).instructions[1]).serialize()
+            script_code = p2pkh_script(tx_in.script_pubkey(self.testnet).cmds[1]).serialize()
         s += script_code
         s += int_to_little_endian(tx_in.value(), 8)
         s += int_to_little_endian(tx_in.sequence, 4)
@@ -304,18 +304,18 @@ class Tx:
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
         # check to see if the ScriptPubkey is a p2sh
         if script_pubkey.is_p2sh_script_pubkey():
-            # the last instruction has to be the RedeemScript to trigger
-            instruction = tx_in.script_sig.instructions[-1]
+            # the last cmd has to be the RedeemScript to trigger
+            cmd = tx_in.script_sig.cmds[-1]
             # parse the RedeemScript
-            raw_redeem = int_to_little_endian(len(instruction), 1) + instruction
+            raw_redeem = int_to_little_endian(len(cmd), 1) + cmd
             redeem_script = Script.parse(BytesIO(raw_redeem))
             # the RedeemScript might be p2wpkh or p2wsh
             if redeem_script.is_p2wpkh_script_pubkey():
                 z = self.sig_hash_bip143(input_index, redeem_script)
                 witness = tx_in.witness
             elif redeem_script.is_p2wsh_script_pubkey():
-                instruction = tx_in.witness[-1]
-                raw_witness = encode_varint(len(instruction)) + instruction
+                cmd = tx_in.witness[-1]
+                raw_witness = encode_varint(len(cmd)) + cmd
                 witness_script = Script.parse(BytesIO(raw_witness))
                 z = self.sig_hash_bip143(input_index, witness_script=witness_script)
                 witness = tx_in.witness
@@ -328,8 +328,8 @@ class Tx:
                 z = self.sig_hash_bip143(input_index)
                 witness = tx_in.witness
             elif script_pubkey.is_p2wsh_script_pubkey():
-                instruction = tx_in.witness[-1]
-                raw_witness = encode_varint(len(instruction)) + instruction
+                cmd = tx_in.witness[-1]
+                raw_witness = encode_varint(len(cmd)) + cmd
                 witness_script = Script.parse(BytesIO(raw_witness))
                 z = self.sig_hash_bip143(input_index, witness_script=witness_script)
                 witness = tx_in.witness
@@ -362,7 +362,7 @@ class Tx:
         sig = der + SIGHASH_ALL.to_bytes(1, 'big')
         # calculate the sec
         sec = private_key.point.sec()
-        # initialize a new script with [sig, sec] as the instructions
+        # initialize a new script with [sig, sec] as the cmds
         script_sig = Script([sig, sec])
         # change input's script_sig to new script
         self.tx_ins[input_index].script_sig = script_sig
@@ -391,10 +391,10 @@ class Tx:
         # if this is NOT a coinbase transaction, return None
         if not self.is_coinbase():
             return None
-        # grab the first instruction
-        first_instruction = self.tx_ins[0].script_sig.instructions[0]
-        # convert the instruction from little endian to int
-        return little_endian_to_int(first_instruction)
+        # grab the first cmd
+        first_cmd = self.tx_ins[0].script_sig.cmds[0]
+        # convert the cmd from little endian to int
+        return little_endian_to_int(first_cmd)
 
 
 class TxIn:

@@ -210,10 +210,10 @@ class Tx:
         # check to see if the ScriptPubkey is a p2sh using
         # Script.is_p2sh_script_pubkey()
         if script_pubkey.is_p2sh_script_pubkey():
-            # the last instruction in a p2sh is the RedeemScript
-            instruction = tx_in.script_sig.instructions[-1]
+            # the last cmd in a p2sh is the RedeemScript
+            cmd = tx_in.script_sig.cmds[-1]
             # prepend the length of the RedeemScript using encode_varint
-            raw_redeem = encode_varint(len(instruction)) + instruction
+            raw_redeem = encode_varint(len(cmd)) + cmd
             # parse the RedeemScript
             redeem_script = Script.parse(BytesIO(raw_redeem))
         # otherwise RedeemScript is None
@@ -248,7 +248,7 @@ class Tx:
         sig = der + SIGHASH_ALL.to_bytes(1, 'big')
         # calculate the sec
         sec = private_key.point.sec()
-        # initialize a new script with [sig, sec] as the instructions
+        # initialize a new script with [sig, sec] as the cmds
         script_sig = Script([sig, sec])
         # change input's script_sig to new script
         self.tx_ins[input_index].script_sig = script_sig
@@ -277,10 +277,10 @@ class Tx:
         # if this is NOT a coinbase transaction, return None
         if not self.is_coinbase():
             return None
-        # grab the first instruction
-        first_instruction = self.tx_ins[0].script_sig.instructions[0]
-        # convert the instruction from little endian to int
-        return little_endian_to_int(first_instruction)
+        # grab the first cmd
+        first_cmd = self.tx_ins[0].script_sig.cmds[0]
+        # convert the cmd from little endian to int
+        return little_endian_to_int(first_cmd)
 
 
 class TxIn:

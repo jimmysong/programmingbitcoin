@@ -97,7 +97,7 @@ Write the `coinbase_height` method for the `Tx` class.
 def coinbase_height(self):
     if not self.is_coinbase():
         return None
-    element = self.tx_ins[0].script_sig.instructions[0]
+    element = self.tx_ins[0].script_sig.cmds[0]
     return little_endian_to_int(element)
 # end::answer2[]
 

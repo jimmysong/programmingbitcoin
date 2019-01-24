@@ -105,14 +105,14 @@ The 20-byte hash is an element, so it's pushed to the stack (<<p2wpkh_step_2>>).
 .p2wpkh Step 2
 image::images/prbc_1306.png[p2wpkh Step 2]
 
-At this point, older nodes will stop as there are no more Script instructions to be processed.
+At this point, older nodes will stop as there are no more Script commands to be processed.
 Since the top element is nonzero, this will be counted as a valid Script.
 This is very similar to p2sh (<<chapter_p2sh>>) in that older nodes cannot validate further.
 Newer nodes, however, have a special Segwit rule much like the special rule for p2sh (see <<chapter_p2sh>>).
 Recall that with p2sh, the exact Script sequence of `<redeem script>` `OP_HASH160` `<hash>` `OP_EQUAL` triggers a special rule.
 
 In the case of p2wpkh, the Script sequence is `OP_0` `<20-byte hash>`.
-When that Script sequence is encountered, the pubkey and signature from the Witness field and the 20-byte hash are added to the instruction set in exactly the same sequence as p2pkh.
+When that Script sequence is encountered, the pubkey and signature from the Witness field and the 20-byte hash are added to the command set in exactly the same sequence as p2pkh.
 Namely: `<signature> <pubkey> OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG`.
 <<p2wpkh_step_3>> shows the state that is encountered next.
 
@@ -175,7 +175,7 @@ We start the Script evaluation like <<p2sh_p2wpkh_start>>.
 .p2sh-p2wpkh Start
 image::images/prbc_1312.png[p2sh-p2wpkh Start]
 
-Notice that the instructions to be processed are exactly what triggers the p2sh Special rule.
+Notice that the commands to be processed are exactly what triggers the p2sh Special rule.
 The RedeemScript goes on the stack (<<p2sh_p2wpkh_step_1>>).
 
 [[p2sh_p2wpkh_step_1]]
@@ -195,7 +195,7 @@ The hash will go on the stack and we then get to `OP_EQUAL` (<<p2sh_p2wpkh_step_
 image::images/prbc_1315.png[p2sh-p2wpkh Step 3]
 
 At this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid, as they are unaware of the p2sh validation rules.
-However, post-BIP0016 nodes recognize the special Script sequence for p2sh, so the RedeemScript will then be evaluated as Script instructions.
+However, post-BIP0016 nodes recognize the special Script sequence for p2sh, so the RedeemScript will then be evaluated as Script commands.
 The RedeemScript is `OP_0 <20-byte hash>`, which is the same as the ScriptPubKey for p2wpkh.
 This makes the Script state look like <<p2sh_p2wpkh_step_4>>.
 
@@ -212,7 +212,7 @@ image::images/prbc_1317.png[p2sh-p2wpkh Step 5]
 
 At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules.
 However, post-Segwit nodes will recognize the special Script sequence for p2wpkh.
-The signature and pubkey from the Witness field along with the 20-byte hash will add the p2pkh instructions (<<p2sh_p2wpkh_step_6>>).
+The signature and pubkey from the Witness field along with the 20-byte hash will add the p2pkh commands (<<p2sh_p2wpkh_step_6>>).
 
 [[p2sh_p2wpkh_step_6]]
 .p2sh-p2wpkh Step 6
@@ -309,8 +309,8 @@ class Tx:
         tx_in = self.tx_ins[input_index]
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
         if script_pubkey.is_p2sh_script_pubkey():
-            instruction = tx_in.script_sig.instructions[-1]
-            raw_redeem = int_to_little_endian(len(instruction), 1) + instruction
+            command = tx_in.script_sig.commands[-1]
+            raw_redeem = int_to_little_endian(len(command), 1) + command
             redeem_script = Script.parse(BytesIO(raw_redeem))
             if redeem_script.is_p2wpkh_script_pubkey():  # <1>
                 z = self.sig_hash_bip143(input_index, redeem_script)  # <2>
@@ -331,7 +331,7 @@ class Tx:
 <1> This handles the p2sh-p2wpkh case.
 <2> BIP0143 signature hash generation code is in _tx.py_ of this chapter's code.
 <3> This handles the p2wpkh case.
-<4> The Witness passes through to the evaluation engine so that p2wpkh can construct the right instructions.
+<4> The Witness passes through to the evaluation engine so that p2wpkh can construct the right commands.
 
 We also define what a p2wpkh Script looks like in _script.py_:
 
@@ -352,10 +352,10 @@ class Script:
 ...
     def evaluate(self, z, witness):
     ...
-        while len(instructions) > 0:
+        while len(commands) > 0:
         ...
             else:
-                stack.append(instruction)
+                stack.append(command)
 		...
 include::code-ch13/script.py[tag=source3]
 ----
@@ -403,7 +403,7 @@ The 32-byte hash is an element, so is pushed to the stack (<<p2wsh_step_2>>).
 .p2wsh Step 2
 image::images/prbc_1325.png[p2wsh Step 2]
 
-As with p2wpkh, older nodes will stop because there are no more Script instructions to be processed.
+As with p2wpkh, older nodes will stop because there are no more Script commands to be processed.
 Newer nodes will recognize the special sequence and do additional validation by looking at the Witness field.
 
 The Witness field for p2wsh in our case is a 2-of-3 multisig (<<p2wsh_witness>>).
@@ -414,14 +414,14 @@ image::images/prbc_1326.png[p2wsh Witness]
 
 The last item of the Witness is called the _WitnessScript_ and must sha256 to the 32-byte hash from the ScriptPubKey.
 Note this is sha256, not hash256.
-Once the WitnessScript is validated by having the same hash value, the WitnessScript is interpreted as Script instructions put into the instruction set.
+Once the WitnessScript is validated by having the same hash value, the WitnessScript is interpreted as Script commands put into the command set.
 The Witness Script looks like <<p2wsh_witness_script>>.
 
 [[p2wsh_witness_script]]
 .p2wsh Witness Script
 image::images/prbc_1327.png[p2wsh Witness Script]
 
-The rest of the Witness field is put on top to produce this instruction set (<<p2wsh_step_3>>).
+The rest of the Witness field is put on top to produce this command set (<<p2wsh_step_3>>).
 
 [[p2wsh_step_3]]
 .p2wsh Step 3
@@ -440,8 +440,8 @@ If the signatures are valid, we end like <<p2wsh_step_5>>.
 image::images/prbc_1330.png[p2wsh Step 5]
 
 The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
-Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script instructions and added to the instruction set.
-The rest of the Witness is then put on the instruction set as well, producing the final set of instructions to be evaluated.
+Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script commands and added to the command set.
+The rest of the Witness is then put on the command set as well, producing the final set of commands to be evaluated.
 p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional Payment Channels for the Lightning Network.
 
 === p2sh-p2wsh
@@ -488,7 +488,7 @@ The hash is pushed to the stack and we then get to `OP_EQUAL` (<<p2sh_p2wsh_step
 image::images/prbc_1315.png[p2sh-p2wsh Step 3]
 
 As with p2sh-p2wpkh, if the hashes are equal, pre-BIP0016 nodes will mark the input as valid as they are unaware of the p2sh validation rules.
-However, post-BIP0016 nodes will recognize the special Script sequence for p2sh, so the RedeemScript will be interpreted as new Script instructions.
+However, post-BIP0016 nodes will recognize the special Script sequence for p2sh, so the RedeemScript will be interpreted as new Script commands.
 The RedeemScript is `OP_0 <32-byte hash>`, which is the same as the ScriptPubKey for p2wsh (<<p2sh_p2wsh_redeemscript>>).
 
 [[p2sh_p2wsh_redeemscript]]
@@ -515,7 +515,7 @@ image::images/prbc_1325.png[p2sh-p2wsh Step 6]
 
 At this point, pre-Segwit nodes will mark this input as valid, as they are unaware of the Segwit validation rules.
 However, post-Segwit nodes will recognize the special Script sequence for p2wsh.
-The Witness field (<<p2sh_p2wsh_witness>>) contains the Witness Script (<<p2sh_p2wsh_witness_script>>). The sha256 of the WitnessScript is checked against 32-byte hash and if equal, the WitnessScript is interpreted as Script and put into the instruction set (<<p2sh_p2wsh_step_7>>).
+The Witness field (<<p2sh_p2wsh_witness>>) contains the Witness Script (<<p2sh_p2wsh_witness_script>>). The sha256 of the WitnessScript is checked against 32-byte hash and if equal, the WitnessScript is interpreted as Script and put into the command set (<<p2sh_p2wsh_step_7>>).
 
 [[p2sh_p2wsh_witness]]
 .p2sh-p2wsh Witness
@@ -525,7 +525,7 @@ image::images/prbc_1342.png[p2sh-p2wsh Witness]
 .p2sh-p2wsh Witness Script
 image::images/prbc_1327.png[p2wsh Witness Script]
 
-The Witness Script is a 2-of-3 multisig that is put into the instruction set (<<p2sh_p2wsh_step_7>>).
+The Witness Script is a 2-of-3 multisig that is put into the command set (<<p2sh_p2wsh_step_7>>).
 
 [[p2sh_p2wsh_step_7]]
 .p2sh-p2wsh Step 7
@@ -553,15 +553,15 @@ class Tx:
         tx_in = self.tx_ins[input_index]
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
         if script_pubkey.is_p2sh_script_pubkey():
-            instruction = tx_in.script_sig.instructions[-1]
-            raw_redeem = int_to_little_endian(len(instruction), 1) + instruction
+            command = tx_in.script_sig.commands[-1]
+            raw_redeem = int_to_little_endian(len(command), 1) + command
             redeem_script = Script.parse(BytesIO(raw_redeem))
             if redeem_script.is_p2wpkh_script_pubkey():
                 z = self.sig_hash_bip143(input_index, redeem_script)
                 witness = tx_in.witness
             elif redeem_script.is_p2wsh_script_pubkey():  # <1>
-                instruction = tx_in.witness[-1]
-                raw_witness = encode_varint(len(instruction)) + instruction
+                command = tx_in.witness[-1]
+                raw_witness = encode_varint(len(command)) + command
                 witness_script = Script.parse(BytesIO(raw_witness))
                 z = self.sig_hash_bip143(input_index, witness_script=witness_script)
                 witness = tx_in.witness
@@ -573,8 +573,8 @@ class Tx:
                 z = self.sig_hash_bip143(input_index)
                 witness = tx_in.witness
             elif script_pubkey.is_p2wsh_script_pubkey():  # <2>
-                instruction = tx_in.witness[-1]
-                raw_witness = encode_varint(len(instruction)) + instruction
+                command = tx_in.witness[-1]
+                raw_witness = encode_varint(len(command)) + command
                 witness_script = Script.parse(BytesIO(raw_witness))
                 z = self.sig_hash_bip143(input_index, witness_script=witness_script)
                 witness = tx_in.witness
@@ -607,19 +607,19 @@ class Script:
 ...
     def evaluate(self, z, witness):
     ...
-        while len(instructions) > 0:
+        while len(commands) > 0:
         ...
 	   else:
-                stack.append(instruction)
+                stack.append(command)
     	        ...
 include::code-ch13/script.py[tag=source6]
 ----
 <1> The top element is the sha256 hash of the WitnessScript.
 <2> The second element is the Witness version, 0.
-<3> Everything but the WitnessScript is added to the instruction set.
+<3> Everything but the WitnessScript is added to the command set.
 <4> The WitnessScript is the last item of the Witness.
 <5> The WitnessScript must hash to the sha256 that was in the stack.
-<6> Parse the WitnessScript and add to the instruction set.
+<6> Parse the WitnessScript and add to the command set.
 
 === Other Improvements
 

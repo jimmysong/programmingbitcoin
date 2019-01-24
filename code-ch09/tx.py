@@ -210,10 +210,10 @@ class Tx:
         # check to see if the ScriptPubkey is a p2sh using
         # Script.is_p2sh_script_pubkey()
         if script_pubkey.is_p2sh_script_pubkey():
-            # the last instruction in a p2sh is the RedeemScript
-            instruction = tx_in.script_sig.instructions[-1]
+            # the last cmd in a p2sh is the RedeemScript
+            cmd = tx_in.script_sig.cmds[-1]
             # prepend the length of the RedeemScript using encode_varint
-            raw_redeem = encode_varint(len(instruction)) + instruction
+            raw_redeem = encode_varint(len(cmd)) + cmd
             # parse the RedeemScript
             redeem_script = Script.parse(BytesIO(raw_redeem))
         # otherwise RedeemScript is None
@@ -248,7 +248,7 @@ class Tx:
         sig = der + SIGHASH_ALL.to_bytes(1, 'big')
         # calculate the sec
         sec = private_key.point.sec()
-        # initialize a new script with [sig, sec] as the instructions
+        # initialize a new script with [sig, sec] as the cmds
         script_sig = Script([sig, sec])
         # change input's script_sig to new script
         self.tx_ins[input_index].script_sig = script_sig
@@ -268,8 +268,8 @@ class Tx:
         Returns None if this transaction is not a coinbase transaction
         '''
         # if this is NOT a coinbase transaction, return None
-        # grab the first instruction
-        # convert the instruction from little endian to int
+        # grab the first cmd
+        # convert the cmd from little endian to int
         raise NotImplementedError
 
 
