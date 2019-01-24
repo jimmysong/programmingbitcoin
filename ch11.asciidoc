@@ -287,7 +287,7 @@ include::code-ch11/merkleblock.py[tag=source1]
 Now that we have an empty tree, we can go about filling it to calculate the Merkle Root.
 If we had every leaf hash, getting the Merkle Root would look like this:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example6]
 ----
@@ -318,7 +318,7 @@ include::code-ch11/merkleblock.py[tag=source2]
 We have Merkle Tree traversal methods `left`, `right`, and `up`.
 Let's use these methods to populate the tree via depth-first traversal:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example7]
 ----
@@ -335,7 +335,7 @@ This code will only work when the number of leaves is a power of two, as edge ca
 
 We handle the case where the parent is the parent of the rightmost node on a level with an odd number of nodes:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example8]
 ----
