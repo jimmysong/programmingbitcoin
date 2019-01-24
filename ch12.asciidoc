@@ -157,7 +157,7 @@ include::code-ch12/answers.py[tag=exercise3,indent=0]
 === Loading a Bloom Filter
 
 Once a light client has created a Bloom Filter, it needs to let the full node know the details of the filter so the full node can send Proofs of Inclusion.
-The first thing a light client must do is set the optional relay flag in the version message (see <<chapter_networking>>) to 1.
+The first thing a light client must do is set the optional relay flag in the version message (see <<chapter_networking>>) to 0.
 This tells the full node not to send transaction messages unless they match a Bloom Filter or they have been specifically requested.
 After the relay flag, a light client then communicates to the full node the Bloom Filter itself.
 The command to set the Bloom Filter is called `filterload`.

@@ -43,7 +43,7 @@ This is what we call the _additive inverse_.
 5. If _a_ is in the set and is not 0, __a^–1^__ is in the set, which is defined as the value that makes __a ⋅ a^–1^ = 1__.
 This is what we call the _multiplicative inverse_.
 
-Let's unpack each of the following.
+Let's unpack each of the above.
 
 We have a set of numbers that's finite.
 Because the set is finite, we can designate a number _p_, which is how big the set is.
@@ -108,11 +108,11 @@ A Finite Field of order 17 looks like this:
 </ul>
 ++++
 
-A Finite Field of order 981 looks like this:
+A Finite Field of order 983 looks like this:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>981</sub>= {0, 1, 2, ... 980}</li>
+<li>F<sub>983</sub>= {0, 1, 2, ... 982}</li>
 </ul>
 ++++
 
@@ -134,7 +134,7 @@ The bare bones of the class look like this:
 include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive.
-If not, we have an invalid Field Element and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
+If not, we get an invalid Field Element and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
 <2> The rest of the `__init__` method assigns the initialization values to the object.
 <3> The `__eq__` method checks if two objects of class `FieldElement` are equal.
 This is only true when the `num` and `prime` properties are equal.
@@ -506,7 +506,7 @@ include::code-ch01/answers.py[tag=exercise6,indent=0]
 ==== Coding Exponentiation in Python
 
 We need to define the exponentiation for `FieldElement`, which in Python can be defined with the `__pow__` method, overriding the `**` operator.
-The difference here is that the exponent is _not_ a `FieldElement`, so has to be treated a bit differently.
+The difference here is that the exponent is _not_ a `FieldElement`, so it has to be treated a bit differently.
 We want something like this to work:
 
 [source,python]
@@ -747,7 +747,7 @@ class FieldElement:
 ...
 include::code-ch01/ecc.py[tag=source3]
 ----
-<1> Make the exponent into something within the 0 to p–1 range.
+<1> Make the exponent into something within the 0 to p-2 range, inclusive.
 
 === Conclusion
 

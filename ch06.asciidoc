@@ -150,7 +150,7 @@ Here are some operations and their byte codes:
 * `0x00` - `OP_0`
 * `0x51` - `OP_1`
 * `0x60` - `OP_16`
-* `0x75` - `OP_DUP`
+* `0x76` - `OP_DUP`
 * `0x93` - `OP_ADD`
 * `0xa9` - `OP_HASH160`
 * `0xac` - `OP_CHECKSIG`
@@ -284,7 +284,7 @@ Note the `OP_CHECKSIG`, as that will be very important.
 The ScriptSig is the part that unlocks the received bitcoins.
 The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see <<chapter_serialization>>).
 
-For p2pk, the ScriptSig required to unlock the corresponding ScriptPubKey is just the signature as shown in <<pay_to_pubkey_p2pk_scriptsig>>.
+For p2pk, the ScriptSig required to unlock the corresponding ScriptPubKey is the signature followed by a single sighash byte as shown in <<pay_to_pubkey_p2pk_scriptsig>>:
 
 [[pay_to_pubkey_p2pk_scriptsig]]
 .Pay-to-pubkey (p2pk) ScriptSig

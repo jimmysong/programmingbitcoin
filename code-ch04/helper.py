@@ -4,7 +4,7 @@ import hashlib
 
 
 # tag::source1[]
-BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 # end::source1[]
 
 
@@ -34,25 +34,25 @@ def encode_base58(s):
             count += 1
         else:
             break
-    prefix = b'1' * count
     num = int.from_bytes(s, 'big')
-    result = bytearray()
+    prefix = '1' * count
+    result = ''
     while num > 0:  # <2>
         num, mod = divmod(num, 58)
-        result.insert(0, BASE58_ALPHABET[mod])
-    return prefix + bytes(result)  # <3>
+        result = BASE58_ALPHABET[mod] + result
+    return prefix + result  # <3>
 # end::source2[]
 
 
 # tag::source3[]
-def encode_base58_checksum(s):
-    return encode_base58(s + hash256(s)[:4]).decode('ascii')  # <1>
+def encode_base58_checksum(b):
+    return encode_base58(b + hash256(b)[:4])
 # end::source3[]
 
 
 def decode_base58(s):
     num = 0
-    for c in s.encode('ascii'):
+    for c in s:
         num *= 58
         num += BASE58_ALPHABET.index(c)
     combined = num.to_bytes(25, byteorder='big')

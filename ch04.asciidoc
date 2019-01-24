@@ -370,7 +370,6 @@ We can do steps 4 and 5 in one go this way:
 ----
 include::code-ch04/helper.py[tag=source3]
 ----
-<1> Note that the `.decode('ascii')` part is necessary to convert from Python 3 bytes to a Python 3 string.
 
 [NOTE]
 .What Is Testnet?

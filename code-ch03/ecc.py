@@ -156,6 +156,9 @@ class Point:
     def __repr__(self):
         if self.x is None:
             return 'Point(infinity)'
+        elif isinstance(self.x, FieldElement):
+            return 'Point({},{})_{}_{} FieldElement({})'.format(
+                self.x.num, self.y.num, self.a.num, self.b.num, self.x.prime)
         else:
             return 'Point({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
@@ -212,8 +215,8 @@ class Point:
             if coef & 1:  # <3>
                 result += current
             current += current  # <4>
-            coef >>= 1
-        return result  # <5>
+            coef >>= 1  # <5>
+        return result
     # end::source3[]
 
 
