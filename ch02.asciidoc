@@ -211,7 +211,7 @@ That is:
 </ul>
 ++++
 
-This is also related to _invertibility_.
+This((("invertibility"))) is also related to _invertibility_.
 For some point _A_, there's some other point –_A_ that results in the identity point.
 That is:
 
@@ -230,10 +230,10 @@ image::images/prbc_0212.png[Vertical Line]
 This is why we call this point the point at infinity.
 We have one extra point in the Elliptic Curve, which makes the vertical line intersect the curve a third time.
 
-_Commutativity_ means that _A_ + _B_ = _B_ + _A_.
+_Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
 This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place no matter the order.
 
-_Associativity_ means that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
+_Associativity_ means((("associativity"))) that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
 This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
 <a data-type="xref" href="#a_b_c_case_2" data-xrefstyle="select:labelnumber">#a_b_c_case_2</a>.]
 
@@ -257,7 +257,7 @@ To code point addition, we're going to split it up into three steps:
 
 === Coding Point Addition
 
-We first handle the identity, or the point at infinity.
+We((("Elliptic Curves", "Point Addition coding", id="ECpoindcode02")))((("Point Addition", "coding", id="PAcode02"))) first handle the identity, or the point at infinity.
 Since we can't easily use infinity in Python, we'll use the `None` value instead.
 What we want is this to work:
 
@@ -307,7 +307,7 @@ You can figure this out using a formula from pre-algebra:
 * __P__~1~ + __P__~2~ = __P__~3~
 *_s_ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
 
-This is the _slope_, and we can use the slope to calculate __x__~3~.
+This((("slope"))) is the _slope_, and we can use the slope to calculate __x__~3~.
 Once we know __x__~3~, we can calculate __y__~3~.
 __P__~3~ can be derived using this formula:
 
@@ -497,7 +497,7 @@ class Point:
 	if self == other and self.y == 0 * self.x:  # <1>
 	    return self.__class__(None, None, self.a, self.b)
 ----
-<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.((("", startref="MTeliptic02")))
+<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
 
 === Conclusion
 
