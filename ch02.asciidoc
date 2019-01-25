@@ -193,16 +193,16 @@ In mathematics parlance, point addition is _nonlinear_.((("", startref="PAdef02"
 
 === Math of Point Addition
 
-"Addition" in the name Point Addition satisfies certain properties that we think of as addition, such as:
+"Addition" in((("Elliptic Curves", "Point Addition math", id="ECpointmath02")))((("Point Addition", "math of", id="PAmath02"))) the name Point Addition satisfies certain properties that we think of as addition, such as:
 
 * Identity
 * Commutativity
 * Associativity
 * Invertibility
 
-_Identity_ here means that there's a zero.
+_Identity_ here((("identity"))) means that there's a zero.
 That is, there exists some point (_I_) that, when added to a point (_A_), results in _A_.
-We'll call this point the _point at infinity_ (reasons for this will become clear in a bit).
+We'll((("point at infinity"))) call this point the _point at infinity_ (reasons for this will become clear in a bit).
 That is:
 
 ++++
