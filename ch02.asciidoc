@@ -233,7 +233,7 @@ We have one extra point in the Elliptic Curve, which makes the vertical line int
 _Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
 This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place no matter the order.
 
-_Associativity_ means that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
+_Associativity_ means((("associativity"))) that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
 This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
 <a data-type="xref" href="#a_b_c_case_2" data-xrefstyle="select:labelnumber">#a_b_c_case_2</a>.]
 
