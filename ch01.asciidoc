@@ -681,7 +681,7 @@ To((("pow function"))) lessen the expensiveness, we can use the `pow` function i
 Thus something like `pow(7,17)` does the same thing as `7**17`.
 The `pow` function, however, has an optional third argument that makes our calculation more efficient.
 Specifically, `pow` will modulo by the third argument.
-Thus, `pow(7,17,19)` will give the same result as `7**17%19` but do so faster because the modulo function is done after each round of multiplication.((("&#x005F;&#x005F;truediv&#x005F;&#x005F; method")))((("&#x005F;&#x005F;floordiv&#x005F;&#x005F; method")))
+Thus, `pow(7,17,19)` will give the same result as `7**17%19` but do so faster because the modulo function is done after each round of multiplication.((("&#x005F;&#x005F;truediv&#x005F;&#x005F; method")))((("&#x005F;&#x005F;floordiv&#x005F;&#x005F; method")))((("", startref="FFdiv01")))
 
 include::code-ch01/answers.py[tag=exercise8,indent=0]
 
