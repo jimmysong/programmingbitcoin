@@ -111,7 +111,7 @@ image::images/prbc_0209.png[secp256k1 curve]
 
 For((("Elliptic Curves", "coding in Python"))) a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
 For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (–1,1).
-We are thus going to define the class `Point` to be a _point_ on a specific curve.
+We((("Point class"))) are thus going to define the class `Point` to be a _point_ on a specific curve.
 The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`:
 
 [source,python]
