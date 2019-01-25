@@ -151,13 +151,13 @@ Python((("== operator"))) allows us to override the `==` operator on `FieldEleme
 You can see this in action in the code that accompanies this book.
 Once you've set up Jupyter Notebook (see Preface), you can navigate to _code-ch01/Chapter1.ipynb_ and run the code to see the results.
 For the next exercise, you'll want to open up _ecc.py_ by clicking the link in the Exercise 1 box.
-If you get stuck, please remember that the answers to every exercise are in <<appendix_solutions>>.
+If you get stuck, please remember that the answers to every exercise are in <<appendix_solutions>>.((("", startref="FFsets01")))((("&#x005F;&#x005F;ne&#x005F;&#x005F; method")))
 
 include::code-ch01/answers.py[tag=exercise1,indent=0]
 
 === Modulo Arithmetic
 
-One((("", startref="FFsets01")))((("&#x005F;&#x005F;ne&#x005F;&#x005F; method")))((("Finite Fields", "modulo arithmetic", id="FFmodulo01")))((("modulo arithmetic", id="modulo01"))) of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
+One((("Finite Fields", "modulo arithmetic", id="FFmodulo01")))((("modulo arithmetic", id="modulo01"))) of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
 
 We can define addition on the finite set using modulo arithmetic, which is something you probably learned when you first learned division.
 Remember problems like <<long_division_example_one>>?
