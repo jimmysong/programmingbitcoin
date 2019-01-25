@@ -427,7 +427,7 @@ include::code-ch01/answers.py[tag=exercise3,indent=0]
 
 === Finite Field Multiplication and Exponentiation
 
-Just as we defined a new addition (+~f~) for Finite Fields that was _closed_, we can also define a new multiplication for Finite Fields that's also closed.
+Just((("Finite Fields", "multiplication and exponentiation", id="FFmulti1"))) as we defined a new addition (+~f~) for Finite Fields that was _closed_, we can also define a new multiplication for Finite Fields that's also closed.
 By multiplying the same number many times, we can also define exponentiation.
 In this section, we'll go through exactly how to define this using modulo arithmetic.
 
