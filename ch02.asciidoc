@@ -92,7 +92,7 @@ image::images/prbc_0207.png[Stretch]
 .Step 3: Reflected over the x-axis
 image::images/prbc_0208.png[Symmetric]
 
-Specifically, the Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
+Specifically, the((("secp256k1 curve"))) Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
 
 ++++
 <ul class="simplelist">
