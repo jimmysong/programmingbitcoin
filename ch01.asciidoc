@@ -677,7 +677,7 @@ In __F__~19~:
 
 This is a relatively expensive calculation as exponentiating grows very fast.
 Division is the most expensive operation for that reason.
-To lessen the expensiveness, we can use the `pow` function in Python, which does exponentiation.
+To((("pow function"))) lessen the expensiveness, we can use the `pow` function in Python, which does exponentiation.
 Thus something like `pow(7,17)` does the same thing as `7**17`.
 The `pow` function, however, has an optional third argument that makes our calculation more efficient.
 Specifically, `pow` will modulo by the third argument.
