@@ -491,7 +491,7 @@ If the order of the set was composite number, multiplying the set by one of the 
 
 ==== Coding Multiplication in Python
 
-Now that we understand what multiplication should be in `FieldElement`, we want to define the `__mul__` method that overrides the `*` operator.
+Now((("&#x005F;&#x005F;mul&#x005F;&#x005F; method")))((("&#x002A; (multiplication) operator")))((("multiplication (&#x002A;) operator"))) that we understand what multiplication should be in `FieldElement`, we want to define the `__mul__` method that overrides the `*` operator.
 We want this to work:
 
 [source,python]
