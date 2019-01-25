@@ -136,13 +136,13 @@ include::code-ch02/answers.py[tag=exercise2,indent=0]
 
 === Point Addition
 
-Elliptic Curves are useful because of something called Point Addition.
+Elliptic Curves((("Elliptic Curves", "Point Addition"))) are useful because of something called Point Addition.
 Point Addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
 This is called _addition_ because the operation has a lot of the intuitions we associate with the mathematical operation of addition.
 For example, Point Addition is commutative.
 That is, adding point A to point B is the same as adding point B to point A.
 
-The way we define Point Addition is as follows.
+The((("Point Addition", "definition of"))) way we define Point Addition is as follows.
 It turns out that for every Elliptic Curve, a line will intersect it at either 1 point (<<line_intersects_at_only_1_point>>) or 3 points (<<line_intersects_at_3_points>>), except for a couple of special cases.
 
 [[line_intersects_at_only_1_point]]
@@ -193,16 +193,16 @@ In mathematics parlance, point addition is _nonlinear_.
 
 === Math of Point Addition
 
-"Addition" in the name Point Addition satisfies certain properties that we think of as addition, such as:
+"Addition" in((("Elliptic Curves", "Point Addition math")))((("Point Addition", "math of"))) the name Point Addition satisfies certain properties that we think of as addition, such as:
 
 * Identity
 * Commutativity
 * Associativity
 * Invertibility
 
-_Identity_ here means that there's a zero.
+_Identity_ here((("identity"))) means that there's a zero.
 That is, there exists some point (_I_) that, when added to a point (_A_), results in _A_.
-We'll call this point the _point at infinity_ (reasons for this will become clear in a bit).
+We'll((("point at infinity"))) call this point the _point at infinity_ (reasons for this will become clear in a bit).
 That is:
 
 ++++
