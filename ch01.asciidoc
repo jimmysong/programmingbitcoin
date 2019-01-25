@@ -157,7 +157,7 @@ include::code-ch01/answers.py[tag=exercise1,indent=0]
 
 === Modulo Arithmetic
 
-One of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
+One((("", startref="FFsets01"))) of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
 
 We can define addition on the finite set using modulo arithmetic, which is something you probably learned when you first learned division.
 Remember problems like <<long_division_example_one>>?
