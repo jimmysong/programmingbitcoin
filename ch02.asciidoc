@@ -128,7 +128,7 @@ We can now create `Point` objects, and we will get an error if the point is not 
 include::code-ch02/examples.py[tag=example1]
 ----
 
-In((("&#x005F;&#x005F;init&#x005F;&#x005F; method"))) other words, `__init__` will raise an exception when the point is not on the curve.
+In((("&#x005F;&#x005F;init&#x005F;&#x005F; method"))) other words, `__init__` will raise an exception when the point is not on the curve.((("&#x005F;&#x005F;ne&#x005F;&#x005F; method")))
 
 include::code-ch02/answers.py[tag=exercise1,indent=0]
 
