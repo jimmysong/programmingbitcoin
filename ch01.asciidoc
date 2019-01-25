@@ -277,7 +277,7 @@ include::code-ch01/examples.py[tag=example3]
 
 === Finite Field Addition and Subtraction
 
-Remember that we need to define Finite Field addition such that we ensure the result is still in the set.
+Remember((("Finite Fields", "addition and subtraction", id="FFadd01"))) that we need to define Finite Field addition such that we ensure the result is still in the set.
 That is, we want to make sure that addition in a Finite Field is _closed_.
 
 We can use what we just learned, modulo arithmetic, to make addition closed.
@@ -289,7 +289,7 @@ Let's say we have a Finite Field of 19:
 </ul>
 ++++
 
-where a, b ∈ __F__~19~. Note that the symbol ∈ means "is an element of."
+where a, b ∈ __F__~19~. Note((("element of (&#x8712) symbol")))(((&#x8712 (element of) symbol"))) that the symbol ∈ means "is an element of."
 In our case, _a_ and _b_ are elements of __F__~19~.
 
 Addition being closed means:
