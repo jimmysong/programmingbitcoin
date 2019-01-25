@@ -2,7 +2,7 @@
 == Elliptic Curves
 
 [.lead]
-In((("mathematical tools", "elliptic curves", id="MTeliptic02"))) this chapter we're going to learn about Elliptic Curves.
+In((("mathematical tools", "Elliptic Curves", id="MTeliptic02"))) this chapter we're going to learn about Elliptic Curves.
 In <<chapter_elliptic_curve_cryptography>>, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
 
 As in <<chapter_finite_fields>>, Elliptic Curves can look intimidating if you haven't seen them before.
@@ -12,7 +12,7 @@ In this chapter, we'll get to what these curves are and what we can do with them
 
 === Definition
 
-Elliptic Curves are like many equations you've been seeing since pre-algebra.
+Elliptic Curves((("Elliptic Curves", "definition of"))) are like many equations you've been seeing since pre-algebra.
 They have `y` on one side and `x` on the other in some form.
 Elliptic Curves have a form like this:
 
