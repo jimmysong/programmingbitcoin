@@ -70,7 +70,7 @@ To aid your progress, we will be looking at a lot of code and diagrams throughou
 
 === Setting Up
 
-To((("Bitcoin", "downloading and installation")))((("example code", "environment setup"))) get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
+To((("Bitcoin", "downloading and installation", id="Bdown00")))((("example code", "environment setup", id="ECset00")))((("environment setup", id="envset00"))) get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
 Here are the commands for setting everything up.
 
 Install Python 3.5 or higher on your machine:
