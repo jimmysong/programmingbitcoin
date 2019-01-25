@@ -12,7 +12,7 @@ In this chapter, we'll get to what these curves are and what we can do with them
 
 === Definition
 
-Elliptic Curves are like many equations you've been seeing since pre-algebra.
+Elliptic Curves((("Elliptic Curves", "definition of"))) are like many equations you've been seeing since pre-algebra.
 They have `y` on one side and `x` on the other in some form.
 Elliptic Curves have a form like this:
 
@@ -92,7 +92,7 @@ image::images/prbc_0207.png[Stretch]
 .Step 3: Reflected over the x-axis
 image::images/prbc_0208.png[Symmetric]
 
-Specifically, the Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
+Specifically, the((("secp256k1 curve")))((("Elliptic Curves", "secp256k1 curve"))) Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
 
 ++++
 <ul class="simplelist">
@@ -109,9 +109,9 @@ image::images/prbc_0209.png[secp256k1 curve]
 
 === Coding Elliptic Curves in Python
 
-For a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
+For((("Elliptic Curves", "coding in Python"))) a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
 For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (–1,1).
-We are thus going to define the class `Point` to be a _point_ on a specific curve.
+We((("Point class"))) are thus going to define the class `Point` to be a _point_ on a specific curve.
 The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`:
 
 [source,python]
