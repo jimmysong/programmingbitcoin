@@ -444,7 +444,7 @@ With `__add__` and `__rmul__`, we can start defining some more complicated Ellip
 [[definingCurveBC]]
 === Defining the Curve for Bitcoin
 
-While we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
+While((("Elliptic Curve Cryptography", "secp256k1 curve", id="ECCsecp03")))((("secp256k1 curve", id="secp03")))((("Elliptic Curves", "secp256k1 curve", id="ECsecp03"))) we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
 Small primes mean that we can use a computer to search through the entire Group.
 If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break Discrete Log.
 
