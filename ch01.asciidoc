@@ -30,7 +30,7 @@ The fundamentals here will not only make understanding Bitcoin a lot easier, but
 
 === Finite Field Definition
 
-Mathematically, a Finite Field is defined as follows:
+Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01"))) a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
@@ -753,4 +753,4 @@ include::code-ch01/ecc.py[tag=source3]
 
 In this chapter we learned about Finite Fields and how to implement it in Python.
 We'll be using Finite Fields in <<chapter_elliptic_curve_cryptography>> for Elliptic Curve Cryptography.
-We turn next to the other mathematical component that we need for Elliptic Curve Cryptography: Elliptic Curves.
+We turn next to the other mathematical component that we need for Elliptic Curve Cryptography: Elliptic Curves.((("", startref="MTfinite01")))
