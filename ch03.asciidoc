@@ -619,7 +619,7 @@ Ultimately this is going to be used in Transactions, which will prove that the r
 
 ==== Inscribing the Target
 
-The inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
+The((("signing and verification", "signature algorithm")))((("signature algorithm"))) inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
 
 The secret in our case is `e` satisfying the following:
 
@@ -693,7 +693,7 @@ William Tell, for example, was shooting so that he could save his son (shoot the
 You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive.
 This has to be incorporated into our equations.
 
-In signature/verification parlance, this is called the _signature hash_.
+In((("signing and verification", "signature hash")))((("signature hash"))) signature/verification parlance, this is called the _signature hash_.
 A hash is a deterministic function that takes arbitrary data into a data of fixed size.
 This is a fingerprint of the message containing the intent of the shooter that anyone verifying the message already knows.
 We denote this with the letter `z`.
