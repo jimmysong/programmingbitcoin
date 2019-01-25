@@ -689,7 +689,7 @@ include::code-ch01/answers.py[tag=exercise9,indent=0]
 
 === Redefining Exponentiation
 
-One last thing that we need to take care of before we leave this chapter is the `__pow__` method, which needs to handle negative exponents.
+One((("&#x005F;&#x005F;pow&#x005F;&#x005F; method"))) last thing that we need to take care of before we leave this chapter is the `__pow__` method, which needs to handle negative exponents.
 For example, __a__^–3^ needs to be a Finite Field element, but the current code does not take care of this case.
 We want, for example, something like this to work:
 
