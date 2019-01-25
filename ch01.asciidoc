@@ -564,7 +564,7 @@ The question you might be asking yourself is, how do I calculate 2/~__f__~7 if I
 This is indeed a very good question; to answer it, we'll have to use the result from Exercise 7.
 
 In case you didn't get it, the answer is that __n__^(__p__–1)^ is always 1 for every _p_ that is prime and every _n_ > 0.
-This is a beautiful result from number theory called Fermat's Little Theorem.
+This is a beautiful result from number theory called((("Fermat’s Little Theorem"))) Fermat's Little Theorem.
 Essentially, the theorem says:
 
 ++++
