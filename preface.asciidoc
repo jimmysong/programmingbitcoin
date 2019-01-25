@@ -280,7 +280,7 @@ Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
 
 === Acknowledgments
 
-The((("acknowledgments"))) number of people that got me here is legion. The experiences and knowledge that an author draws from tend to have a lot of origins and it's difficult to give them all their proper credit. This is my way of saying that I'm probably going to forget a significant number of people and for that I sincerely apologize.
+The((("acknowledgments", id="ack00"))) number of people that got me here is legion. The experiences and knowledge that an author draws from tend to have a lot of origins and it's difficult to give them all their proper credit. This is my way of saying that I'm probably going to forget a significant number of people and for that I sincerely apologize.
 
 First, I want to thank my Lord Jesus Christ for putting me on this journey. If not for my faith, I would not have had the ethical conviction to blog about the importance of sound money in general and Bitcoin in particular, which ultimately led to the writing of this book.
 
@@ -320,5 +320,5 @@ Alumni of my course, Programming Blockchain, in addition to Bitcoiners on GitHub
 
 My subscribers on YouTube, my followers on Twitter, and my readers on Medium have been instrumental in helping me find my voice and set me on my path as an entrepreneur.
 
-Lastly, my wife, Julie, and my kids supported me throughout the past couple of years. If not for them, I doubt I'd have had the motivation to work as I have.
+Lastly, my wife, Julie, and my kids supported me throughout the past couple of years. If not for them, I doubt I'd have had the motivation to work as I have.((("", startref="ack00")))
 
