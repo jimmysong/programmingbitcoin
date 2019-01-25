@@ -399,7 +399,7 @@ include::code-ch01/answers.py[tag=exercise2,indent=0]
 
 ==== Coding Addition and Subtraction in Python
 
-In the class `FieldElement` we can now define `__add__` and `__sub__` methods.
+In((("&#x005F;&#x005F;add&#x005F;&#x005F; method")))((("&#x005F;&#x005F;sub&#x005F;&#x005F; method"))) the class `FieldElement` we can now define `__add__` and `__sub__` methods.
 The idea of these methods is that we want something like this to work:
 
 [source,python]
