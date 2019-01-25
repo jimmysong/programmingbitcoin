@@ -253,7 +253,7 @@ To code point addition, we're going to split it up into three steps:
 
 1. Where the points are in a vertical line or using the identity point.
 2. Where the points are not in a vertical line, but are different.
-3. Where the two points are the same.
+3. Where the two points are the same.((("", startref="ECpointmath02")))((("", startref="PAmath02")))
 
 === Coding Point Addition
 
