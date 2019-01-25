@@ -128,7 +128,7 @@ We can now create `Point` objects, and we will get an error if the point is not 
 include::code-ch02/examples.py[tag=example1]
 ----
 
-In other words, `__init__` will raise an exception when the point is not on the curve.
+In((("&#x005F;&#x005F;init&#x005F;&#x005F; method"))) other words, `__init__` will raise an exception when the point is not on the curve.((("&#x005F;&#x005F;ne&#x005F;&#x005F; method"))
 
 include::code-ch02/answers.py[tag=exercise1,indent=0]
 
@@ -268,7 +268,7 @@ include::code-ch02/examples.py[tag=example2]
 
 To make this work, we have to do two things:
 
-First, we have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
+First, we have to adjust((("&#x005F;&#x005F;init&#x005F;&#x005F; method)))" the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
 Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class.
 
 [source,python]
