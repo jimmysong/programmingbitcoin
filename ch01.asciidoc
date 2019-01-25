@@ -30,7 +30,7 @@ The fundamentals here will not only make understanding Bitcoin a lot easier, but
 
 === Finite Field Definition
 
-Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01"))) a Finite Field is defined as follows:
+Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01")))((("Finite Fields", "defined"))) a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
