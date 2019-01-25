@@ -36,7 +36,7 @@ The only difference is that we have to use the addition/subtraction/multiplicati
 
 === Elliptic Curves over Finite Fields
 
-So((("Elliptic Curve Cryptography", "elliptic curves over finite fields"))) what does an Elliptic Curve over a Finite Field look like?
+So((("Elliptic Curve Cryptography", "elliptic curves over finite fields", id="ECCfinite03"))) what does an Elliptic Curve over a Finite Field look like?
 Let's look at the equation __y__^2^ = _-x__^3^ + 7 over __F__~103~.
 We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
 
@@ -104,11 +104,11 @@ Ran 1 test in 0.001s
 
 OK
 ----
-<1> `helper` is a module with some very useful utility functions, including the ability to run unit tests individually.
+<1> `helper` is a module with some very useful utility functions, including the ability to run unit tests individually.((("", startref="ECCfinite03")))
 
 === Point Addition over Finite Fields
 
-We can use all the same equations over Finite Fields, including the linear equation:
+We((("Elliptic Curve Cryptography", "point addition over finite fields", id="ECCpoint03"))) can use all the same equations over Finite Fields, including the linear equation:
 
 ++++
 <ul class="simplelist">
@@ -149,7 +149,7 @@ All of the equations for Elliptic Curves work over Finite Fields, which sets us 
 
 === Coding Point Addition over Finite Fields
 
-Because we coded FieldElement in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__`, and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will work:
+Because we coded FieldElement in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__`, and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will((("", startref="ECCpoint03"))) work:
 
 [source,python]
 ----
