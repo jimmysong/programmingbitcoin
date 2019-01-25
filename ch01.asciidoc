@@ -146,7 +146,7 @@ What we've defined already allows us to do this:
 include::code-ch01/examples.py[tag=example1]
 ----
 
-Python allows us to override the `==` operator on `FieldElement` with the `__eq__` method, which is something we'll be taking advantage of going forward.
+Python((("== operator"))) allows us to override the `==` operator on `FieldElement` with the `__eq__` method, which is something we'll be taking advantage of going forward.
 
 You can see this in action in the code that accompanies this book.
 Once you've set up Jupyter Notebook (see Preface), you can navigate to _code-ch01/Chapter1.ipynb_ and run the code to see the results.
