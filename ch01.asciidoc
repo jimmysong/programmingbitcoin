@@ -505,7 +505,7 @@ include::code-ch01/answers.py[tag=exercise6,indent=0]
 
 ==== Coding Exponentiation in Python
 
-We((("&#x005F;&#x005F;pow&#x005F;&#x005F; method"))) method need to define the exponentiation for `FieldElement`, which in Python can be defined with the `__pow__` method, overriding the `**` operator.
+We((("&#x005F;&#x005F;pow&#x005F;&#x005F; method")))((("&#x002A;&#x002A; operator"))) method need to define the exponentiation for `FieldElement`, which in Python can be defined with the `__pow__` method, overriding the `**` operator.
 The difference here is that the exponent is _not_ a `FieldElement`, so it has to be treated a bit differently.
 We want something like this to work:
 
