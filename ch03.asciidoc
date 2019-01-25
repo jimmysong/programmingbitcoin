@@ -589,7 +589,7 @@ We'll note here that the private key is a single 256-bit number and the public k
 
 === Signing and Verification
 
-To set up the motivation for why signing and verification exists, imagine this scenario.
+To((("Elliptic Curve Cryptography", "signing and verification", id="ECCsign03")))((("signing and verification", "purpose of"))) set up the motivation for why signing and verification exists, imagine this scenario.
 You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any particular target.
 
 Now if someone could observe you and interact with you, proving this would be easy.
