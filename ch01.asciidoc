@@ -30,7 +30,7 @@ The fundamentals here will not only make understanding Bitcoin a lot easier, but
 
 === Finite Field Definition
 
-Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01")))((("Finite Fields", "defined"))) a Finite Field is defined as follows:
+Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01")))((("Finite Fields", "definition of"))) a Finite Field is defined as follows:
 
 A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
@@ -39,9 +39,9 @@ We call this property _closed_.
 2. The additive identity: _0_ exists and has the property __a + 0 = a__.
 3. The multiplicative identity: _1_ exists and has the property __a ⋅ 1 = a__.
 4. If _a_ is in the set, __–a__ is in the set, which is defined as the value that makes __a + (-a) = 0__.
-This is what we call the _additive inverse_.
+This((("additive inverse"))) is what we call the _additive inverse_.
 5. If _a_ is in the set and is not 0, __a^–1^__ is in the set, which is defined as the value that makes __a ⋅ a^–1^ = 1__.
-This is what we call the _multiplicative inverse_.
+This((("multiplicative inverse"))) is what we call the _multiplicative inverse_.
 
 Let's unpack each of these criteria.
 
