@@ -289,7 +289,7 @@ Let's say we have a Finite Field of 19:
 </ul>
 ++++
 
-where a, b ∈ __F__~19~. Note((("element of (&#x8712) symbol")))(((&#x8712 (element of) symbol"))) that the symbol ∈ means "is an element of."
+where a, b ∈ __F__~19~. Note((("element of (&#x8712;) symbol")))((("&#x8712; (element of) symbol"))) that the symbol ∈ means "is an element of."
 In our case, _a_ and _b_ are elements of __F__~19~.
 
 Addition being closed means:
