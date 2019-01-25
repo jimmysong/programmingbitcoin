@@ -211,7 +211,7 @@ That is:
 </ul>
 ++++
 
-This is also related to _invertibility_.
+This((("invertibility"))) is also related to _invertibility_.
 For some point _A_, there's some other point –_A_ that results in the identity point.
 That is:
 
