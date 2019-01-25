@@ -382,7 +382,7 @@ We have the formulas:
 * __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 * __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-At((("self.__class__ method"))) the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
+At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
 
 include::code-ch02/answers.py[tag=exercise5,indent=0]
 
