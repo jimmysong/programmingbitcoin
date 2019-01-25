@@ -130,7 +130,7 @@ C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
 
-Run Jupyter Notebook:
+Run Jupyter((("Jupyter Notebook", "running"))) Notebook:
 
 [source,bash]
 ----
