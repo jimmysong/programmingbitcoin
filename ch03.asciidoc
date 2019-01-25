@@ -162,7 +162,7 @@ include::code-ch03/answers.py[tag=exercise3,indent=0]
 
 === Scalar Multiplication for Elliptic Curves
 
-Because we can add a point to itself, we can introduce some new notation:
+Because((("Elliptic Curve Cryptography", "scalar multiplication for elliptic curves", id="ECCscalar03"))) we can add a point to itself, we can introduce some new notation:
 
 ++++
 <ul class="simplelist">
@@ -285,7 +285,7 @@ But if we were presented this:
 
 would you be able to solve for _s_?
 We can look up the results show earlier, but that's because we have a small group.
-We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.
+We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.((("", startref="ECCscalar03")))
 
 === Mathematical Groups
 
