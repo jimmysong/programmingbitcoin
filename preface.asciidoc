@@ -223,7 +223,7 @@ If there is, when you email digidist with the link, let them know what you fille
 This info will determine where digidist loads the files.-->
 ++++
 
-Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/jimmysong/programmingbitcoin$$[].
+Supplemental((("example code", "downloading and using")))((("code examples, obtaining and using"))) material (code examples, exercises, etc.) is available for download at link:$$https://github.com/jimmysong/programmingbitcoin$$[].
 
 This book is here to help you get your job done.
 In general, if example code is offered with this book, you may use it in your programs and documentation.
