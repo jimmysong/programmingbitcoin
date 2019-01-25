@@ -417,11 +417,11 @@ include::code-ch01/ecc.py[tag=source2]
 ----
 <1> We have to ensure that the elements are from the same Finite Field, otherwise this calculation doesn't have any meaning.
 <2> Addition in a Finite Field is defined with the modulo operator, as explained earlier.
-<3> We have to return an instance of the class, which we can conveniently access with `self.__class__`.
+<3> We((("self.&#x005F;&#x005F;class&#x005F;&#x005F; method"))) have to return an instance of the class, which we can conveniently access with `self.__class__`.
 We pass the two initializing arguments, `num` and `self.prime`, for the `__init__` method above.
 
 Note that we can use `FieldElement` instead of `self.__class__`, but this would not make the method easily inheritable.
-We will be subclassing `FieldElement` later, so making the method inheritable is important here.
+We will be subclassing `FieldElement` later, so making the method inheritable is important here.((("", startref="FFadd01")))
 
 include::code-ch01/answers.py[tag=exercise3,indent=0]
 
