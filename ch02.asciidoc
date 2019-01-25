@@ -314,7 +314,7 @@ __P__~3~ can be derived using this formula:
 * __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 * __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-Remember that __y__~3~ is the reflection over the x-axis.((("Point Addition", "deriving the Point Addition Formula")))
+Remember that __y__~3~ is the reflection over the x-axis.
 
 .Deriving the Point Addition Formula
 ****
@@ -324,7 +324,7 @@ Supposing:
 * __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
 * __P__~1~ + __P__~2~ = __P__~3~
 
-We want to know what __P__~3~ is.
+We((("Point Addition", "deriving the Point Addition Formula"))) want to know what __P__~3~ is.
 
 Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and has this formula:
 
@@ -350,7 +350,7 @@ From earlier, we know that:
 
 * __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __s__^2^__x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
-There's a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
+There's((("Vieta’s Formula"))) a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
 The first coefficient that's interesting is the coefficient in front of __x__^2^:
 
 * –__s__^2^ = –(__x__~1~ + __x__~2~ + __x__~3~)
