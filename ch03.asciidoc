@@ -2,7 +2,7 @@
 == Elliptic Curve Cryptography
 
 [.lead]
-The previous two chapters covered some fundamental math.
+The((("mathematical tools", "Elliptic Curve Cryptography", id="MTelipcurcrypt03"))) previous two chapters covered some fundamental math.
 We learned how Finite Fields work and what an Elliptic Curve is.
 In this chapter, we're going to combine the two concepts to learn Elliptic Curve Cryptography.
 Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
@@ -976,7 +976,7 @@ This is because sha256 is collision resistant and no collisions to date have bee
 Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time.
 This makes debugging much easier and unit tests a lot easier to write.
 In addition, transactions that use deterministic `k` will create the same transaction every time, as the signature will not change.
-This makes transactions less malleable (more on that in <<chapter_segwit>>).
+This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))
 
 ****
 
