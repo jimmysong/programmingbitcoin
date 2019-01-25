@@ -12,7 +12,7 @@ In this chapter, we'll get to what these curves are and what we can do with them
 
 === Definition
 
-Elliptic Curves((("Elliptic Curves", "definition of"))) are like many equations you've been seeing since pre-algebra.
+Elliptic Curves((("Elliptic Curves", "definition of", id="ECdefin02"))) are like many equations you've been seeing since pre-algebra.
 They have `y` on one side and `x` on the other in some form.
 Elliptic Curves have a form like this:
 
@@ -101,7 +101,7 @@ Specifically, the Elliptic Curve used in Bitcoin is called secp256k1 and it uses
 ++++
 
 The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>] so the curve is defined by the constants `a=0`, `b=7`.
-The curve looks like <<secp256k1_curve>>.
+The curve looks like <<secp256k1_curve>>.((("", startref="ECdefin02")))
 
 [[secp256k1_curve]]
 .secp256k1 curve
