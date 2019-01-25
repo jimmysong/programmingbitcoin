@@ -230,7 +230,7 @@ image::images/prbc_0212.png[Vertical Line]
 This is why we call this point the point at infinity.
 We have one extra point in the Elliptic Curve, which makes the vertical line intersect the curve a third time.
 
-_Commutativity_ means that _A_ + _B_ = _B_ + _A_.
+_Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
 This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place no matter the order.
 
 _Associativity_ means that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
