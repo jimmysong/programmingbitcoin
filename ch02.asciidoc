@@ -2,7 +2,7 @@
 == Elliptic Curves
 
 [.lead]
-In this chapter we're going to learn about Elliptic Curves.
+In((("mathematical tools", "elliptic curves", id="MTeliptic02"))) this chapter we're going to learn about Elliptic Curves.
 In <<chapter_elliptic_curve_cryptography>>, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
 
 As in <<chapter_finite_fields>>, Elliptic Curves can look intimidating if you haven't seen them before.
@@ -502,4 +502,4 @@ class Point:
 === Conclusion
 
 We've covered what Elliptic Curves are, how they work and how to do point addition.
-We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
+We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.((("", startref="MTeliptic02")))
