@@ -74,7 +74,7 @@ This will be the trickiest to define in a finite field.
 
 === Defining Finite Sets
 
-If((("Finite Fields", "defining finite sets", id="FFsets01"))) the _order_ (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2, ... p – 1.
+If((("Finite Fields", "defining finite sets", id="FFsets01")))((("order (size)"))) the _order_ (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2, ... p – 1.
 These((("elements"))) numbers are what we call the _elements_ of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
 They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, and so forth.
 
@@ -86,7 +86,7 @@ In math notation the Finite Field set looks like this:
 </ul>
 ++++
 
-What's in the Finite Field set are called elements.
+What's in the Finite Field set are called elements.((("field of p")))
 F~p~ is a specific finite field called "field of p" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call _order_).
 The numbers between the {}s represent what elements are in the field.
 We name the elements 0, 1, 2, etc. because they're convenient for our purposes.
@@ -122,7 +122,7 @@ For a variety of reasons that will become clear later, it turns out that fields 
 
 ==== Constructing a Finite Field in Python
 
-We want to represent each Finite Field element, so in Python, we'll be creating a class that represents a single Finite Field element.
+We((("FieldElement class"))) want to represent each Finite Field element, so in Python, we'll be creating a class that represents a single Finite Field element.
 Naturally, we'll name the class `FieldElement`.
 
 
