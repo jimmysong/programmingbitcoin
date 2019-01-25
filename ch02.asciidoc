@@ -298,7 +298,7 @@ include::code-ch02/answers.py[tag=exercise3,indent=0]
 
 === Point Addition for when x~1~≠x~2~
 
-Now((("Elliptic Curves", "Point Addition for x&#x2081 &#x22260; x&#x2082;")))((("Point Addition", "for x&#x2081 &#x22260; x&#x2082;")))((("slope"))) that we've covered the vertical line, let's examine when the points are different.
+Now((("Elliptic Curves", "Point Addition for x&#x2081 &#x22260; x&#x2082;", id="ECxnotequal02")))((("Point Addition", "for x&#x2081 &#x22260; x&#x2082;", id="PAxnotequal02")))((("slope"))) that we've covered the vertical line, let's examine when the points are different.
 When we have points where the `x`'s differ, we can add using a fairly simple formula.
 To help with intuition, we'll first find the slope created by the two points.
 You can figure this out using a formula from pre-algebra:
