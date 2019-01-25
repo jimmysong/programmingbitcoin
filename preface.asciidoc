@@ -189,7 +189,7 @@ They are also available in the __code-ch<xx>/answers.py__ file where +xx+ is the
 
 === Conventions Used in This Book
 
-The following typographical conventions are used in this book:
+The((("typographical conventions"))) following typographical conventions are used in this book:
 
 _Italic_:: Indicates new terms, URLs, email addresses, filenames, and file extensions.
 
