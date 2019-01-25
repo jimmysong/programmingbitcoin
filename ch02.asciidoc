@@ -388,7 +388,7 @@ include::code-ch02/answers.py[tag=exercise5,indent=0]
 
 === Point Addition for When P~1~ = P~2~
 
-When((("Elliptic Curves", "Point Addition for P&#x2018; = P&#x2082;", id="Pequal02")))((("Point Addition", "for P&#x2018; = P&#x2082;", id="PAPequal02"))) the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
+When((("Elliptic Curves", "Point Addition for P&#x2018; &#x003D; P&#x2082;", id="Pequal02")))((("Point Addition", "for P&#x2018; &#x003D; P&#x2082;", id="PAPequal02"))) the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
 We know that this means:
 
 ++++
