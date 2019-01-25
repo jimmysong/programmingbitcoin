@@ -233,7 +233,7 @@ Selling or distributing a CD-ROM of examples from O’Reilly books does require 
 Answering a question by citing this book and quoting example code does not require permission.
 Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
 
-We appreciate, but do not require, attribution.
+We((("attributions"))) appreciate, but do not require, attribution.
 An attribution usually includes the title, author, publisher, and ISBN.
 For example: “_Programming Bitcoin_ by Jimmy Song (O’Reilly).
 Copyright 2019, 978-1-492-03149-9.”
@@ -252,7 +252,7 @@ Our unique network of experts and innovators share their knowledge and expertise
 
 === How to Contact Us
 
-Please address comments and questions concerning this book to the publisher:
+Please((("contact information")))((("questions and comments")))((("comments and questions"))) address comments and questions concerning this book to the publisher:
 
 ++++
 <ul class="simplelist">
