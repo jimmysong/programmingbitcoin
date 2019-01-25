@@ -375,14 +375,14 @@ include::code-ch02/answers.py[tag=exercise4,indent=0]
 === Coding Point Addition for when x~1~≠x~2~
 
 We now code this into our library.
-That means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
+That((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
 We have the formulas:
 
 * __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
 * __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 * __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
+At((("self.__class__ method"))) the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.((("", startref="ECxnotequal02")))((("", startref="PAxnotequal02")))
 
 include::code-ch02/answers.py[tag=exercise5,indent=0]
 
