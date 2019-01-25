@@ -168,7 +168,7 @@ image::images/prbc_0101.png[Long Division Example 1]
 
 Whenever the division wasn't even, there was something called the "remainder," which is the leftover from the actual division.
 We define modulo in the same way.
-We use the operator % for "modulo":
+We((("% operator"))) use the operator % for "modulo":
 
 ++++
 <ul class="simplelist">
@@ -268,7 +268,7 @@ Here is how the modulo operator is used:
 include::code-ch01/examples.py[tag=example2]
 ----
 
-We can also use the modulo operator on negative numbers like this:
+We can also use the modulo operator on negative numbers like((("", startref="FFmodulo01")))((("", startref="modulo01"))) this:
 
 [source,python]
 ----
