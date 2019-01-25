@@ -9,7 +9,7 @@ Specifically, we're going to build the primitives needed to sign and verify mess
 
 === Elliptic Curves over Reals
 
-We discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers.
+We((("Elliptic Curve Cryptography", "elliptic curves over real numbers"))) discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers.
 Specifically, it's not just integers or even rational numbers, but all _real_ numbers.
 Pi, sqrt(2), __e__+7th root of 19, and the like are all real numbers.
 
@@ -36,7 +36,7 @@ The only difference is that we have to use the addition/subtraction/multiplicati
 
 === Elliptic Curves over Finite Fields
 
-So what does an Elliptic Curve over a Finite Field look like?
+So((("Elliptic Curve Cryptography", "elliptic curves over finite fields"))) what does an Elliptic Curve over a Finite Field look like?
 Let's look at the equation __y__^2^ = _-x__^3^ + 7 over __F__~103~.
 We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
 
