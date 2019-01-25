@@ -568,7 +568,7 @@ We can now define _G_ directly and keep it around since we'll be using it a lot 
 include::code-ch03/ecc.py[tag=source10]
 ----
 
-Now checking that the order of _G_ is `n` is trivial:
+Now((("", startref="ECsecp03")))((("", startref="secp03")))((("", startref="ECCsecp03"))) checking that the order of _G_ is `n` is trivial:
 
 [source,python]
 ----
