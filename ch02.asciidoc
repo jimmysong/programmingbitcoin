@@ -136,7 +136,7 @@ include::code-ch02/answers.py[tag=exercise2,indent=0]
 
 === Point Addition
 
-Elliptic Curves are useful because of something called Point Addition.
+Elliptic Curves((("Elliptic Curves", "Point Addition", id="ECpoint02")))((("Point Addition", "definition of", id="PAdef02"))) are useful because of something called Point Addition.
 Point Addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
 This is called _addition_ because the operation has a lot of the intuitions we associate with the mathematical operation of addition.
 For example, Point Addition is commutative.
