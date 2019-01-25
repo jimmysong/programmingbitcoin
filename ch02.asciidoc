@@ -257,7 +257,7 @@ To code point addition, we're going to split it up into three steps:
 
 === Coding Point Addition
 
-We first handle the identity, or the point at infinity.
+We((("Elliptic Curves", "Point Addition coding")))((("Point Addition", "coding"))) first handle the identity, or the point at infinity.
 Since we can't easily use infinity in Python, we'll use the `None` value instead.
 What we want is this to work:
 
