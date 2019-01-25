@@ -502,4 +502,4 @@ class Point:
 === Conclusion
 
 We've covered what Elliptic Curves are, how they work and how to do point addition.
-We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.((("", startref="MTeliptic02")))
+We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
