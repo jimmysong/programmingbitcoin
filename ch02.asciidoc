@@ -257,7 +257,7 @@ To code point addition, we're going to split it up into three steps:
 
 === Coding Point Addition
 
-We((("Elliptic Curves", "Point Addition coding")))((("Point Addition", "coding"))) first handle the identity, or the point at infinity.
+We((("Elliptic Curves", "Point Addition coding", id="ECpointcode02")))((("Point Addition", "coding", id="PAcode02"))) first handle the identity, or the point at infinity.
 Since we can't easily use infinity in Python, we'll use the `None` value instead.
 What we want is this to work:
 
@@ -298,7 +298,7 @@ include::code-ch02/answers.py[tag=exercise3,indent=0]
 
 === Point Addition for when x~1~≠x~2~
 
-Now((("Elliptic Curves", "Point Addition for  , id="ECxnotequal02")))((("Point Addition", "for  ", id="PAxnotequal02")))((("slope"))) that we've covered the vertical line, let's examine when the points are different.
+Now((("slope"))) that we've covered the vertical line, let's examine when the points are different.
 When we have points where the `x`'s differ, we can add using a fairly simple formula.
 To help with intuition, we'll first find the slope created by the two points.
 You can figure this out using a formula from pre-algebra:
@@ -382,13 +382,13 @@ We have the formulas:
 * __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 * __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-At((("self.__class__ method"))) the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.((("", startref="ECxnotequal02")))((("", startref="PAxnotequal02")))
+At((("self.__class__ method"))) the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
 
 include::code-ch02/answers.py[tag=exercise5,indent=0]
 
 === Point Addition for When P~1~ = P~2~
 
-When((("Elliptic Curves", "Point Addition for ", id="Pequal02")))((("Point Addition", "for ", id="PAPequal02"))) the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
+When the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
 We know that this means:
 
 ++++
@@ -468,7 +468,7 @@ include::code-ch02/answers.py[tag=exercise6,indent=0]
 === Coding Point Addition for When P~1~ = P~2~
 
 We((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) adjust the `__add__` method to account for this particular case.
-We have the formulas, we now implement them.((("", startref="Pequal02")))((("", startref="PAPequal02")))
+We have the formulas, we now implement them.
 
 * __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
 * __x__~3~ = __s__^2^ – 2__x__~1~
@@ -478,7 +478,7 @@ include::code-ch02/answers.py[tag=exercise7,indent=0]
 
 === Coding One More Exception
 
-There((("Elliptic Curves", "where tangent line is vertical")))((("Point Addition", "where tangent line is vertical"))) is one more exception and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
+There is one more exception and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
 
 [[vertical_and_tangent_to_the_curve]]
 .Vertical and tangent to the curve
@@ -497,7 +497,7 @@ class Point:
 	if self == other and self.y == 0 * self.x:  # <1>
 	    return self.__class__(None, None, self.a, self.b)
 ----
-<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.
+<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.((("", startref="ECpointcode02")))((("", startref="PAcode02")))
 
 === Conclusion
 
