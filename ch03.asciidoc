@@ -289,7 +289,7 @@ We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger
 
 === Mathematical Groups
 
-The preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point.
+The((("Elliptic Curve Cryptography", "mathematical groups", id="ECCmath03"))) preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point.
 What we actually want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups, and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate a Finite Cyclic Group.
 
 Unlike fields, groups have only a single operation.
@@ -385,7 +385,7 @@ image::images/prbc_0216.png[Case 1]
 .A + (B + C). B + C is added first before adding A. Note that this results in the same point as in <<a_b_c_case_one>>.
 image::images/prbc_0217.png[Case 2]
 
-Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_ proving associativity.
+Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_ proving associativity.((("", startref="ECCmath03")))
 
 include::code-ch03/answers.py[tag=exercise5,indent=0]
 
