@@ -538,7 +538,7 @@ include::code-ch01/answers.py[tag=exercise7,indent=0]
 
 === Finite Field Division
 
-The intuition that helps us with addition, subtraction, multiplication, and perhaps even exponentiation unfortunately doesn't help us quite as much in division.
+The((("Finite Fields", "division", id="FFdiv01"))) intuition that helps us with addition, subtraction, multiplication, and perhaps even exponentiation unfortunately doesn't help us quite as much in division.
 Because division is the hardest one to make sense of, we'll start with something that should make sense.
 
 In normal math, division is the inverse of multiplication:
