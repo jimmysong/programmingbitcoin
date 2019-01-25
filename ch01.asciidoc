@@ -74,8 +74,8 @@ This will be the trickiest to define in a finite field.
 
 === Defining Finite Sets
 
-If((("Finite Fields", "defining finite sets"))) the _order_ (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2, ... p – 1.
-These numbers are what we call the _elements_ of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
+If((("Finite Fields", "defining finite sets", id="FFsets01"))) the _order_ (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2, ... p – 1.
+These((("elements"))) numbers are what we call the _elements_ of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
 They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, and so forth.
 
 In math notation the Finite Field set looks like this:
