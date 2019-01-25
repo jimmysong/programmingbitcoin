@@ -269,7 +269,7 @@ include::code-ch02/examples.py[tag=example2]
 To make this work, we have to do two things:
 
 First, we have to adjust((("&#x005F;&#x005F;init&#x005F;&#x005F; method)))" the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
-Second, we((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) have to overload the addition operator or `__add__` as we did with the `FieldElement` class.
+Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class.
 
 [source,python]
 ----
@@ -375,7 +375,7 @@ include::code-ch02/answers.py[tag=exercise4,indent=0]
 === Coding Point Addition for when x~1~≠x~2~
 
 We now code this into our library.
-That((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
+That means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
 We have the formulas:
 
 * __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
@@ -467,7 +467,7 @@ include::code-ch02/answers.py[tag=exercise6,indent=0]
 
 === Coding Point Addition for When P~1~ = P~2~
 
-We((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) adjust the `__add__` method to account for this particular case.
+We adjust the `__add__` method to account for this particular case.
 We have the formulas, we now implement them.
 
 * __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
