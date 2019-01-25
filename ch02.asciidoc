@@ -189,7 +189,7 @@ We then reflect that point over the x-axis, which puts us at the A + B point in 
 One of the properties that we are going to use is that point addition is not easily predictable.
 We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
 Going back to <<point_addition>>, A + B is to the right of both points, A + C would be somewhere between A and C on the x-axis, and B + C would be to the left of both points.
-In mathematics parlance, point addition is _nonlinear_.
+In mathematics parlance, point addition is _nonlinear_.((("", startref="PAdef02")))((("", startref="ECpoint02")))
 
 === Math of Point Addition
 
