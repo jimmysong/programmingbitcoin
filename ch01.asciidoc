@@ -135,8 +135,8 @@ include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive.
 If not, we get an invalid Field Element and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
-<2> The((("__init__ method"))) rest of the `__init__` method assigns the initialization values to the object.
-<3> The((("__eq__ method"))) `__eq__` method checks if two objects of class `FieldElement` are equal.
+<2> The((("&#x005F;&#x005F;init&#x005F;&#x005F; method"))) rest of the `__init__` method assigns the initialization values to the object.
+<3> The((("&#x005F;&#x005F;eq&#x005F;&#x005F; method"))) `__eq__` method checks if two objects of class `FieldElement` are equal.
 This is only true when the `num` and `prime` properties are equal.
 
 What we've defined already allows us to do this:
@@ -157,7 +157,7 @@ include::code-ch01/answers.py[tag=exercise1,indent=0]
 
 === Modulo Arithmetic
 
-One((("", startref="FFsets01")))((("__ne__ method")))((("Finite Fields", "modulo arithmetic", id="FFmodulo01")))((("modulo arithmetic", id="modulo01"))) of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
+One((("", startref="FFsets01")))((("&#x005F;&#x005F;ne&#x005F;&#x005F; method")))((("Finite Fields", "modulo arithmetic", id="FFmodulo01")))((("modulo arithmetic", id="modulo01"))) of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
 
 We can define addition on the finite set using modulo arithmetic, which is something you probably learned when you first learned division.
 Remember problems like <<long_division_example_one>>?
