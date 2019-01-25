@@ -532,7 +532,7 @@ Why don't we force the exponent to be a `FieldElement` object?
 It turns out that the exponent doesn't have to be a member of the Finite Field for the math to work.
 In fact, if it were, the exponents wouldn't display the intuitive behavior we would expect from exponents, like being able to add the exponents when you multiply with the same base.
 
-Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.
+Some of what we're doing now may seem slow for large numbers, but we'll use some clever tricks to improve the performance of these algorithms.((("", startref="FFmulti1")))
 
 include::code-ch01/answers.py[tag=exercise7,indent=0]
 
