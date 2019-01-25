@@ -407,7 +407,7 @@ The idea of these methods is that we want something like this to work:
 include::code-ch01/examples.py[tag=example4]
 ----
 
-In Python we can define what addition (or + operator) means for our class with the `__add__` method.
+In((("&#x002B; (addition) operator")))((("addition (&#x002B;) operator"))) Python we can define what addition (or + operator) means for our class with the `__add__` method.
 So how do we do this?
 We combine what we learned with modulo arithmetic and create a new method of the class `FieldElement` like so:
 
