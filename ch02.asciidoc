@@ -478,7 +478,7 @@ include::code-ch02/answers.py[tag=exercise7,indent=0]
 
 === Coding One More Exception
 
-There is one more exception and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
+There((("Elliptic Curves", "where tangent line is vertical")))((("Point Addition", "where tangent line is vertical"))) is one more exception and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
 
 [[vertical_and_tangent_to_the_curve]]
 .Vertical and tangent to the curve
