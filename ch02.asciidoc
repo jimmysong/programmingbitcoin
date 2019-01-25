@@ -2,7 +2,7 @@
 == Elliptic Curves
 
 [.lead]
-In((("mathematical tools", "Elliptic Curves", id="MTeliptic02"))) this chapter we're going to learn about Elliptic Curves.
+In this chapter we're going to learn about Elliptic Curves.
 In <<chapter_elliptic_curve_cryptography>>, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
 
 As in <<chapter_finite_fields>>, Elliptic Curves can look intimidating if you haven't seen them before.
@@ -12,7 +12,7 @@ In this chapter, we'll get to what these curves are and what we can do with them
 
 === Definition
 
-Elliptic Curves((("Elliptic Curves", "definition of", id="ECdefin02"))) are like many equations you've been seeing since pre-algebra.
+Elliptic Curves are like many equations you've been seeing since pre-algebra.
 They have `y` on one side and `x` on the other in some form.
 Elliptic Curves have a form like this:
 
@@ -92,7 +92,7 @@ image::images/prbc_0207.png[Stretch]
 .Step 3: Reflected over the x-axis
 image::images/prbc_0208.png[Symmetric]
 
-Specifically, the((("Elliptic Curves", "secp256k1 curve")))((("secp256k1 curve"))) Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
+Specifically, the Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
 
 ++++
 <ul class="simplelist">
@@ -101,7 +101,7 @@ Specifically, the((("Elliptic Curves", "secp256k1 curve")))((("secp256k1 curve")
 ++++
 
 The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>] so the curve is defined by the constants `a=0`, `b=7`.
-The curve looks like <<secp256k1_curve>>.((("", startref="ECdefin02")))
+The curve looks like <<secp256k1_curve>>.
 
 [[secp256k1_curve]]
 .secp256k1 curve
@@ -109,9 +109,9 @@ image::images/prbc_0209.png[secp256k1 curve]
 
 === Coding Elliptic Curves in Python
 
-For((("Elliptic Curves", "coding in Python"))) a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
+For a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
 For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (–1,1).
-We((("Point class"))) are thus going to define the class `Point` to be a _point_ on a specific curve.
+We are thus going to define the class `Point` to be a _point_ on a specific curve.
 The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`:
 
 [source,python]
@@ -128,7 +128,7 @@ We can now create `Point` objects, and we will get an error if the point is not 
 include::code-ch02/examples.py[tag=example1]
 ----
 
-In((("&#x005F;&#x005F;init&#x005F;&#x005F; method"))) other words, `__init__` will raise an exception when the point is not on the curve.((("&#x005F;&#x005F;ne&#x005F;&#x005F; method")))
+In other words, `__init__` will raise an exception when the point is not on the curve.
 
 include::code-ch02/answers.py[tag=exercise1,indent=0]
 
@@ -136,7 +136,7 @@ include::code-ch02/answers.py[tag=exercise2,indent=0]
 
 === Point Addition
 
-Elliptic Curves((("Elliptic Curves", "Point Addition", id="ECpoint02")))((("Point Addition", "definition of", id="PAdef02"))) are useful because of something called Point Addition.
+Elliptic Curves are useful because of something called Point Addition.
 Point Addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
 This is called _addition_ because the operation has a lot of the intuitions we associate with the mathematical operation of addition.
 For example, Point Addition is commutative.
@@ -189,20 +189,20 @@ We then reflect that point over the x-axis, which puts us at the A + B point in 
 One of the properties that we are going to use is that point addition is not easily predictable.
 We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
 Going back to <<point_addition>>, A + B is to the right of both points, A + C would be somewhere between A and C on the x-axis, and B + C would be to the left of both points.
-In mathematics parlance, point addition is _nonlinear_.((("", startref="PAdef02")))((("", startref="ECpoint02")))
+In mathematics parlance, point addition is _nonlinear_.
 
 === Math of Point Addition
 
-"Addition" in((("Elliptic Curves", "Point Addition math", id="ECpointmath02")))((("Point Addition", "math of", id="PAmath02"))) the name Point Addition satisfies certain properties that we think of as addition, such as:
+"Addition" in the name Point Addition satisfies certain properties that we think of as addition, such as:
 
 * Identity
 * Commutativity
 * Associativity
 * Invertibility
 
-_Identity_ here((("identity"))) means that there's a zero.
+_Identity_ here means that there's a zero.
 That is, there exists some point (_I_) that, when added to a point (_A_), results in _A_.
-We'll((("point at infinity"))) call this point the _point at infinity_ (reasons for this will become clear in a bit).
+We'll call this point the _point at infinity_ (reasons for this will become clear in a bit).
 That is:
 
 ++++
@@ -211,7 +211,7 @@ That is:
 </ul>
 ++++
 
-This((("invertibility"))) is also related to _invertibility_.
+This is also related to _invertibility_.
 For some point _A_, there's some other point –_A_ that results in the identity point.
 That is:
 
@@ -230,10 +230,10 @@ image::images/prbc_0212.png[Vertical Line]
 This is why we call this point the point at infinity.
 We have one extra point in the Elliptic Curve, which makes the vertical line intersect the curve a third time.
 
-_Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
+_Commutativity_ means that _A_ + _B_ = _B_ + _A_.
 This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place no matter the order.
 
-_Associativity_ means((("associativity"))) that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
+_Associativity_ means that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
 This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
 <a data-type="xref" href="#a_b_c_case_2" data-xrefstyle="select:labelnumber">#a_b_c_case_2</a>.]
 
@@ -253,11 +253,11 @@ To code point addition, we're going to split it up into three steps:
 
 1. Where the points are in a vertical line or using the identity point.
 2. Where the points are not in a vertical line, but are different.
-3. Where the two points are the same.((("", startref="ECpointmath02")))((("", startref="PAmath02")))
+3. Where the two points are the same.
 
 === Coding Point Addition
 
-We((("Elliptic Curves", "Point Addition coding", id="ECpointcode02")))((("Point Addition", "coding", id="PAcode02"))) first handle the identity, or the point at infinity.
+We first handle the identity, or the point at infinity.
 Since we can't easily use infinity in Python, we'll use the `None` value instead.
 What we want is this to work:
 
@@ -268,7 +268,7 @@ include::code-ch02/examples.py[tag=example2]
 
 To make this work, we have to do two things:
 
-First, we((("&#x005F;&#x005F;init&#x005F;&#x005F; method")))((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
+First, we have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
 Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class.
 
 [source,python]
@@ -298,7 +298,7 @@ include::code-ch02/answers.py[tag=exercise3,indent=0]
 
 === Point Addition for when x~1~≠x~2~
 
-Now((("slope"))) that we've covered the vertical line, let's examine when the points are different.
+Now that we've covered the vertical line, let's examine when the points are different.
 When we have points where the `x`'s differ, we can add using a fairly simple formula.
 To help with intuition, we'll first find the slope created by the two points.
 You can figure this out using a formula from pre-algebra:
@@ -324,7 +324,7 @@ Supposing:
 * __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
 * __P__~1~ + __P__~2~ = __P__~3~
 
-We((("Point Addition", "deriving the Point Addition Formula"))) want to know what __P__~3~ is.
+We want to know what __P__~3~ is.
 
 Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and has this formula:
 
@@ -350,7 +350,7 @@ From earlier, we know that:
 
 * __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __s__^2^__x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
 
-There's((("Vieta’s Formula"))) a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
+There's a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
 The first coefficient that's interesting is the coefficient in front of __x__^2^:
 
 * –__s__^2^ = –(__x__~1~ + __x__~2~ + __x__~3~)
@@ -375,14 +375,14 @@ include::code-ch02/answers.py[tag=exercise4,indent=0]
 === Coding Point Addition for when x~1~≠x~2~
 
 We now code this into our library.
-That((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
+That means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
 We have the formulas:
 
 * __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
 * __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
 * __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
 
-At((("self.__class__ method"))) the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
+At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
 
 include::code-ch02/answers.py[tag=exercise5,indent=0]
 
@@ -467,7 +467,7 @@ include::code-ch02/answers.py[tag=exercise6,indent=0]
 
 === Coding Point Addition for When P~1~ = P~2~
 
-We((("&#x005F;&#x005F;add&#x005F;&#x005F; method"))) adjust the `__add__` method to account for this particular case.
+We adjust the `__add__` method to account for this particular case.
 We have the formulas, we now implement them.
 
 * __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
@@ -497,7 +497,7 @@ class Point:
 	if self == other and self.y == 0 * self.x:  # <1>
 	    return self.__class__(None, None, self.a, self.b)
 ----
-<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.((("", startref="ECpointcode02")))((("", startref="PAcode02")))
+<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.
 
 === Conclusion
 
