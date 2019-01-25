@@ -292,7 +292,7 @@ My high school classmate Eric Silberstein gave me my first job out of college as
 
 At that first job, I met Ken Liu and I'm amazed that we're where we are in our careers writing books. He not only gave me great advice about book publishing, but he wrote the wonderful foreword. He's also a great sounding board and an amazing friend, and I'm privileged to know him.
 
-With regard to Bitcoin, the anonymous developer Satoshi Nakamoto invented what I thought before was impossible: decentralized digital scarcity. Bitcoin is a profound invention that the world hasn't fully grokked. The website http://slashdot.org introduced me to Bitcoin in 2011 and Alex Mizrahi gave me my first work as a Bitcoin developer in 2013 to do some open source work. I had no idea what I was doing, but I learned quite a bit about what Bitcoin was about through his direction.
+With regard to Bitcoin, the anonymous developer((("Bitcoin", "developer of"))) Satoshi Nakamoto invented what I thought before was impossible: decentralized digital scarcity. Bitcoin is a profound invention that the world hasn't fully grokked. The website http://slashdot.org introduced me to Bitcoin in 2011 and Alex Mizrahi gave me my first work as a Bitcoin developer in 2013 to do some open source work. I had no idea what I was doing, but I learned quite a bit about what Bitcoin was about through his direction.
 
 The Austin Bitcoin Meetup in 2013 was where I met a lot of Bitcoiners and the subsequent Texas Bitcoin Conference in 2014 was where I met a ton of people that I still know today. Though the meetup and conferences are not ones I attend anymore, I am grateful for the people I met. Among people I met there are Michael Goldstein, Daniel Krawisz, and Napoleon Cole.
 
