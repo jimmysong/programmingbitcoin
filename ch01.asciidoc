@@ -135,7 +135,7 @@ include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive.
 If not, we get an invalid Field Element and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
-<2> The rest of the `__init__` method assigns the initialization values to the object.
+<2> The((("__init__ method"))) rest of the `__init__` method assigns the initialization values to the object.
 <3> The `__eq__` method checks if two objects of class `FieldElement` are equal.
 This is only true when the `num` and `prime` properties are equal.
 
