@@ -354,7 +354,7 @@ So we know that this element is in the group, proving closure.
 
 ==== Invertibility
 
-Invertibility is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
+Invertibility((("invertibility")))((("Finite Cyclic Groups", "invertibility"))) is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
 
 [[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
 .Each point is invertible by taking the reflection over the x-axis
