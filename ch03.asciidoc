@@ -859,7 +859,7 @@ So given a public key, which is a point on the secp256k1 curve and a signature h
 
 ==== Signing In Depth
 
-Given that we know how verification should work, signing is straightforward.
+Given((("signing and verification", "signing process"))) that we know how verification should work, signing is straightforward.
 The only missing step is figuring out what `k`, and thus _R_ = _kG_ to use.
 We do this by choosing a random `k`.
 
@@ -876,7 +876,7 @@ We'll see later that `z` is computed and P is sent along with the signature.
 
 ==== Creating a Signature
 
-We can now create a signature using some of the primitives that we have.
+We((("signing and verification", "signature creation", id="SAVsig03"))) can now create a signature using some of the primitives that we have.
 
 .Be Careful with Random Number Generation
 [WARNING]
@@ -976,7 +976,7 @@ This is because sha256 is collision resistant and no collisions to date have bee
 Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time.
 This makes debugging much easier and unit tests a lot easier to write.
 In addition, transactions that use deterministic `k` will create the same transaction every time, as the signature will not change.
-This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))
+This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))((("", startref="SAVsig03")))
 
 ****
 
