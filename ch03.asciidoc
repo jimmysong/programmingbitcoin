@@ -319,7 +319,7 @@ image::images/prbc_0212.png[Vertical Line]
 
 ==== Closure
 
-This is perhaps the easiest to prove since we generated the group in the first place by adding G over and over.
+This((("closure")))((("Finite Cyclic Groups", "closure property"))) is perhaps the easiest to prove since we generated the group in the first place by adding G over and over.
 Thus, two different elements look like this:
 
 ++++
