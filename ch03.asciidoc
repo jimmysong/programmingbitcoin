@@ -290,7 +290,7 @@ We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger
 === Mathematical Groups
 
 The((("Elliptic Curve Cryptography", "mathematical groups", id="ECCmath03"))) preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point.
-What we actually want to generate for the purposes of Public Key Cryptography are Finite Cyclic Groups, and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate a Finite Cyclic Group.
+What we actually want to generate for the purposes of Public Key Cryptography are((("Finite Cyclic Groups"))) Finite Cyclic Groups, and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate a Finite Cyclic Group.
 
 Unlike fields, groups have only a single operation.
 In our case, Point Addition is our operation.
