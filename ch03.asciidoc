@@ -813,7 +813,7 @@ Two rounds of sha256 don't necessarily prevent all possible attacks, but doing t
 
 ==== Verifying a Signature
 
-We can now verify a signature using some of the primitives that we have.
+We((("signing and verification", "signature verification", id="SAVsign03"))) can now verify a signature using some of the primitives that we have.
 
 [source,python]
 ----
