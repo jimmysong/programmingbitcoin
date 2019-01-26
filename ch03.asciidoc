@@ -9,7 +9,7 @@ Specifically, we're going to build the primitives needed to sign and verify mess
 
 === Elliptic Curves over Reals
 
-We((("Elliptic Curve Cryptography", "elliptic curves over real numbers"))) discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers.
+We((("Elliptic Curve Cryptography", "elliptic curves over real numbers")))((("real numbers"))) discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers.
 Specifically, it's not just integers or even rational numbers, but all _real_ numbers.
 Pi, sqrt(2), __e__+7th root of 19, and the like are all real numbers.
 
