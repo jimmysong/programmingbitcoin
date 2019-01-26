@@ -902,7 +902,7 @@ include::code-ch03/answers.py[tag=exercise7,indent=0]
 
 ==== Programming Message Signing
 
-To program message signing, we now create a `PrivateKey` class, which will house our secret.
+To((("PrivateKey class"))) program message signing, we now create a `PrivateKey` class, which will house our secret.
 
 [source,python]
 ----
