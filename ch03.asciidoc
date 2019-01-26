@@ -375,7 +375,7 @@ This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
 
 ==== Associativity
 
-We know from Point Addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
+We((("associativity")))((("Finite Cyclic Groups", "associativity property"))) know from Point Addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
 
 [[a_b_c_case_one]]
 .(A + B) + C. A + B is computed first before C is added.
