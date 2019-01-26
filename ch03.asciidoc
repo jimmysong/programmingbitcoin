@@ -399,7 +399,7 @@ include::code-ch03/examples.py[tag=example5]
 ----
 
 We want to be able to scalar multiply the point with some number.
-Thankfully, there's a method in Python called `__rmul__` that can be used to override the front multiplication.
+Thankfully, there's((("&#x005F;&#x005F;rmul&#x005F;&#x005F; method"))) a method in Python called `__rmul__` that can be used to override the front multiplication.
 A naive implementation looks something like this:
 
 [source,python]
