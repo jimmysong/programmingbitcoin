@@ -194,7 +194,7 @@ You can see that this is a complete scattershot.
 This is because point addition is nonlinear and not easy to calculate.
 Performing scalar multiplication is straightforward, but doing the opposite, point division, is not.
 
-This is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
+This((("Discrete Log problem"))) is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
 
 Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, point at infinity is the additive identity or 0).
 If we imagine a point G and scalar-multiply until we get the point at infinity, we end up with a set:
@@ -273,7 +273,7 @@ About the only pattern is that between 10 and 11, the _x_ coordinates are equal 
 This is due to the fact that 21 ⋅ (47,71) = 0.
 
 Scalar multiplication looks really random and that's what gives this equation _asymmetry_.
-An _asymmetric_ problem is one that's easy to calculate in one direction, but hard to reverse.
+An((("asymmetric problems"))) _asymmetric_ problem is one that's easy to calculate in one direction, but hard to reverse.
 For example, it's easy enough to calculate 12 ⋅ (47,71).
 But if we were presented this:
 
@@ -285,7 +285,7 @@ But if we were presented this:
 
 would you be able to solve for _s_?
 We can look up the results show earlier, but that's because we have a small group.
-We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.((("", startref="ECCscalar03")))
+We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.((("", startref="ECCscalar03")))((("", startref="SMelliptic03")))
 
 === Mathematical Groups
 
