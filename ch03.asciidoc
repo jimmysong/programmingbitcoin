@@ -881,7 +881,7 @@ We((("signing and verification", "signature creation", id="SAVsig03"))) can now 
 .Be Careful with Random Number Generation
 [WARNING]
 ====
-Note that using something like the `random` library from Python to do cryptography is generally not a good idea.
+Note((("random number generation"))) that using something like the `random` library from Python to do cryptography is generally not a good idea.
 This library is for teaching purposes only, so please don't use any of the code explained to you here for production purposes.
 ====
 
