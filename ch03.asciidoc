@@ -301,7 +301,7 @@ Let's look at each property.
 
 ==== Identity
 
-If((("identity"))) you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group, since we generate the group when we get to the point at infinity.
+If((("identity")))((("Finite Cyclic Groups", "identity property"))) you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group, since we generate the group when we get to the point at infinity.
 So:
 
 ++++
