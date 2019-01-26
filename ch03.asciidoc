@@ -354,7 +354,7 @@ So we know that this element is in the group, proving closure.
 
 ==== Invertibility
 
-Invertibility((("invertibility")))((("Finite Cyclic Groups", "invertibility"))) is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
+Invertibility((("invertibility")))((("Finite Cyclic Groups", "invertibility property"))) is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
 
 [[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
 .Each point is invertible by taking the reflection over the x-axis
@@ -365,7 +365,7 @@ You can add them together to get __aG__ + (__n__ – __a__)__G__ = (__a__ + __n_
 
 ==== Commutativity
 
-We know from Point Addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>):
+We((("Finite Cyclic Groups", "commutativity property")))((("commutativity"))) know from Point Addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>):
 
 [[the_line_through_the_points_doesnt_change]]
 .The line through the points doesn't change
