@@ -391,7 +391,7 @@ include::code-ch03/answers.py[tag=exercise5,indent=0]
 
 === Coding Scalar Multiplication
 
-What((("Elliptic Curve Cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
+What((("scalar multiplicaiton", "coding for")))((("Elliptic Curve Cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
 
 [source,python]
 ----
