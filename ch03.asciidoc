@@ -976,7 +976,7 @@ This is because sha256 is collision resistant and no collisions to date have bee
 Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time.
 This makes debugging much easier and unit tests a lot easier to write.
 In addition, transactions that use deterministic `k` will create the same transaction every time, as the signature will not change.
-This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))((("", startref="SAVsig03")))
+This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))((("", startref="SAVsig03")))((("", startref="ECCsign03")))
 
 ****
 
