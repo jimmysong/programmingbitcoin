@@ -418,7 +418,7 @@ class Point:
 This is fine for small coefficients, but what if we have a very large coefficient—that is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time?
 For example, a coefficient of 1 trillion is going to take a really long time.
 
-There's a cool technique called _binary expansion_ that allows us to perform multiplication in `log2(n)` loops, which dramatically reduces the calculation time for large numbers.
+There's((("binary expansion"))) a cool technique called _binary expansion_ that allows us to perform multiplication in `log2(n)` loops, which dramatically reduces the calculation time for large numbers.
 For example, 1 trillion is 40 bits in binary, so we only have to loop 40 times for a number that's generally considered very large.
 
 [source,python]
