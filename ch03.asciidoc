@@ -855,7 +855,7 @@ Note that we can mod by `n` as that's the order of the group.
 <4> _uG_ + _vP_ should be _R_.
 <5> We check that the _x_ coordinate is `r`
 
-So given a public key, which is a point on the secp256k1 curve and a signature hash, `z`, we can verify whether a signature is valid or not.
+So given a public key, which is a point on the secp256k1 curve and a signature hash, `z`, we can verify whether a signature is valid or not.((("", startref="SAVsign03")))
 
 ==== Signing In Depth
 
