@@ -431,7 +431,7 @@ include::code-ch04/answers.py[tag=exercise6,indent=0]
 
 === Big- and Little-Endian Redux
 
-It will be very useful to know how Big- and Little-Endian are done in Python, as the next few chapters will be parsing and serializing numbers to and from Big-/Little-Endian quite a bit.
+It((("serialization", "Big- and Little-Endian encodings")))((("Big-Endian encoding")))((("Little-Endian encoding"))) will be very useful to know how Big- and Little-Endian are done in Python, as the next few chapters will be parsing and serializing numbers to and from Big-/Little-Endian quite a bit.
 In particular, Satoshi used a lot of Little-Endian for Bitcoin and unfortunately, there's no easy-to-learn rule for where Little-Endian is used and where Big-Endian is used.
 Recall that SEC format uses Big-Endian encoding as do addresses and WIF.
 From <<chapter_tx_parsing>> onward, we will use Little-Endian encoding a lot more.
