@@ -379,7 +379,7 @@ The coins on there are not worth anything and the proof-of-work required to find
 The mainnet chain as of this writing has around 550,000 blocks, while testnet has significantly more (around 1,450,000 blocks).
 ====
 
-The process of doing a sha256 operation followed by a ripemd160 operation is called a hash160 operation((("hash160 operation"))) in Bitcoin.
+The((("ripemd160 operation"))) process of doing a ((("sha256 operation")))sha256 operation followed by a ripemd160 operation is called a hash160 operation((("hash160 operation"))) in Bitcoin.
 We can implement this in _helper.py_.
 
 [source,python]
