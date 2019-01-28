@@ -11,12 +11,12 @@ Ideally, we want to do this efficiently, for reasons we'll see in <<chapter_netw
 
 === Uncompressed SEC format
 
-We'll((("S256Point class", "serialization of"))) start with the `S256Point` class, which is the public key class.
+We'll((("S256Point class", "serialization of")))((("serialization", "uncompressed SEC format"))) start with the `S256Point` class, which is the public key class.
 Recall that the public key in Elliptic Curve Cryptography is really a coordinate in the form of `(x,y)`.
 How can we serialize this data?
 
 It turns out there's already a standard for serializing ECDSA public keys called SEC.
-SEC stands for Standards for Efficient Cryptography, and as the word "Efficient" in the name suggests, it's got minimal overhead.
+SEC stands for((("Standard for Efficient Cryptography", see="SEC format"))) Standards for Efficient Cryptography, and as the word "Efficient" in the name suggests, it's got minimal overhead.
 There are two forms of SEC format that we need to be concerned with: uncompressed SEC format and the compressed SEC format.
 
 Here is how the uncompressed SEC format for a given point _P_ = (_x_,_y_) is generated:
