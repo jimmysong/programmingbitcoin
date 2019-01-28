@@ -535,7 +535,7 @@ include::code-ch03/ecc.py[tag=source5]
 We're subclassing the `FieldElement` class so we don't have to pass in `P` all the time.
 We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeros.
 
-Similarly, we can define a point on the secp256k1 curve and call it `S256Point`.
+Similarly, we((("S256Point class", "creating"))) can define a point on the secp256k1 curve and call it `S256Point`.
 
 [source,python]
 ----
