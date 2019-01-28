@@ -11,7 +11,7 @@ Ideally, we want to do this efficiently, for reasons we'll see in <<chapter_netw
 
 === Uncompressed SEC format
 
-We'll((("S256Point class", "serialization of")))((("serialization", "uncompressed SEC format")))((("SEC serialization format", "uncompressed"))) start with the `S256Point` class, which is the public key class.
+We'll((("S256Point class", "serialization of")))((("serialization", "uncompressed SEC format")))((("SEC serialization format", "uncompressed format"))) start with the `S256Point` class, which is the public key class.
 Recall that the public key in Elliptic Curve Cryptography is really a coordinate in the form of `(x,y)`.
 How can we serialize this data?
 
@@ -74,7 +74,7 @@ include::code-ch04/answers.py[tag=exercise1,indent=0]
 
 === Compressed SEC Format
 
-Recall((("serialization", "compressed SEC format")))((("SEC serialization format", "compressed"))) that for any _x_ coordinate, there are at most two _y_ coordinates due to the __y__^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>):
+Recall((("serialization", "compressed SEC format")))((("SEC serialization format", "compressed format"))) that for any _x_ coordinate, there are at most two _y_ coordinates due to the __y__^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>):
 
 [[the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve]]
 .The two possible values for y are where this vertical line intersects the curve
