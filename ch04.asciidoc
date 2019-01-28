@@ -233,7 +233,7 @@ include::code-ch04/answers.py[tag=exercise2,indent=0]
 
 === DER Signatures
 
-Another((("serialization", "DER format")))((("Signature class", "serialization of")))((("DER format")))((("signing and verification", "serializing signature"))) class that we need to learn to serialize is `Signature`.
+Another((("serialization", "DER Signature format")))((("Signature class", "serialization of")))((("DER Signature format")))((("signing and verification", "serializing signature"))) class that we need to learn to serialize is `Signature`.
 Much like the SEC format, it needs to encode two different numbers, `r` and `s`.
 Unfortunately, unlike `S256Point`, `Signature` cannot be compressed as `s` cannot be derived solely from `r`.
 
