@@ -418,7 +418,7 @@ Here is how the WIF format is created:
 5. Do a hash256 of the result from #4 and get the first 4 bytes.
 6. Take the combination of #4 and #5 and encode in Base58.
 
-We can now create the `wif` method on the `PrivateKey` class.
+We((("PrivateKey class", "serialization of"))) can now create the `wif` method on the `PrivateKey` class.
 
 [source,python]
 ----
