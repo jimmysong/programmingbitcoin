@@ -11,7 +11,7 @@ Ideally, we want to do this efficiently, for reasons we'll see in <<chapter_netw
 
 === Uncompressed SEC format
 
-We'll start with the `S256Point` class, which is the public key class.
+We'll((("S256Point class", "serialization of"))) start with the `S256Point` class, which is the public key class.
 Recall that the public key in Elliptic Curve Cryptography is really a coordinate in the form of `(x,y)`.
 How can we serialize this data?
 
