@@ -311,7 +311,7 @@ Unfortunately, Base64 is prone to mistakes, as a lot of letters and numbers look
 If we remove these characters, we can have something that's got good readability and decent compression (around 5.86 bits per character).
 Lastly, we can add a checksum at the end to ensure that mistakes are easy to detect.
 
-This construction is called Base58.
+This((("Base64"))) construction is called Base58.
 Instead of hexadecimal (base 16) or Base64, we're encoding numbers in Base58.
 
 The actual mechanics of doing the Base58 encoding are as follows.
