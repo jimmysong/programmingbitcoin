@@ -351,7 +351,7 @@ include::code-ch04/answers.py[tag=exercise4,indent=0]
 
 === Address Format
 
-The 264 bits from a compressed SEC format are still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
+The((("serialization", "address format")))((("address format"))) 264 bits from a compressed SEC format are still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
 To both shorten and increase security, we can use the ripemd160 hash to reduce the size to a 20-byte hash.
 
 By not using the SEC format directly, we can go from 33 bytes to 20 bytes, shortening the address significantly.
