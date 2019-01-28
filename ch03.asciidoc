@@ -830,7 +830,7 @@ include::code-ch03/answers.py[tag=exercise6,indent=0]
 ==== Programming Signature Verification
 
 We already have a class `S256Point`, which is the public point for the private key.
-We create a `Signature` class that houses the `r` and `s` values:
+We((("Signature class", "creating"))) create a `Signature` class that houses the `r` and `s` values:
 
 [source,python]
 ----
