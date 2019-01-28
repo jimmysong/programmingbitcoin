@@ -446,7 +446,7 @@ include::code-ch04/answers.py[tag=exercise9,indent=0]
 
 Go to a testnet faucet (https://faucet.programmingbitcoin.com) and send some testnet coins to that address (it should start with `m` or `n` or else something is wrong).
 If you succeeded, congrats!
-You're now the proud owner of some testnet coins!
+You're now the proud owner of some testnet coins!((("", startref="MTserial04")))
 
 === Conclusion
 
