@@ -34,7 +34,7 @@ image::images/prbc_0401.png[Uncompressed SEC Format]
 [WARNING]
 .Big- and Little-Endian
 ====
-The motivation for Big- and Little-Endian encodings is storing a number on disk.
+The((("serialization", "Big- and Little-Endian encodings")))((("Big-Endian encoding")))((("Little-Endian encoding"))) motivation for Big- and Little-Endian encodings is storing a number on disk.
 A number under 256 is easy enough to encode, as a single byte (2^8^) is enough to hold it.
 When it's bigger than 256, how do we serialize the number to bytes?
 
