@@ -577,7 +577,7 @@ include::code-ch03/examples.py[tag=example8]
 
 === Public Key Cryptography
 
-At((("Elliptic Curve Cryptography", "Public Key Cryptography")))((("Public Key Cryptography"))) last, we have the tools that we need to do Public Key Cryptography operations.
+At((("Elliptic Curve Cryptography", "Public Key Cryptography")))((("Public Key Cryptography", "asymmetric equation"))) last, we have the tools that we need to do Public Key Cryptography operations.
 The key operation that we need is `P=eG`, which is an _asymmetric_ equation.
 We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
 This is the Discrete Log Problem described earlier.
