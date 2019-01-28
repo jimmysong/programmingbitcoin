@@ -3,7 +3,7 @@
 == Serialization
 
 [.lead]
-We've created a lot of classes thus far, including `PrivateKey`, `S256Point`, and `Signature`.
+We've((("mathematical tools", "serialization", id="MTserial04"))) created a lot of classes thus far, including `PrivateKey`, `S256Point`, and `Signature`.
 We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk.
 This is where serialization comes into play.
 We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`.
