@@ -285,7 +285,7 @@ include::code-ch04/answers.py[tag=exercise3,indent=0]
 
 === Base58
 
-In the early days of Bitcoin, Bitcoins were assigned to public keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
+In((("serialization", "Base58")))((("Base58"))) the early days of Bitcoin, Bitcoins were assigned to public keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
 For reasons we'll get to in <<chapter_script>>, using this particular very simple script turned out to be both wasteful for storing UTXOs and a little less secure than the scripts in more prominent use now.
 For now, we'll go through what addresses are and how they are encoded.
 
