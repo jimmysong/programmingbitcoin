@@ -102,7 +102,7 @@ include::code-ch05/answers.py[tag=exercise1,indent=0]
 
 === Inputs
 
-Each input points to an output of a previous transaction (see <<inputs_chap_five>>).
+Each((("Transactions", "input component", id="Tinput05")))((("inputs", id="inputs05"))) input points to an output of a previous transaction (see <<inputs_chap_five>>).
 This fact requires more explanation as it's not intuitively obvious at first.
 
 [[inputs_chap_five]]
