@@ -2,7 +2,7 @@
 == Networking
 
 [.lead]
-The((("peer-to-peer network", seealso="networking"))) peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. More than 65,000 nodes are running on the network as of this writing and are communicating constantly.
+The((("peer-to-peer network", seealso="networking")))((("networking", "basics of"))) peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. More than 65,000 nodes are running on the network as of this writing and are communicating constantly.
 
 The Bitcoin network is a((("broadcast networks", seealso="networking")))((("gossip networks", seealso="networking"))) broadcast network or a gossip network.
 Every node is announcing different transactions, blocks, and peers that it knows about.
@@ -15,7 +15,7 @@ With that in mind, we'll work in this chapter toward requesting, receiving, and 
 
 === Network Messages
 
-All network messages looks like <<network_message_or_the_envelope_that_contains_the_actual_payload>>.
+All((("networking", "network messages"))) network messages looks like <<network_message_or_the_envelope_that_contains_the_actual_payload>>.
 
 [[network_message_or_the_envelope_that_contains_the_actual_payload]]
 .Network Message or the Envelope that contains the actual payload
