@@ -77,7 +77,7 @@ include::code-ch12/answers.py[tag=exercise1,indent=0]
 
 === Going a Step Further
 
-Supposing that the space of all items is 1 million and we want bucket sizes to still be 5, we would need a Bloom Filter that's 1,000,000 / 5 = 200,000 bits long.
+Supposing((("Bloom Filters", "using multiple hash functions"))) that the space of all items is 1 million and we want bucket sizes to still be 5, we would need a Bloom Filter that's 1,000,000 / 5 = 200,000 bits long.
 Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, 20% of which would be items of interest.
 200,000 bits is 25,000 bytes and is a lot to transmit.
 Can we do better?
