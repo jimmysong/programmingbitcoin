@@ -330,7 +330,7 @@ To compute p2sh addresses, we use a process similar to how we compute p2pkh addr
 The hash160 is prepended with a prefix byte and appended with a checksum.
 
 Mainnet p2sh uses the `0x05` byte, which causes addresses to start with a `3` in Base58, while testnet p2sh uses the `0xc4` byte to cause addresses to start with a `2`.
-We can calculate the address using the `encode_base58_checksum` function from _helper.py_.
+We can calculate the address using the `encode_base58_checksum` function from _helper.py_.((("", startref="p2shcode08")))
 
 [source,python]
 ----
