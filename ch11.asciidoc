@@ -63,7 +63,7 @@ We'll go through each part of this process below.
 [WARNING]
 .Be Careful with Merkle Trees!
 ====
-There was a vulnerability in Bitcoin 0.4-0.6, which is detailed in CVE-2012-2459.
+There((("Denial of Service attack (DoS) attacks"))) was a vulnerability in Bitcoin 0.4-0.6, which is detailed in CVE-2012-2459.
 There was a Denial of Service vector due to the duplication of the last item in Merkle Trees, which caused some nodes to invalidate blocks even if they were valid.
 ====
 
