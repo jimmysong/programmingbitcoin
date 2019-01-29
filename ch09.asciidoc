@@ -387,7 +387,7 @@ include::code-ch09/answers.py[tag=exercise11,indent=0]
 
 === Difficulty Adjustment
 
-In Bitcoin, each group of 2,016 blocks is called a _difficulty adjustment period_.
+In((("Blocks", "difficulty adjustment period")))((("difficulty adjustment period")))((("proof-of-work", "difficulty adjustment period"))) Bitcoin, each group of 2,016 blocks is called a _difficulty adjustment period_.
 At the end of every difficulty adjustment period, the target is adjusted according to this formula:
 
 `time_differential = (block timestamp of last block in difficulty adjustment period) -
