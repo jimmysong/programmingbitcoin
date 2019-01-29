@@ -52,7 +52,7 @@ So what's in the ScriptSig?
 The ScriptSig of the Coinbase Transaction is set by whoever mined the transaction.
 The main restriction is that the ScriptSig has to be at least 2 bytes and no longer than 100 bytes.
 Other than those restrictions and BIP0034 (see <<BIP0034>>) the ScriptSig can be anything the miner wants as long as the evaluation of the ScriptSig by itself, with no corresponding ScriptPubKey, is valid.
-Here is the ScriptSig for the Genesis Block's Coinbase Transaction:
+Here is the ScriptSig for the Genesis BloBIP0066ck's Coinbase Transaction:
 
 ```
 4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c
@@ -73,7 +73,7 @@ Other Coinbase Transactions' ScriptSigs contain similarly arbitrary data.
 [[BIP0034]]
 ==== BIP0034
 
-BIP0034 regulates the first element of the ScriptSig of Coinbase Transactions.
+BIP0034((("BIP (Bitcoin Improvement Proposals)", "BIP0034"))) regulates the first element of the ScriptSig of Coinbase Transactions.
 This was due to a network problem where miners were using the _same_ Coinbase Transaction for different blocks.
 
 The Coinbase Transaction being the same byte-wise means that the transaction IDs are also the same, since the hash256 of the transaction is deterministic.
@@ -148,8 +148,8 @@ _Version_ in normal software refers to a particular set of features.
 For a block, this is similar, in the sense that the version field reflects the capabilities of the software that produced the block.
 In the past this was used as a way to indicate a single feature that was ready to be deployed by the block's miner.
 Version 2 meant that the software was ready for BIP0034, the Coinbase Transaction block height feature from earlier in this chapter.
-Version 3 meant that the software was ready for BIP0066, the enforcement of strict DER encoding.
-Version 4 meant that the software was ready for BIP0065, which specified `OP_CHECKLOCKTIMEVERIFY`.
+Version 3 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0066"))) BIP0066, the enforcement of strict DER encoding.
+Version 4 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) BIP0065, which specified `OP_CHECKLOCKTIMEVERIFY`.
 
 Unfortunately, the incremental increase in version number meant that only one feature was signaled on the network at a time.
 To alleviate this, the developers came up with BIP9, which allows up to 29 different features to be signaled at the same time.
