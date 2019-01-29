@@ -210,7 +210,7 @@ Note that a full node would verify more things like checking for double-spends a
 
 === Creating Transactions
 
-The code to verify transactions will help quite a bit with creating transactions.
+The((("Transactions", "creating", id="Tcreate07"))) code to verify transactions will help quite a bit with creating transactions.
 We can create transactions that fit the verification process.
 Transactions we create will require the sum of the inputs to be greater than or equal to the sum of the outputs.
 Similarly, transactions we create will require a ScriptSig that, when combined with the ScriptPubKey, will be valid.
