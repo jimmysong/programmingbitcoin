@@ -18,7 +18,7 @@ If((("Script", "mechanics of"))) you are confused about what a "smart contract" 
 "Smart contract" is a fancy way of saying "programmable," and the "smart contract language" is simply a programming language.
 In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which Bitcoins are spendable.
 
-Bitcoin has the digital equivalent of a contract in Script.
+Bitcoin((("Forth"))) has the digital equivalent of a contract in Script.
 Script is a stack-based language similar to Forth.
 Script is intentionally limited in the sense that Script avoids certain features.
 Specifically, Script avoids any mechanism for loops and is therefore not Turing complete.
