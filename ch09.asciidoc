@@ -189,7 +189,7 @@ include::code-ch09/answers.py[tag=exercise8,indent=0]
 
 === Previous Block
 
-All blocks have to point to a previous block.
+All((("Blocks", "blockchain data structure")))((("blockchain data structure")))((("Genesis Block"))) blocks have to point to a previous block.
 This is why the data structure is called a _blockchain_.
 Blocks link back all the way to the very first block, or the Genesis Block.
 The previous block field ends in a bunch of `00` bytes, which we will discuss more later in this chapter.
