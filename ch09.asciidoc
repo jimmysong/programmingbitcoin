@@ -274,7 +274,7 @@ Getting back to the analogy, the process of finding proof-of-work requires us to
 
 ==== How a Miner Generates New Hashes
 
-Where((("proof-of-work", "gnerating new hashes"))) does the miner get new numerical dirt to process to see if it satisfies proof-of-work?
+Where((("proof-of-work", "generating new hashes"))) does the miner get new numerical dirt to process to see if it satisfies proof-of-work?
 This is where the nonce field comes in.
 The miners can change the nonce field at will.
 
@@ -290,7 +290,7 @@ The mechanics of how the Merkle Root changes whenever any transaction in the blo
 
 ==== Target
 
-Proof-of-work is the requirement that the hash of every block header in Bitcoin must be below a certain target.
+Proof-of-work((("proof-of-work", "targets")))((("targets"))) is the requirement that the hash of every block header in Bitcoin must be below a certain target.
 _Target_ is a 256-bit number that is computed directly from the bits field.
 The target is very small compared to an average 256-bit number.
 
