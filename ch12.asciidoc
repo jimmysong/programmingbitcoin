@@ -174,7 +174,7 @@ include::code-ch12/answers.py[tag=exercise4,indent=0]
 
 === Getting Merkle Blocks
 
-There is one more command that a light client needs: Merkle Block information about transactions of interest from the full node.
+There((("Bloom Filters", "getting Merkle Blocks")))((("Merkle Blocks", "filtered"))) is one more command that a light client needs: Merkle Block information about transactions of interest from the full node.
 The `getdata` command is what communicates blocks and transactions.
 The specific type of data that a light client will want from a full node is something called a _filtered block_.
 A filtered block is asking for transactions that pass through the Bloom Filter in the form of Merkle Blocks.
