@@ -12,7 +12,7 @@ The full node can check for transactions that are relevant to these addresses, b
 A light client wouldn't want to reveal, for example, that it has one thousand BTC to a full node.
 Privacy leaks are security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
 
-One solution is for the light client to tell the full node enough information to create a _superset_ of all transactions of interest.
+One((("Bloom Filters", "purpose of", id="BFpurpose12"))) solution is for the light client to tell the full node enough information to create a _superset_ of all transactions of interest.
 To create this superset, we use what's called a _Bloom Filter_.
 
 === What Is a Bloom Filter?
@@ -71,7 +71,7 @@ include::code-ch12/examples.py[tag=example2]
 ----
 <1> We are creating a filter for two items here, but this can be extended to many more.
 
-If the space of all possible items is 50, 10 items on average will make it through this filter instead of the 5 when we only had 1 item of interest, because 2 buckets are returned, not 1.
+If the space of all possible items is 50, 10 items on average will make it through this filter instead of the 5 when we only had 1 item of interest, because 2 buckets are returned, not 1.((("", startref="BFpurpose12")))
 
 include::code-ch12/answers.py[tag=exercise1,indent=0]
 
