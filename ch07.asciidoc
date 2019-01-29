@@ -89,7 +89,7 @@ The transaction and the extra Bitcoins it created was invalidated retroactively 
 
 === Checking the Signature
 
-Perhaps the trickiest part of validating a transaction is the process of checking its signatures.
+Perhaps((("signing and verification", "signature verification", id="SAVsigver07"))) the trickiest part of validating a transaction is the process of checking its signatures.
 A transaction typically has at least one signature per input.
 If there are multisig outputs being spent, there may be more than one.
 As we learned in <<chapter_elliptic_curve_cryptography>>, the ECDSA signature algorithm requires the public key `P`, the signature hash `z`, and the signature `(r,s)`.
