@@ -37,7 +37,7 @@ The reason why transaction malleability is a problem at all is because the trans
 The ID of the transaction is the hash256 of the transaction.
 Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
 
-The one field that does allow for some manipulation without invalidating the Signature is the ScriptSig field on each input.
+The((("ScriptSig field (inputs)"))) one field that does allow for some manipulation without invalidating the Signature is the ScriptSig field on each input.
 The ScriptSig is emptied before creating the signature hash (see <<chapter_tx>>), so it's possible to change the ScriptSig without invalidating the signature.
 Also, as we learned in <<chapter_elliptic_curve_cryptography>>, signatures contain a random component.
 This means that two different ScriptSigs can essentially mean the same thing but be different byte-wise.
