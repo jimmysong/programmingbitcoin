@@ -201,7 +201,7 @@ We will discuss how this is important for SPV (simplified payment verification) 
 
 === Timestamp
 
-The((("Blocks", "timestamps")))((("timestamps"))) timestamp is a UNIX-style timestamp taking up 4 bytes.
+The((("Blocks", "timestamps")))((("timestamps")))((("UNIX-style timestamps"))) timestamp is a UNIX-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
 This timestamp is used in two places: the first for validating timestamp-based Locktimes on transactions included in the block and the second for calculating a new bits/target/difficulty every 2,016 blocks.
 The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) Locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's Locktime directly, but the median-time-past (MTP) of the past 11 blocks.
