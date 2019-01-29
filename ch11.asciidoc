@@ -275,7 +275,7 @@ include::code-ch11/answers.py[tag=exercise5,indent=0]
 
 ==== Coding a Merkle Tree
 
-We((("Merkle Blocks", "coding Merkle Trees")))((("Merkle Trees", "coding"))) create a `MerkleTree` class:
+We((("Merkle Blocks", "coding Merkle Trees", id="MBcod11")))((("Merkle Trees", "coding", id="MTcode11"))) create a `MerkleTree` class:
 
 [source,python]
 ----
