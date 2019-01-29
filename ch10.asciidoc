@@ -58,7 +58,7 @@ include::code-ch10/answers.py[tag=exercise3,indent=0]
 
 === Parsing the Payload
 
-Each command has a separate payload specification.
+Each((("networking", "parsing payloads"))) command has a separate payload specification.
 <<parsed_version_chap_ten>> is the parsed payload for Version.
 
 [[parsed_version_chap_ten]]
