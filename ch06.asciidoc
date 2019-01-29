@@ -648,7 +648,7 @@ include::code-ch06/answers.py[tag=exercise4,indent=0]
 
 ==== SHA-1 Piñata
 
-In 2013, Peter Todd created a Script very similar to the Script in Exercise 4 and put some Bitcoins into it to create an economic incentive for people to find hash collisions.
+In((("SHA-1 piñata")))((("Script", "SHA-1 piñata"))) 2013, Peter Todd created a Script very similar to the Script in Exercise 4 and put some Bitcoins into it to create an economic incentive for people to find hash collisions.
 The donations reached 2.49153717 BTC, and when Google actually found a https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[hash collision for SHA-1 in February 2017], this Script was promptly redeemed.
 The transaction output was 2.48 BTC, which was $2,848.88 USD at the time.
 
