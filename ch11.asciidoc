@@ -69,7 +69,7 @@ There was a Denial of Service vector due to the duplication of the last item in 
 
 === Merkle Parent
 
-Given((("Merkle Trees", "parent hashes")))((("Merkle Parent Level"))) two hashes, we produce another hash that represents both of them.
+Given((("Merkle Trees", "parent hashes"))) two hashes, we produce another hash that represents both of them.
 As they are ordered, we will call the two hashes the _left_ hash and the _right_ hash.
 The hash of the left and right hashes is what we call the _parent_ hash.
 To clarify, here's the formula for the parent hash:
@@ -98,7 +98,7 @@ include::code-ch11/answers.py[tag=exercise1,indent=0]
 
 === Merkle Parent Level
 
-Given an ordered list of more than two hashes, we can calculate the parents of each pair, or what we call the _Merkle Parent Level_.
+Given((("Merkle Parent Level"))) an ordered list of more than two hashes, we can calculate the parents of each pair, or what we call the _Merkle Parent Level_.
 If we have an even number of hashes, this is straightforward, as we can simply pair them up in order.
 If we have an odd number of hashes, then we need to do something, as we have a lone hash at the end.
 We can solve this by duplicating the last item.
