@@ -36,7 +36,7 @@ The rest of this chapter goes into what the Proof of Inclusion is and how to ver
 
 === Merkle Tree
 
-A Merkle Tree is a computer science structure designed for efficient proofs of inclusion.
+A((("Merkle Trees", "constructing"))) Merkle Tree is a computer science structure designed for efficient proofs of inclusion.
 The prerequisites are an ordered list of items and a cryptographic hash function.
 In our case, the ordered list of items are transactions in a block and the hash function, hash256.
 To construct the Merkle Tree, we follow this algorithm:
