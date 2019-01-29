@@ -141,7 +141,7 @@ To mitigate these problems, pay-to-script-hash (p2sh) was born.((("", startref="
 
 === Pay-to-Script-Hash (p2sh)
 
-Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08"))) is a general solution to the long address/ScriptPubKey problem.
+Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) operation", id="MSp2shoper08"))) is a general solution to the long address/ScriptPubKey problem.
 More complicated ScriptPubKeys than Bare Multisig can easily be made and they have the same problems as Bare Multisig.
 
 The solution that p2sh implements is to take the hash of some Script commands and then reveal the pre-image Script commands later.
@@ -287,11 +287,11 @@ image::images/prbc_0824.png[`OP_EVAL`]
 Unfortunately, this((("Turing Completeness"))) more elegant solution comes with an unwanted side effect, namely Turing Completeness.
 Turing Completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see <<chapter_script>>).
 Thus, the more hacky, but more secure option of special-casing was chosen in BIP0016.
-BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.((("", startref="p2shoper08")))
+BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.((("", startref="p2shoper08")))((("", startref="MSp2shoper08")))
 
 === Coding p2sh
 
-The((("p2sh (pay-to-script-hash)", "coding", id="p2shcode08"))) special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
+The((("p2sh (pay-to-script-hash)", "coding", id="p2shcode08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) coding", id="MSp2shcode08"))) special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
 The `evaluate` method in _script.py_ is where we handle the special case:
 
 [source,python]
@@ -407,7 +407,7 @@ include::code-ch08/examples.py[tag=example3]
 ----
 <1> `z` is from the code on page 185.
 
-We've verified one of the two signatures that are required to unlock this p2sh multisig.((("", startref="p2shsignver08")))
+We've verified one of the two signatures that are required to unlock this p2sh multisig.((("", startref="p2shsignver08")))((("", startref="MSp2shcode08")))
 
 include::code-ch08/answers.py[tag=exercise4,indent=0]
 
