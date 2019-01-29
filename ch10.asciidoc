@@ -21,8 +21,8 @@ All((("networking", "network messages"))) network messages looks like <<network_
 .Network Message or the Envelope that contains the actual payload
 image::images/prbc_1001.png[Network Message]
 
-The first four bytes are always the same and are referred to as the _network magic_.
-Magic bytes are common in network programming as the communication is asynchronous and can be intermittent.
+The((("networking", "network magic"))) first four bytes are always the same and are referred to as the _network magic_.
+Magic bytes((("magic bytes"))) are common in network programming as the communication is asynchronous and can be intermittent.
 Magic bytes give the receiver of the message a place to start should the communication get interrupted (say, by your phone dropping signal).
 They are also useful for identifying the network.
 You would not want a Bitcoin node to connect to a Litecoin node, for example.
