@@ -2,7 +2,7 @@
 == Networking
 
 [.lead]
-The peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. More than 65,000 nodes are running on the network as of this writing and are communicating constantly.
+The((("peer-to-peer network", seealso="networking"))) peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. More than 65,000 nodes are running on the network as of this writing and are communicating constantly.
 
 The Bitcoin network is a broadcast network or a gossip network.
 Every node is announcing different transactions, blocks, and peers that it knows about.
