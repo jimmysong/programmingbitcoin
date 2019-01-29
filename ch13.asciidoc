@@ -625,7 +625,7 @@ include::code-ch13/script.py[tag=source6]
 
 Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of the signature hash.
 A lot of the calculations for signature hash, or `z`, can be reused instead of requiring a new hash256 hash for each input.
-The signature hash calculation is detailed in BIP0143 and can be seen in _code-ch13/tx.py_.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) signature hash calculation is detailed in BIP0143 and can be seen in _code-ch13/tx.py_.
 
 Another improvement is that by policy, uncompressed SEC pubkeys are now forbidden and only compressed SEC pubkeys are used for Segwit, saving space.
 
