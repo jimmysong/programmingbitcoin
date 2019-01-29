@@ -351,7 +351,7 @@ include::code-ch07/answers.py[tag=exercise3,indent=0]
 
 ==== Creating Your Own Transactions on testnet
 
-To create your own transaction, get some coins for yourself.
+To((("testnet"))) create your own transaction, get some coins for yourself.
 To do that you'll need an address.
 If you completed the last exercise in <<chapter_serialization>>, you should have your own testnet address and private key.
 If you don't remember, here's how:
