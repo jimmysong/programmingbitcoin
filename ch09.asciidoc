@@ -175,7 +175,7 @@ Checking for these features is relatively straightforward:
 ----
 include::code-ch09/examples.py[tag=example4]
 ----
-<1> The `>>` operator is the left bit-shift operator, which throws away the rightmost 29 bits, leaving just the top 3 bits.
+<1> The `>>` operator((("&gt;&gt; (left bit-shift) operator")))((("left bit-shift (&gt;&gt;) operator"))) is the left bit-shift operator, which throws away the rightmost 29 bits, leaving just the top 3 bits.
 The `0b001` is a way of writing a number in binary in Python.
 <2> The `&` operator is the "bitwise and" operator.
 In our case, we right-shift by 4 bits first and then check that the rightmost bit is 1.
