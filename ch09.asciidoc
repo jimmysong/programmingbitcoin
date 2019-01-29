@@ -395,7 +395,7 @@ At the end of every difficulty adjustment period, the target is adjusted accordi
 
 `new_target = previous_target * time_differential / (2 weeks)`
 
-The `time_differential` number is calculated so that if it's greater than 8 weeks, 8 weeks is used, and if it's less than 3.5 days, 3.5 days is used.
+The((("time_differential number"))) `time_differential` number is calculated so that if it's greater than 8 weeks, 8 weeks is used, and if it's less than 3.5 days, 3.5 days is used.
 This way, the new target cannot change more than four times in either direction.
 That is, the target will be reduced or increased by four times at the most.
 
