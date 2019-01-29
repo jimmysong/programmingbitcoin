@@ -3,7 +3,7 @@
 == Transactions
 
 [.lead]
-Transactions are at the heart of Bitcoin.
+Transactions((("Transactions", "overview of", id="Tover05"))) are at the heart of Bitcoin.
 Transactions, simply put, are value transfers from one entity to another.
 We'll see in <<chapter_script>> how "entities" in this case are really smart contracts.
 But we're getting ahead of ourselves.
@@ -31,7 +31,7 @@ image::images/prbc_0501.png[Transaction Version Inputs Outputs and Locktime]
 
 The differently highlighted parts represent Version, Inputs, Outputs and Locktime respectively.
 
-With this in mind, we can start constructing the Transaction class, which we'll call `Tx`:
+With this in mind, we can start constructing the((("Transaction class (Tx)", "creating"))) Transaction class, which we'll call `Tx`:
 
 [source,python]
 ----
