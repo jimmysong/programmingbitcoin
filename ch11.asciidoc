@@ -473,7 +473,7 @@ We traverse to the right node to get its value.
 <11> We have the left node's value, but the right does not exist.
 In this case, according to Merkle Tree rules, we calculate the Merkle Parent of the left node twice.
 <12> All hashes must be consumed or we got bad data.
-<13> All flag bits must be consumed or we got bad data.((("", startref="Bmerkel11")))
+<13> All flag bits must be consumed or we got bad data.((("", startref="Bmerkel11")))((("", startref="flagbit11")))((("", startref="Hblock11")))((("", startref="MBflag11")))
 
 include::code-ch11/answers.py[tag=exercise7,indent=0]
 
