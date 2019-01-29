@@ -225,7 +225,7 @@ Once both pieces of information are given, the light client can reconstruct the 
 A full node communicates these two pieces of information to a light client using a Merkle Block.
 
 To((("Merkle Blocks", "binary trees and")))((("binary trees"))) understand what's in a Merkle Block, we need to understand a bit about how a Merkle Tree or more generally, Binary Trees, can be traversed.
-In a binary tree, nodes can be traversed breadth-first or depth-first.
+In((("Merkle Trees", "breadth-first versus depth-first ordering"))) a binary tree, nodes can be traversed breadth-first or depth-first.
 Breadth-first traversal would go level by level like <<bread_first_ordering>>.
 
 [[bread_first_ordering]]
