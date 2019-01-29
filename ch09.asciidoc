@@ -149,7 +149,7 @@ For a block, this is similar, in the sense that the version field reflects the c
 In the past this was used as a way to indicate a single feature that was ready to be deployed by the block's miner.
 Version 2 meant that the software was ready for BIP0034, the Coinbase Transaction block height feature from earlier in this chapter.
 Version 3 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0066"))) BIP0066, the enforcement of strict DER encoding.
-Version 4 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) BIP0065, which specified `OP_CHECKLOCKTIMEVERIFY`.
+Version 4 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) BIP0065, which specified((("OP_CHECKLOCKTIMEVERIFY operation"))) `OP_CHECKLOCKTIMEVERIFY`.
 
 Unfortunately, the incremental increase in version number meant that only one feature was signaled on the network at a time.
 To alleviate this, the developers came up with((("BIP (Bitcoin Improvement Proposals)", "BIP9"))) BIP9, which allows up to 29 different features to be signaled at the same time.
