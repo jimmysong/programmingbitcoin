@@ -94,7 +94,7 @@ Note in the diagram that `y = hash160(x)`.
 .`OP_HASH160` does a sha256 followed by ripemd160 to the top element
 image::images/prbc_0604.png[OP_HASH160]
 
-Another very important operation is `OP_CHECKSIG` (<<op_checksig_checks_if_the_signature_for_the_pubkey_is_valid_or_not>>).
+Another((("OP_CHECKSIG operation"))) very important operation is `OP_CHECKSIG` (<<op_checksig_checks_if_the_signature_for_the_pubkey_is_valid_or_not>>).
 `OP_CHECKSIG` consumes two elements from the stack, the first being the pubkey, the second being a signature, and examines if the signature is good for the given pubkey.
 If so, `OP_CHECKSIG` pushes a 1 to the stack; otherwise, it pushes a 0 to the stack.
 
