@@ -195,7 +195,7 @@ include::code-ch07/answers.py[tag=exercise2,indent=0]
 
 === Verifying the Entire Transaction
 
-Now that we can verify an input, the task of verifying the entire transaction is straightforward:
+Now((("Transactions", "verifying entire transaction"))) that we can verify an input, the task of verifying the entire transaction is straightforward:
 
 [source,python]
 ----
