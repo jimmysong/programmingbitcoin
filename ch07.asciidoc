@@ -141,7 +141,7 @@ image::images/prbc_0704.png[Validation Step 2]
 
 ==== Step 3: Append the Hash Type
 
-Last, we add a 4-byte hash type to the end.
+Last, we add a 4-byte((("SIGHASH_ALL"))) hash type to the end.
 This is to specify what the signature is authorizing.
 The signature can authorize that this input has to go with all the other inputs and outputs (`SIGHASH_ALL`), go with a specific output (`SIGHASH_SINGLE`), or go with any output whatsoever (`SIGHASH_NONE`).
 The latter two have some theoretical use cases, but in practice, almost every transaction is signed with `SIGHASH_ALL`.
