@@ -142,7 +142,7 @@ include::code-ch06/answers.py[tag=exercise1,indent=0]
 
 === Parsing the Script Fields
 
-Both ScriptPubKey and ScriptSig are parsed the same way.
+Both((("Script", "parsing Script fields", id="Sparsing06"))) ScriptPubKey and ScriptSig are parsed the same way.
 If the byte is between `0x01` and `0x4b` (which we call `n`), we read the next `n` bytes as an element.
 Otherwise, the byte represents an operation, which we have to look up.
 Here are some operations and their byte codes:
