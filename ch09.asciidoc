@@ -196,7 +196,7 @@ The previous block field ends in a bunch of `00` bytes, which we will discuss mo
 
 === Merkle Root
 
-The Merkle Root encodes all the ordered transactions in a 32-byte hash.
+The((("Merkle Root")))((("Blocks", "Merkle Root"))) Merkle Root encodes all the ordered transactions in a 32-byte hash.
 We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the Merkle Root along with data from the server to get a proof-of-inclusion in <<chapter_spv>>.
 
 === Timestamp
