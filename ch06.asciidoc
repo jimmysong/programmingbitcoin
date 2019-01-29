@@ -453,7 +453,7 @@ For example, quantum computing has the potential to reduce the calculation times
 
 === Solving the Problems with p2pkh
 
-Pay-to-pubkey-hash (p2pkh) is an alternative Script that has advantages over p2pk:
+Pay-to-pubkey-hash (p2pkh) is((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative Script that has advantages over p2pk:
 
 1. The addresses are shorter.
 2. It's additionally protected by sha256 and ripemd160.
