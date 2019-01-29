@@ -619,7 +619,7 @@ Ultimately this is going to be used in Transactions, which will prove that the r
 
 ==== Inscribing the Target
 
-The((("signing and verification", "signature algorithm")))((("signature algorithm"))) inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
+The((("signing and verification", "signature algorithm")))((("signature algorithm")))((("ECDSA (Elliptic Curve Digital Signature Algorithm)"))) inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
 
 The secret in our case is `e` satisfying the following:
 
