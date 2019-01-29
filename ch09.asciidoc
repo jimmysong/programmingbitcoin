@@ -4,7 +4,7 @@
 [.lead]
 Transactions((("Blocks", "purpose of"))) transfer Bitcoins from one party to another and are unlocked, or authorized, by signatures.
 This ensures that the sender authorized the transaction, but what if the sender sends the same coins to multiple people?
-This is called the _double-spending problem_ and is so called because the owner of a lockbox may try to spend the same output twice.
+This((("double-spending, preventing"))) is called the _double-spending problem_ and is so called because the owner of a lockbox may try to spend the same output twice.
 Much like being given a check that has the possibility of bouncing, the receiver needs to be assured that the transaction is valid.
 
 This is where a major innovation of Bitcoin comes in with Blocks.
@@ -23,7 +23,7 @@ We'll start with a special transaction called the Coinbase Transaction, which is
 
 === Coinbase Transactions
 
-Coinbase Transactions have nothing to do with the US company of the same name.
+Coinbase Transactions((("Blocks", "Coinbase Transactions")))((("Coinbase Transactions"))) have nothing to do with the US company of the same name.
 Coinbase is the required first transaction of every block and is the only transaction allowed to bring Bitcoins into existence.
 The Coinbase Transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the _block reward_.
 
