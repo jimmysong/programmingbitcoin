@@ -32,11 +32,11 @@ Loops are a useful construct in programming, so you may be wondering at this poi
 There are a lot of reasons for this, but let's start with program execution.
 Anyone can create a Script program that every full node on the network executes.
 If Script were Turing Complete, it would be possible for the loop to go on executing forever.
-This would cause validating nodes to enter and never leave that loop.
+This((("Denial of Service attack (DoS) attacks"))) would cause validating nodes to enter and never leave that loop.
 This would be an easy way to attack the network through what would be called a Denial of Service attack (DoS).
 A single Script that has an infinite loop could take down Bitcoin!
 This would be a large systematic vulnerability and protecting against this vulnerability is one of the major reasons why Turing Completeness is avoided.
-Ethereum, which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas."
+Ethereum,((("Ethereum"))) which has Turing Completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas."
 An infinite loop will exhaust whatever gas is in the contract because, by definition, it will run an infinite number of times.
 
 There are other reasons to avoid Turing Completeness, and that's because smart contracts with Turing Completeness are very difficult to analyze.
