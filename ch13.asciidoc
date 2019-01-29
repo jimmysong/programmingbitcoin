@@ -138,7 +138,7 @@ Segwit Version 1 can have a completely different processing path.
 `<20-byte hash> 1` could be the special Script sequence that triggers a different rule.
 Upgrades((("Schnorr signatures")))((("Graftroot")))((("Simplicity"))) of Segwit can introduce Schnorr Signatures, Graftroot, or even a different scripting system altogether like Simplicity.
 Segwit gives us a clear upgrade path.
-Software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.
+Software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.((("", startref="Sp2wpkh13")))((("", startref="p2wpkh13")))
 
 === p2sh-p2wpkh
 
