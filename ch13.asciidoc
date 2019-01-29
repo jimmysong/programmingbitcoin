@@ -143,7 +143,7 @@ Software that understands how to validate Segwit Version X will validate such tr
 === p2sh-p2wpkh
 
 p2wpkh is great, but unfortunately, this is a new type of Script and older wallets cannot send Bitcoins to p2wpkh ScriptPubKeys.
-p2wpkh uses a new address format called bech32, defined in BIP173, whose ScriptPubKeys older wallets don't know how to create.
+p2wpkh uses a new address format called bech32, defined((("BIP (Bitcoin Improvement Proposals)", "BIP173"))) in BIP173, whose ScriptPubKeys older wallets don't know how to create.
 
 The Segwit authors found an ingenious way to make Segwit backward compatible by using p2sh.
 We can "wrap" p2wpkh inside a p2sh.
@@ -194,7 +194,7 @@ The hash will go on the stack and we then get to `OP_EQUAL` (<<p2sh_p2wpkh_step_
 .p2sh-p2wpkh Step 3
 image::images/prbc_1315.png[p2sh-p2wpkh Step 3]
 
-At this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid, as they are unaware of the p2sh validation rules.
+At((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid, as they are unaware of the p2sh validation rules.
 However, post-BIP0016 nodes recognize the special Script sequence for p2sh, so the RedeemScript will then be evaluated as Script commands.
 The RedeemScript is `OP_0 <20-byte hash>`, which is the same as the ScriptPubKey for p2wpkh.
 This makes the Script state look like <<p2sh_p2wpkh_step_4>>.
