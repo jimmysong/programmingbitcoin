@@ -289,7 +289,7 @@ There are multiple ways to estimate fees, including:
 * Looking at the current mempool and adding a fee that roughly corresponds to enough economic incentivization, and
 * Going with some fixed fee.
 
-Many wallets use different strategies and this is an active area of research.
+Many wallets use different strategies and this is an active area of research.((("", startref="Tcreate07")))
 ====
 
 === Combining to Make a Transaction
