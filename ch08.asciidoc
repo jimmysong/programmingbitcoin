@@ -3,7 +3,7 @@
 == Pay to Script Hash
 
 [.lead]
-Up to this point in the book, we've been doing single-key transactions, or transactions with only a single private key per input.
+Up((("multisig (multiple signatures)", "benefits of"))) to this point in the book, we've been doing single-key transactions, or transactions with only a single private key per input.
 What if we wanted something a little more complicated?
 A company that has $100 million in Bitcoin might not want funds locked to a single private key: if that single key is lost or stolen, all funds would then be lost.
 Loss of a single key would mean all funds would then be lost.
@@ -23,7 +23,7 @@ Schnorr signatures((("Schnorr signatures"))) will make aggregating signatures ea
 
 === Bare Multisig
 
-Bare Multisig was the first attempt at creating transaction outputs that require signatures from multiple parties.
+Bare Multisig((("multisig (multiple signatures)", "Bare Multisig"))) was the first attempt at creating transaction outputs that require signatures from multiple parties.
 The idea is to change from a single point of failure to something a little more resilient to hacks.
 To understand Bare Multisig, one must first understand the `OP_CHECKMULTISIG` opcode.
 As discussed in <<chapter_script>>, Script has a lot of different opcodes.
