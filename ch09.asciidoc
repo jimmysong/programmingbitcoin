@@ -220,7 +220,7 @@ In 2106, the block header will need some sort of fork as the timestamp in the bl
 
 === Bits
 
-Bits is a field that encodes the proof-of-work necessary in this block.
+Bits((("Blocks", "Bits field"))) is a field that encodes the proof-of-work necessary in this block.
 This will be discussed more in the next section.
 
 === Nonce
