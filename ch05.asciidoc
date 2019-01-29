@@ -198,7 +198,7 @@ image::images/prbc_0505.png[Input Fields]
 
 .Sequence and Locktime
 ****
-Originally, Satoshi wanted Sequence and Locktime to be used for something called "high-frequency trades."
+Originally, Satoshi((("Locktime"))) wanted Sequence and Locktime to be used for something called "high-frequency trades."
 What Satoshi envisioned was a way to do payments back and forth with another party without making lots of on-chain transactions.
 For example, if Alice pays Bob `x` Bitcoins for something and then Bob pays Alice `y` Bitcoins for something else (say `x > y`), then Alice can just pay Bob `x-y`, instead of two separate transactions on-chain.
 We could do the same thing if Alice and Bob had 100 transactions between them—that is, compress a bunch of transactions into a single transaction.
