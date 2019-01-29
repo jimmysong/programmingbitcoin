@@ -294,7 +294,7 @@ Many wallets use different strategies and this is an active area of research.(((
 
 === Combining to Make a Transaction
 
-We have a plan for a new transaction with one input and two outputs.
+We((("Transactions", "combining to make"))) have a plan for a new transaction with one input and two outputs.
 But first, let's look at some other tools we'll need.
 
 We need a way to take an address and get the 20-byte hash out of it.
