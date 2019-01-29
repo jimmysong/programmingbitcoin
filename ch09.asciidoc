@@ -2,7 +2,7 @@
 == Blocks
 
 [.lead]
-Transactions transfer Bitcoins from one party to another and are unlocked, or authorized, by signatures.
+Transactions((("Blocks", "purpose of"))) transfer Bitcoins from one party to another and are unlocked, or authorized, by signatures.
 This ensures that the sender authorized the transaction, but what if the sender sends the same coins to multiple people?
 This is called the _double-spending problem_ and is so called because the owner of a lockbox may try to spend the same output twice.
 Much like being given a check that has the possibility of bouncing, the receiver needs to be assured that the transaction is valid.
