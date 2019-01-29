@@ -436,7 +436,7 @@ Incidentally, this IP-to-IP payment system was phased out because it's not secur
 
 .Why Did Satoshi Use the Uncompressed SEC Format?
 ****
-It seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium. So why did Satoshi use it?
+It((("SEC serialization format", "uncompressed format")))((("serialization", "uncompressed SEC format"))) seems the uncompressed SEC format doesn't make sense for Bitcoin given that block space is at a premium. So why did Satoshi use it?
 Satoshi was using the OpenSSL library to do the SEC format conversions, and the OpenSSL library at the time Satoshi wrote Bitcoin (circa 2008) did not document the compressed format very well.
 It's speculated this is why Satoshi used the uncompressed SEC format.
 
