@@ -124,7 +124,7 @@ OP_CODE_FUNCTIONS = {
 Note that we return a boolean with this opcode, as a way to tell whether the operation was successful.
 A failed operation automatically fails Script evaluation.
 
-Here's another one for `OP_HASH256`.
+Here's((("OP_HASH256 operation"))) another one for `OP_HASH256`.
 This opcode will consume the top element, perform a hash256 operation on it, and push the result on the stack.
 
 [source,python]
