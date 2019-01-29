@@ -287,11 +287,11 @@ image::images/prbc_0824.png[`OP_EVAL`]
 Unfortunately, this((("Turing Completeness"))) more elegant solution comes with an unwanted side effect, namely Turing Completeness.
 Turing Completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see <<chapter_script>>).
 Thus, the more hacky, but more secure option of special-casing was chosen in BIP0016.
-BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.
+BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.((("", startref="p2shoper08")))
 
 === Coding p2sh
 
-The special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
+The((("p2sh (pay-to-script-hash)", "coding", id="p2shcode08"))) special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
 The `evaluate` method in _script.py_ is where we handle the special case:
 
 [source,python]
