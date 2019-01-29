@@ -84,7 +84,7 @@ Our method will be able to handle any sort of stream and return the `Tx` object 
 
 === Version
 
-When you see a version number in something (<<version_chap_five>> shows an example), it's meant to give the receiver information about what the versioned thing is supposed to represent.
+When((("Transactions", "version component")))((("version numbers"))) you see a version number in something (<<version_chap_five>> shows an example), it's meant to give the receiver information about what the versioned thing is supposed to represent.
 If, for example, you are running Windows 3.1, that's a version number that's very different than Windows 8 or Windows 10.
 You could specify just "Windows", but specifying the version number after the operating system helps you know what features it has and what APIs you can program against.
 
