@@ -478,7 +478,7 @@ Given p2pkh is shorter and more secure, p2pk use declined significantly after 20
 
 === p2pkh
 
-Pay-to-pubkey-hash was used during the early days of Bitcoin, though not as much as p2pk.
+Pay-to-pubkey-hash((("Script", "p2pkh (pay-to-pubkey-hash)", id="Sp2pkh06"))) was used during the early days of Bitcoin, though not as much as p2pk.
 
 The p2pkh ScriptPubKey, or locking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptpubkey>>.
 
@@ -488,7 +488,7 @@ image::images/prbc_0615.png[P2PKH ScriptPubKey]
 
 Like p2pk, `OP_CHECKSIG` is here and `OP_HASH160` makes an appearance.
 Unlike p2pk, the SEC pubkey is not here, but a 20-byte hash is.
-There is also a new opcode here: `OP_EQUALVERIFY`.
+There((("OP_EQUALVERIFY operation"))) is also a new opcode here: `OP_EQUALVERIFY`.
 
 The p2pkh ScriptSig, or the unlocking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptsig>>.
 
