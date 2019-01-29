@@ -232,7 +232,7 @@ Breadth-first traversal would go level by level like <<bread_first_ordering>>.
 .Breadth-first ordering
 image::images/prbc_1103.png[Breadth First]
 
-The breadth-first ordering starts at the root and goes from root to leaves, level by level, left to right.
+The((("breadth-first ordering"))) breadth-first ordering starts at the root and goes from root to leaves, level by level, left to right.
 
 Depth-first ordering is a bit different and looks like <<depth_first_ordering>>.
 
@@ -240,7 +240,7 @@ Depth-first ordering is a bit different and looks like <<depth_first_ordering>>.
 .Depth-first ordering
 image::images/prbc_1104.png[Depth First]
 
-The depth-first ordering starts at the root, and traverses the left side at each node before the right side.
+The((("depth-first ordering"))) depth-first ordering starts at the root, and traverses the left side at each node before the right side.
 
 In a Proof of Inclusion (see <<merkle_proof_two>>), the full node sends the green boxes, H~K~ and H~N~, along with the blue boxes H~ABCDEFGH~, H~IJ~, H~L~, H~M~ and H~OP~.
 The location of each hash is reconstructed using depth-first ordering from some flags.
