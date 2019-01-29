@@ -124,7 +124,7 @@ include::code-ch11/answers.py[tag=exercise2,indent=0]
 
 === Merkle Root
 
-The process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash.
+The((("Merkle Root"))) process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash.
 If, for example, we have items A through G (7 items), we calculate the Merkle Parent Level:
 
 `[H(A||B), H(C||D), H(E||F), H(G||G)]`
