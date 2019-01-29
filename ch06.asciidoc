@@ -3,11 +3,11 @@
 == Script
 
 [.lead]
-The ability to lock and unlock coins is the mechanism by which we transfer Bitcoin.
+The((("locking/unlocking mechanism")))((("unlocking/locking mechanism"))) ability to lock and unlock coins is the mechanism by which we transfer Bitcoin.
 _Locking_ is giving some Bitcoins to some entity.
 _Unlocking_ is spending some Bitcoins that you have received.
 
-In this chapter we examine this locking/unlocking mechanism, which is often called a _smart contract_.
+In((("smart contract language"))) this chapter we examine this locking/unlocking mechanism, which is often called a _smart contract_.
 Elliptic Curve Cryptography (<<chapter_elliptic_curve_cryptography>>) is used by Script to validate that the transaction was properly authorized (<<chapter_tx_parsing>>).
 Script essentially allows people to prove that they have the right to spend certain UTXOs.
 We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
