@@ -272,7 +272,7 @@ To verify an ECDSA signature, we need the message, `z`, the public key, `P`, and
 In p2pk, Bitcoins are sent to a public key, and the owner of the private key can unlock or spend the Bitcoins by creating a signature.
 The ScriptPubKey of a Transaction puts the assigned Bitcoins under the control of the private key owner.
 
-Specifying where the Bitcoins go is the job of the ScriptPubKey.
+Specifying((("ScriptPubKey"))) where the Bitcoins go is the job of the ScriptPubKey.
 ScriptPubKey is the lockbox that receives the Bitcoins.
 The p2pk ScriptPubKey looks like <<pay_to_pubkey_p2pk_scriptpubkey>>.
 
