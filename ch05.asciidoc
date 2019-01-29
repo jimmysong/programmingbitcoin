@@ -182,7 +182,7 @@ Thus, we need to define exactly which output _within a transaction_ that we're s
 Note that the previous transaction ID is 32 bytes and that the previous transaction index is 4 bytes.
 Both are in Little-Endian.
 
-ScriptSig((("ScriptSig"))) has to do with Bitcoin's smart contract language Script, discussed more thoroughly in <<chapter_script>>.
+ScriptSig((("ScriptSig field (inputs)"))) has to do with Bitcoin's smart contract language Script, discussed more thoroughly in <<chapter_script>>.
 For now, think of ScriptSig as opening a locked box—something that can only be done by the owner of the transaction output.
 The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far.
 A variable-length field requires us to define exactly how long the field will be, which is why the field is preceded by a varint telling us how long the field is.
