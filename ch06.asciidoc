@@ -14,7 +14,7 @@ We're getting a little ahead of ourselves, though, so let's start with how Scrip
 
 === Mechanics of Script
 
-If you are confused about what a "smart contract" is, don't worry.
+If((("Script", "mechanics of"))) you are confused about what a "smart contract" is, don't worry.
 "Smart contract" is a fancy way of saying "programmable," and the "smart contract language" is simply a programming language.
 In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which Bitcoins are spendable.
 
