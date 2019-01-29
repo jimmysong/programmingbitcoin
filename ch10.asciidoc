@@ -220,7 +220,7 @@ include::code-ch10/answers.py[tag=exercise6,indent=0]
 
 === Headers Response
 
-We((("networking", "headers response messages"))) can now create a node, handshake, and then ask for some headers.
+We((("networking", "headers response messages", id="NWheader10"))) can now create a node, handshake, and then ask for some headers.
 
 [source,python]
 ----
@@ -274,7 +274,7 @@ include::code-ch10/examples.py[tag=example1]
 Note that this won't work on testnet as the difficulty adjustment algorithm is different.
 To make sure blocks can be found consistently for testing, if a block hasn't been found on testnet in 20 minutes, the difficulty drops to 1, making it very easy to find a block.
 This is on purpose as to allow testers to be able to keep building blocks on the network without expensive mining equipment.
-A $30 USB ASIC can typically find a few blocks per minute at the minimum difficulty.
+A $30 USB ASIC can typically find a few blocks per minute at the minimum difficulty.((("", startref="NWheader10")))
 
 === Conclusion
 
