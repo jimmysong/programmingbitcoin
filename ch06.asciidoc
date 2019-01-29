@@ -247,7 +247,7 @@ We will use this ability to combine Scripts for evaluation later in this chapter
 
 === Standard Scripts
 
-There are many types of standard Scripts in Bitcoin, including the following:
+There((("Script", "standard Scripts"))) are many types of standard Scripts in Bitcoin, including the following:
 
 p2pk:: Pay-to-pubkey
 p2pkh:: Pay-to-pubkey-hash
