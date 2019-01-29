@@ -133,10 +133,10 @@ Note that less data is sent over the network to older nodes.
 Also, nodes are given the option of not having to download (and hence not verify) transactions that are X blocks old if they don't want to.
 In a sense, the signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating directly if it so chooses.
 
-Furthermore, this is a special rule for Segwit Version 0.
+Furthermore,((("Segwit (segregated witness)", "Segwit Version 0"))) this is a special rule for Segwit Version 0.
 Segwit Version 1 can have a completely different processing path.
 `<20-byte hash> 1` could be the special Script sequence that triggers a different rule.
-Upgrades of Segwit can introduce Schnorr Signatures, Graftroot, or even a different scripting system altogether like Simplicity.
+Upgrades((("Schnorr signatures")))((("Graftroot")))((("Simplicity"))) of Segwit can introduce Schnorr Signatures, Graftroot, or even a different scripting system altogether like Simplicity.
 Segwit gives us a clear upgrade path.
 Software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.
 
