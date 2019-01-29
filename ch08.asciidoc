@@ -284,7 +284,7 @@ image::images/prbc_0824.png[`OP_EVAL`]
 
 `OP_EVAL` would have consumed the top element of the stack and interpreted that as Script commands to be put into the Script column.
 
-Unfortunately, this more elegant solution comes with an unwanted side effect, namely Turing Completeness.
+Unfortunately, this((("Turing Completeness"))) more elegant solution comes with an unwanted side effect, namely Turing Completeness.
 Turing Completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see <<chapter_script>>).
 Thus, the more hacky, but more secure option of special-casing was chosen in BIP0016.
 BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.
