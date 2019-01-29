@@ -109,7 +109,7 @@ include::code-ch08/op.py[tag=source1]
 ----
 <1> Each DER signature is assumed to be signed with `SIGHASH_ALL`.
 <2> We take care of the off-by-one error by consuming the top element of the stack and not doing anything with the element.
-<3> This is the part that you will need to code for the next exercise.
+<3> This is the part that you will need to code for the next exercise.((("", startref="opcheck08")))
 
 include::code-ch08/answers.py[tag=exercise1,indent=0]
 
@@ -137,7 +137,7 @@ The whitepaper was encoded into 947 outputs as 1-of-3 Bare Multisig outputs.
 These outputs are not spendable but have to be indexed in the UTXO sets of full nodes.
 This is a tax every full node has to pay and is in that sense abusive.
 
-To mitigate these problems, pay-to-script-hash (p2sh) was born.
+To mitigate these problems, pay-to-script-hash (p2sh) was born.((("", startref="baremulti08")))((("", startref="MSbare08")))
 
 === Pay-to-Script-Hash (p2sh)
 
