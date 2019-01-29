@@ -379,7 +379,7 @@ include::code-ch11/answers.py[tag=exercise6,indent=0]
 
 ==== Using Flag Bits and Hashes
 
-The flag bits inform where the hashes go using depth-first ordering.
+The((("Merkle Blocks", "flag bits and hashes")))((("flag bits")))((("hashes", "using in Merkle Blocks"))) flag bits inform where the hashes go using depth-first ordering.
 
 The rules for the flag bits are:
 
