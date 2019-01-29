@@ -417,7 +417,7 @@ include::code-ch06/answers.py[tag=exercise2,indent=0]
 [[problemsp2pk]]
 === Problems with p2pk
 
-Pay-to-pub-key is intuitive in the sense that there is a public key that anyone can send Bitcoins to and a signature that can only be produced by the owner of the private key.
+Pay-to-pub-key((("p2pk (pay-to-pubkey)", "problems with"))) is intuitive in the sense that there is a public key that anyone can send Bitcoins to and a signature that can only be produced by the owner of the private key.
 This works well, but there are some problems.
 
 First, the public keys are long.
