@@ -252,7 +252,7 @@ image::images/prbc_1102.png[Merkle Proof]
 
 ==== Merkle Tree Structure
 
-The first thing a light client does is create the general structure of the Merkle Tree.
+The((("Merkle Blocks", "Merkle Tree structure")))((("Merkle Trees", "structure of"))) first thing a light client does is create the general structure of the Merkle Tree.
 Because Merkle Trees are built from the leaves upward, the only thing a light client needs is the number of leaves that exist to know the structure.
 The tree from <<merkle_proof_two>> has 16 leaves.
 A light client can create the empty Merkle Tree like so:
