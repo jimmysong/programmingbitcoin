@@ -373,7 +373,7 @@ Fee is the total of the input amounts minus the total of the output amounts.
 
 === Transaction Fee
 
-One of the consensus rules of Bitcoin is that for any non-Coinbase Transactions (more on Coinbase Transactions in <<chapter_p2sh>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
+One((("Transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-Coinbase Transactions (more on Coinbase Transactions in <<chapter_p2sh>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
 You may be wondering why the inputs and outputs can't just be forced to be equal.
 This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks (see <<chapter_blocks>>).
 Fees are a way to incentivize miners to include transactions.
