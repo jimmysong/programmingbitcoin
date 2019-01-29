@@ -236,7 +236,7 @@ How we do that is further discussed in <<chapter_tx>>.
 
 ==== Parsing Script
 
-We'll delve more deeply into how Script is parsed in <<chapter_script>>, but for now, here's how you get a `Script` object from hexadecimal in Python:
+We'll((("Script objects", "creating"))) delve more deeply into how Script is parsed in <<chapter_script>>, but for now, here's how you get a `Script` object from hexadecimal in Python:
 
 [source,python]
 ----
