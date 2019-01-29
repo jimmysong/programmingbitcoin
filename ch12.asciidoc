@@ -203,7 +203,7 @@ include::code-ch12/answers.py[tag=exercise5,indent=0]
 
 === Getting Transactions of Interest
 
-A((("Bloom Filters", "getting transactions of interest"))) light client that loads a Bloom Filter with a full node will get all the information needed to prove that transactions of interest are included in particular blocks.
+A((("Bloom Filters", "getting transactions of interest")))((("transactions of interest, collecting"))) light client that loads a Bloom Filter with a full node will get all the information needed to prove that transactions of interest are included in particular blocks.
 
 [source,python]
 ----
