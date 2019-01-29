@@ -74,7 +74,7 @@ They consume zero or more elements from the processing stack and push zero or mo
 .Operations
 image::images/prbc_0602.png[Script Operations]
 
-A typical operation is `OP_DUP` (<<op_dup_duplicates_the_top_element>>), which will duplicate the top element (consuming 0) and push the new element to the stack (pushing 1).
+A((("OP_DUP operation"))) typical operation is `OP_DUP` (<<op_dup_duplicates_the_top_element>>), which will duplicate the top element (consuming 0) and push the new element to the stack (pushing 1).
 
 [[op_dup_duplicates_the_top_element]]
 .`OP_DUP` duplicates the top element
@@ -86,7 +86,7 @@ Resolving as invalid means that the transaction that includes the unlocking Scri
 
 === Example Operations
 
-There are many other operations besides `OP_DUP`.
+There((("Script", "example operations"))) are many other operations besides `OP_DUP`.
 `OP_HASH160` (<<op_hash160_does_a_sha256_followed_by_ripemd160_to_the_top_element>>) does a sha256 followed by a ripemd160 (aka hash160) to the top element of the stack (consuming 1) and pushing a new element to the stack (pushing 1).
 Note in the diagram that `y = hash160(x)`.
 
