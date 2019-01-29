@@ -18,7 +18,7 @@ The bug has had to stay in the protocol because fixing it would require a hard f
 .Multiple Private Keys to a Single Aggregated Public Key
 ====
 It is possible to "split" a single private key into multiple private keys and use an interactive method to aggregate signatures without ever reconstructing the private key, but this is not a common practice.
-Schnorr signatures will make aggregating signatures easier and perhaps more common in the future.
+Schnorr signatures((("Schnorr signatures"))) will make aggregating signatures easier and perhaps more common in the future.
 ====
 
 === Bare Multisig
