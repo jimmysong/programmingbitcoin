@@ -176,7 +176,7 @@ We need the `z`, or signature hash, to pass into the `evaluate`, method and we n
 [NOTE]
 .Quadratic Hashing
 ====
-The signature hashing algorithm is inefficient and wasteful and is called the Quadratic Hashing problem.
+The((("Quadratic Hashing problem")))((("signing and verification", "signature hash")))((("signature hash"))) signature hashing algorithm is inefficient and wasteful and is called the Quadratic Hashing problem.
 The Quadratic Hashing problem states that calculating the signature hashes, or `z`'s, increases quadratically with the number of inputs in a transaction.
 Specifically, the number of hash256 operations for calculating the `z` will increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation because the entire signature hash will need to be calculated anew for each input.
 
@@ -186,7 +186,7 @@ pass:[<code>bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2&#x200b;b4e
 
 This transaction had 5,569 inputs and 1 output and took many miners over a minute to validate, as the signature hashes for the transaction were expensive to calculate.
 
-Segwit (<<chapter_segwit>>) fixes this with a different way of calculating the signature hash, which is specified in BIP0143.
+Segwit (<<chapter_segwit>>) fixes this with a different way of calculating the signature hash, which is specified in BIP0143.((("", startref="Tvalid07")))((("", startref="SAVsigver07")))
 ====
 
 include::code-ch07/answers.py[tag=exercise1,indent=0]
