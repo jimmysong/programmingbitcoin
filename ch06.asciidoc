@@ -397,7 +397,7 @@ Specifically, the stack after all the ScriptSig commands are evaluated are store
 
 ==== Stack Elements Under the Hood
 
-It may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte-strings like a DER signature or SEC pubkey.
+It((("p2pk (pay-to-pubkey)", "stack elements under the hood"))) may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte-strings like a DER signature or SEC pubkey.
 Under the hood, they're all bytes, but some are interpreted as numbers for certain opcodes.
 For example, 1 is stored on the stack as the `01` byte, 2 is stored as the `02` byte, 999 as the `e703` and so on.
 Any byte-string is interpreted as a Little-Endian number for arithmetic opcodes.
