@@ -635,7 +635,7 @@ include::code-ch06/answers.py[tag=exercise3,indent=0]
 
 ==== Utility of Scripts
 
-The previous exercise was a bit of a cheat as `OP_MUL` is no longer allowed on the Bitcoin network.
+The((("Script", "utility of"))) previous exercise was a bit of a cheat as `OP_MUL` is no longer allowed on the Bitcoin network.
 Version 0.3.5 of Bitcoin disabled a lot of different opcodes, as anything that had even a little bit of potential to create vulnerabilities on the network were disabled.
 
 This is just as well, since most of the functionality in Script is actually not used much.
