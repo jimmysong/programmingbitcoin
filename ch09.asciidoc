@@ -96,7 +96,7 @@ include::code-ch09/answers.py[tag=exercise2,indent=0]
 
 === Headers versus Full Blocks
 
-Blocks are batches of transactions, and the block header is metadata about the transactions included in the block.
+Blocks((("Blocks", "headers versus full blocks"))) are batches of transactions, and the block header is metadata about the transactions included in the block.
 The block header as shown in <<parsed_block>> consists of:
 
 * Version
