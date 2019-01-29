@@ -280,7 +280,7 @@ The p2pk ScriptPubKey looks like <<pay_to_pubkey_p2pk_scriptpubkey>>.
 .Pay-to-pubkey (p2pk) ScriptPubKey
 image::images/prbc_0607.png[P2PK ScriptPubKey]
 
-Note the `OP_CHECKSIG`, as that will be very important.
+Note((("OP_CHECKSIG operation"))) the `OP_CHECKSIG`, as that will be very important.
 The ScriptSig is the part that unlocks the received bitcoins.
 The pubkey can be compressed or uncompressed, though early on in Bitcoin's history when p2pk was more prominent, uncompressed was the only one being used (see <<chapter_serialization>>).
 
