@@ -376,7 +376,7 @@ Fee is the total of the input amounts minus the total of the output amounts.
 One((("Transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-Coinbase Transactions (more on Coinbase Transactions in <<chapter_p2sh>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
 You may be wondering why the inputs and outputs can't just be forced to be equal.
 This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks (see <<chapter_blocks>>).
-Fees are a way to incentivize miners to include transactions.
+Fees((("mempool transactions"))) are a way to incentivize miners to include transactions.
 Transactions not in blocks (so-called _mempool transactions_) are not part of the blockchain and are not final.
 
 The transaction fee is simply the sum of the inputs minus the sum of the outputs.
@@ -385,7 +385,7 @@ As inputs don't have an amount field, we have to look up the amount.
 This requires access to the blockchain, specifically the UTXO set.
 If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information.
 
-We are creating a new class to handle this, called `TxFetcher`:
+We((("TxFetcher class", "creating"))) are creating a new class to handle this, called `TxFetcher`:
 
 [source,python]
 ----
