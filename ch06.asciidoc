@@ -214,7 +214,7 @@ Note that both the parser and serializer were used in <<chapter_tx_parsing>>, pa
 
 === Combining the Script Fields
 
-The Script object represents the command set that requires evaluation.
+The((("Script", "combining Script fields"))) Script object represents the command set that requires evaluation.
 To evaluate Script, we need to combine the ScriptPubKey and ScriptSig fields.
 The lockbox (ScriptPubKey) and the unlocking (ScriptSig) are in _different_ transactions.
 Specifically, the lockbox is where the bitcoins are received, the unlocking is where the bitcoins are spent.
