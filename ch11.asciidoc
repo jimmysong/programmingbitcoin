@@ -211,7 +211,7 @@ It only takes a single honest node to invalidate one hundred dishonest ones, sin
 Therefore, isolation of a light client (that is, control of who the light client is connected to) is required to deceive in this way.
 The security of SPV requires that there be lots of honest nodes on the network.
 
-In other words, light client security is based on a robust network of nodes and the economic cost of producing proof-of-work.
+In((("light client security"))) other words, light client security is based on a robust network of nodes and the economic cost of producing proof-of-work.
 For small transactions relative to the block subsidy (currently 12.5 BTC), there's probably little to worry about.
 For large transactions (say, one hundred BTC), the full nodes may have economic incentive to deceive you.
 Transactions that large should generally be validated using a full node.
