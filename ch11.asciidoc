@@ -55,7 +55,7 @@ Visually, a Merkle Tree looks like <<merkle_tree_chap_eleven>>.
 image::images/prbc_1101.png[Merkle Tree]
 
 The bottom row is what we call the leaves of the tree.
-All other nodes besides the leaves are called _internal nodes_.
+All((("internal nodes"))) other nodes besides the leaves are called _internal nodes_.
 The leaves get combined to produce its _parent level_ (H~AB~ and H~CD~) and when we calculate the parent level of that, we get the Merkle Root.
 
 We'll go through each part of this process below.
