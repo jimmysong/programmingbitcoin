@@ -94,7 +94,7 @@ include::code-ch10/answers.py[tag=exercise4,indent=0]
 
 === Network Handshake
 
-The network handshake is how nodes establish communication.
+The((("networking", "network handshakes"))) network handshake is how nodes establish communication.
 
  * A wants to connect to B and sends a Version message.
  * B receives the Version message and responds with a Verack message, and sends its own Version message.
