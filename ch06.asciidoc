@@ -629,7 +629,7 @@ Think of this ScriptPubKey as a lockbox with a very flimsy lock that anyone can 
 It is for this reason that most transactions have a signature requirement in the ScriptSig.
 
 Once a UTXO has been spent, included in a block, and secured by proof-of-work, the coins are locked to a different ScriptPubKey and no longer as easily spendable.
-Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (see <<chapter_blocks>>).
+Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (see <<chapter_blocks>>).((("", startref="Sconst06")))
 
 include::code-ch06/answers.py[tag=exercise3,indent=0]
 
