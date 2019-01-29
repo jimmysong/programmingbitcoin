@@ -334,7 +334,7 @@ However, every ScriptSig in this transaction is currently empty. Filling it is w
 
 === Signing a Transaction
 
-Signing the transaction would be tricky, but we know how to get the signature hash, or `z`, from earlier in this chapter.
+Signing((("signing and verification", "signing process", id="SAVsign07")))((("Transactions", "signing", id="Tsign07"))) the transaction would be tricky, but we know how to get the signature hash, or `z`, from earlier in this chapter.
 If we have the private key whose public key hash160s to the 20-byte hash in the ScriptPubKey, we can sign the `z` and produce the DER signature.
 
 [source,python]
@@ -368,7 +368,7 @@ My website, https://faucet.programmingbitcoin.com/ is updated to point to a test
 Enter your new testnet address into these faucets to get some testnet coins.
 
 After receiving some coins, spend them using this library.
-This is a big accomplishment for a budding Bitcoin developer, so please take some time to complete this exercise.
+This is a big accomplishment for a budding Bitcoin developer, so please take some time to complete this exercise.((("", startref="Tsign07")))((("", startref="SAVsign07")))
 
 include::code-ch07/answers.py[tag=exercise4,indent=0]
 
