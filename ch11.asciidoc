@@ -124,7 +124,7 @@ include::code-ch11/answers.py[tag=exercise2,indent=0]
 
 === Merkle Root
 
-The((("Merkle Root"))) process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash.
+The((("Merkle Root", id="merroot11"))) process of getting the Merkle Root is to calculate successive Merkle Parent Levels until we get a single hash.
 If, for example, we have items A through G (7 items), we calculate the Merkle Parent Level:
 
 `[H(A||B), H(C||D), H(E||F), H(G||G)]`
@@ -173,7 +173,7 @@ include::code-ch11/block.py[tag=source1]
 <1> We now allow the transaction hashes to be set as part of the initialization of the block.
 The transaction hashes have to be ordered.
 
-As a full node, if we are given all of the transactions, we can calculate the Merkle Root and check that the Merkle Root is what we expect.
+As a full node, if we are given all of the transactions, we can calculate the Merkle Root and check that the Merkle Root is what we expect.((("", startref="merroot11")))
 
 include::code-ch11/answers.py[tag=exercise4,indent=0]
 
