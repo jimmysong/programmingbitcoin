@@ -623,7 +623,7 @@ include::code-ch13/script.py[tag=source6]
 
 === Other Improvements
 
-Other improvements to Segwit include fixing the quadratic hashing problem through a different calculation of the signature hash.
+Other improvements((("Segwit (segregated witness)", "other improvements"))) to Segwit include fixing the quadratic hashing problem through a different calculation of the signature hash.
 A lot of the calculations for signature hash, or `z`, can be reused instead of requiring a new hash256 hash for each input.
 The((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) signature hash calculation is detailed in BIP0143 and can be seen in _code-ch13/tx.py_.
 
