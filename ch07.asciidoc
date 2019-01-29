@@ -258,7 +258,7 @@ p2pkh, on the other hand, is also protected by sha256 and ripemd160.
 However, because the blockchain is public, once we _spend from_ a ScriptPubKey corresponding to our address, we reveal our public key as part of the ScriptSig.
 Once we've revealed that public key, sha256 and ripemd160 no longer protect us as the attacker knows the public key and doesn't have to guess.
 
-That said, as of this writing, we are still protected by the Discrete Log problem, which is unlikely to be broken any time soon.
+That((("Discrete Log problem"))) said, as of this writing, we are still protected by the Discrete Log problem, which is unlikely to be broken any time soon.
 It's important from a security perspective, however, to understand what we're protected by.
 
 The other reason to not reuse addresses is for privacy.
