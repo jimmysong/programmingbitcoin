@@ -187,7 +187,7 @@ For now, think of ScriptSig as opening a locked box—something that can only be
 The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far.
 A variable-length field requires us to define exactly how long the field will be, which is why the field is preceded by a varint telling us how long the field is.
 
-Sequence was originally intended as a way to do what Satoshi called "high-frequency trades" with the Locktime field (see _Sequence and Locktime_), but is currently used with Replace-By-Fee and `OP_CHECKSEQUENCEVERIFY`.
+Sequence((("high-frequency trades"))) was originally intended as a way to do what Satoshi called "high-frequency trades" with the Locktime field (see _Sequence and Locktime_), but is currently used with Replace-By-Fee and `OP_CHECKSEQUENCEVERIFY`.
 Sequence is also in Little-Endian and takes up 4 bytes.
 
 The fields of the input look like <<the_fields_of_an_input_previous_tx_previous_index_scriptsig_and_sequence>>.
