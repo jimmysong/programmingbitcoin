@@ -281,7 +281,7 @@ The miners can change the nonce field at will.
 Unfortunately, the 4 bytes or 32-bits, or 2^32^ possible nonces that a miner can try, is insufficient space.
 This is because the required proof-of-work is much more difficult than can be done in 32 bits.
 Modern ASIC equipment can calculate way more than 2^32^ different hashes per second.
-The AntMiner S9, for example, calculates 12 terahashes per second (Th/s).
+The((("AntMiner S9"))) AntMiner S9, for example, calculates 12 terahashes per second (Th/s).
 That is approximately 2^43^ hashes per second, which means that the entire nonce space can be consumed in just 0.0003 seconds.
 
 What miners can do when the nonce field is exhausted is change the Coinbase Transaction, which then changes the Merkle Root, giving miners a fresh nonce space each time.
