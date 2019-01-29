@@ -237,12 +237,12 @@ Detractors to Segwit have referred to Segwit outputs as "anyone can spend."
 This would be true if the Bitcoin community rejected Segwit.
 In other words, if an economically significant part of the Bitcoin community refused to do the Segwit validation and actively split from the network by accepting a transaction that's not Segwit valid, the outputs would have been anyone can spend.
 Due to a variety of economic incentives, Segwit was activated on the network, there was no network split, a lot of Bitcoins are now locked in Segwit outputs, and Segwit transactions are validated per the soft-fork rules by the vast economic majority of nodes.
-We can now say confidently that the detractors were wrong.
+We can now say confidently that the detractors were wrong.((("", startref="p2shback13")))
 ====
 
 ==== Coding p2wpkh and p2sh-p2wpkh
 
-The first change we're going to make is to the `Tx` class where we need to mark whether the transaction is Segwit or not:
+The((("p2wpkh (pay-to-witness-pubkey-hash)", "coding", id="paytowitcod13")))((("p2sh (pay-to-script-hash)", "coding", id="PTScode13"))) first change we're going to make is to the `Tx` class where we need to mark whether the transaction is Segwit or not:
 
 [source,python]
 ----
@@ -360,7 +360,7 @@ class Script:
 include::code-ch13/script.py[tag=source3]
 ----
 <1> This is where we execute Witness Program version 0 for p2wpkh.
-We make a p2pkh combined Script from the 20-byte hash, signature and pubkey and evaluate.((("", startref="p2wpkh13")))((("", startref="Sp2sh13")))((("", startref="p2shback13")))
+We make a p2pkh combined Script from the 20-byte hash, signature and pubkey and evaluate.((("", startref="p2wpkh13")))((("", startref="Sp2sh13")))((("", startref="PTScode13")))((("", startref="paytowitcod13")))
 
 === Pay-to-Witness-Script-Hash (p2wsh)
 
