@@ -25,7 +25,7 @@ We'll start with a special transaction called the Coinbase Transaction, which is
 
 Coinbase Transactions((("Blocks", "Coinbase Transactions")))((("Coinbase Transactions"))) have nothing to do with the US company of the same name.
 Coinbase is the required first transaction of every block and is the only transaction allowed to bring Bitcoins into existence.
-The Coinbase Transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the _block reward_.
+The((("block rewards"))) Coinbase Transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the _block reward_.
 
 The Coinbase Transaction is what makes it worthwhile for a miner to mine.
 <<coinbase_transaction>> shows what a Coinbase Transaction looks like:
