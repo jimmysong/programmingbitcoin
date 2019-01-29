@@ -345,11 +345,11 @@ In other words, only someone with knowledge of the private key can produce a val
 
 Incidentally, we can see where ScriptPubKey got its name.
 The public key in uncompressed SEC format is the main command in ScriptPubKey for p2pk (the other command being `OP_CHECKSIG`).
-Similarly, ScriptSig is named as such because the ScriptSig for p2pk is a single element: the DER signature.
+Similarly, ScriptSig is named as such because the ScriptSig for p2pk is a single element: the DER signature.((("", startref="P2oper06")))
 
 ==== Coding Script Evaluation
 
-We now code a way to evaluate Script.
+We((("p2pk (pay-to-pubkey)", "coding Script evaluation"))) now code a way to evaluate Script.
 This requires us to go through each command and evaluate whether the Script is valid.
 What we want to be able to do is this:
 
