@@ -401,7 +401,7 @@ This is impossible unless we receive the entire transaction.
 .Why We Minimize Trusting Third Parties
 [WARNING]
 ====
-As((("third parties, minimizing risk of"))) Nick Szabo eloquently wrote in his seminal essay https://nakamotoinstitute.org/trusted-third-parties/["Trusted Third Parties are Security Holes"], trusting third parties to provide correct data is _not_ a good security practice.
+As((("third parties, minimizing risk of")))((("trusted third parties"))) Nick Szabo eloquently wrote in his seminal essay https://nakamotoinstitute.org/trusted-third-parties/["Trusted Third Parties are Security Holes"], trusting third parties to provide correct data is _not_ a good security practice.
 The third party may be behaving well now, but you never know when they may get hacked, may have an employee go rogue, or start implementing policies that are against your interests.
 Part of what makes Bitcoin secure is in _not_ trusting, but verifying the data that we're given.
 ====
