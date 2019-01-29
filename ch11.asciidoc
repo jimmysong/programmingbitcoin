@@ -347,7 +347,7 @@ This is true unless this node happens to be the right-most node and the child le
 <5> We have the left node value, but the right child doesn't exist.
 This is the right-most node of this level so we combine the left value twice.
 
-We can now traverse the tree for the number of leaves that aren't powers of two.
+We can now traverse the tree for the number of leaves that aren't powers of two.((("", startref="MTcode11")))((("", startref="MBcod11")))
 
 ==== Merkle Block Command
 
