@@ -274,7 +274,7 @@ Getting back to the analogy, the process of finding proof-of-work requires us to
 
 ==== How a Miner Generates New Hashes
 
-Where does the miner get new numerical dirt to process to see if it satisfies proof-of-work?
+Where((("proof-of-work", "gnerating new hashes"))) does the miner get new numerical dirt to process to see if it satisfies proof-of-work?
 This is where the nonce field comes in.
 The miners can change the nonce field at will.
 
