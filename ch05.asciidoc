@@ -304,7 +304,7 @@ include::code-ch05/answers.py[tag=exercise3,indent=0]
 
 === Locktime
 
-Locktime is a way to time-delay a transaction.
+Locktime((("Locktime"))) is a way to time-delay a transaction.
 A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,001.
 This was originally construed as a way to do "high-frequency trades" (see _Sequence and Locktime_), which turned out to be insecure.
 If the Locktime is greater than or equal to 500,000,000, Locktime is a UNIX timestamp.
