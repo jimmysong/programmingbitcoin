@@ -155,7 +155,7 @@ In p2sh, a special rule gets executed only when the pattern shown in <<pay_to_sc
 image::images/prbc_0809.png[p2sh Pattern]
 
 If((("RedeemScript"))) this exact command set ends with a `1` on the stack, then the RedeemScript (top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
-This special pattern was introduced in BIP0016 and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
+This((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) special pattern was introduced in BIP0016 and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
 The RedeemScript does not add new Script commands for processing unless this _exact_ sequence is encountered and ends with a `1`.
 
 If this sounds hacky, it is.
@@ -274,7 +274,7 @@ image::images/prbc_0822.png[p2sh Step 5]
 image::images/prbc_0823.png[p2sh End]
 
 The RedeemScript substitution is a bit hacky and there's special-cased code in Bitcoin software to handle this.
-Why wasn't something a lot less hacky and more intuitive chosen?
+Why((("BIP (Bitcoin Improvement Proposals)", "BIP0012"))) wasn't something a lot less hacky and more intuitive chosen?
 BIP0012 was a competing proposal at the time that used `OP_EVAL` and was considered more elegant.
 A ScriptPubKey like <<op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element>> would have worked with BIP0012.
 
@@ -286,7 +286,7 @@ image::images/prbc_0824.png[`OP_EVAL`]
 
 Unfortunately, this((("Turing Completeness"))) more elegant solution comes with an unwanted side effect, namely Turing Completeness.
 Turing Completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see <<chapter_script>>).
-Thus, the more hacky, but more secure option of special-casing was chosen in BIP0016.
+Thus, the((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) more hacky, but more secure option of special-casing was chosen in BIP0016.
 BIP0016 or p2sh was implemented in 2011 and continues to be a part of the network today.((("", startref="p2shoper08")))((("", startref="MSp2shoper08")))
 
 === Coding p2sh
