@@ -210,7 +210,7 @@ include::code-ch06/script.py[tag=source3]
 <5> Any element longer than 520 bytes cannot be serialized.
 <6> Script serialization starts with the length of the entire Script.
 
-Note that both the parser and serializer were used in <<chapter_tx_parsing>>, parsing/serializing the ScriptSig and ScriptPubKey fields.
+Note that both the parser and serializer were used in <<chapter_tx_parsing>>, parsing/serializing the ScriptSig and ScriptPubKey fields.((("", startref="Sparsing06")))
 
 === Combining the Script Fields
 
