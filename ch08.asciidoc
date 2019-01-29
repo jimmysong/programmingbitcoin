@@ -23,9 +23,9 @@ Schnorr signatures((("Schnorr signatures"))) will make aggregating signatures ea
 
 === Bare Multisig
 
-Bare Multisig((("multisig (multiple signatures)", "Bare Multisig"))) was the first attempt at creating transaction outputs that require signatures from multiple parties.
+Bare Multisig((("multisig (multiple signatures)", "Bare Multisig")))((("Bare Multisig"))) was the first attempt at creating transaction outputs that require signatures from multiple parties.
 The idea is to change from a single point of failure to something a little more resilient to hacks.
-To understand Bare Multisig, one must first understand the `OP_CHECKMULTISIG` opcode.
+To((("OP_CHECKMULTISIG operation"))) understand Bare Multisig, one must first understand the `OP_CHECKMULTISIG` opcode.
 As discussed in <<chapter_script>>, Script has a lot of different opcodes.
 `OP_CHECKMULTISIG` is one of them at `0xae`.
 The opcode consumes a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
