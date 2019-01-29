@@ -20,7 +20,7 @@ We'll start by examining the most basic type of Segwit transaction, pay-to-witne
 
 === Pay-to-Witness-Pubkey-Hash
 
-Pay-to-witness-pubkey-hash (p2wpkh) is one of four types of Scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
+Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)"))) one of four types of Scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
 This is a smart contract that acts a lot like pay-to-pubkey-hash and is named similarly for that reason.
 The main change from p2pkh is that the data for the ScriptSig is now in the Witness field.
 The rearrangement is to fix transaction malleability.
