@@ -10,7 +10,7 @@ Toward the end of this chapter, we'll be creating a testnet transaction and broa
 
 === Validating Transactions
 
-Every node, when receiving transactions, makes sure that each transaction adheres to the network rules.
+Every((("Transactions", "validating", id="Tvalid07"))) node, when receiving transactions, makes sure that each transaction adheres to the network rules.
 This process is called _transaction validation_.
 Here are the main things that a node checks:
 
@@ -30,7 +30,7 @@ Let's look at how each is checked.
 
 === Checking the Spentness of Inputs
 
-To prevent double-spending, a node checks that each input exists and has not been spent.
+To((("inputs")))((("double-spending, preventing"))) prevent double-spending, a node checks that each input exists and has not been spent.
 This can be checked by any full node by looking at the UTXO set (see <<chapter_tx_parsing>>).
 We cannot determine from the transaction itself whether it's double-spending, much like we cannot look at a personal check and determine whether it's overdrafting.
 The only way to know is to have access to the UTXO set, which requires calculation from the entire set of transactions.
@@ -44,7 +44,7 @@ A full node can check the spentness of an input pretty easily, but a light clien
 
 === Checking the Sum of the Inputs versus the Sum of the Outputs
 
-Nodes also make sure that the sum of the inputs is greater than or equal to the sum of the outputs.
+Nodes((("outputs"))) also make sure that the sum of the inputs is greater than or equal to the sum of the outputs.
 This ensures that the transaction does not create new coins.
 The one exception is a Coinbase Transaction, which we'll study more in <<chapter_blocks>>.
 Since inputs don't have an amount field, this must be looked up on the blockchain.
@@ -75,7 +75,7 @@ If the fee is negative, we know that the `output_sum` is greater than the `input
 [NOTE]
 .The Value Overflow Incident
 ====
-Back in 2010, there was a transaction that created 184 billion new Bitcoins.
+Back((("value overflow incident"))) in 2010, there was a transaction that created 184 billion new Bitcoins.
 This is due to the fact that in C++, the amount field is a _signed_ integer and not an _unsigned_ integer.
 That is, the value could be negative!
 
