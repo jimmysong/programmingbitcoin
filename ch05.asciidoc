@@ -243,7 +243,7 @@ We'll((("Script objects", "creating"))) delve more deeply into how Script is par
 include::code-ch05/examples.py[tag=example1]
 ----
 <1> Note that the `Script` class will be more thoroughly explored in <<chapter_script>>.
-For now, please trust that the `Script.parse` method will create the object that we need.
+For now, please trust that the `Script.parse` method will create the object that we need.((("", startref="Tinput05")))((("", startref="inputs05")))
 
 include::code-ch05/answers.py[tag=exercise2,indent=0]
 
