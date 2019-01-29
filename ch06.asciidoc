@@ -263,7 +263,7 @@ To show exactly how all this works, we'll start with one of the original Scripts
 
 === p2pk
 
-Pay-to-pubkey (p2pk) ((("Script", "p2pk (pay-to-pubkey)", id="Sp2pk06")))was used largely during the early days of Bitcoin.
+Pay-to-pubkey (p2pk) ((("Script", "p2pk (pay-to-pubkey)", id="Sp2pk06")))((("p2pk (pay-to-pubkey)", "operation of", id="P2oper06")))was used largely during the early days of Bitcoin.
 Most coins thought to belong to Satoshi are in p2pk UTXOs—that is, transaction outputs whose ScriptPubKeys have the p2pk form.
 There are some limitations that we'll discuss in <<problemsp2pk>>, but first, let's look at how p2pk works.
 
