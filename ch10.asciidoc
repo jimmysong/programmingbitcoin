@@ -194,7 +194,7 @@ For full nodes, downloading the block headers allows them to asynchronously ask 
 For light clients, downloading headers allows them to verify the proof-of-work in each block.
 As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network, but that requires the light clients to have the block headers.
 
-Nodes can give us the block headers without taking up much bandwidth.
+Nodes((("getheaders command"))) can give us the block headers without taking up much bandwidth.
 The command to get the block headers is called `getheaders` and it looks like <<parsed_getheaders>>.
 
 [[parsed_getheaders]]
