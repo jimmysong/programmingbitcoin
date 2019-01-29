@@ -144,7 +144,7 @@ include::code-ch09/answers.py[tag=exercise5,indent=0]
 
 === Version
 
-_Version_ in normal software refers to a particular set of features.
+_Version_ in normal((("Blocks", "versions"))) software refers to a particular set of features.
 For a block, this is similar, in the sense that the version field reflects the capabilities of the software that produced the block.
 In the past this was used as a way to indicate a single feature that was ready to be deployed by the block's miner.
 Version 2 meant that the software was ready for BIP0034, the Coinbase Transaction block height feature from earlier in this chapter.
