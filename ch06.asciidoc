@@ -563,11 +563,11 @@ This is why we call this type of Script pay-to-pubkey-_hash_.
 The ScriptPubKey has the 20-byte _hash160_ of the public key and not the public key itself.
 We are locking Bitcoins to a _hash_ of the public key and the spender is responsible for revealing the public key as part of constructing the ScriptSig.
 
-The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.
+The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))
 
 === Scripts Can Be Arbitrarily Constructed
 
-Note that Scripts can be any arbitrary program.
+Note((("Script", "construction of", id="Sconst06"))) that Scripts can be any arbitrary program.
 Script is a smart contract language and can lock Bitcoins in many different ways.
 <<example_scriptpubkey>> is an example ScriptPubKey.
 
