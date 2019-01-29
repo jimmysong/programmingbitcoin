@@ -225,7 +225,7 @@ This will be discussed more in the next section.
 
 === Nonce
 
-Nonce stands for "number used only once" or n-once.
+Nonce((("Blocks", "nonce")))((("nonce"))) stands for "number used only once" or n-once.
 This number is what is changed by miners when looking for proof-of-work.
 
 === Proof-of-Work
