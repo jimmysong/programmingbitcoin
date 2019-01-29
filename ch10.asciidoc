@@ -220,7 +220,7 @@ include::code-ch10/answers.py[tag=exercise6,indent=0]
 
 === Headers Response
 
-We can now create a node, handshake, and then ask for some headers.
+We((("networking", "headers response messages"))) can now create a node, handshake, and then ask for some headers.
 
 [source,python]
 ----
