@@ -260,7 +260,7 @@ Like inputs, the outputs serialization starts with how many outputs there are as
 .Number of outputs
 image::images/prbc_0506.png[Outputs]
 
-Each output has two fields: Amount and ScriptPubKey.
+Each((("Amount field (outputs)")))((("ScriptPubKey field (outputs)"))) output has two fields: Amount and ScriptPubKey.
 Amount is the amount of Bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin.
 This allows us to divide Bitcoin very finely, down to 1/300th of a penny in USD terms as of this writing.
 The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million Bitcoins) in satoshis, which is 2,100,000,000,000,000 (2,100 trillion) satoshis.
