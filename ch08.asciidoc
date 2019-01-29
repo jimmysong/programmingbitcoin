@@ -343,7 +343,7 @@ include::code-ch08/answers.py[tag=exercise3,indent=0]
 
 ==== p2sh Signature Verification
 
-As with p2pkh, one of the tricky aspects of p2sh is verifying the signatures.
+As((("p2sh (pay-to-script-hash)", "signature verification", id="p2shsignver08"))) with p2pkh, one of the tricky aspects of p2sh is verifying the signatures.
 The p2sh signature verification is different than the p2pkh process covered in <<chapter_tx>>.
 
 Unlike p2pkh where there's only one signature and one public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some equal or smaller number of signatures (in DER format in the ScriptSig).
@@ -407,7 +407,7 @@ include::code-ch08/examples.py[tag=example3]
 ----
 <1> `z` is from the code on page 185.
 
-We've verified one of the two signatures that are required to unlock this p2sh multisig.
+We've verified one of the two signatures that are required to unlock this p2sh multisig.((("", startref="p2shsignver08")))
 
 include::code-ch08/answers.py[tag=exercise4,indent=0]
 
