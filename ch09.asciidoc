@@ -343,7 +343,7 @@ include::code-ch09/answers.py[tag=exercise9,indent=0]
 
 ==== Difficulty
 
-Target is hard to comprehend for human beings.
+Target((("proof-of-work", "difficulty"))) is hard to comprehend for human beings.
 Target is the number that the hash must be below, but as humans, it's hard to easily see the difference between a 180-bit number and a 190-bit number.
 The first is a thousand times smaller, but from looking at targets, such large numbers are not easy to contextualize.
 
@@ -379,7 +379,7 @@ include::code-ch09/answers.py[tag=exercise10,indent=0]
 
 ==== Checking That the Proof-of-Work Is Sufficient
 
-We already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a Little-Endian integer.
+We((("proof-of-work", "validity"))) already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a Little-Endian integer.
 If this number is lower than the target, we have a valid proof-of-work.
 If not, the block is not valid as it doesn't have proof-of-work.
 
