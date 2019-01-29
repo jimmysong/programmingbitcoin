@@ -235,7 +235,7 @@ We((("networking", "headers response messages", id="NWheader10"))) can now creat
 ----
 
 Now we need a way to receive the headers from the other node.
-The other node will send back the `headers` command.
+The((("headers command"))) other node will send back the `headers` command.
 The headers command is a list of block headers (<<parsed_headers_chap_ten>>), which we already learned how to parse from <<chapter_blocks>>.
 The `HeadersMessage` class can take advantage when parsing.
 
