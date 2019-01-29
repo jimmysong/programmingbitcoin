@@ -12,7 +12,7 @@ This will be motivated by something called a Proof of Inclusion.
 For a device that doesn't have much disk space, bandwidth, or computing power, it's expensive to store, receive, and validate the entire blockchain.
 As of this writing, the entire Bitcoin blockchain is around 200GB, which is more than many phones can store; it can be very difficult to download efficiently and will certainly tax the CPU.
 If the entire blockchain cannot be put on the phone, what else can we do?
-Is it possible to create a((("Bitcoin wallets")))((("SPV (Simplified Payment Verification)", "motivation for"))) Bitcoin wallet on a phone without having all the data?
+Is it possible to create a((("Bitcoin wallets")))((("SPV (Simplified Payment Verification)", "motivation for")))((("Simplified Payment Verification (SPV)", "motivation for"))) Bitcoin wallet on a phone without having all the data?
 
 For any wallet, there are two scenarios that we're concerned with:
 
@@ -202,7 +202,7 @@ You can see that Figure 11-2's dotted boxes correspond to the hashes that the li
 [NOTE]
 .How Secure Is an SPV Proof?
 ====
-The((("SPV (Simplified Payment Verification)", "security of"))) full node can send a limited amount of information about the block and the light client can recalculate the Merkle Root, which can then be verified against the Merkle Root in the block header.
+The((("SPV (Simplified Payment Verification)", "security of")))((("Simplified Payment Verification (SPV)", "security of"))) full node can send a limited amount of information about the block and the light client can recalculate the Merkle Root, which can then be verified against the Merkle Root in the block header.
 This does not guarantee that the transaction is in the longest blockchain, but it does assure the light client that the full node would have had to spend a lot of hashing power or energy creating a valid proof-of-work.
 As long as the reward for creating such a proof-of-work is greater than the amounts in the transactions, the light client can at least know that the full node has no clear economic incentive to lie.
 
