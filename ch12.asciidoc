@@ -106,7 +106,7 @@ A Bloom Filter can be optimized by changing the number of hash functions and bit
 
 === BIP0037 Bloom Filters
 
-BIP0037 specifies Bloom Filters in network communication. The information contained in a Bloom Filter is:
+BIP0037((("Bloom Filters", "BIP0037 Bloom Filters")))((("BIP (Bitcoin Improvement Proposals)", "BIP0037"))) specifies Bloom Filters in network communication. The information contained in a Bloom Filter is:
 
 1. The size of the bit field, or how many buckets there are.
 The size is specified in bytes (8 bits per byte) and rounded up if necessary.
