@@ -342,7 +342,7 @@ This function will take any bytes in Python 3 and convert it to Base58.
 Base58 has been used for a long time, and while it does make it somewhat easier than something like Base64 to communicate, it's not really that convenient.
 Most people prefer to copy and paste the addresses, and if you've ever tried to communicate a Base58 address over voice, you know it can be a nightmare.
 
-What's((("Bech32 standard"))) much better is the new Bech32 standard, which is defined in BIP0173.
+What's((("Bech32 standard")))((("BIP (Bitcoin Improvement Proposals)", "BIP0173"))) much better is the new Bech32 standard, which is defined in BIP0173.
 Bech32 uses a 32-character alphabet that's just numbers and lowercase letters except `1`, `b`, `i` and `o`.
 These are thus far only used for Segwit (<<chapter_segwit>>).((("", startref="base58")))
 ====
