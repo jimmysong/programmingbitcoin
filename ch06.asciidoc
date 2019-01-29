@@ -429,7 +429,7 @@ This makes the compressed and uncompressed SEC formats 66 and 130 characters res
 To compound this, early Bitcoin transactions didn't use the compressed versions, so the hexadecimal addresses were 130 characters each!
 This is not fun or easy for people to transcribe, much less communicate by voice.
 
-That said, the original use cases for p2pk were for IP-to-IP payments and mining outputs.
+That((("IP-to-IP payments"))) said, the original use cases for p2pk were for IP-to-IP payments and mining outputs.
 For IP-to-IP payments, IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that human communication wasn't necessarily a problem.
 Use for mining outputs also doesn't require human communication.
 Incidentally, this IP-to-IP payment system was phased out because it's not secure and prone to man-in-the-middle attacks.
