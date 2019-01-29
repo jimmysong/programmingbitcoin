@@ -141,7 +141,7 @@ To mitigate these problems, pay-to-script-hash (p2sh) was born.((("", startref="
 
 === Pay-to-Script-Hash (p2sh)
 
-Pay-to-script-hash (p2sh) is a general solution to the long address/ScriptPubKey problem.
+Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08"))) is a general solution to the long address/ScriptPubKey problem.
 More complicated ScriptPubKeys than Bare Multisig can easily be made and they have the same problems as Bare Multisig.
 
 The solution that p2sh implements is to take the hash of some Script commands and then reveal the pre-image Script commands later.
@@ -154,7 +154,7 @@ In p2sh, a special rule gets executed only when the pattern shown in <<pay_to_sc
 .Pay-to-script-hash pattern that executes the special rule
 image::images/prbc_0809.png[p2sh Pattern]
 
-If this exact command set ends with a `1` on the stack, then the RedeemScript (top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
+If((("RedeemScript"))) this exact command set ends with a `1` on the stack, then the RedeemScript (top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
 This special pattern was introduced in BIP0016 and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
 The RedeemScript does not add new Script commands for processing unless this _exact_ sequence is encountered and ends with a `1`.
 
