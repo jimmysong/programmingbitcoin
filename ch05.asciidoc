@@ -336,7 +336,7 @@ include::code-ch05/answers.py[tag=exercise5,indent=0]
 
 === Coding Transactions
 
-We've parsed the transaction; now we want to do the opposite, which is serializing the transaction.
+We've((("Transactions", "coding transactions"))) parsed the transaction; now we want to do the opposite, which is serializing the transaction.
 Let's start with `TxOut`:
 
 [source,python]
