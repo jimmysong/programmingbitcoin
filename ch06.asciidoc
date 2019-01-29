@@ -54,7 +54,7 @@ The unlocking of the lockbox is done in the ScriptSig field (see <<chapter_tx_pa
 
 === How Script Works
 
-Script is a programming language, and, like most programming languages, processes one command at a time.
+Script((("Script", "operation of"))) is a programming language, and, like most programming languages, processes one command at a time.
 The commands operate on a stack of elements.
 There are two possible types of commands: elements and operations.
 
