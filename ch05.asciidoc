@@ -249,7 +249,7 @@ include::code-ch05/answers.py[tag=exercise2,indent=0]
 
 === Outputs
 
-As hinted in the previous section, outputs define where the Bitcoins are going.
+As((("Transactions", "output component")))((("outputs"))) hinted in the previous section, outputs define where the Bitcoins are going.
 Each transaction must have one or more outputs.
 Why would anyone have more than one output?
 An exchange may batch transactions, for example, and pay out a lot of people at once instead of generating a single transaction for every single person that requests Bitcoins.
