@@ -474,7 +474,7 @@ These 20 bytes are the result of doing a hash160 operation on this (compressed) 
 
 `0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352`
 
-Given p2pkh is shorter and more secure, p2pk use declined significantly after 2010, though it's still fully supported today.
+Given p2pkh is shorter and more secure, p2pk use declined significantly after 2010, though it's still fully supported today.((("", startref="Sp2pk06")))
 
 === p2pkh
 
