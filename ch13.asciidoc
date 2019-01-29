@@ -138,11 +138,11 @@ Segwit Version 1 can have a completely different processing path.
 `<20-byte hash> 1` could be the special Script sequence that triggers a different rule.
 Upgrades((("Schnorr signatures")))((("Graftroot")))((("Simplicity"))) of Segwit can introduce Schnorr Signatures, Graftroot, or even a different scripting system altogether like Simplicity.
 Segwit gives us a clear upgrade path.
-Software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.((("", startref="Sp2wpkh13")))((("", startref="p2wpkh13")))
+Software that understands how to validate Segwit Version X will validate such transactions, but software that isn't aware of Segwit Version X simply processes only up to the point of the special rule.((("", startref="Sp2wpkh13")))
 
 === p2sh-p2wpkh
 
-p2wpkh is great, but unfortunately, this is a new type of Script and older wallets cannot send Bitcoins to p2wpkh ScriptPubKeys.
+p2wpkh((("Segwit (segregated witness)", "p2sh-p2wpkh", id="Sp2sh13")))((("p2sh (pay-to-script-hash)", "backward compatibility", id="p2shback13"))) is great, but unfortunately, this is a new type of Script and older wallets cannot send Bitcoins to p2wpkh ScriptPubKeys.
 p2wpkh uses a new address format called bech32, defined((("BIP (Bitcoin Improvement Proposals)", "BIP173"))) in BIP173, whose ScriptPubKeys older wallets don't know how to create.
 
 The Segwit authors found an ingenious way to make Segwit backward compatible by using p2sh.
@@ -360,7 +360,7 @@ class Script:
 include::code-ch13/script.py[tag=source3]
 ----
 <1> This is where we execute Witness Program version 0 for p2wpkh.
-We make a p2pkh combined Script from the 20-byte hash, signature and pubkey and evaluate.
+We make a p2pkh combined Script from the 20-byte hash, signature and pubkey and evaluate.((("", startref="p2wpkh13")))
 
 === Pay-to-Witness-Script-Hash (p2wsh)
 
