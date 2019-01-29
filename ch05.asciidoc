@@ -93,7 +93,7 @@ You could specify just "Windows", but specifying the version number after the op
 image::images/prbc_0502.png[Version]
 
 Similarly, Bitcoin transactions have version numbers.
-In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in BIP112 require use of version > 1).
+In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in((("BIP (Bitcoin Improvement Proposals)", "BIP112"))) BIP112 require use of version > 1).
 
 You may notice here that the actual value in hexadecimal is `01000000`, which doesn't look like 1.
 Interpreted as a Little-Endian integer, however, this number is actually 1 (recall the discussion from <<chapter_serialization>>).
@@ -327,7 +327,7 @@ The main problem with using Locktime is that the recipient of the transaction ha
 This is similar to a postdated bank check, which has the possibility of bouncing.
 The sender can spend the inputs prior to the Locktime transaction getting into the blockchain, thus invalidating the transaction at Locktime.
 
-The uses before BIP0065 were limited.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) uses before BIP0065 were limited.
 BIP0065 introduced `OP_CHECKLOCKTIMEVERIFY`, which makes Locktime more useful by making an output unspendable until a certain Locktime.
 
 include::code-ch05/answers.py[tag=exercise4,indent=0]
