@@ -107,7 +107,7 @@ If a node sends a bad transaction or block, it can expect to get banned or disco
 
 === Connecting to the Network
 
-Network communication is tricky due to its asynchronous nature.
+Network communication((("networking", "connecting to networks"))) is tricky due to its asynchronous nature.
 To experiment, we can establish a connection to a node on the network synchronously.
 
 [source,python]
