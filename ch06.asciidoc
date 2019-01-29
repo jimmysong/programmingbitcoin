@@ -26,7 +26,7 @@ Specifically, Script avoids any mechanism for loops and is therefore not Turing 
 [NOTE]
 .Why Bitcoin Isn't Turing Complete
 ====
-Turing Completeness in a programming language essentially means that the program has the ability to loop.
+Turing Completeness((("Turing Completeness"))) in a programming language essentially means that the program has the ability to loop.
 Loops are a useful construct in programming, so you may be wondering at this point why Script doesn't have the ability to loop.
 
 There are a lot of reasons for this, but let's start with program execution.
