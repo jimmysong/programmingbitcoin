@@ -162,7 +162,7 @@ include::code-ch03/answers.py[tag=exercise3,indent=0]
 
 === Scalar Multiplication for Elliptic Curves
 
-Because((("scalar multiplicaiton", "for elliptic curves", id="SMelliptic03")))((("Elliptic Curve Cryptography", "scalar multiplication for elliptic curves", id="ECCscalar03"))) we can add a point to itself, we can introduce some new notation:
+Because((("scalar multiplication", "for elliptic curves", id="SMelliptic03")))((("Elliptic Curve Cryptography", "scalar multiplication for elliptic curves", id="ECCscalar03"))) we can add a point to itself, we can introduce some new notation:
 
 ++++
 <ul class="simplelist">
@@ -391,7 +391,7 @@ include::code-ch03/answers.py[tag=exercise5,indent=0]
 
 === Coding Scalar Multiplication
 
-What((("scalar multiplicaiton", "coding for")))((("Elliptic Curve Cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
+What((("scalar multiplication", "coding for")))((("Elliptic Curve Cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
 
 [source,python]
 ----
@@ -693,7 +693,7 @@ William Tell, for example, was shooting so that he could save his son (shoot the
 You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive.
 This has to be incorporated into our equations.
 
-In((("signing and verification", "signature hash")))((("signature hash"))) signature/verification parlance, this is called the _signature hash_.
+In((("hashes", "signature hash")))((("signing and verification", "signature hash")))((("signature hash"))) signature/verification parlance, this is called the _signature hash_.
 A hash is a deterministic function that takes arbitrary data into a data of fixed size.
 This is a fingerprint of the message containing the intent of the shooter that anyone verifying the message already knows.
 We denote this with the letter `z`.
