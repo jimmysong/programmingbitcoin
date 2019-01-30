@@ -13,7 +13,7 @@ That said, there are a bunch of standards for creating wallets that can help.
 
 ==== Hierarchical Deterministic Wallets
 
-For((("deterministic wallets")))((("hierarchical deterministic wallets"))) privacy purposes, reusing addresses is very bad (see <<chapter_tx>>).
+For((("deterministic wallets")))((("hierarchical deterministic (HD) wallets"))) privacy purposes, reusing addresses is very bad (see <<chapter_tx>>).
 That means we need to create lots of addresses.
 Unfortunately, storing a different secret for each address generated can become a security and backup problem.
 How do you back them all up in a secure way?
