@@ -2,7 +2,7 @@
 [[appendix_solutions]]
 == Solutions
 
-=== <<chapter_finite_fields>>: Finite Fields
+=== <<chapter_finite_fields>>: Finite Fields((("exercises", "answers to", "Chapter 1: Finite Fields")))
 
 include::code-ch01/answers.py[tag=exercise1,indent=0]
 
@@ -77,7 +77,7 @@ class FieldElement:
 include::code-ch01/answers.py[tag=answer9,indent=4]
 ----
 
-=== <<chapter_elliptic_curves>>: Elliptic Curves
+=== <<chapter_elliptic_curves>>: Elliptic Curves((("exercises", "answers to", "Chapter 2: Elliptic Curves")))
 
 include::code-ch02/answers.py[tag=exercise1,indent=0]
 
