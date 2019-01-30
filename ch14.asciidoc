@@ -70,7 +70,7 @@ If((("Bitcoin", "suggested next projects"))) at this point, you're still wonderi
 
 ==== Testnet Wallet
 
-It's hard to understate the importance of security in Bitcoin.
+It's hard((("testnet")))((("Bitcoin wallets")))((("wallets"))) to understate the importance of security in Bitcoin.
 Writing a wallet even on testnet will help you understand the various considerations that go into creating a wallet.
 UI, backups, address books, and transaction histories are just some of the things that you have to deal with when creating a wallet.
 As this is the most popular application of Bitcoin, creating a wallet will give you a lot of insight into users needs.
