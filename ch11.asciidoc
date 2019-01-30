@@ -69,7 +69,7 @@ There was a Denial of Service vector due to the duplication of the last item in 
 
 === Merkle Parent
 
-Given((("Merkle Trees", "parent hashes"))) two hashes, we produce another hash that represents both of them.
+Given((("Merkle Trees", "parent hashes")))((("hashes", "parent hashes"))) two hashes, we produce another hash that represents both of them.
 As they are ordered, we will call the two hashes the _left_ hash and the _right_ hash.
 The hash of the left and right hashes is what we call the _parent_ hash.
 To clarify, here's the formula for the parent hash:
