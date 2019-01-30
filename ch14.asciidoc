@@ -8,7 +8,7 @@ In this chapter, we'll go through what other things you can learn, how to bootst
 
 === Wallets
 
-Creating a wallet is a challenging task because securing private keys is very difficult.
+Creating((("Bitcoin wallets")))((("wallets"))) a wallet is a challenging task because securing private keys is very difficult.
 That said, there are a bunch of standards for creating wallets that can help.
 
 ==== Hierarchical Deterministic Wallets
