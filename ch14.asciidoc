@@ -35,7 +35,7 @@ While many wallets (Trezor, Coinomi, etc) implement both BIP0032 and BIP0044, so
 ==== Mnemonic Seeds
 
 Writing down and transcribing a 256-bit seed is a pain and fraught with errors.
-To combat this, BIP0039 is a way to encode the seed into a bunch of English words.
+To combat this, BIP0039((("BIP (Bitcoin Improvement Proposals)", "BIP0039"))) is a way to encode the seed into a bunch of English words.
 There are 2,048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed.
 The standard defines exactly how the mnemonic backup gets translated to a BIP0032 seed.
 BIP0039 along with BIP0032 and BIP0044 is how most wallets implement backup and restoration.
@@ -92,7 +92,7 @@ Once again, it's advised that you start on testnet and use the cryptographically
 ==== Utility Library
 
 A utility library like the one built in this book is another great way to learn more about Bitcoin.
-Writing the BIP0143 serialization for the signature hash of Segwit, for example, can be instructive in getting used to protocol programming.
+Writing((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) the BIP0143 serialization for the signature hash of Segwit, for example, can be instructive in getting used to protocol programming.
 Porting the code from this book to another language would also be a great learning tool.
 
 === Finding a Job
