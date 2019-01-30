@@ -49,7 +49,7 @@ The specifications are in progress as of this writing and are available at https
 
 === Contributing
 
-A large part of the Bitcoin ethic is in contributing back to the community.
+A((("Bitcoin", "open source projects")))((("open source projects"))) large part of the Bitcoin ethic is in contributing back to the community.
 The main way you can do that is through open source projects.
 There are almost too many to list, but here's a sample:
 
