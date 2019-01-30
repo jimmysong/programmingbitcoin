@@ -398,7 +398,7 @@ include::code-ch07/answers.py[tag=exercise5,indent=0]
 include::code-ch07/answers.py[tag=answer5,indent=0]
 ----
 
-=== <<chapter_p2sh>>: Pay to Script Hash
+=== <<chapter_p2sh>>: Pay to Script Hash((("exercises", "answers to", "Chapter 8: Pay to Script Hash")))
 
 include::code-ch08/answers.py[tag=exercise1,indent=0]
 
@@ -437,7 +437,7 @@ class Tx:
 include::code-ch08/answers.py[tag=answer5,indent=4]
 ----
 
-=== <<chapter_blocks>>: Blocks
+=== <<chapter_blocks>>: Blocks((("exercises", "answers to", "Chapter 9: Blocks")))
 
 include::code-ch09/answers.py[tag=exercise1,indent=0]
 
