@@ -661,7 +661,7 @@ class MerkleBlock:
 include::code-ch11/answers.py[tag=answer7,indent=4]
 ----
 
-=== <<chapter_bloom_filters>>: Bloom Filters
+=== <<chapter_bloom_filters>>: Bloom Filters((("exercises", "answers to", "Chapter 12: Bloom Filters")))
 
 include::code-ch12/answers.py[tag=exercise1,indent=0]
 
