@@ -77,7 +77,7 @@ As this is the most popular application of Bitcoin, creating a wallet will give 
 
 ==== Block Explorer
 
-A more ambitious project would be to write your own block explorer.
+A((("block explorers"))) more ambitious project would be to write your own block explorer.
 The key to making your own block explorer is to store the blockchain data in an easy-to-access fashion.
 Using a traditional database like Postgres or MySQL may be useful here.
 As Bitcoin Core does not have address indexes, adding one will make it possible for you to allow lookups of UTXOs and past transactions by address, which is what most users desire.
