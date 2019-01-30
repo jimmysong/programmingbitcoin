@@ -159,7 +159,7 @@ Here are some operations and their byte codes:
 .Elements Longer Than 75 Bytes
 ====
 You might be wondering what would happen if you had an element that's greater than `0x4b` (75 in decimal).
-There are three specific opcodes for handling elements with length greater than 75: `OP_PUSHDATA1`, `OP_PUSHDATA2`, and `OP_PUSHDATA4`.
+There((("OP_PUSHDATA1 operation")))((("OP_PUSHDATA2 operation")))((("OP_PUSHDATA4 operation"))) are three specific opcodes for handling elements with length greater than 75: `OP_PUSHDATA1`, `OP_PUSHDATA2`, and `OP_PUSHDATA4`.
 `OP_PUSHDATA1` means that the next byte contains how many bytes we need to read for the element.
 `OP_PUSHDATA2` means that the next 2 bytes contain how many bytes we need to read for the element.
 `OP_PUSHDATA4` means that the next 4 bytes contain how many bytes we need to read for the element.
@@ -605,19 +605,19 @@ image::images/prbc_0629.png[Example 1 Step 1]
 .Example step 2
 image::images/prbc_0630.png[Example 1 Step 2]
 
-`OP_ADD` will consume the top two elements of the stack, add them together, and push the sum to the stack (<<example_step_3>>).
+`OP_ADD` will(((" OP_ADD operation"))) consume the top two elements of the stack, add them together, and push the sum to the stack (<<example_step_3>>).
 
 [[example_step_3]]
 .Example step 3
 image::images/prbc_0631.png[Example 1 Step 3]
 
-`OP_9` will push a 9 to the stack (<<example_step_4>>).
+`OP_9` will((("OP_9 operation"))) push a 9 to the stack (<<example_step_4>>).
 
 [[example_step_4]]
 .Example step 4
 image::images/prbc_0632.png[Example 1 Step 4]
 
-`OP_EQUAL` will consume two elements and push a 1 if equal, 0 if not (<<example_end>>).
+`OP_EQUAL` will((("OP_EQUAL operation"))) consume two elements and push a 1 if equal, 0 if not (<<example_end>>).
 
 [[example_end]]
 .Example end
