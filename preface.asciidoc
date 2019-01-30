@@ -70,7 +70,7 @@ To aid your progress, we will be looking at a lot of code and diagrams throughou
 
 === Setting Up
 
-To((("Bitcoin", "downloading and installation", id="Bdown00")))((("example code", "environment setup", id="ECset00")))((("environment setup", id="envset00")))((("excercises", "environment setup", id="Eset00"))) get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
+To((("Bitcoin", "downloading and installation", id="Bdown00")))((("example code", "environment setup", id="ECset00")))((("environment setup", id="envset00")))((("exercises", "environment setup", id="Eset00"))) get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
 Here are the commands for setting everything up.
 
 Install Python 3.5 or higher on your machine:
@@ -171,7 +171,7 @@ You may want to familiarize yourself with this interface if you haven't seen it 
 You can run each "cell" and see the results as if this were an interactive Python shell.
 
 A large portion of the exercises will be coding concepts introduced in the book.
-The((("excercises", "unit tests")))((("unit tests"))) unit tests are written for you, and you will need to write the Python code to make the tests pass.
+The((("exercises", "unit tests")))((("unit tests"))) unit tests are written for you, and you will need to write the Python code to make the tests pass.
 You can check whether your code is correct directly in Jupyter.
 You will need to edit the corresponding file by clicking through a link like the "this test" link in <<pr0003>>.
 This will take you to a browser tab, as shown in <<pr0003>>.
@@ -184,7 +184,7 @@ To make the test pass, edit the file here and save.((("", startref="Bdown00")))(
 
 === Answers
 
-All((("excercises", "answers to"))) the answers to the various exercises in this book are in <<appendix_solutions>>.
+All((("exercises", "answers to"))) the answers to the various exercises in this book are in <<appendix_solutions>>.
 They are also available in the __code-ch<xx>/answers.py__ file where +xx+ is the chapter that you're on.
 
 === Conventions Used in This Book
