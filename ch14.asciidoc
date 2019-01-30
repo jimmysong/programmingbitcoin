@@ -22,7 +22,7 @@ What if you run out of secrets?
 How do you back them up again?
 What system can you use to ensure that the backups are current?
 
-To combat this problem, Armory, an early Bitcoin wallet, first implemented deterministic wallets.
+To((("Armory"))) combat this problem, Armory, an early Bitcoin wallet, first implemented deterministic wallets.
 The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed.
 The((("BIP (Bitcoin Improvement Proposals)", "BIP0032"))) Armory style deterministic wallets were great, except people wanted some grouping of addresses, so the Hierarchical Deterministic wallet standard or BIP0032 was born.
 BIP0032 wallets have multiple layers and keys, each with a unique derivation path.
