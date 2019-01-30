@@ -233,11 +233,11 @@ include::code-ch04/answers.py[tag=exercise2,indent=0]
 
 === DER Signatures
 
-Another((("serialization", "DER Signature format")))((("Signature class", "serialization of")))((("DER Signature format")))((("signing and verification", "serializing signatures"))) class that we need to learn to serialize is `Signature`.
+Another((("serialization", "DER Signature format")))((("Signature class", "serialization of")))((("DER (Distinguished Encoding Rules) Signature format")))((("signing and verification", "serializing signatures"))) class that we need to learn to serialize is `Signature`.
 Much like the SEC format, it needs to encode two different numbers, `r` and `s`.
 Unfortunately, unlike `S256Point`, `Signature` cannot be compressed as `s` cannot be derived solely from `r`.
 
-The((("Distinguished Encoding Rules", see="DER format"))) standard for serializing signatures (and lots of other things, for that matter) is called DER format.
+The((("Distinguished Encoding Rules"))) standard for serializing signatures (and lots of other things, for that matter) is called DER format.
 DER stands for Distinguished Encoding Rules and was used by Satoshi to serialize signatures.
 This was most likely because the standard was already defined in 2008, supported in the OpenSSL library (used in Bitcoin at the time), and was easy enough to adopt, rather than creating a new standard.
 
