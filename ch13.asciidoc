@@ -242,7 +242,7 @@ We can now say confidently that the detractors were wrong.((("", startref="p2shb
 
 ==== Coding p2wpkh and p2sh-p2wpkh
 
-The((("p2wpkh (pay-to-witness-pubkey-hash)", "coding", id="paytowitcod13")))((("p2sh (pay-to-script-hash)", "coding", id="PTScode13"))) first change we're going to make is to the `Tx` class where we need to mark whether the transaction is Segwit or not:
+The((("hashes", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "coding", id="paytowitcod13")))((("p2sh (pay-to-script-hash)", "coding", id="PTScode13"))) first change we're going to make is to the `Tx` class where we need to mark whether the transaction is Segwit or not:
 
 [source,python]
 ----
@@ -364,7 +364,7 @@ We make a p2pkh combined Script from the 20-byte hash, signature and pubkey and 
 
 === Pay-to-Witness-Script-Hash (p2wsh)
 
-While((("p2wsh (pay-to witness-script-hash)", id="p2witscripthash13")))((("Segwit (segregated witness)", "p2wsh (pay-to witness-script-hash)", id="Spaywithash13"))) p2wpkh takes care of a major use case, we need something more flexible if we want more complicated Scripts like multisig.
+While((("hashes", "p2wsh (pay-to witness-script-hash)", id="Hp2wsh13")))((("p2wsh (pay-to witness-script-hash)", id="p2witscripthash13")))((("Segwit (segregated witness)", "p2wsh (pay-to witness-script-hash)", id="Spaywithash13"))) p2wpkh takes care of a major use case, we need something more flexible if we want more complicated Scripts like multisig.
 This is where p2wsh comes in.
 Pay-to-witness-script-hash is like p2sh, but with all the ScriptSig data in the Witness field instead.
 
@@ -442,7 +442,7 @@ image::images/prbc_1330.png[p2wsh Step 5]
 The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
 Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script commands and added to the command set.
 The rest of the Witness is then put on the command set as well, producing the final set of commands to be evaluated.
-p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional Payment Channels for the Lightning Network.
+p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional Payment Channels for the Lightning Network.((("", startref="Hp2wsh13")))
 
 === p2sh-p2wsh
 
