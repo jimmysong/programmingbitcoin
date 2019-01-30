@@ -191,7 +191,7 @@ include::code-ch03/answers.py[tag=exercise7,indent=0]
 include::code-ch03/answers.py[tag=answer7,indent=0]
 ----
 
-=== <<chapter_serialization>>: Serialization
+=== <<chapter_serialization>>: Serialization((("exercises", "answers to", "Chapter 4: Serialization")))
 
 include::code-ch04/answers.py[tag=exercise1,indent=0]
 
