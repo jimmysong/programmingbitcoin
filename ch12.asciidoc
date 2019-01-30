@@ -117,7 +117,7 @@ The size is specified in bytes (8 bits per byte) and rounded up if necessary.
 While we could define lots of hash functions (sha512, keccak384, ripemd160, blake256, etc.), in practice, we use a single hash function with a different seed.
 This allows the implementation to be simpler.
 
-The((("murmur3 hash function"))) hash function we use is called `murmur3`.
+The((("hashes", "murmur3 hash function")))((("murmur3 hash function"))) hash function we use is called `murmur3`.
 Unlike sha256, _murmur3_ is not cryptographically secure, but is much faster.
 The task of filtering and getting a deterministic, evenly distributed modulo does not require cryptographic security, but benefits from speed, so murmur3 is the appropriate tool for the job.
 The seed formula is defined this way:
