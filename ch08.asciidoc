@@ -261,7 +261,7 @@ These go into the Script column as commands (<<p2sh_step_4>>).
 .p2sh Step 4
 image::images/prbc_0821.png[p2sh Step 4]
 
-`OP_2` pushes a `2` to the stack, the pubkeys are also pushed, and a final `OP_2` pushes another `2` to the stack (<<p2sh_step_5>>).
+`OP_2` pushes((("OP_2 operation"))) a `2` to the stack, the pubkeys are also pushed, and a final `OP_2` pushes another `2` to the stack (<<p2sh_step_5>>).
 
 [[p2sh_step_5]]
 .p2sh Step 5
@@ -275,7 +275,7 @@ image::images/prbc_0823.png[p2sh End]
 
 The RedeemScript substitution is a bit hacky and there's special-cased code in Bitcoin software to handle this.
 Why((("BIP (Bitcoin Improvement Proposals)", "BIP0012"))) wasn't something a lot less hacky and more intuitive chosen?
-BIP0012 was a competing proposal at the time that used `OP_EVAL` and was considered more elegant.
+BIP0012 was a competing proposal at the time((("OP_EVAL operation"))) that used `OP_EVAL` and was considered more elegant.
 A ScriptPubKey like <<op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element>> would have worked with BIP0012.
 
 [[op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element]]
@@ -317,7 +317,7 @@ Similarly, we know the next command is the 20-byte hash value and the third comm
 
 ==== More Complicated Scripts
 
-The nice thing about p2sh is that the RedeemScript can be as long as the largest single element from `OP_PUSHDATA2`, which is 520 bytes.
+The((("OP_PUSHDATA2 operation"))) nice thing about p2sh is that the RedeemScript can be as long as the largest single element from `OP_PUSHDATA2`, which is 520 bytes.
 Multisig is just one possibility.
 You can have Scripts that define more complicated logic like "2 of 3 of these keys or 5 of 7 of these other keys."
 The main feature of p2sh is that it's flexible and at the same time reduces the UTXO set size by pushing the burden of storing part of the Script back to the user.
