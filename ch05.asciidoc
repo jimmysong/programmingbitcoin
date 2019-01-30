@@ -40,7 +40,7 @@ include::code-ch05/tx.py[tag=source1]
 <1> Input and Output are very generic terms so we specify what kind of inputs they are.
 We'll define the specific object types they are later.
 <2> We need to know which network this transaction is on to be able to validate it fully.
-<3> The `id` is what block explorers use for looking up transactions.
+<3> The `id` is what block explorers((("block explorers"))) use for looking up transactions.
 It's the hash256 of the transaction in hexadecimal format.
 <4> The hash is the hash256 of the serialization in Little-Endian.
 Note we don't have the `serialize` method yet, so until we do, this won't work.
