@@ -550,7 +550,7 @@ include::code-ch09/answers.py[tag=exercise13,indent=0]
 include::code-ch09/answers.py[tag=answer13,indent=0]
 ----
 
-=== <<chapter_networking>>: Networking
+=== <<chapter_networking>>: Networking((("exercises", "answers to", "Chapter 10: Networking")))
 
 include::code-ch10/answers.py[tag=exercise1,indent=0]
 
