@@ -27,7 +27,7 @@ The rearrangement is to fix transaction malleability.
 
 ==== Transaction Malleability
 
-_Transaction malleability_ is the((("transaction malleability")))((("malleability")))((("Segwit (segregated witness)", "transaction malleability"))) ability to change the transaction's ID without altering the transaction's meaning.
+_Transaction malleability_ is the((("transaction malleability")))((("malleability")))((("Segwit (segregated witness)", "transaction malleability")))((("p2wpkh (pay-to-witness-pubkey-hash)", "transaction malleability and"))) ability to change the transaction's ID without altering the transaction's meaning.
 Mt. Gox CEO Mark Karpeles cited transaction malleability as the reason why his exchange was not allowing withdrawals back in 2013.
 
 Malleability((("Payment Channels"))) of the ID is an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network.
