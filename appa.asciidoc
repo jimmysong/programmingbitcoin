@@ -320,7 +320,7 @@ class Tx:
 include::code-ch05/answers.py[tag=answer6,indent=4]
 ----
 
-=== <<chapter_script>>: Script
+=== <<chapter_script>>: Script((("exercises", "answers to", "Chapter 6: Script")))
 
 include::code-ch06/answers.py[tag=exercise1,indent=0]
 
