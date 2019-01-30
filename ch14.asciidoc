@@ -97,7 +97,7 @@ Porting the code from this book to another language would also be a great learni
 
 === Finding a Job
 
-If you are interested in getting more in-depth in this industry, there are lots of great opportunities for developers.
+If((("Bitcoin", "opportunities for developers")))((("developers, opportunities for"))) you are interested in getting more in-depth in this industry, there are lots of great opportunities for developers.
 The key to proving that you know something is to have a portfolio of projects that you've done on your own.
 Contributing to an existing open source project or making your own project will help you get noticed by companies.
 In addition, programming against the API of any particular company is a great way to get an interview!
