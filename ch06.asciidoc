@@ -453,7 +453,7 @@ For example, quantum computing has the potential to reduce the calculation times
 
 === Solving the Problems with p2pkh
 
-Pay-to-pubkey-hash (p2pkh) is((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative Script that has advantages over p2pk:
+Pay-to-pubkey-hash (p2pkh) is((("hashes", "p2pkh (pay-to-pubkey-hash)", id="Hp2pkh06")))((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative Script that has advantages over p2pk:
 
 1. The addresses are shorter.
 2. It's additionally protected by sha256 and ripemd160.
@@ -563,7 +563,7 @@ This is why we call this type of Script pay-to-pubkey-_hash_.
 The ScriptPubKey has the 20-byte _hash160_ of the public key and not the public key itself.
 We are locking Bitcoins to a _hash_ of the public key and the spender is responsible for revealing the public key as part of constructing the ScriptSig.
 
-The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))
+The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))((("", startref="Hp2pkh06")))
 
 === Scripts Can Be Arbitrarily Constructed
 
