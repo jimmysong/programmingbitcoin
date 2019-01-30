@@ -230,7 +230,7 @@ This number is what is changed by miners when looking for proof-of-work.
 
 === Proof-of-Work
 
-Proof-of-work is((("Blocks", "looking for proof-of-work")))((("proof-of-work", "fuction of"))) what secures Bitcoin and, at a deep level, allows the decentralized mining of Bitcoin.
+Proof-of-work is((("Blocks", "looking for proof-of-work")))((("proof-of-work", "function of"))) what secures Bitcoin and, at a deep level, allows the decentralized mining of Bitcoin.
 Finding a proof-of-work gives a miner the right to put the attached block into the blockchain.
 As proof-of-work is very rare, this is not an easy task.
 But because proof-of-work is objective and easy to verify, anyone can be a miner if they so choose.
