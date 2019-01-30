@@ -53,14 +53,14 @@ We only need 1 signature for this 1-of-2 multisig, so this is relatively short, 
 image::images/prbc_0803.png[Bare Multisig Combined Script]
 
 Note `m` and `n` are something between 1 and 16 inclusive.
-We've generalized here so we can see what a Bare `m`-of-`n` Multisig would look like (`m` and `n` can be anything from 1 to 20, though there's numerical opcodes only go up to `OP_16`; 17 to 20 would require `0112` to push a number like 18 to the stack).
+We've generalized here so we can see what a Bare `m`-of-`n` Multisig would look like (`m` and `n` can be anything from 1 to 20, though there's numerical opcodes only go((("OP_16 operation"))) up to `OP_16`; 17 to 20 would require `0112` to push a number like 18 to the stack).
 The starting state looks like <<bare_multisig_start>>.
 
 [[bare_multisig_start]]
 .Bare Multisig Start
 image::images/prbc_0804.png[Bare Multisig Start]
 
-`OP_0` will push the number `0` to the stack (<<bare_multisig_step_1>>).
+`OP_0` will((("OP_0 operation"))) push the number `0` to the stack (<<bare_multisig_step_1>>).
 
 [[bare_multisig_step_1]]
 .Bare Multisig Step 1
@@ -72,7 +72,7 @@ The signatures are elements so they'll be pushed directly to the stack (<<bare_m
 .Bare Multisig Step 2
 image::images/prbc_0806.png[Bare Multisig Step 2]
 
-`OP_m` will push the number `m` on the stack, the public keys will be pushed to the stack, and `OP_n` will push the number `n` to the stack (<<bare_multisig_step_3>>).
+`OP_m` will((("OP_m operation")))((("OP_n operation"))) push the number `m` on the stack, the public keys will be pushed to the stack, and `OP_n` will push the number `n` to the stack (<<bare_multisig_step_3>>).
 
 [[bare_multisig_step_3]]
 .Bare Multisig Step 3
@@ -240,7 +240,7 @@ The 20-byte hash will be pushed on the stack (<<p2sh_step_3>>).
 .p2sh Step 3
 image::images/prbc_0818.png[p2sh Step 3]
 
-And finally, `OP_EQUAL` will compare the top two elements.
+And((("OP_EQUAL operation"))) finally, `OP_EQUAL` will compare the top two elements.
 If the software checking this transaction is pre-BIP0016, we would end up with <<p2sh_end_if_evaluating_with_pre_bip0016_software>>.
 
 [[p2sh_end_if_evaluating_with_pre_bip0016_software]]
@@ -291,7 +291,7 @@ BIP0016 or p2sh was implemented in 2011 and continues to be a part of the networ
 
 === Coding p2sh
 
-The((("p2sh (pay-to-script-hash)", "coding", id="p2shcode08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) coding", id="MSp2shcode08"))) special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
+The((("p2sh (pay-to-script-hash)", "coding", id="p2shcode08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) coding", id="MSp2shcode08")))((("OP_HASH160 operation"))) special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
 The `evaluate` method in _script.py_ is where we handle the special case:
 
 [source,python]
