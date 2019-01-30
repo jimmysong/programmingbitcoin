@@ -281,7 +281,7 @@ image::images/prbc_0507.png[Output Fields]
 
 .UTXO Set
 ****
-UTXO((("UTXO Set")))((("Unspent Transaction Output", see="UTXO Set"))) stands for Unspent Transaction Output.
+UTXO((("UTXO (Unspent Transaction Output) Set"))) stands for Unspent Transaction Output.
 The entire set of unspent transaction outputs at any given moment is called the UTXO Set.
 The reason why UTXOs are important is because at any moment in time, they represent all the Bitcoins that are available to be spent.
 In other words, these are the Bitcoins that are in circulation.
