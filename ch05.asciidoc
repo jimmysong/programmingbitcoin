@@ -385,7 +385,7 @@ As inputs don't have an amount field, we have to look up the amount.
 This requires access to the blockchain, specifically the UTXO set.
 If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information.
 
-We((("TxFetcher class", "creating"))) are creating a new class to handle this, called `TxFetcher`:
+We((("TxFetcher class"))) are creating a new class to handle this, called `TxFetcher`:
 
 [source,python]
 ----
