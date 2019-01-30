@@ -66,7 +66,7 @@ Contributing can be very beneficial for a lot of reasons, including future emplo
 
 === Suggested Next Projects
 
-If at this point, you're still wondering what projects would be beneficial for you, what follows are some suggestions.
+If((("Bitcoin", "suggested next projects"))) at this point, you're still wondering what projects would be beneficial for you, what follows are some suggestions.
 
 ==== Testnet Wallet
 
