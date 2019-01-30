@@ -256,7 +256,7 @@ include::code-ch04/answers.py[tag=exercise9,indent=0]
 include::code-ch04/answers.py[tag=answer9,indent=0]
 ----
 
-=== <<chapter_tx_parsing>>: Transactions
+=== <<chapter_tx_parsing>>: Transactions((("exercises", "answers to", "Chapter 5: Transactions")))
 
 include::code-ch05/answers.py[tag=exercise1,indent=0]
 
