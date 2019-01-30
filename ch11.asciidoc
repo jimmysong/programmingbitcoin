@@ -12,7 +12,7 @@ This will be motivated by something called a Proof of Inclusion.
 For a device that doesn't have much disk space, bandwidth, or computing power, it's expensive to store, receive, and validate the entire blockchain.
 As of this writing, the entire Bitcoin blockchain is around 200GB, which is more than many phones can store; it can be very difficult to download efficiently and will certainly tax the CPU.
 If the entire blockchain cannot be put on the phone, what else can we do?
-Is it possible to create a((("Bitcoin wallets")))((("SPV (Simplified Payment Verification)", "motivation for")))((("Simplified Payment Verification (SPV)", "motivation for"))) Bitcoin wallet on a phone without having all the data?
+Is it possible to create a((("wallets")))((("Bitcoin wallets")))((("SPV (Simplified Payment Verification)", "motivation for")))((("Simplified Payment Verification (SPV)", "motivation for"))) Bitcoin wallet on a phone without having all the data?
 
 For any wallet, there are two scenarios that we're concerned with:
 
