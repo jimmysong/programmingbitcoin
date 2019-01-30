@@ -84,7 +84,7 @@ As Bitcoin Core does not have address indexes, adding one will make it possible 
 
 ==== Web Shop
 
-A Bitcoin-based shop is another project that helps you learn.
+A Bitcoin-based shop((("Bitcoin-based shops"))) is another project that helps you learn.
 This is particularly appropriate for web developers as they typically know how to create a web application.
 A web application with a Bitcoin backend can be a powerful way to avoid third party dependencies for payment.
 Once again, it's advised that you start on testnet and use the cryptographically secure libraries that are available to hook up the plumbing on payments.
