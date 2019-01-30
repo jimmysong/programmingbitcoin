@@ -62,7 +62,7 @@ This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do addi
 
 === Pay-to-Witness-Pubkey-Hash (p2wpkh)
 
-To((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)", id="Sp2wpkh13")))((("p2wpkh (pay-to-witness-pubkey-hash)", id="p2wpkh13"))) understand Segwit, it helps to look at what the transaction looks like when sent to an old node (<<pay_to_witness_pubkey_hash_as_seen_by_pre_bip0141_software>>) versus a new node (<<pay_to_witness_pubkey_hash_as_seen_by_post_bip0141_software>>).
+To((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)", id="Sp2wpkh13")))((("p2wpkh (pay-to-witness-pubkey-hash)", "transactions using" id="p2wpkh13"))) understand Segwit, it helps to look at what the transaction looks like when sent to an old node (<<pay_to_witness_pubkey_hash_as_seen_by_pre_bip0141_software>>) versus a new node (<<pay_to_witness_pubkey_hash_as_seen_by_post_bip0141_software>>).
 
 [[pay_to_witness_pubkey_hash_as_seen_by_pre_bip0141_software]]
 .Pay-to-witness-pubkey-hash as seen by pre-BIP0141 software
