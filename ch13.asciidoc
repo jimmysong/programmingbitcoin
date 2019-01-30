@@ -364,7 +364,7 @@ We make a p2pkh combined Script from the 20-byte hash, signature and pubkey and 
 
 === Pay-to-Witness-Script-Hash (p2wsh)
 
-While((("hashes", "p2wsh (pay-to witness-script-hash)", id="Hp2wsh13")))((("p2wsh (pay-to witness-script-hash)", id="p2witscripthash13")))((("Segwit (segregated witness)", "p2wsh (pay-to witness-script-hash)", id="Spaywithash13")))((("p2wsh (pay-to witness-script-hash)", "pre- and post-BIP0141 transactuins"))) p2wpkh takes care of a major use case, we need something more flexible if we want more complicated Scripts like multisig.
+While((("hashes", "p2wsh (pay-to witness-script-hash)", id="Hp2wsh13")))((("p2wsh (pay-to witness-script-hash)", id="p2witscripthash13")))((("Segwit (segregated witness)", "p2wsh (pay-to witness-script-hash)", id="Spaywithash13"))) p2wpkh takes care of a major use case, we need something more flexible if we want more complicated Scripts like multisig.
 This is where p2wsh comes in.
 Pay-to-witness-script-hash is like p2sh, but with all the ScriptSig data in the Witness field instead.
 
@@ -406,7 +406,7 @@ image::images/prbc_1325.png[p2wsh Step 2]
 As with p2wpkh, older nodes will stop because there are no more Script commands to be processed.
 Newer nodes will recognize the special sequence and do additional validation by looking at the Witness field.
 
-The((("p2wsh (pay-to witness-script-hash)", "Witness field in"))) Witness field for p2wsh in our case is a 2-of-3 multisig (<<p2wsh_witness>>).
+The Witness field for p2wsh in our case is a 2-of-3 multisig (<<p2wsh_witness>>).
 
 [[p2wsh_witness]]
 .p2wsh Witness
