@@ -2,7 +2,7 @@
 [[appendix_solutions]]
 == Solutions
 
-=== <<chapter_finite_fields>>: Finite Fields((("excercises", "answers to", "Chapter 1: Finite Fields", tertiary-sortas="Chapter 01: Finite Fields")))
+=== <<chapter_finite_fields>>: Finite Fields((("exercises", "answers to", "Chapter 1: Finite Fields", tertiary-sortas="Chapter 01: Finite Fields")))
 
 include::code-ch01/answers.py[tag=exercise1,indent=0]
 
