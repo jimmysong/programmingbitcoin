@@ -401,11 +401,11 @@ include::code-ch04/answers.py[tag=exercise5,indent=0]
 
 === WIF Format
 
-The((("serialization", "WIF format")))((("WIF format"))) private key in our case is a 256-bit number.
+The((("serialization", "WIF format")))((("WIF (Wallet Import Format)"))) private key in our case is a 256-bit number.
 Generally, we are not going to need to serialize our secret that often, as it doesn't get broadcast (that would be a bad idea!).
 That said, there are instances where we may want to transfer your private key from one wallet to another, for example, from a paper wallet to a software wallet.
 
-For((("Wallet Import Format", see="WIF format"))) this purpose, there is a format called WIF, which stands for Wallet Import Format.
+For this purpose, there is a format called WIF, which stands for Wallet Import Format.
 WIF is a serialization of the private key that's meant to be human readable.
 WIF uses the same Base58 encoding that addresses use.
 
