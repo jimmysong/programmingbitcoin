@@ -237,7 +237,7 @@ Another((("serialization", "DER Signature format")))((("Signature class", "seria
 Much like the SEC format, it needs to encode two different numbers, `r` and `s`.
 Unfortunately, unlike `S256Point`, `Signature` cannot be compressed as `s` cannot be derived solely from `r`.
 
-The((("Distinguished Encoding Rules"))) standard for serializing signatures (and lots of other things, for that matter) is called DER format.
+The((("Distinguished Encoding Rules (DER)"))) standard for serializing signatures (and lots of other things, for that matter) is called DER format.
 DER stands for Distinguished Encoding Rules and was used by Satoshi to serialize signatures.
 This was most likely because the standard was already defined in 2008, supported in the OpenSSL library (used in Bitcoin at the time), and was easy enough to adopt, rather than creating a new standard.
 
