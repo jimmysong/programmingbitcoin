@@ -253,7 +253,7 @@ Though it's generally bad privacy and security practice to reuse addresses, we'l
 .Why Reusing Addresses Is a Bad Idea
 [WARNING]
 ====
-Back((("addresses, reusing")))((("privacy issues", "reusing addresses"))) in <<chapter_script>>, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA.
+Back((("addresses, reusing")))((("privacy issues, reusing addresses"))) in <<chapter_script>>, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA.
 p2pkh, on the other hand, is also protected by sha256 and ripemd160.
 However, because the blockchain is public, once we _spend from_ a ScriptPubKey corresponding to our address, we reveal our public key as part of the ScriptSig.
 Once we've revealed that public key, sha256 and ripemd160 no longer protect us as the attacker knows the public key and doesn't have to guess.
