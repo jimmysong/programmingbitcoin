@@ -140,7 +140,7 @@ class Point:
 include::code-ch02/answers.py[tag=answer7,indent=4]
 ----
 
-=== <<chapter_elliptic_curve_cryptography>>: Elliptic Curve Cryptography
+=== <<chapter_elliptic_curve_cryptography>>: Elliptic Curve Cryptography((("exercises", "answers to", "Chapter 3: Elliptic Curve Cryptography")))
 
 include::code-ch03/answers.py[tag=exercise1,indent=0]
 
