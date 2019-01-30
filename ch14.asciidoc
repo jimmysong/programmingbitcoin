@@ -34,7 +34,7 @@ While((("Trezor")))((("Coinomi")))((("Electrum")))((("Edge"))) many wallets (Tre
 
 ==== Mnemonic Seeds
 
-Writing down and transcribing a 256-bit seed is a pain and fraught with errors.
+Writing((("mnemonic seeds")))((("backup and restoration"))) down and transcribing a 256-bit seed is a pain and fraught with errors.
 To combat this, BIP0039((("BIP (Bitcoin Improvement Proposals)", "BIP0039"))) is a way to encode the seed into a bunch of English words.
 There are 2,048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed.
 The standard defines exactly how the mnemonic backup gets translated to a BIP0032 seed.
