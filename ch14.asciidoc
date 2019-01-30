@@ -43,7 +43,7 @@ Writing a testnet wallet that implements BIP0039 is another good way to get a ta
 
 === Payment Channels and Lightning Network
 
-Payment Channels((("Payment Channels")))((("Lightning Network"))) are the atomic unit of the Lightning Network, and learning how they work is a good next step.
+Payment Channels((("Payment Channels")))((("Lightning Network")))((("BOLT standard"))) are the atomic unit of the Lightning Network, and learning how they work is a good next step.
 There are many ways to implement Payment Channels, but the BOLT standard is the specification that lightning nodes use.
 The specifications are in progress as of this writing and are available at https://github.com/lightningnetwork/lightning-rfc/.
 
