@@ -355,7 +355,7 @@ include::code-ch06/answers.py[tag=answer4,indent=0]
 
 This is looking for a SHA-1 Collision. The only way to satisfy this script is to give `x` and `y` such that `x≠y` but `sha1(x)=sha1(y)`.
 
-=== <<chapter_tx>>: Transaction Creation and Validation
+=== <<chapter_tx>>: Transaction Creation and Validation((("exercises", "answers to", "Chapter 7: Transaction Creation and Validation")))
 
 include::code-ch07/answers.py[tag=exercise1,indent=0]
 
