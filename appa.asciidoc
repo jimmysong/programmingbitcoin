@@ -604,7 +604,7 @@ class GetHeadersMessage:
 include::code-ch10/answers.py[tag=answer6,indent=4]
 ----
 
-=== <<chapter_spv>>: SPV((("exercises", "answers to", "Chapter 11: SPV")))
+=== <<chapter_spv>>: Simplified Payment Verification((("exercises", "answers to", "Chapter 11: SPV")))
 
 include::code-ch11/answers.py[tag=exercise1,indent=0]
 
