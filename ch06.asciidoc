@@ -357,7 +357,7 @@ What we want to be able to do is this:
 ----
 include::code-ch06/examples.py[tag=example1]
 ----
-<1> p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG`, which is `0xac` or 170.
+<1> p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG`, which is `0xac` or 172.
 <2> We can do this because of the `__add__` method we just created.
 <3> We want to evaluate the commands and see if the Script validates.
 

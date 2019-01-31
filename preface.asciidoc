@@ -308,7 +308,7 @@ Michael Flaxman has reviewed in almost everything Bitcoin-related I've written, 
 
 Vortex, Thomas Hunt, and Tone Vays brought me into the World Crypto Network back in 2017 that launched my YouTube career. Tone in particular has been an inspiration on working hard and being dedicated to a craft.
 
-John Newbery was very helpful to me when I first contributed to Bitcoin Core and he's just a really good person, period. He's become such a significant contributor in a relatively short time, which speaks to his talent and dedication. I'm grateful to other Core developers like Marco Falke, Vladimir van der Laan, Alex Morcos, Pieter Wuille, Matt Corallo, Suhas Daftuar, and Greg Maxwell, who have reviewed some of my code and blog posts.
+John Newbery was very helpful to me when I first contributed to Bitcoin Core and he's just a really good person, period. He's become such a significant contributor in a relatively short time, which speaks to his talent and dedication. I'm grateful to other Core developers like Marco Falke, Wladimir van der Laan, Alex Morcos, Pieter Wuille, Matt Corallo, Suhas Daftuar, and Greg Maxwell, who have reviewed some of my code and blog posts.
 
 David Harding was exceptional in his technical review on this book. He reviewed the text three times, with a lot of great comments. He'd better write a book about Bitcoin at some point, because he has an encyclopedic knowledge of nearly everything that's happend in Bitcoin's history.
 
@@ -316,7 +316,7 @@ Jim Calvin helped me get in contact with people at O'Reilly, and Mike Loukides w
 
 The crew of Bitcoiners in Austin have helped keep me on track. They include Bryan Bishop, Will Cole, Napoleon Cole, Tipton Cole, Tuur Demeester, Johnny Dilley, Michael Flaxman, Parker Lewis, Justin Moon, Alan Piscitello, and Andrew Poelstra. There's also a Slack channel (TAAS) where Saifedean Ammous announced that he was writing a book whose success inspired me. 
 
-Alumni of my course, Programming Blockchain, in addition to Bitcoiners on GitHub also did tech reviews of my book. Jeff Flowers, Brian Liotti, Casey Bowman, Johnson Lau, Jason Les, Thomas Braunberger, Eduardo Cobain, and Spencer Hanson are among the people who found issues.
+Alumni of my course, Programming Blockchain, in addition to Bitcoiners on GitHub also did tech reviews of my book. Jeff Flowers, Brian Liotti, Casey Bowman, Johnson Lau, Albert Chen, Jason Les, Thomas Braunberger, Eduardo Cobain, and Spencer Hanson are among the people who found issues.
 
 My subscribers on YouTube, my followers on Twitter, and my readers on Medium have been instrumental in helping me find my voice and set me on my path as an entrepreneur.
 
