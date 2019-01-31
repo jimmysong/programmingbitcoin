@@ -176,7 +176,7 @@ We need the `z`, or signature hash, to pass into the `evaluate`, method and we n
 [NOTE]
 .Quadratic Hashing
 ====
-The((("Quadratic Hashing problem")))((("signing and verification", "signature hash")))((("signature hash")))((("hashes", "signature hashes"))) signature hashing algorithm is inefficient and wasteful and is called the Quadratic Hashing problem.
+The((("Quadratic Hashing problem")))((("signing and verification", "signature hash")))((("signature hash")))((("hashes", "signature hash"))) signature hashing algorithm is inefficient and wasteful and is called the Quadratic Hashing problem.
 The Quadratic Hashing problem states that calculating the signature hashes, or `z`'s, increases quadratically with the number of inputs in a transaction.
 Specifically, the number of hash256 operations for calculating the `z` will increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation because the entire signature hash will need to be calculated anew for each input.
 
