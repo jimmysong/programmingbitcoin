@@ -10,7 +10,7 @@ This((("Elliptic Curve Cryptography", "role in Bicoin")))((("signing and verific
 It may seem strange, but we'll start with the basic math that you need to understand Elliptic Curve Cryptography.
 Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms.
 These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin.
-By learning Finite Fields and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need to progress logically.
+By learning Finite Fields((("Finite Fields", "role in Bitcoin")))((("Elliptic Curves", "role in Bitcoin"))) and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need to progress logically.
 
 Be aware that this chapter and the next two chapters may feel a bit like you're eating vegetables, especially if you haven't done formal math in a long time.
 I would encourage you to get through this, as the concepts and code here will be used throughout the book.
