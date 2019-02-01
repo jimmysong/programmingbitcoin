@@ -38,19 +38,19 @@ General computer science knowledge, for example of hash functions, will come in 
 
 This((("Bitcoin", "topics covered"))) book is split into 14 chapters. Each is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
 
-Roughly speaking, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_serialization">#chapter_serialization</a>] establish the mathematical tools that we need; Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_tx_parsing">#chapter_tx_parsing</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_p2sh">#chapter_p2sh</a>] cover Transactions, which are the fundamental unit of Bitcoin; and Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_blocks">#chapter_blocks</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] cover Blocks and Networking.
+Roughly speaking, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_serialization">#chapter_serialization</a>] establish the mathematical tools that we need; Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_tx_parsing">#chapter_tx_parsing</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_p2sh">#chapter_p2sh</a>] cover transactions, which are the fundamental unit of Bitcoin; and Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_blocks">#chapter_blocks</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] cover blocks and networking.
 The last two chapters cover some advanced topics but don't actually require you to write code.
 
 Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>] cover some math that we need.
-Finite Fields and Elliptic Curves are needed to understand Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
-After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, <<chapter_serialization>> adds parsing and serialization, which are how cryptographic primitives are stored and transmitted.
+finite fields and elliptic curves are needed to understand elliptic curve cryptography in <<chapter_elliptic_curve_cryptography>>.
+After we've established the public key cryptography at the end of <<chapter_elliptic_curve_cryptography>>, <<chapter_serialization>> adds parsing and serialization, which are how cryptographic primitives are stored and transmitted.
 
-<<chapter_tx_parsing>> covers the Transaction structure.
+<<chapter_tx_parsing>> covers the transaction structure.
 <<chapter_script>> goes into the smart contract language behind Bitcoin, called Script.
-<<chapter_tx>> builds on all the previous chapters, showing how to validate and create transactions based on the Elliptic Curve Cryptography from the first four chapters.
+<<chapter_tx>> builds on all the previous chapters, showing how to validate and create transactions based on the elliptic curve cryptography from the first four chapters.
 <<chapter_p2sh>> establishes how pay-to-script-hash (p2sh) works, which is a way to make more powerful smart contracts.
 
-<<chapter_blocks>> covers Blocks, which are groups of ordered Transactions.
+<<chapter_blocks>> covers blocks, which are groups of ordered transactions.
 <<chapter_networking>> covers network communication in Bitcoin.
 <<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data to and from nodes that store the entire blockchain.
 
