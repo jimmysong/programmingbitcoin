@@ -143,7 +143,7 @@ include::code-ch06/answers.py[tag=exercise1,indent=0]
 === Parsing the Script Fields
 
 Both((("Script", "parsing Script fields", id="Sparsing06"))) ScriptPubKey and ScriptSig are parsed the same way.
-If the byte is between `0x01` and `0x4b` (which we call `n`), we read the next `n` bytes as an element.
+If the byte is between `0x01` and `0x4b` (whose value we call `n`), we read the next `n` bytes as an element.
 Otherwise, the byte represents an operation, which we have to look up.
 Here are some operations and their byte codes:
 
@@ -172,7 +172,7 @@ It is possible to encode a number below 76 using `OP_PUSHDATA1` or a number belo
 These are considered nonstandard transactions, meaning most bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
 ====
 
-There are many more opcodes, which are coded in _op.py_, and the full list can be found at https://en.bitcoin.it/wiki/Script.[].
+There are many more opcodes, which are coded in _op.py_, and the full list can be found at https://en.bitcoin.it/wiki/Script[].
 
 ==== Coding a Script Parser and Serializer
 
