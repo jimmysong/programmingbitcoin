@@ -78,7 +78,7 @@ To clarify, here's the formula for the parent hash:
 
 `P=H(L||R)`
 
-Note the `||` symbol denotes concatenation.
+Note the || symbol denotes concatenation.
 
 Here's how we can code this process in Python:
 
