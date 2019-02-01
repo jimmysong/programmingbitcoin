@@ -326,8 +326,8 @@ Supposing:
 
 ++++
 <ul class="simplelist">
-<li><em>x</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>x</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>x</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
-<li><em>x</em><sub>1</sub> + <em>x</em><sub>2</sub> = <em>x</em><sub>3</sub></li>
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
 </ul>
 ++++
 
@@ -348,7 +348,7 @@ Using this formula and plugging it into the elliptic curve equation, we get:
 ++++
 <ul class="simplelist">
 <li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
-<li><em>y</em><sup>2</sup> = (<em>s</em>(__x__ – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub>)<sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+<li><em>y</em><sup>2</sup> = (<em>s</em>(<em>x</em> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub>)<sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
 </ul>
 ++++
 
