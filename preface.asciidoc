@@ -92,7 +92,6 @@ $ python3 get-pip.py
 
 . Download the source code for this book:
 +
-[source,bash]
 ----
 $ git clone https://github.com/jimmysong/programmingbitcoin
 $ cd programmingbitcoin
@@ -134,12 +133,12 @@ C:\programmingbitcoin> pip install -r requirements.txt
 [I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
 [I 11:13:23.061 NotebookApp] http://localhost:8888/?token=
   f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
-[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down  
-  all kernels (twice to skip confirmation).
+[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and 
+  shut down all kernels (twice to skip confirmation).
 [C 11:13:23.065 NotebookApp]
 
-    Copy/paste this URL into your browser when you connect for the first time,
-    to login with a token:
+    Copy/paste this URL into your browser when you connect for 
+    the first time, to login with a token:
         http://localhost:8888/?token=
         f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 ----
@@ -162,14 +161,14 @@ From here you can open _Chapter1.ipynb_ (<<pr0003>>).
 .Jupyter notebook
 image::images/prbc_0003.png[Chapter 1 Notebook]
 
-You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
+You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way that makes experimenting easy.
 You can run each "cell" and see the results as if this were an interactive Python shell.
 
 A large portion of the exercises will be coding concepts introduced in the book.
-The((("exercises", "unit tests")))((("unit tests"))) unit tests are written for you, and you will need to write the Python code to make the tests pass.
+The((("exercises", "unit tests")))((("unit tests"))) unit tests are written for you, but you will need to write the Python code to make the tests pass.
 You can check whether your code is correct directly in Jupyter.
 You will need to edit the corresponding file by clicking through a link like the "this test" link in <<pr0003>>.
-This will take you to a browser tab, as shown in <<pr0003>>.
+This will take you to a browser tab like the one shown in <<pr0004>>.
 
 [[pr0004]]
 .ecc.py
@@ -180,7 +179,7 @@ To make the test pass, edit the file here and save.((("", startref="Bdown00")))(
 === Answers
 
 All((("exercises", "answers to"))) the answers to the various exercises in this book are in <<appendix_solutions>>.
-They are also available in the __code-ch<xx>/answers.py__ file where +xx+ is the chapter that you're on.
+They are also available in the __code-ch<xx>/answers.py__ files, where __<xx>__ is the chapter that you're on.
 
 === Conventions Used in This Book
 
@@ -211,12 +210,6 @@ This element indicates a waning or caution.
 ====
 
 === Using Code Examples
-++++
-<!--PROD: Please reach out to author to find out if they will be uploading code examples to oreilly.com or their own site (e.g., GitHub).
-If there is no code download, delete this whole section.
-If there is, when you email digidist with the link, let them know what you filled in for title_title (should be as close to book title as possible, i.e., leaning_python_2e).
-This info will determine where digidist loads the files.-->
-++++
 
 Supplemental((("example code", "downloading and using")))((("code examples, obtaining and using"))) material (code examples, exercises, etc.) is available for download at link:$$https://github.com/jimmysong/programmingbitcoin$$[].
 
@@ -231,7 +224,7 @@ Incorporating a significant amount of example code from this book into your prod
 We((("attributions"))) appreciate, but do not require, attribution.
 An attribution usually includes the title, author, publisher, and ISBN.
 For example: “_Programming Bitcoin_ by Jimmy Song (O’Reilly).
-Copyright 2019, 978-1-492-03149-9.”
+Copyright 2019 Jimmy Song, 978-1-492-03149-9.”
 
 If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
 
@@ -275,11 +268,11 @@ Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
 
 === Acknowledgments
 
-The((("acknowledgments", id="ack00"))) number of people that got me here is legion. The experiences and knowledge that an author draws from tend to have a lot of origins and it's difficult to give them all their proper credit. This is my way of saying that I'm probably going to forget a significant number of people and for that I sincerely apologize.
+The((("acknowledgments", id="ack00"))) number of people that got me here is legion. The experiences and knowledge that an author draws from tend to have a lot of , and it's difficult to give them all their proper credit. This is my way of saying that I'm probably going to forget a significant number of people, and for that I sincerely apologize.
 
 First, I want to thank my Lord Jesus Christ for putting me on this journey. If not for my faith, I would not have had the ethical conviction to blog about the importance of sound money in general and Bitcoin in particular, which ultimately led to the writing of this book.
 
-My parents, Kathy and Kyung-Sup, had the courage to immigrate to America back when I was 8 years old, which ultimately led to the opportunities I've had. My dad got me my first computers (Commodore 16, Generic Hyundai 8086 and a 486 33-Mhz from a manufacturer I don't remember) and my mom got me private programming tutoring as a 6th and 7th grader from a woman whose name I can't remember. How she found her when I showed some proclivity to programming, I don't know. That teacher-whose-name-I-can't-remember stoked that natural tendency and I hope this acknowledgement finds its way to her.
+My parents, Kathy and Kyung-Sup, had the courage to immigrate to America back when I was eight years old, which ultimately led to the opportunities I've had. My dad got me my first computers (Commodore 16, Generic Hyundai 8086 and a 486 33-Mhz from a manufacturer I don't remember) and my mom got me private programming tutoring as a 6th and 7th grader from a woman whose name I can't remember. How she found her when I showed some proclivity to programming, I don't know. That teacher-whose-name-I-can't-remember stoked that natural tendency and I hope this acknowledgement finds its way to her.
 
 Speaking of which, I've had many teachers along the way, some of whom I hated at the time. Mr. Marain, Mrs. Edelman, and Mrs. Nelson taught me math and computer science back in high school. I'm not necessarily a fan of the current education system, but what I learned in those classes were instrumental to my love of math and programming.
 
