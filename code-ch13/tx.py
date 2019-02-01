@@ -126,7 +126,8 @@ class Tx:
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(s))
         locktime = little_endian_to_int(s.read(4))
-        return cls(version, inputs, outputs, locktime, testnet=testnet, segwit=False)
+        return cls(version, inputs, outputs, locktime, 
+                   testnet=testnet, segwit=False)
     # end::source2[]
 
     # tag::source3[]
