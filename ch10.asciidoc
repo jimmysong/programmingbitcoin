@@ -94,21 +94,21 @@ include::code-ch10/answers.py[tag=exercise4,indent=0]
 
 === Network Handshake
 
-The((("handshakes")))((("networking", "network handshakes"))) network handshake is how nodes establish communication.
+The((("handshakes")))((("networking", "network handshakes"))) network handshake is how nodes establish communication:
 
- * A wants to connect to B and sends a Version message.
- * B receives the Version message and responds with a Verack message, and sends its own Version message.
- * A receives the Version and Verack messages and sends back a Verack message
- * B receives the Verack message and continues communication
+ * A wants to connect to B and sends a version message.
+ * B receives the version message, responds with a verack message, and sends its own version message.
+ * A receives the version and verack messages and sends back a verack message.
+ * B receives the verack message and continues communication.
 
 Once the handshake is finished, A and B can communicate however they want.
-Note that there is no authentication here and it's up to the nodes to verify all data that they receive.
+Note that there is no authentication here, and it's up to the nodes to verify all data that they receive.
 If a node sends a bad transaction or block, it can expect to get banned or disconnected.
 
 === Connecting to the Network
 
 Network communication((("networking", "connecting to networks"))) is tricky due to its asynchronous nature.
-To experiment, we can establish a connection to a node on the network synchronously.
+To experiment, we can establish a connection to a node on the network synchronously:
 
 [source,python]
 ----
@@ -137,16 +137,16 @@ A stream made this way can be passed to all the parse methods.
 Connecting in this way, we can't send until we've received and can't respond intelligently to more than one message at a time.
 A more robust implementation would use an asynchronous library (like `asyncio` in Python 3) to send and receive without being blocked.
 
-We also need a Verack message class, which we'll create here:
+We also need a verack message class, which we'll create here:
 
 [source,python]
 ----
 include::code-ch10/network.py[tag=source3]
 ----
 
-`VerAckMessage` is a minimal network message.
+A `VerAckMessage` is a minimal network message.
 
-Let's now automate this by creating a class that will handle the communication for us.
+Let's now automate this by creating a class that will handle the communication for us:
 
 [source,python]
 ----
@@ -156,10 +156,10 @@ include::code-ch10/network.py[tag=source4]
 The `command` property and `serialize` methods are expected to exist in the `message` object.
 <2> The `read` method reads a new message from the socket.
 <3> The `wait_for` method lets us wait for any one of several commands (specifically, message classes).
-Along with the synchronous nature of this class, a method like this makes for a bit easier programming.
+Along with the synchronous nature of this class, a method like this makes for easier programming.
 A commercial-strength node would definitely not use something like this.
 
-Now that we have a node, we can now handshake with another node.
+Now that we have a node, we can handshake with another node: 
 
 [source,python]
 ----
@@ -177,12 +177,12 @@ Now that we have a node, we can now handshake with another node.
 ...         version_received = True
 ...         node.send(VerAckMessage())
 ----
-<1> Most nodes don't care about the fields in Version like IP address.
+<1> Most nodes don't care about the fields in `version` like IP address.
 We can connect with the defaults and everything will be just fine.
-<2> We start the handshake by sending the Version message.
-<3> We only finish when we've received both Verack and Version.
-<4> We expect to receive a Verack for our Version and the other node's Version.
-We don't know which order, though.
+<2> We start the handshake by sending the version message.
+<3> We only finish when we've received both verack and version.
+<4> We expect to receive a verack for our version and the other node's version.
+We don't know in which order they will arrive, though.
 
 include::code-ch10/answers.py[tag=exercise5,indent=0]
 
