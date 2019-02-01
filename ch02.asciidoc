@@ -291,23 +291,31 @@ Thus, we return `self`.
 
 include::code-ch02/answers.py[tag=exercise3,indent=0]
 
-=== Point Addition for when x~1~≠x~2~
+=== Point Addition for When x~1~≠x~2~
 
 Now that we've covered the vertical line, let's examine when the points are different.
 When we have points where the `x`'s differ, we can add using a fairly simple formula.
 To help with intuition, we'll first find the slope created by the two points.
-You can figure this out using a formula from pre-algebra:
+We can figure this out using a formula from pre-algebra:
 
-* __P__~1~ = (__x__~1~,__y__~1~), __P__~2~=(__x__~2~,__y__~2~), __P__~3~=(__x__~3~,__y__~3~)
-* __P__~1~ + __P__~2~ = __P__~3~
-* _s_ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+</ul>
+++++
 
 This((("slope"))) is the _slope_, and we can use the slope to calculate __x__~3~.
 Once we know __x__~3~, we can calculate __y__~3~.
 __P__~3~ can be derived using this formula:
 
-* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
-* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 Remember that __y__~3~ is the reflection over the x-axis.
 
@@ -316,53 +324,93 @@ Remember that __y__~3~ is the reflection over the x-axis.
 
 Supposing:
 
-* __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
-* __P__~1~ + __P__~2~ = __P__~3~
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>x</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>x</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>x</em><sub>1</sub> + <em>x</em><sub>2</sub> = <em>x</em><sub>3</sub></li>
+</ul>
+++++
 
 We((("point addition", "deriving the point addition Formula"))) want to know what __P__~3~ is.
 
 Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and has this formula:
 
-* __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
-* __y__ = __s__(__x__ – __x__~1~) + __y__~1~
+++++
+<ul class="simplelist">
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+<li><em>y</em> = <em>s</em>(<em>x</em> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 The second formula is the equation of the line that intersects at both __P__~1~ and __P__~2~.
 Using this formula and plugging it into the elliptic curve equation, we get:
 
-* __y__^2^ = __x__^3^ + __ax__ + __b__
-* __y__^2^ = (__s__(__x__ – __x__~1~) + __y__~1~)^2^ = __x__^3^ + __ax__+ __b__
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+<li><em>y</em><sup>2</sup> = (<em>s</em>(__x__ – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub>)<sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
 
 Gathering all the terms, we have this polynomial equation:
 
-* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __s__^2^__x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
+++++
+<ul class="simplelist">
+<li><em>x</em><sup>3</sup> – <em>s</em><sup>2</sup><em>x</em><sup>2</sup> + (<em>a</em> + 2<em>s</em><sup>2</sup><em>x</em><sub>1</sub> – 2<em>sy</em><sub>1</sub>)<em>x</em> + <em>b</em> – <em>s</em><sup>2</sup><em>x</em><sub>1</sub><sup>2</sup> + 2<em>sx</em><sub>1</sub><em>y</em><sub>1</sub> – <em>y</em><sub>1</sub><sup>2</sup> = 0</li>
+</ul>
+++++
 
 We also know that __x__~1~, __x__~2~, and __x__~3~ are solutions to this equation, thus:
 
-* (__x__ – __x__~1~)(__x__ – __x__~2~)(__x__ – __x__~3~) = 0
-* __x__^3^ – (__x__~1~ + __x__~2~ + __x__~3~)__x__^2^ + (__x__~1~__x__~2~ + __x__~1~__x__~3~ + __x__~2~__x__~3~)__x__ – __x__~1~__x__~2~__x__~3~ = 0
+++++
+<ul class="simplelist">
+<li>(<em>x</em> – <em>x</em><sub>1</sub>)(<em>x</em> – <em>x</em><sub>2</sub>)(<em>x</em> – <em>x</em><sub>3</sub>) = 0</li>
+<li><em>x</em><sup>3</sup> – (<em>x</em><sub>1</sub> + <em>x</em><sub>2</sub> + <em>x</em><sub>3</sub>)<em>x</em><sup>2</sup> + (<em>x</em><sub>1</sub><em>x</em><sub>2</sub> + <em>x</em><sub>1</sub><em>x</em><sub>3</sub> + <em>x</em><sub>2</sub><em>x</em><sub>3</sub>)<em>x</em> – <em>x</em><sub>1</sub><em>x</em><sub>2</sub><em>x</em><sub>3</sub> = 0</li>
+</ul>
+++++
 
 From earlier, we know that:
 
-* __x__^3^ – __s__^2^x^2^ + (__a__ + 2__s__^2^__x__~1~ – 2__sy__~1~)__x__ + __b__ – __s__^2^__x__~1~^2^ + 2__sx__~1~__y__~1~ – __y__~1~^2^ = 0
+++++
+<ul class="simplelist">
+<li><em>x</em><sup>3</sup> – <em>s</em><sup>2</sup><em>x</em><sup>2</sup> + (<em>a</em> + 2<em>s</em><sup>2</sup><em>x</em><sub>1</sub> – 2<em>sy</em>~1~)<em>x</em> + <em>b</em> – <em>s</em><sup>2</sup><em>x</em><sub>1</sub><sup>2</sup> + 2<em>sx</em>~1~<em>y</em><sub>1</sub> – <em>y</em><sub>1</sub><sup>2</sup> = 0</li>
+</ul>
+++++
 
-There's((("Vieta’s Formula"))) a result from what's called the https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's Formula], which states that the coefficients have to equal each other if the roots are the same.
+There's((("Vieta’s Formula"))) a result from what's called https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's formula], which states that the coefficients have to equal each other if the roots are the same.
 The first coefficient that's interesting is the coefficient in front of __x__^2^:
 
-* –__s__^2^ = –(__x__~1~ + __x__~2~ + __x__~3~)
+++++
+<ul class="simplelist">
+<li>–<em>s</em><sup>2</sup> = –(<em>x</em><sub>1</sub> + <em>x</em><sub>2</sub> + <em>x</em><sub>3</sub>)</li>
+</ul>
+++++
 
 We can use this to derive the formula for __x__~3~:
 
-* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+</ul>
+++++
 
-We can plug this in to the formula for the line above:
+We can plug this into the formula for the line above:
 
-* __y__ = __s__(__x__ – __x__~1~) + __y__~1~
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>s</em>(<em>x</em> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 But we have to reflect over the x-axis, so the right side has to be negated:
 
-* __y__~3~ = –(__s__(__x__~3~ – __x__~1~) + __y__~1~) = __s__(__x__~1~ – __x__~3~) – __y__~1~
+++++
+<ul class="simplelist">
+<li><em>y</em><sub>3</sub> = –(<em>s</em>(<em>x</em><sub>3</sub> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub>) = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
-QED
+QED.
 ****
 
 include::code-ch02/answers.py[tag=exercise4,indent=0]
