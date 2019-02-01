@@ -482,15 +482,14 @@ The parameters for secp256k1 are these:
 * _n_ = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
 __G~x~__ refers to the _x_ coordinate of the point _G_ and __G~y~__ the _y_ coordinate.
-The numbers starting with `0x` indicate a hexadecimal number. There are a few things to notice about this curve.
+The numbers starting with 0x are hexadecimal numbers. 
 
-First, the equation is relatively simple.
-Many curves have `a` and `b` that are much bigger.
-secp256k1 has a really simple equation.
+There are a few things to notice about this curve. First, the equation is relatively simple.
+Many curves have _a_ and _b_ values that are much bigger.
 
-Second, `p` is extremely close to 2^256^.
-This means that most numbers under 2^256^ are in the prime field and thus, any point on the curve has _x_ and _y_ coordinates that are expressible in 256 bits each.
-`n` is also very close to 2^256^.
+Second, _p_ is extremely close to 2^256^.
+This means that most numbers under 2^256^ are in the prime field, and thus any point on the curve has _x_ and _y_ coordinates that are expressible in 256 bits each.
+_n_ is also very close to 2^256^.
 This means any scalar multiple can also be expressed in 256 bits.
 
 Third, 2^256^ is a huge number (see sidebar).
@@ -502,7 +501,11 @@ This means that we can store the private key relatively easily.
 2^256^ doesn't seem that big because we can express it succinctly, but in reality, it is an enormous number.
 To give you an idea, here are some relative scales:
 
-2^256^ ~ 10^77^
+++++
+<ul class="simplelist">
+<li>2<sup>256</sup> ~ 10<sup>77</sup></li>
+</ul>
+++++
 
  * Number of atoms in and on Earth ~ 10^50^
  * Number of atoms in the solar system ~ 10^57^
