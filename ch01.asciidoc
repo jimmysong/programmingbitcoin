@@ -147,7 +147,7 @@ include::code-ch01/examples.py[tag=example1]
 Python((("== operator"))) allows us to override the `==` operator on `FieldElement` with the `__eq__` method, which is something we'll be taking advantage of going forward.
 
 You can see this in action in the code that accompanies this book.
-Once you've set up Jupyter Notebook (see Preface), you can navigate to _code-ch01/Chapter1.ipynb_ and run the code to see the results.
+Once you've set up Jupyter Notebook (see <<setting_up>>), you can navigate to _code-ch01/Chapter1.ipynb_ and run the code to see the results.
 For the next exercise, you'll want to open up _ecc.py_ by clicking the link in the Exercise 1 box.
 If you get stuck, please remember that the answers to every exercise are in <<appendix_solutions>>.((("", startref="FFsets01")))((("&#x005F;&#x005F;ne&#x005F;&#x005F; method")))
 
@@ -158,15 +158,15 @@ include::code-ch01/answers.py[tag=exercise1,indent=0]
 One((("Finite Fields", "modulo arithmetic", id="FFmodulo01")))((("modulo arithmetic", id="modulo01"))) of the tools we can use to make a Finite Field closed under addition, subtraction, multiplication, and division is something called _modulo arithmetic_.
 
 We can define addition on the finite set using modulo arithmetic, which is something you probably learned when you first learned division.
-Remember problems like <<long_division_example_one>>?
+Remember problems like the one in <<long_division_example_one>>?
 
 [[long_division_example_one]]
 .Long division example 1
 image::images/prbc_0101.png[Long Division Example 1]
 
-Whenever the division wasn't even, there was something called the "remainder," which is the leftover from the actual division.
+Whenever the division wasn't even, there was something called the "remainder," which is the amount left over from the actual division.
 We define modulo in the same way.
-We((("% (modulo) operator"))) use the operator % for "modulo":
+We((("% (modulo) operator"))) use the operator % for modulo:
 
 ++++
 <ul class="simplelist">
@@ -189,32 +189,38 @@ Let's look at another example with larger numbers:
 </ul>
 ++++
 
-If it helps, you can think of modulo arithmetic as "wrap-around" or "clock" math.
+If it helps, you can think of modulo arithmetic as "wraparound" or "clock" math.
 Imagine a problem like this:
 
-It is currently 3 o'clock.
-What hour will it be 47 hours from now?
+++++
+<ul class="simplelist">
+<li>It is currently 3 o'clock. What hour will it be 47 hours from now?</li>
+</ul>
+++++
 
-The answer is 2 o'clock because (3 + 47) % 12 = 2 (see <<clock_going_forward_47_hours>>)
+The answer is 2 o'clock because (3 + 47) % 12 = 2 (see <<clock_going_forward_47_hours>>).
 
 [[clock_going_forward_47_hours]]
 .Clock going forward 47 hours
 image::images/prbc_0103.png[Clock]
 
-We can also see this as "wrapping around" in the sense that you go past zero every time we move ahead 12 hours.
+We can also see this as "wrapping around" in the sense that we go past 0 every time we move ahead 12 hours.
 
 We can perform modulo on negative numbers.
 For example, you can ask:
 
-It is currently 3 o'clock.
-What hour was it 16 hours ago?
+++++
+<ul class="simplelist">
+<li>It is currently 3 o'clock.
+What hour was it 16 hours ago?</li>
+</ul>
+++++
 
-The answer is 11 o'clock.
-Hence we can say:
+The answer is 11 o'clock:
 
 ++++
 <ul class="simplelist">
-<li>(3 - 16) % 12 = 11</li>
+<li>(3 – 16) % 12 = 11</li>
 </ul>
 ++++
 
