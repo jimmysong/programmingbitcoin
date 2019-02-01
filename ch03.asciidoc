@@ -475,9 +475,9 @@ The parameters for secp256k1 are these:
 
 * _a_ = 0, _b_ = 7, making the equation __y__^2^ = __x__^3^ + 7
 * _p_ = 2^256^ – 2^32^ – 977
-* __G~x~__ = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+* __G~x~__ = pass:[<br/>]0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
 
-* __G~y~__ = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
+* __G~y~__ = pass:[<br/>]0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
 
 * _n_ = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
