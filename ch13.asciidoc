@@ -109,7 +109,7 @@ At this point, older nodes will stop as there are no more Script commands to be 
 Since the top element is nonzero, this will be counted as a valid Script.
 This is very similar to p2sh (<<chapter_p2sh>>) in that older nodes cannot validate further.
 Newer nodes, however, have a special Segwit rule much like the special rule for p2sh (see <<chapter_p2sh>>).
-Recall that with p2sh, the exact Script sequence of `<redeem script>` `OP_HASH160` `<hash>` `OP_EQUAL` triggers a special rule.
+Recall that with p2sh, the exact Script sequence of `<redeem_script>` `OP_HASH160` `<hash>` `OP_EQUAL` triggers a special rule.
 
 In the case of p2wpkh, the Script sequence is `OP_0` `<20-byte hash>`.
 When that Script sequence is encountered, the pubkey and signature from the Witness field and the 20-byte hash are added to the command set in exactly the same sequence as p2pkh.
