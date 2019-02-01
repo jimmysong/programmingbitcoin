@@ -305,8 +305,7 @@ You can figure this out using a formula from pre-algebra:
 
 * __P__~1~ = (__x__~1~,__y__~1~), __P__~2~=(__x__~2~,__y__~2~), __P__~3~=(__x__~3~,__y__~3~)
 * __P__~1~ + __P__~2~ = __P__~3~
-
-*_s_ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
+* _s_ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
 
 This((("slope"))) is the _slope_, and we can use the slope to calculate __x__~3~.
 Once we know __x__~3~, we can calculate __y__~3~.
