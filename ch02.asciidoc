@@ -415,15 +415,19 @@ QED.
 
 include::code-ch02/answers.py[tag=exercise4,indent=0]
 
-=== Coding Point Addition for when x~1~≠x~2~
+=== Coding Point Addition for When x~1~≠x~2~
 
 We now code this into our library.
-That means we have to adjust the `__add__` method to handle the case where x~1~≠x~2~.
+That means we have to adjust the `__add__` method to handle the case where __x__~1~≠__x__~2~.
 We have the formulas:
 
-* __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
-* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
-* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
+++++
+<ul class="simplelist">
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
 
@@ -431,7 +435,7 @@ include::code-ch02/answers.py[tag=exercise5,indent=0]
 
 === Point Addition for When P~1~ = P~2~
 
-When the `x` coordinates are the same and the `y` coordinate is different, we have the situation where the points are opposite each other over the x-axis.
+When the _x_ coordinates are the same and the _y_ coordinate is different, we have the situation where the points are opposite each other over the x-axis.
 We know that this means:
 
 ++++
@@ -444,7 +448,7 @@ We've already handled this in Exercise 3.
 
 What happens when __P__~1~ = __P__~2~?
 Visually, we have to calculate the line that's _tangent_ to the curve at __P__~1~ and find the point at which the line intersects the curve.
-The situation looks like this as we saw before (see <<line_thats_tangent_to_the_curve>>):
+The situation looks like <<line_thats_tangent_to_the_curve>>, as we saw before.
 
 [[line_thats_tangent_to_the_curve]]
 .Line that's tangent to the curve
@@ -452,14 +456,22 @@ image::images/prbc_0213.png[Tangent Line]
 
 Once again, we'll find the slope of the tangent point:
 
-* __P__~1~ = (__x__~1~,__y__~1~), __P__~3~ = (__x__~3~,__y__~3~)
-* __P__~1~ + __P__~1~ = __P__~3~
-* __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>1</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + <em>a</em>)/(2<em>y</em><sub>1</sub>)</li>
+</ul>
+++++
 
 The rest of the formula goes through as before, except __x__~1~ = __x__~2~, so we can combine them:
 
-* __x__~3~ = __s__^2^ – 2__x__~1~
-* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 [NOTE]
 .Deriving the Slope Tangent to the Curve
@@ -513,9 +525,9 @@ include::code-ch02/answers.py[tag=exercise6,indent=0]
 We adjust the `__add__` method to account for this particular case.
 We have the formulas, we now implement them.
 
-* __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
-* __x__~3~ = __s__^2^ – 2__x__~1~
-* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
+* <em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + __a__)/(2<em>y</em><sub>1</sub>)
+* <em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub>
+* <em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub>
 
 include::code-ch02/answers.py[tag=exercise7,indent=0]
 
