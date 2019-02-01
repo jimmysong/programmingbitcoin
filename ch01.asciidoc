@@ -9,7 +9,7 @@ There are so many components that depend on each other that learning one thing m
 This((("Bitcoin", "overview of components")))((("elliptic curve cryptography", "role in Bicoin")))((("signing and verification", "purpose of")))((("Transactions", "role in Bitcoin"))) chapter is going to get you off to a more manageable start.
 It may seem strange, but we'll start with the basic math that you need to understand elliptic curve cryptography.
 Elliptic curve cryptography, in turn, gives us the signing and verification algorithms.
-These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin.
+These are at the heart of how transactions work, and transactions are the atomic unit of value transfer in Bitcoin.
 By learning about finite fields((("finite fields", "role in Bitcoin")))((("elliptic curves", "role in Bitcoin"))) and elliptic curves first, you'll get a firm grasp of concepts that you'll need to progress logically.
 
 Be aware that this chapter and the next two chapters may feel a bit like you're eating vegetables, especially if you haven't done formal math in a long time.
@@ -26,7 +26,7 @@ This is my way of telling you that finite fields are not that hard to learn and 
 This chapter is required if you want to understand elliptic curve cryptography.
 Elliptic curve cryptography is required for understanding signing and verification, which is at the heart of Bitcoin itself.
 As I've said, this chapter and the next two may feel a bit unrelated, but I encourage you to endure.
-The fundamentals here will not only make understanding Bitcoin a lot easier, but also make understanding Schnorr Signatures, Confidential Transactions, and other leading-edge Bitcoin technologies easier.
+The fundamentals here will not only make understanding Bitcoin a lot easier, but also make understanding Schnorr signatures, confidential transactions, and other leading-edge Bitcoin technologies easier.
 
 === Finite Field Definition
 
