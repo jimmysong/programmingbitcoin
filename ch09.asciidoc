@@ -175,7 +175,7 @@ Checking for these features is relatively straightforward:
 ----
 include::code-ch09/examples.py[tag=example4]
 ----
-<1> The `>>` operator((("&gt;&gt; (left bit-shift) operator")))((("left bit-shift (&gt;&gt;) operator"))) is the left bit-shift operator, which throws away the rightmost 29 bits, leaving just the top 3 bits.
+<1> The `>>` operator((("&gt;&gt; (left bit-shift) operator")))((("left bit-shift (&gt;&gt;) operator"))) is the right bit-shift operator, which throws away the rightmost 29 bits, leaving just the top 3 bits.
 The `0b001` is a way of writing a number in binary in Python.
 <2> The `&` operator is the "bitwise and" operator.
 In our case, we right-shift by 4 bits first and then check that the rightmost bit is 1.
@@ -204,7 +204,7 @@ We will discuss how this is important for SPV (simplified payment verification) 
 The((("Blocks", "timestamps")))((("timestamps")))((("UNIX-style timestamps"))) timestamp is a UNIX-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
 This timestamp is used in two places: the first for validating timestamp-based Locktimes on transactions included in the block and the second for calculating a new bits/target/difficulty every 2,016 blocks.
-The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) Locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's Locktime directly, but((("median-time-past (MTP)"))) the median-time-past (MTP) of the past 11 blocks.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) Locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's timestamp directly, but((("median-time-past (MTP)"))) the median-time-past (MTP) of the past 11 blocks.
 
 [NOTE]
 .Will Bitcoin Overflow on the Timestamp?
@@ -323,7 +323,7 @@ include::code-ch09/examples.py[tag=example6]
 A valid proof-of-work is a hash of the block header that, when interpreted as a Little-Endian integer, is below the target number.
 Proof-of-work hashes are exceedingly rare and the process of mining is the process of finding one of these hashes.
 To find a single proof-of-work with the above target, the network as a whole must calculate 3.8 &#215; 10^21^ hashes, which, when this block was found, was roughly every 10 minutes.
-To give this number some context, the best GPU miner in the world would need to run for 50,000 years on average to find a single proof-of-work below this target.
+To give this number some context, the best GPU mining card in the world would need to run for 50,000 years on average to find a single proof-of-work below this target.
 
 We can check that this block header's hash satisfies the proof-of-work:
 
