@@ -156,7 +156,8 @@ class Tx:
                     items.append(s.read(item_len))
             tx_in.witness = items
         locktime = little_endian_to_int(s.read(4))
-        return cls(version, inputs, outputs, locktime, testnet=testnet, segwit=True)
+        return cls(version, inputs, outputs, locktime, 
+                   testnet=testnet, segwit=True)
     # end::source3[]
 
     # tag::source4[]
