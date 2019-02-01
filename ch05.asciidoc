@@ -238,7 +238,7 @@ How we do that is further discussed in <<chapter_tx>>.
 
 We'll((("Script", "creating Script objects"))) delve more deeply into how Script is parsed in <<chapter_script>>, but for now, here's how you get a `Script` object from hexadecimal in Python:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch05/examples.py[tag=example1]
 ----
