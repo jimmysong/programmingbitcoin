@@ -106,7 +106,7 @@ def coinbase_height(self):
 # tag::exercise3[]
 ==== Exercise 3
 
-Write the `parse` for `Block`.
+Write the `parse` method for `Block`.
 # end::exercise3[]
 '''
 
@@ -128,7 +128,7 @@ def parse(cls, s):
 # tag::exercise4[]
 ==== Exercise 4
 
-Write the `serialize` for `Block`.
+Write the `serialize` method for `Block`.
 # end::exercise4[]
 '''
 
@@ -149,7 +149,7 @@ def serialize(self):
 # tag::exercise5[]
 ==== Exercise 5
 
-Write the `hash` for `Block`.
+Write the `hash` method for `Block`.
 # end::exercise5[]
 '''
 
