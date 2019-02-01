@@ -221,7 +221,7 @@ def add(self, item):
 # tag::exercise4[]
 ==== Exercise 4
 
-Write the  `filterload` payload from the `BloomFilter` class.
+Write the  `filterload` method for the `BloomFilter` class.
 # end::exercise4[]
 '''
 
