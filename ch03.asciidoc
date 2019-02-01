@@ -112,7 +112,7 @@ OK
 
 === Point Addition over Finite Fields
 
-We((("elliptic curve cryptography", "point addition over finite fields", id="ECCpoint03")))((("Point Addition", "over finite fields", id="PAfinite03"))) can use all the same equations over finite fields, including the linear equation:
+We((("elliptic curve cryptography", "point addition over finite fields", id="ECCpoint03")))((("point addition", "over finite fields", id="PAfinite03"))) can use all the same equations over finite fields, including the linear equation:
 
 ++++
 <ul class="simplelist">
@@ -375,27 +375,27 @@ You can add them together to get __aG__ + (__n__ – __a__)__G__ = (__a__ + __n_
 
 ==== Commutativity
 
-We((("finite cyclic groups", "commutativity property")))((("commutativity"))) know from point addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>):
+We((("finite cyclic groups", "commutativity property")))((("commutativity"))) know from point addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>).
 
 [[the_line_through_the_points_doesnt_change]]
 .The line through the points doesn't change
-image::images/prbc_0214.png[Point Addition]
+image::images/prbc_0214.png[Point addition]
 
 This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
 
 ==== Associativity
 
-We((("associativity")))((("finite cyclic groups", "associativity property"))) know from Point Addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
+We((("associativity")))((("finite cyclic groups", "associativity property"))) know from point addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
 
 [[a_b_c_case_one]]
-.(A + B) + C. A + B is computed first before C is added.
+.(A + B) + C: A + B is computed first before C is added
 image::images/prbc_0216.png[Case 1]
 
 [[a_b_c_case_two]]
-.A + (B + C). B + C is added first before adding A. Note that this results in the same point as in <<a_b_c_case_one>>.
+.A + (B + C): B + C is added first before adding A (note that this results in the same point as in <<a_b_c_case_one>>)
 image::images/prbc_0217.png[Case 2]
 
-Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_ proving associativity.((("", startref="ECCmath03")))
+Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_, proving associativity.((("", startref="ECCmath03")))
 
 include::code-ch03/answers.py[tag=exercise5,indent=0]
 
@@ -408,7 +408,7 @@ What((("scalar multiplication", "coding for")))((("elliptic curve cryptography",
 include::code-ch03/examples.py[tag=example5]
 ----
 
-We want to be able to scalar multiply the point with some number.
+We want to be able to scalar-multiply the point with some number.
 Thankfully, there's((("&#x005F;&#x005F;rmul&#x005F;&#x005F; method"))) a method in Python called `__rmul__` that can be used to override the front multiplication.
 A naive implementation looks something like this:
 
@@ -422,14 +422,14 @@ class Point:
             product += self
         return product
 ----
-<1> We start the `product` at 0, which in the case of Point Addition is the point at infinity.
+<1> We start the `product` at 0, which in the case of point addition is the point at infinity.
 <2> We loop `coefficient` times and add the point each time.
 
 This is fine for small coefficients, but what if we have a very large coefficient—that is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time?
 For example, a coefficient of 1 trillion is going to take a really long time.
 
-There's((("binary expansion"))) a cool technique called _binary expansion_ that allows us to perform multiplication in `log2(n)` loops, which dramatically reduces the calculation time for large numbers.
-For example, 1 trillion is 40 bits in binary, so we only have to loop 40 times for a number that's generally considered very large.
+There's((("binary expansion"))) a cool technique called _binary expansion_ that allows us to perform multiplication in log~2~(_n_) loops, which dramatically reduces the calculation time for large numbers.
+For example, 1 trillion is 40 bits in binary, so we only have to loop 40 times for a number that's generally considered very large:
 
 [source,python]
 ----
@@ -438,16 +438,16 @@ class Point:
 include::code-ch03/ecc.py[tag=source3]
 ----
 <1> `current` represents the point that's at the current bit.
-First time through the loop it represents 1 &#xd7; self; the second time, it will be 2 &#xd7; self; third time, 4 &#xd7; self; then 8 &#xd7; self, and so on.
+The first time through the loop it represents 1 &#xd7; +self+; the second time it will be 2 &#xd7; +self+, the third time 4 &#xd7; +self+, then 8 &#xd7; +self+, and so on.
 We double the point each time.
 In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
 <2> We start the result at 0, or the point at infinity.
-<3> We are looking at whether the right-most bit is a 1.
+<3> We are looking at whether the rightmost bit is a 1.
 If it is, then we add the value of the current bit.
 <4> We need to double the point until we're past how big the coefficient can be.
 <5> We bit-shift the coefficient to the right.
 
-This is an advanced technique and if you don't understand bitwise operators, think of representing the coefficient in binary and only adding the point where there are 1's.
+This is an advanced technique. If you don't understand bitwise operators, think of representing the coefficient in binary and only adding the point where there are 1's.
 
 With `__add__` and `__rmul__`, we can start defining some more complicated elliptic curves.
 
@@ -455,7 +455,7 @@ With `__add__` and `__rmul__`, we can start defining some more complicated ellip
 === Defining the Curve for Bitcoin
 
 While((("elliptic curve cryptography", "secp256k1 curve", id="ECCsecp03")))((("secp256k1 curve", id="secp03")))((("elliptic curves", "secp256k1 curve", id="ECsecp03"))) we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
-Small primes mean that we can use a computer to search through the entire Group.
+Small primes mean that we can use a computer to search through the entire group.
 If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break discrete log.
 
 But what if we made the prime larger?
@@ -464,22 +464,22 @@ The security of elliptic curve cryptography depends on computers _not_ being abl
 
 An elliptic curve for Public Key Cryptography is defined with the following parameters:
 
-* We specify the `a` and `b` of the curve __y__^2^ = __x__^3^ + _ax_ + _b_.
-* We specify the prime of the finite field, `p`.
-* We specify the _x_ and _y_ coordinates of the generator point _G_
-* We specify the order of the group generated by _G_, `n`.
+* We specify the _a_ and _b_ of the curve __y__^2^ = __x__^3^ + _ax_ + _b_.
+* We specify the prime of the finite field, _p_.
+* We specify the _x_ and _y_ coordinates of the generator point _G_.
+* We specify the order of the group generated by _G_, _n_.
 
 These numbers are known publicly and together form the cryptographic curve.
 There are many cryptographic curves and they have different security/convenience trade-offs, but the one we're most interested in is the one Bitcoin uses: secp256k1.
 The parameters for secp256k1 are these:
 
-* `a = 0`, `b = 7`, making the equation __y__^2^ = __x__^3^ + 7
+* _a_ = 0, _b_ = 7, making the equation __y__^2^ = __x__^3^ + 7
 * _p_ = 2^256^ – 2^32^ – 977
-* __G~x~__ = pass:[<br/>]`0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798`
+* __G~x~__ = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
 
-* __G~y~__ = pass:[<br/>]`0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8`
+* __G~y~__ = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
 
-* _n_ = pass:[<br/>]`0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141`
+* _n_ = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
 __G~x~__ refers to the _x_ coordinate of the point _G_ and __G~y~__ the _y_ coordinate.
 The numbers starting with `0x` indicate a hexadecimal number. There are a few things to notice about this curve.
