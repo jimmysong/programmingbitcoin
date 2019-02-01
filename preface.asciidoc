@@ -80,8 +80,8 @@ macOS:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg[]
 Linux:: See your distro docs (many Linux distributions, like Ubuntu, come with Python 3.5+ preinstalled)
 
 . Install pip by downloading this script: https://bootstrap.pypa.io/get-pip.py[].
-+
-Run this script using Python 3:
+
+. Run this script using Python 3:
 +
 [source,bash]
 ----
@@ -119,14 +119,14 @@ $ . .venv/bin/activate
 Windows::
 +
 ----
-C:\programmingbitcoin> virtualenv -p C:\PathToYourPythonInstallation\Python.exe .venv
+C:\programmingbitcoin> virtualenv -p
+    C:\PathToYourPythonInstallation\Python.exe .venv
 C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
 
 . Run Jupyter((("Jupyter Notebook", "running"))) Notebook:
 +
-[source,bash]
 ----
 (.venv) $ jupyter notebook
 [I 11:13:23.061 NotebookApp] Serving notebooks from local directory:
@@ -140,7 +140,8 @@ C:\programmingbitcoin> pip install -r requirements.txt
 
     Copy/paste this URL into your browser when you connect for the first time,
     to login with a token:
-        http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+        http://localhost:8888/?token=
+        f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
 ----
 
 You should have a browser open up automatically, as shown in <<pr0001>>.
@@ -149,16 +150,16 @@ You should have a browser open up automatically, as shown in <<pr0001>>.
 .Jupyter
 image::images/prbc_0001.png[Jupyter]
 
-Here's((("Jupyter Notebook", "navigating chapter directories"))) how to navigate to chapter directories. To do the exercises from <<chapter_finite_fields>>, you would navigate to _code-ch01_ (<<pr0002>>):
+From here, you can((("Jupyter Notebook", "navigating chapter directories"))) navigate to the chapter directories. To do the exercises from <<chapter_finite_fields>>, you would navigate to _code-ch01_ (<<pr0002>>).
 
 [[pr0002]]
 .Jupyter directory view
 image::images/prbc_0002.png[Chapter 1 Directory]
 
-From here you can open _Chapter1.ipynb_ (<<pr0003>>):
+From here you can open _Chapter1.ipynb_ (<<pr0003>>).
 
 [[pr0003]]
-.Jupyter Notebook
+.Jupyter notebook
 image::images/prbc_0003.png[Chapter 1 Notebook]
 
 You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way to make experimenting easy.
