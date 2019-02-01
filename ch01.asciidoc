@@ -227,8 +227,14 @@ The answer is 11 o'clock:
 The minute hand is also a modulo operation.
 For example, you can ask:
 
-It is currently 12 minutes past the hour.
-What minute will it be 843 minutes from now?
+++++
+<ul class="simplelist">
+<li>It is currently 12 minutes past the hour.
+What minute will it be 843 minutes from now?</li>
+</ul>
+++++
+
+It will be 15 minutes past the hour:
 
 ++++
 <ul class="simplelist">
@@ -236,11 +242,16 @@ What minute will it be 843 minutes from now?
 </ul>
 ++++
 
-It will be 15 minutes past the hour.
 Likewise, we can ask:
 
-It is currently 23 minutes past the hour.
-What minute will it be 97 minutes from now?
+++++
+<ul class="simplelist">
+<li>It is currently 23 minutes past the hour.
+What minute will it be 97 minutes from now?</li>
+</ul>
+++++
+
+In this case, the answer is 0:
 
 ++++
 <ul class="simplelist">
@@ -250,7 +261,7 @@ What minute will it be 97 minutes from now?
 
 0 is another way of saying there is no remainder.
 
-The result of the modulo (%) operation for minutes is always between 0 and 59, inclusive, in this case.
+The result of the modulo (%) operation for minutes is always between 0 and 59, inclusive.
 This happens to be a very useful property as even very large numbers can be brought down to a relatively small range with modulo:
 
 ++++
@@ -272,7 +283,7 @@ Here is how the modulo operator is used:
 include::code-ch01/examples.py[tag=example2]
 ----
 
-We can also use the modulo operator on negative numbers like((("", startref="FFmodulo01")))((("", startref="modulo01"))) this:
+We can also use the modulo operator on negative numbers, like((("", startref="FFmodulo01")))((("", startref="modulo01"))) this:
 
 [source,python]
 ----
@@ -289,31 +300,29 @@ Let's say we have a Finite Field of 19:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>19</sub>={0,1,2,...18}</li>
+<li><em>F</em><sub>19</sub> = {0, 1, 2, ... 18}</li>
 </ul>
 ++++
 
-where a, b ∈ __F__~19~. Note((("element of (&#x2208;) symbol")))((("&#x2208; (element of) symbol"))) that the symbol ∈ means "is an element of."
+where _a_, _b_ ∈ __F__~19~. Note((("element of (&#x2208;) symbol")))((("&#x2208; (element of) symbol"))) that the symbol ∈ means "is an element of."
 In our case, _a_ and _b_ are elements of __F__~19~.
 
 Addition being closed means:
 
 ++++
 <ul class="simplelist">
-<li>a+<sub><em>f</em></sub>b ∈ F<sub>19</sub></li>
+<li><em>a</em> + <sub><em>f</em></sub>b ∈ F<sub>19</sub></li>
 </ul>
 ++++
 
-
-
-We denote Finite Field addition with pass:[+<sub><em>f</em></sub>] to avoid confusion with normal integer addition +.
+We denote Finite Field addition with pass:[+<sub><em>f</em></sub>] to avoid confusion with normal integer addition, +.
 
 If we utilize modulo arithmetic, we can guarantee this to be the case.
-We can define pass:[a+<sub><em>f</em></sub>b] this way:
+We can define pass:[<em>a</em> + <sub><em>f</em></sub><em>b</em>] this way:
 
 ++++
 <ul class="simplelist">
-<li>a+<sub><em>f</em></sub>b = (a+b)%19</li>
+<li><em>a</em> + <sub><em>f</em></sub><em>b</em> = (<em>a</em> + <em>b</em>)%19</li>
 </ul>
 ++++
 
@@ -332,35 +341,35 @@ and so on.
 
 We take any two numbers in the set, add, and "wrap around" the end to get the sum.
 We are creating our own addition operator here and the result is a bit unintuitive.
-After all, pass:[11+<sub><em>f</em></sub>17=9] just doesn't look right because we're not used to Finite Field addition.
+After all, pass:[11 + <sub><em>f</em></sub>17 = 9] just doesn't look right because we're not used to Finite Field addition.
 
 More generally, we define field addition this way:
 
 ++++
 <ul class="simplelist">
-<li>a+<sub><em>f</em></sub>b=(a+b)%p</li>
+<li><em>a</em> + <sub><em>f</em></sub><em>b</em> = (<em>a</em> + <em>b</em>)%<em>p</em></li>
 </ul>
 ++++
  
-where a, b ∈ F~p~. 
+where _a_, _b_ ∈ __F__~__p__~. 
 
-We also define the additive inverse this way. pass:[a ∈ F<sub><em>p</em></sub> implies that -<sub><em>f</em></sub>a ∈ F<sub><em>p</em></sub>]:
+We also define the additive inverse this way. pass:[<em>a</em> ∈ <em>F</em><sub><em>p</em></sub> implies that –<sub><em>f</em></sub><em>a</em> ∈ <em>F</em><sub><em>p</em></sub>]:
 
 ++++
 <ul class="simplelist">
-<li>-<sub><em>f</em></sub>a = (-a) % p</li>
+<li>–<sub><em>f</em></sub><em>a</em> = (–<em>a</em>) % <em>p</em></li>
 </ul>
 ++++
 
 
 
-Again, for clarity, we use pass:[-<sub><em>f</em></sub>] to distinguish field subtraction and negation from integer subtraction and negation.
+Again, for clarity, we use pass:[–<sub><em>f</em></sub>] to distinguish field subtraction and negation from integer subtraction and negation.
 
 In __F__~19~:
 
 ++++
 <ul class="simplelist">
-<li>-<sub><em>f</em></sub>9 = (-9) % 19 = 10</li>
+<li>–<sub><em>f</em></sub>9 = (–9) % 19 = 10</li>
 </ul>
 ++++
 
@@ -377,23 +386,23 @@ which means that:
 
 And that turns out to be true.
 
-Similarly, we can do field subtraction.
+Similarly, we can do field subtraction:
 
 ++++
 <ul class="simplelist">
-<li>a-<sub><em>f</em></sub>b = (a-b)%p</li>
+<li><em>a</em> –<sub><em>f</em></sub><em>b</em> = (<em>a</em> – <em>b</em>)%<em>p</em></li>
 </ul>
 ++++
 
  
-where a, b ∈ F~p~
+where _a_, _b_ ∈ __F__~__p__~.
 
-In F~19~:
+In __F__~19~:
 
 ++++
 <ul class="simplelist">
-<li>11-<sub><em>f</em></sub>9=(11-9)%19=2</li>
-<li>6-<sub><em>f</em></sub>13=(6-13)%19=12</li>
+<li>11–<sub><em>f</em></sub>9=(11-9)%19 = 2</li>
+<li>6–<sub><em>f</em></sub>13=(6-13)%19 = 12</li>
 </ul>
 ++++
 
