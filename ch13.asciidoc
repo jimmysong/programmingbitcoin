@@ -7,22 +7,22 @@ _Segwit_ stands for "segregated witness" and is a backward-compatible upgrade or
 While the activation was controversial, the features of this technology require some explanation.
 In this chapter, we'll explore how Segwit works, why it's backward compatible, and what Segwit enables.
 
-As a brief overview, Segwit did a multitude of things:
+As a brief overview, Segwit incorporated a multitude of changes:
 
 * Block size increase
 * Transaction malleability fix
-* Introduced Segwit versioning for clear upgrade paths
+* Segwit versioning for clear upgrade paths
 * Quadratic hashing fix
 * Offline wallet fee calculation security
 
 It's not entirely obvious what Segwit is without looking at how it's implemented.
 We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
 
-=== Pay-to-Witness-Pubkey-Hash
+=== Pay-to-Witness-Pubkey- (p2wpkh)
 
-Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "Witness field in"))) one of four types of Scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
+Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "Witness field in"))) one of four types of scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
 This is a smart contract that acts a lot like pay-to-pubkey-hash and is named similarly for that reason.
-The main change from p2pkh is that the data for the ScriptSig is now in the Witness field.
+The main change from p2pkh is that the data for the ScriptSig is now in the witness field.
 The rearrangement is to fix transaction malleability.
 
 ==== Transaction Malleability
@@ -30,8 +30,8 @@ The rearrangement is to fix transaction malleability.
 _Transaction malleability_ is the((("transaction malleability")))((("malleability")))((("Segwit (segregated witness)", "transaction malleability")))((("p2wpkh (pay-to-witness-pubkey-hash)", "transaction malleability and"))) ability to change the transaction's ID without altering the transaction's meaning.
 Mt. Gox CEO Mark Karpeles cited transaction malleability as the reason why his exchange was not allowing withdrawals back in 2013.
 
-Malleability((("Payment Channels"))) of the ID is an important consideration when creating Payment Channels, which are the atomic unit of the Lightning Network.
-A malleable transaction ID makes the safe creation of Payment Channel transactions much more difficult.
+Malleability((("payment channels"))) of the ID is an important consideration when creating payment channels, which are the atomic unit of the Lightning Network.
+A malleable transaction ID makes the safe creation of payment channel transactions much more difficult.
 
 The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction.
 The ID of the transaction is the hash256 of the transaction.
@@ -47,7 +47,7 @@ A malleable transaction ID means that any _dependent_ transactions (that is, a t
 The previous transaction hash is uncertain, so the dependent transaction's transaction input field cannot be guaranteed to be valid.
 
 This is not usually a problem as once a transaction enters the blockchain, the transaction ID is fixed and no longer malleable (at least without finding a proof-of-work!).
-However, with Payment Channels, there are dependent transactions created _before_ the funding transaction is added to the blockchain.
+However, with payment channels, there are dependent transactions created _before_ the funding transaction is added to the blockchain.
 
 === Fixing Malleability
 
@@ -442,7 +442,7 @@ image::images/prbc_1330.png[p2wsh Step 5]
 The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
 Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as Script commands and added to the command set.
 The rest of the Witness is then put on the command set as well, producing the final set of commands to be evaluated.
-p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional Payment Channels for the Lightning Network.((("", startref="Hp2wsh13")))
+p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional payment channels for the Lightning Network.((("", startref="Hp2wsh13")))
 
 === p2sh-p2wsh
 
