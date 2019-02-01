@@ -619,7 +619,7 @@ The (_p_ - 1)! on both sides cancel giving us:
 
 ++++
 <ul class="simplelist">
-<li>1 = <em>n</em><sup>(<em>p</em>-1)</sup> % <em>p</em></li>
+<li>1 = <em>n</em><sup>(p-1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
