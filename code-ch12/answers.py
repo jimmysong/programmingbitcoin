@@ -2,7 +2,7 @@
 # tag::exercise1[]
 ==== Exercise 1
 
-Calculate the Bloom Filter for "hello world" and "goodbye" using the `hash160` hash function over a bit field of 10.
+Calculate the Bloom Filter for "hello world" and "goodbye" using the hash160 hash function over a bit field of 10.
 # end::exercise1[]
 # tag::answer1[]
 >>> from helper import hash160
