@@ -4,43 +4,41 @@
 
 [.lead]
 One of the most difficult things about learning how to program Bitcoin is knowing where to start.
-There are so many components that depend on each other that learning one thing may lead you to have to learn another, which in turn may lead you to learn something else before you can understand the original thing.
+There are so many components that depend on each other that learning one thing may lead you to have to learn another, which in turn may lead you to need to learn something else before you can understand the original thing.
 
 This((("Bitcoin", "overview of components")))((("Elliptic Curve Cryptography", "role in Bicoin")))((("signing and verification", "purpose of")))((("Transactions", "role in Bitcoin"))) chapter is going to get you off to a more manageable start.
 It may seem strange, but we'll start with the basic math that you need to understand Elliptic Curve Cryptography.
 Elliptic Curve Cryptography, in turn, gives us the signing and verification algorithms.
 These are at the heart of how Transactions work, and Transactions are the atomic unit of value transfer in Bitcoin.
-By learning Finite Fields((("Finite Fields", "role in Bitcoin")))((("Elliptic Curves", "role in Bitcoin"))) and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need to progress logically.
+By learning about Finite Fields((("Finite Fields", "role in Bitcoin")))((("Elliptic Curves", "role in Bitcoin"))) and Elliptic Curves first, you'll get a firm grasp of concepts that you'll need to progress logically.
 
 Be aware that this chapter and the next two chapters may feel a bit like you're eating vegetables, especially if you haven't done formal math in a long time.
-I would encourage you to get through this, as the concepts and code here will be used throughout the book.
+I would encourage you to get through them, though, as the concepts and code presented here will be used throughout the book.
 
 === Learning Higher-Level Math
 
 Learning about new mathematical structures can be a bit intimidating, and in this chapter, I hope to dispel the myth that high-level math is difficult.
-Finite Fields, in particular, don't require all that much in terms of prior mathematical knowledge than, say, algebra.
+Finite Fields, in particular, don't require all that much more in terms of prior mathematical knowledge than, say, algebra.
 
-Think of Finite Fields as something that you could have learned instead of trigonometry, just that the education system you're a part of decided that trigonometry was more important for you to learn.
+Think of Finite Fields as something that you could have learned instead of trigonometry, except that the education system you're a part of decided that trigonometry was more important for you to learn.
 This is my way of telling you that Finite Fields are not that hard to learn and require no more background than algebra.
 
 This chapter is required if you want to understand Elliptic Curve Cryptography.
 Elliptic Curve Cryptography is required for understanding signing and verification, which is at the heart of Bitcoin itself.
 As I've said, this chapter and the next two may feel a bit unrelated, but I encourage you to endure.
-The fundamentals here will not only make understanding Bitcoin a lot easier, but also make understanding Schnorr Signatures, Confidential Transactions and other leading edge Bitcoin technologies easier.
+The fundamentals here will not only make understanding Bitcoin a lot easier, but also make understanding Schnorr Signatures, Confidential Transactions, and other leading-edge Bitcoin technologies easier.
 
 === Finite Field Definition
 
-Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01")))((("Finite Fields", "definition of"))) a Finite Field is defined as follows:
+Mathematically,((("mathematical tools", "Finite Fields", id="MTfinite01")))((("Finite Fields", "definition of"))) a _Finite Field_ is defined as a finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
 
-A finite set of numbers and two operations *+* (addition) and *⋅* (multiplication) that satisfy the following:
-
-1. If _a_ and _b_ are in the set, __a + b__ and __a ⋅ b__ are in the set.
+1. If _a_ and _b_ are in the set, __a + b__ and __a__ ⋅ __b__ are in the set.
 We call this property _closed_.
-2. The additive identity: _0_ exists and has the property __a + 0 = a__.
-3. The multiplicative identity: _1_ exists and has the property __a ⋅ 1 = a__.
-4. If _a_ is in the set, __–a__ is in the set, which is defined as the value that makes __a + (-a) = 0__.
+2. 0 exists and has the property __a__ + 0 = __a__. We call this the _additive identity_.
+3. 1 exists and has the property __a__ ⋅ 1 = __a__. We call this the _multiplicative identity_.
+4. If _a_ is in the set, __–a__ is in the set, which is defined as the value that makes __a__ + (–__a__) = 0.
 This((("additive inverse"))) is what we call the _additive inverse_.
-5. If _a_ is in the set and is not 0, __a^–1^__ is in the set, which is defined as the value that makes __a ⋅ a^–1^ = 1__.
+5. If _a_ is in the set and is not 0, __a__^–1^ is in the set, which is defined as the value that makes __a__ ⋅ __a__^–1^ = 1.
 This((("multiplicative inverse"))) is what we call the _multiplicative inverse_.
 
 Let's unpack each of these criteria.
@@ -49,24 +47,24 @@ We have a set of numbers that's finite.
 Because the set is finite, we can designate a number _p_, which is how big the set is.
 This is what we call the _order_ of the set.
 
-(1) says we are closed under addition and multiplication.
+#1 says we are closed under addition and multiplication.
 This means that we have to define addition and multiplication in a way that ensures the results stay in the set.
 For example, a set containing {0,1,2} is _not_ closed under addition, since 1 + 2 = 3 and 3 is not in the set; neither is 2 + 2 = 4.
 Of course we can define addition a little differently to make this work, but using "normal" addition, this set is not closed.
-On the other hand, the set {-1,0,1} is closed under normal multiplication.
-Any two numbers can be multiplied (there are nine such combinations) and the result is always in the set.
+On the other hand, the set {–1,0,1} is closed under normal multiplication.
+Any two numbers can be multiplied (there are nine such combinations), and the result is always in the set.
 
 The other option we have in mathematics is to define multiplication in a particular way to make these sets closed.
 We'll get to how exactly we define addition and multiplication later in this chapter, but the key concept here is that we can _define addition and subtraction differently than the addition and subtraction you are familiar with_.
 
-(2) and (3) mean that we have the additive and multiplicative identities.
+#2 and #3 mean that we have the additive and multiplicative identities.
 That means 0 and 1 are in the set.
 
-(4) means that we have the additive inverse.
+#4 means that we have the additive inverse.
 That is, if _a_ is in the set, _–a_ is in the set.
 Using the additive inverse, we can define subtraction.
 
-(5) means that multiplication has the same property.
+#5 means that multiplication has the same property.
 If _a_ is in the set, __a__^–1^ is in the set.
 That is _a_ ⋅ __a__^–1^ = 1.
 Using the multiplicative inverse, we can define division.
@@ -74,7 +72,7 @@ This will be the trickiest to define in a finite field.
 
 === Defining Finite Sets
 
-If((("Finite Fields", "defining finite sets", id="FFsets01")))((("order (size)"))) the _order_ (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2, ... p – 1.
+If((("Finite Fields", "defining finite sets", id="FFsets01")))((("order (size)"))) the order (or size) of the set is _p_, we can call the elements of the set, 0, 1, 2, ... _p_ – 1.
 These((("elements"))) numbers are what we call the _elements_ of the set, not necessarily the traditional numbers 0, 1, 2, 3, etc.
 They behave in many ways like traditional numbers, but have some differences in how we add, subtract, multiply, and so forth.
 
@@ -82,21 +80,21 @@ In math notation the Finite Field set looks like this:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>p</sub> = {0, 1, 2, ... p–1}</li>
+<li><em>F</em><sub>p</sub> = {0, 1, 2, ... <em>p</em>–1}</li>
 </ul>
 ++++
 
-What's in the Finite Field set are called elements.((("field of p")))
-F~p~ is a specific finite field called "field of p" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call _order_).
+What's in the Finite Field set are the elements.((("field of p")))
+__F__~__p__~ is a specific finite field called "field of _p_" or "field of 29" or whatever the size of it is (again, the size is what mathematicians call _order_).
 The numbers between the {}s represent what elements are in the field.
-We name the elements 0, 1, 2, etc. because they're convenient for our purposes.
+We name the elements 0, 1, 2, etc. because these names are convenient for our purposes.
 
 
 A Finite Field of order 11 looks like this:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>11</sub> = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}</li>
+<li><em>F</em><sub>11</sub> = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}</li>
 </ul>
 ++++
 
@@ -104,7 +102,7 @@ A Finite Field of order 17 looks like this:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>17</sub>= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}</li>
+<li><em>F</em><sub>17</sub>= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}</li>
 </ul>
 ++++
 
@@ -112,18 +110,18 @@ A Finite Field of order 983 looks like this:
 
 ++++
 <ul class="simplelist">
-<li>F<sub>983</sub>= {0, 1, 2, ... 982}</li>
+<li><em>F</em><sub>983</sub>= {0, 1, 2, ... 982}</li>
 </ul>
 ++++
 
 Notice the order of the field is always 1 more than the largest element.
 You might have noticed that the field has a prime order every time.
-For a variety of reasons that will become clear later, it turns out that fields _must_ have an order that is a power of a prime, but that the Finite Fields whose order is prime are the ones we're interested in.
+For a variety of reasons that will become clear later, it turns out that fields _must_ have an order that is a power of a prime, and that the Finite Fields whose order is prime are the ones we're interested in.
 
 ==== Constructing a Finite Field in Python
 
 We((("FieldElement class"))) want to represent each Finite Field element, so in Python, we'll be creating a class that represents a single Finite Field element.
-Naturally, we'll name the class `FieldElement`.
+Naturally, we'll name the class pass:[<span class="keep-together"><code>FieldElement</code></span>].
 
 
 The class represents an element in a field __F__~prime~.
@@ -134,7 +132,7 @@ The bare bones of the class look like this:
 include::code-ch01/ecc.py[tag=source1]
 ----
 <1> We first check that `num` is between `0` and `prime-1` inclusive.
-If not, we get an invalid Field Element and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
+If not, we get an invalid +FieldElement+ and we raise a `ValueError`, which is what we should raise when we get an inappropriate value.
 <2> The((("&#x005F;&#x005F;init&#x005F;&#x005F; method"))) rest of the `__init__` method assigns the initialization values to the object.
 <3> The((("&#x005F;&#x005F;eq&#x005F;&#x005F; method"))) `__eq__` method checks if two objects of class `FieldElement` are equal.
 This is only true when the `num` and `prime` properties are equal.
