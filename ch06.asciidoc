@@ -256,7 +256,7 @@ p2wpkh:: Pay-to-witness-pubkey-hash
 p2wsh:: Pay-to-witness-Script-hash
 
 Addresses are data that fit into known Script templates like these.
-Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKey.
+Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKeys.
 All of the above have a particular type of address format (base58, bech32) so wallets can pay to them.
 
 To show exactly how all this works, we'll start with one of the original Scripts, pay-to-pubkey.
