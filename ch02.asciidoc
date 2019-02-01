@@ -2,19 +2,19 @@
 == Elliptic Curves
 
 [.lead]
-In((("mathematical tools", "Elliptic Curves", id="MTeliptic02"))) this chapter we're going to learn about Elliptic Curves.
-In <<chapter_elliptic_curve_cryptography>>, we will combine Elliptic Curves with Finite Fields to make Elliptic Curve Cryptography.
+In((("mathematical tools", "elliptic curves", id="MTeliptic02"))) this chapter we're going to learn about elliptic curves.
+In <<chapter_elliptic_curve_cryptography>>, we will combine elliptic curves with finite fields to make elliptic curve cryptography.
 
-As in <<chapter_finite_fields>>, Elliptic Curves can look intimidating if you haven't seen them before.
-Also as in <<chapter_finite_fields>>, the actual math isn't very difficult.
-Most of Elliptic Curves could have been taught to you after algebra.
-In this chapter, we'll get to what these curves are and what we can do with them.
+Like finite fields, elliptic curves can look intimidating if you haven't seen them before.
+But again, the actual math isn't very difficult.
+Most of what you need to know about elliptic curves could have been taught to you after algebra.
+In this chapter, we'll explore what these curves are and what we can do with them.
 
 === Definition
 
-Elliptic Curves((("Elliptic Curves", "definition of"))) are like many equations you've been seeing since pre-algebra.
-They have `y` on one side and `x` on the other in some form.
-Elliptic Curves have a form like this:
+Elliptic curves((("elliptic curves", "definition of"))) are like many equations you've seen since pre-algebra.
+They have _y_ on one side and _x_ on the other, in some form.
+elliptic curves have a form like this:
 
 ++++
 <ul class="simplelist">
@@ -31,7 +31,7 @@ For example, you probably learned the linear equation back in pre-algebra:
 </ul>
 ++++
 
-You may even remember that _m_ here has the name _slope_ and _b_, _y-intercept_.
+You may even remember that _m_ here has the name _slope_ and _b_ is the _y-intercept_.
 You can also graph linear equations, as shown in <<linear_equation>>.
 
 [[linear_equation]]
@@ -50,7 +50,7 @@ Similarly, you're probably familiar with the quadratic equation and its graph (<
 .Quadratic equation
 image::images/prbc_0202.png[Quadratic equation]
 
-And sometime around algebra, you did even higher orders of `x`, something called the cubic equation and its graph (<<cubic_equation>>):
+And sometime around algebra, you did even higher orders of __x__—something called the cubic equation and its graph (<<cubic_equation>>):
 
 ++++
 <ul class="simplelist">
@@ -62,23 +62,23 @@ And sometime around algebra, you did even higher orders of `x`, something called
 .Cubic equation
 image::images/prbc_0203.png[Cubic equation]
 
-An Elliptic Curve isn't all that different.
-The only real difference between the Elliptic Curve and the cubic curve in <<cubic_equation>> is the __y__^2^ term on the left side.
-This has the effect of making the graph symmetric over the x-axis, shown in <<continuous_elliptic_curve>>.
+An elliptic curve isn't all that different.
+The only real difference between the elliptic curve and the cubic curve in <<cubic_equation>> is the __y__^2^ term on the left side.
+This has the effect of making the graph symmetric over the x-axis, as shown in <<continuous_elliptic_curve>>.
 
 [[continuous_elliptic_curve]]
-.Continuous Elliptic Curve
-image::images/prbc_0204.png[Elliptic Curve Equation]
+.Continuous elliptic curve
+image::images/prbc_0204.png[Elliptic curve equation]
 
-The Elliptic Curve is also less steep than the cubic curve.
+The elliptic curve is also less steep than the cubic curve.
 Again, this is because of the __y__^2^ term on the left side.
 At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
 
 [[disjoint_elliptic_curve]]
-.Disjoint Elliptic Curve
-image::images/prbc_0205.png[Elliptic Curve Equation]
+.Disjoint elliptic curve
+image::images/prbc_0205.png[Elliptic curve equation]
 
-If it helps, an Elliptic Curve can be thought of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), taking only the part above the x-axis, flattening it out (<<step_2_a_cubic_equation>>), and then mirroring the top half on the bottom half of the x-axis (<<step_3_a_cubic_equation>>).
+If it helps, an elliptic curve can be thought of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), flattening out the part above the x-axis (<<step_2_a_cubic_equation>>), and then mirroring that part below the x-axis (<<step_3_a_cubic_equation>>).
 
 [[step_1_a_cubic_equation]]
 .Step 1: A cubic equation
@@ -92,7 +92,7 @@ image::images/prbc_0207.png[Stretch]
 .Step 3: Reflected over the x-axis
 image::images/prbc_0208.png[Symmetric]
 
-Specifically, the((("secp256k1 curve")))((("Elliptic Curves", "secp256k1 curve"))) Elliptic Curve used in Bitcoin is called secp256k1 and it uses this particular equation:
+Specifically, the((("secp256k1 curve")))((("elliptic curves", "secp256k1 curve"))) elliptic curve used in Bitcoin is called _secp256k1_ and it uses this particular equation:
 
 ++++
 <ul class="simplelist">
@@ -100,8 +100,8 @@ Specifically, the((("secp256k1 curve")))((("Elliptic Curves", "secp256k1 curve")
 </ul>
 ++++
 
-The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>] so the curve is defined by the constants `a=0`, `b=7`.
-The curve looks like <<secp256k1_curve>>.
+The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>], so the curve is defined by the constants _a_ = 0, _b_ = 7.
+It looks like <<secp256k1_curve>>.
 
 [[secp256k1_curve]]
 .secp256k1 curve
@@ -109,17 +109,17 @@ image::images/prbc_0209.png[secp256k1 curve]
 
 === Coding Elliptic Curves in Python
 
-For((("Elliptic Curves", "coding in Python"))) a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
+For((("elliptic curves", "coding in Python"))) a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
 For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (–1,1).
 We((("Point class"))) are thus going to define the class `Point` to be a _point_ on a specific curve.
-The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers `a` and `b`:
+The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers _a_ and _b_:
 
 [source,python]
 ----
 include::code-ch02/ecc.py[tag=source1]
 ----
 <1> We check here that the point is actually on the curve.
-<2> Points are equal if and only if they are on the same curve and have the same coordinates
+<2> Points are equal if and only if they are on the same curve and have the same coordinates.
 
 We can now create `Point` objects, and we will get an error if the point is not on the curve:
 
@@ -136,14 +136,14 @@ include::code-ch02/answers.py[tag=exercise2,indent=0]
 
 === Point Addition
 
-Elliptic Curves((("Elliptic Curves", "Point Addition"))) are useful because of something called Point Addition.
-Point Addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
+Elliptic curves((("elliptic curves", "point addition"))) are useful because of something called _point addition_.
+Point addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
 This is called _addition_ because the operation has a lot of the intuitions we associate with the mathematical operation of addition.
-For example, Point Addition is commutative.
+For example, point addition is commutative.
 That is, adding point A to point B is the same as adding point B to point A.
 
-The((("Point Addition", "definition of"))) way we define Point Addition is as follows.
-It turns out that for every Elliptic Curve, a line will intersect it at either 1 point (<<line_intersects_at_only_1_point>>) or 3 points (<<line_intersects_at_3_points>>), except for a couple of special cases.
+The((("point addition", "definition of"))) way we define point addition is as follows.
+It turns out that for every elliptic curve, a line will intersect it at either one point (<<line_intersects_at_only_1_point>>) or three points (<<line_intersects_at_3_points>>), except in a couple of special cases.
 
 [[line_intersects_at_only_1_point]]
 .Line intersects at only one point
@@ -165,15 +165,12 @@ image::images/prbc_0213.png[Tangent Line]
 
 We will come back to these two cases later.
 
-We can define _point addition_ using the fact that lines intersect one or three times with the Elliptic Curve.
+We can define point addition using the fact that lines intersect one or three times with the elliptic curve.
 Two points define a line, so since that line must intersect the curve at some point one more time, that third point reflected over the x-axis is the result of the point addition.
 
-Like Finite Field Addition, we are going to define point addition.
-In our case, point addition is defined this way:
+So, for any two points __P__~1~ = (__x__~1~,__y__~1~) and __P__~2~ = (__x__~2~,__y__~2~), we get __P__~1~ + __P__~2~ as follows:
 
-For any two points __P__~1~ = (__x__~1~,__y__~1~) and __P__~2~ = (__x__~2~,__y__~2~), we get __P__~1~ + __P__~2~ as follows:
-
-* Find the point intersecting the Elliptic Curve a third time by drawing a line through __P__~1~ and __P__~2~.
+* Find the point intersecting the elliptic curve a third time by drawing a line through __P__~1~ and __P__~2~.
 * Reflect the resulting point over the x-axis.
 
 Visually, it looks like <<point_addition>>.
@@ -182,18 +179,18 @@ Visually, it looks like <<point_addition>>.
 .Point addition
 image::images/prbc_0214.png[Point addition]
 
-We first draw a line through the two points we're adding (A and B).
-The third intersection point is C.
-We then reflect that point over the x-axis, which puts us at the A + B point in <<point_addition>>.
+We first draw a line through the two points we're adding (_A_ and _B_).
+The third intersection point is _C_.
+We then reflect that point over the x-axis, which puts us at the _A_ + _B_ point in <<point_addition>>.
 
 One of the properties that we are going to use is that point addition is not easily predictable.
 We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
-Going back to <<point_addition>>, A + B is to the right of both points, A + C would be somewhere between A and C on the x-axis, and B + C would be to the left of both points.
+Going back to <<point_addition>>, _A_ + _B_ is to the right of both points, _A_ + _C_ would be somewhere between _A_ and _C_ on the x-axis, and _B_ + _C_ would be to the left of both points.
 In mathematics parlance, point addition is _nonlinear_.
 
 === Math of Point Addition
 
-"Addition" in((("Elliptic Curves", "Point Addition math")))((("Point Addition", "math of"))) the name Point Addition satisfies certain properties that we think of as addition, such as:
+((("elliptic curves", "point addition math")))((("point addition", "math of")))Point addition satisfies certain properties that we associate with addition, such as:
 
 * Identity
 * Commutativity
@@ -201,9 +198,7 @@ In mathematics parlance, point addition is _nonlinear_.
 * Invertibility
 
 _Identity_ here((("identity"))) means that there's a zero.
-That is, there exists some point (_I_) that, when added to a point (_A_), results in _A_.
-We'll((("point at infinity"))) call this point the _point at infinity_ (reasons for this will become clear in a bit).
-That is:
+That is, there exists some point _I_ that, when added to a point _A_, results in _A_:
 
 ++++
 <ul class="simplelist">
@@ -211,7 +206,9 @@ That is:
 </ul>
 ++++
 
-This((("invertibility"))) is also related to _invertibility_.
+We'll((("point at infinity"))) call this point the _point at infinity_ (reasons for this will become clear in a moment).
+
+This((("invertibility"))) is related to _invertibility_.
 For some point _A_, there's some other point –_A_ that results in the identity point.
 That is:
 
@@ -221,17 +218,17 @@ That is:
 </ul>
 ++++
 
-Visually, these are points opposite the x-axis on the curve (see <<vertical_line_intersection>>).
+Visually, these points are opposite one another over the x-axis on the curve (see <<vertical_line_intersection>>).
 
 [[vertical_line_intersection]]
 .Vertical line intersection
 image::images/prbc_0212.png[Vertical Line]
 
 This is why we call this point the point at infinity.
-We have one extra point in the Elliptic Curve, which makes the vertical line intersect the curve a third time.
+We have one extra point in the elliptic curve, which makes the vertical line intersect the curve a third time.
 
 _Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
-This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place no matter the order.
+This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place, no matter the order.
 
 _Associativity_ means((("associativity"))) that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
 This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
@@ -246,18 +243,18 @@ image::images/prbc_0216.png[Case 1]
 image::images/prbc_0217.png[Case 2]
 
 You can see that in both <<a_b_c_case_1>> and <<a_b_c_case_2>>, the final point is the same.
-In other words, we have good reason to believe that (A + B) + C = A + (B + C).
+In other words, we have good reason to believe that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
 While this doesn't prove the associativity of point addition, the visual should at least give you the intuition that this is true.
 
 To code point addition, we're going to split it up into three steps:
 
-1. Where the points are in a vertical line or using the identity point.
-2. Where the points are not in a vertical line, but are different.
-3. Where the two points are the same.
+1. Where the points are in a vertical line or using the identity point
+2. Where the points are not in a vertical line, but are different
+3. Where the two points are the same
 
 === Coding Point Addition
 
-We((("Elliptic Curves", "Point Addition coding", id="ECpoindcode02")))((("Point Addition", "coding", id="PAcode02"))) first handle the identity, or the point at infinity.
+We((("elliptic curves", "point addition coding", id="ECpoindcode02")))((("point addition", "coding", id="PAcode02"))) first handle the identity point, or point at infinity.
 Since we can't easily use infinity in Python, we'll use the `None` value instead.
 What we want is this to work:
 
@@ -266,10 +263,8 @@ What we want is this to work:
 include::code-ch02/examples.py[tag=example2]
 ----
 
-To make this work, we have to do two things:
-
-First, we have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
-Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class.
+To make this work, we have to do two things. First, we have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
+Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class:
 
 [source,python]
 ----
@@ -286,7 +281,7 @@ include::code-ch02/ecc.py[tag=source2]
 
 include::code-ch02/ecc.py[tag=source3]
 ----
-<1> _x_ coordinate and _y_ coordinate being `None` is how we signify the point at infinity.
+<1> The _x_ coordinate and _y_ coordinate being `None` is how we signify the point at infinity.
 Note that the next +if+ statement will fail if we don't return here.
 <2> We overload the `+` operator here.
 <3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity.
@@ -324,7 +319,7 @@ Supposing:
 * __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
 * __P__~1~ + __P__~2~ = __P__~3~
 
-We((("Point Addition", "deriving the Point Addition Formula"))) want to know what __P__~3~ is.
+We((("point addition", "deriving the point addition Formula"))) want to know what __P__~3~ is.
 
 Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and has this formula:
 
@@ -332,7 +327,7 @@ Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and 
 * __y__ = __s__(__x__ – __x__~1~) + __y__~1~
 
 The second formula is the equation of the line that intersects at both __P__~1~ and __P__~2~.
-Using this formula and plugging it into the Elliptic Curve equation, we get:
+Using this formula and plugging it into the elliptic curve equation, we get:
 
 * __y__^2^ = __x__^3^ + __ax__ + __b__
 * __y__^2^ = (__s__(__x__ – __x__~1~) + __y__~1~)^2^ = __x__^3^ + __ax__+ __b__
@@ -431,7 +426,7 @@ We know that the slope at a given point is
 ++++
 
 
-To get this, we need to take the derivative of both sides of the Elliptic Curve equation:
+To get this, we need to take the derivative of both sides of the elliptic curve equation:
 
 ++++
 <ul class="simplelist">
@@ -501,5 +496,5 @@ class Point:
 
 === Conclusion
 
-We've covered what Elliptic Curves are, how they work and how to do point addition.
-We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn Elliptic Curve Cryptography in <<chapter_elliptic_curve_cryptography>>.
+We've covered what elliptic curves are, how they work and how to do point addition.
+We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn elliptic curve cryptography in <<chapter_elliptic_curve_cryptography>>.
