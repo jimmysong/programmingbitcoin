@@ -278,40 +278,40 @@ include::code-ch03/examples.py[tag=example4]
 ----
 
 If you look closely at the numbers, there's no real discernible pattern to the scalar multiplication.
-The _x_ coordinates don't always increase or decrease and neither do the _y_ coordinates.
+The _x_ coordinates don't always increase or decrease, and neither do the _y_ coordinates.
 About the only pattern is that between 10 and 11, the _x_ coordinates are equal (10 and 11 have the same _x_, as do 9 and 12, 8 and 13, and so on).
 This is due to the fact that 21 ⋅ (47,71) = 0.
 
-Scalar multiplication looks really random and that's what gives this equation _asymmetry_.
+Scalar multiplication looks really random, and that's what gives this equation _asymmetry_.
 An((("asymmetric problems"))) _asymmetric_ problem is one that's easy to calculate in one direction, but hard to reverse.
 For example, it's easy enough to calculate 12 ⋅ (47,71).
-But if we were presented this:
+But if we were presented with this:
 
 ++++
 <ul class="simplelist">
-<li><em>s</em> ⋅ (47,71)=(194,172)</li>
+<li><em>s</em> ⋅ (47,71) = (194,172)</li>
 </ul>
 ++++
 
-would you be able to solve for _s_?
-We can look up the results show earlier, but that's because we have a small group.
+would we be able to solve for _s_?
+We can look up the results shown earlier, but that's because we have a small group.
 We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, discrete log becomes an intractable problem.((("", startref="ECCscalar03")))((("", startref="SMelliptic03")))
 
 === Mathematical Groups
 
-The((("elliptic curve cryptography", "mathematical groups", id="ECCmath03"))) preceding math (finite fields, elliptic curves, combining the two), was really to bring us to this point.
-What we actually want to generate for the purposes of Public Key Cryptography are((("Finite Cyclic Groups", "generating"))) Finite Cyclic Groups, and it turns out that if we take a Generator Point from an elliptic curve over a finite field, we can generate a Finite Cyclic Group.
+The((("elliptic curve cryptography", "mathematical groups", id="ECCmath03"))) preceding math (finite fields, elliptic curves, combining the two) was really to bring us to this point.
+What we actually want to generate for the purposes of public key cryptography are((("finite cyclic groups", "generating"))) finite cyclic groups, and it turns out that if we take a generator point from an elliptic curve over a finite field, we can generate a finite cyclic group.
 
 Unlike fields, groups have only a single operation.
-In our case, Point Addition is our operation.
-We also have a few other properties like closure, invertibility, commutativity, and associativity.
+In our case, point addition is the operation.
+Groups also have a few other properties, like closure, invertibility, commutativity, and associativity.
 Lastly, we need the identity.
 
-Let's look at each property.
+Let's look at each property, starting with that last one.
 
 ==== Identity
 
-If((("identity")))((("Finite Cyclic Groups", "identity property"))) you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group, since we generate the group when we get to the point at infinity.
+If((("identity")))((("finite cyclic groups", "identity property"))) you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group since we generate the group when we get to the point at infinity.
 So:
 
 ++++
@@ -329,8 +329,8 @@ image::images/prbc_0212.png[Vertical Line]
 
 ==== Closure
 
-This((("closure")))((("Finite Cyclic Groups", "closure property"))) is perhaps the easiest to prove since we generated the group in the first place by adding G over and over.
-Thus, two different elements look like this:
+This((("closure")))((("finite cyclic groups", "closure property"))) is perhaps the easiest property to prove since we generated the group in the first place by adding _G_ over and over.
+Thus, if we have two different elements that look like this:
 
 ++++
 <ul class="simplelist">
@@ -349,8 +349,8 @@ We know that the result is going to be:
 
 
 How do we know if this element is in the group?
-If `a+b < n` (where `n` is the order of the group), then we know it's in the group by definition.
-If `a+b >= n`, then we know `a < n` and `b < n`, so `a+b<2n` so `a+b-n<n`:
+If _a+b < n_ (where _n_ is the order of the group), then we know it's in the group by definition.
+If _a_+_b_ >= _n_, then we know _a_ < _n_ and _b_ < _n_, so _a_+_b_ < 2__n__, so _a_+_b_–_n_ < _n_:
 
 ++++
 <ul class="simplelist">
@@ -358,13 +358,13 @@ If `a+b >= n`, then we know `a < n` and `b < n`, so `a+b<2n` so `a+b-n<n`:
 </ul>
 ++++
 
-More generally (__a__ + __b__)__G__ = ((__a__ + _b_) % __n__)__G__ where _n_ is the order of the group.
+More generally, (__a__ + __b__)__G__ = ((__a__ + _b_) % __n__)__G__, where _n_ is the order of the group.
 
 So we know that this element is in the group, proving closure.
 
 ==== Invertibility
 
-Invertibility((("invertibility")))((("Finite Cyclic Groups", "invertibility property"))) is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
+Invertibility((("invertibility")))((("finite cyclic groups", "invertibility property"))) is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
 
 [[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
 .Each point is invertible by taking the reflection over the x-axis
@@ -375,7 +375,7 @@ You can add them together to get __aG__ + (__n__ – __a__)__G__ = (__a__ + __n_
 
 ==== Commutativity
 
-We((("Finite Cyclic Groups", "commutativity property")))((("commutativity"))) know from Point Addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>):
+We((("finite cyclic groups", "commutativity property")))((("commutativity"))) know from point addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>):
 
 [[the_line_through_the_points_doesnt_change]]
 .The line through the points doesn't change
@@ -385,7 +385,7 @@ This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
 
 ==== Associativity
 
-We((("associativity")))((("Finite Cyclic Groups", "associativity property"))) know from Point Addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
+We((("associativity")))((("finite cyclic groups", "associativity property"))) know from Point Addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
 
 [[a_b_c_case_one]]
 .(A + B) + C. A + B is computed first before C is added.
