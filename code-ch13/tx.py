@@ -65,7 +65,8 @@ class TxFetcher:
 class Tx:
     command = b'tx'
 
-    def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False, segwit=False):
+    def __init__(self, version, tx_ins, tx_outs, 
+        locktime, testnet=False, segwit=False):
         self.version = version
         self.tx_ins = tx_ins
         self.tx_outs = tx_outs
