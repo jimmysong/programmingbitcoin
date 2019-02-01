@@ -116,7 +116,7 @@ class Tx:
 
     @classmethod
     def parse_legacy(cls, s, testnet=False):
-        version = little_endian_to_int(s.read(4))
+        version = little_endian_to_int(s.read(4))   # <4>
         num_inputs = read_varint(s)
         inputs = []
         for _ in range(num_inputs):
