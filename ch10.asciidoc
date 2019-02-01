@@ -220,7 +220,7 @@ include::code-ch10/answers.py[tag=exercise6,indent=0]
 
 === Headers Response
 
-We((("networking", "headers response messages", id="NWheader10"))) can now create a node, handshake, and then ask for some headers.
+We((("networking", "headers response messages", id="NWheader10"))) can now create a node, handshake, and then ask for some headers:
 
 [source,python]
 ----
@@ -236,30 +236,30 @@ We((("networking", "headers response messages", id="NWheader10"))) can now creat
 
 Now we need a way to receive the headers from the other node.
 The((("headers command"))) other node will send back the `headers` command.
-The headers command is a list of block headers (<<parsed_headers_chap_ten>>), which we already learned how to parse from <<chapter_blocks>>.
-The `HeadersMessage` class can take advantage when parsing.
+This is a list of block headers (<<parsed_headers_chap_ten>>), which we already learned how to parse in <<chapter_blocks>>.
+The `HeadersMessage` class can take advantage of this when parsing.
 
 [[parsed_headers_chap_ten]]
-.Parsed `headers`
+.Parsed headers
 image::images/prbc_1004.png[headers payload]
 
-The Headers message starts with the number of headers as a varint, which is a number from 1 to 2,000 inclusive.
+The headers message starts with the number of headers as a varint, which is a number from 1 to 2,000 inclusive.
 Each block header, we know, is 80 bytes.
-Then we have the number of transactions, or 0 in this case.
+Then we have the number of transactions.
 The number of transactions in the headers message is always 0.
-This may be a bit confusing at first since we only asked for the headers and not the transactions.
-The reason nodes bother sending the number of transactions at all is because the Headers message is meant to be compatible with the format for the Block message, which is the block header, number of transactions and then the transactions themselves.
-By specifying that the number of transactions is 0, we can use the same parsing engine as when parsing a full block.
+This may be a bit confusing at first, since we only asked for the headers and not the transactions.
+The reason nodes bother sending the number of transactions at all is because the headers message is meant to be compatible with the format for the block message, which is the block header, the number of transactions, and then the transactions themselves.
+By specifying that the number of transactions is 0, we can use the same parsing engine as when parsing a full block:
 
 [source,python]
 ----
 include::code-ch10/network.py[tag=source6]
 ----
-<1> Each block gets parsed using the `Block` class's `parse` method using the same stream that we have.
+<1> Each block gets parsed with the `Block` class's `parse` method, using the same stream that we have.
 <2> The number of transactions is always 0 and is a remnant of block parsing.
 <3> If we didn't get 0, something is wrong.
 
-Given the network connection that we've set up, we can download the headers, check their proof-of-work, and validate the block header difficulty adjustments:
+Given the network connection that we've set up, we can download the headers, check their proof-of-work, and validate the block header difficulty adjustments as follows:
 
 [source,python]
 ----
@@ -267,16 +267,16 @@ include::code-ch10/examples.py[tag=example1]
 ----
 <1> Check that the proof-of-work is valid.
 <2> Check that the current block is after the previous one.
-<3> Checking that the bits/target/difficulty is what we expect based on the previous epoch calculation.
+<3> Check that the bits/target/difficulty is what we expect based on the previous epoch calculation.
 <4> At the end of the epoch, calculate the next bits/target/difficulty.
 <5> Store the first block of the epoch to calculate bits at the end of the epoch.
 
 Note that this won't work on testnet as the difficulty adjustment algorithm is different.
 To make sure blocks can be found consistently for testing, if a block hasn't been found on testnet in 20 minutes, the difficulty drops to 1, making it very easy to find a block.
-This is on purpose as to allow testers to be able to keep building blocks on the network without expensive mining equipment.
+This is set up this way to allow testers to be able to keep building blocks on the network without expensive mining equipment.
 A $30 USB ASIC can typically find a few blocks per minute at the minimum difficulty.((("", startref="NWheader10")))
 
 === Conclusion
 
-We've managed to connect to a node on the network, handshake, download and verify that the block headers meet the consensus rules.
-In the next chapter, we focus on getting information about transactions that we're interested in from another node in a private, yet provable way.
+We've managed to connect to a node on the network, handshake, download the block headers, and verify that they meet the consensus rules.
+In the next chapter, we focus on getting information about transactions that we're interested in from another node in a private yet provable way.
