@@ -243,7 +243,7 @@ The Discrete Log problem in this context is the ability to reverse the above equ
 
 ++++
 <ul class="simplelist">
-<li>log<sub><em>P</em></sub> <em>Q</em> = 7</li>
+<li>log<sub>P</sub><em>Q</em> = 7</li>
 </ul>
 ++++
 
