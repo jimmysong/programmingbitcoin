@@ -98,7 +98,8 @@ class MerkleTree:
                     if right_hash is None:  # <9>
                         self.right()
                     else:  # <10>
-                        self.set_current_node(merkle_parent(left_hash, right_hash))
+                        self.set_current_node(merkle_parent(left_hash, 
+                        right_hash))
                         self.up()
                 else:  # <11>
                     self.set_current_node(merkle_parent(left_hash, left_hash))
