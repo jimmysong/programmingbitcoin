@@ -222,12 +222,12 @@ Transactions that large should generally be validated using a full node.
 
 === Merkle Block
 
-When((("Blocks", "Merkle Blocks", id="Bmerkel11")))((("Merkle Blocks", "role in proof of inclusion"))) a full node sends a proof of inclusion, there are two pieces of information that need to be included.
+When((("Blocks", "Merkle blocks", id="Bmerkel11")))((("Merkle blocks", "role in proof of inclusion"))) a full node sends a proof of inclusion, there are two pieces of information that need to be included.
 First, the light client needs the Merkle tree structure, and second, the light client needs to know which hash is at which position in the Merkle tree.
 Once both pieces of information are given, the light client can reconstruct the partial Merkle tree to reconstruct the Merkle root and validate the proof of inclusion.
-A full node communicates these two pieces of information to a light client using a Merkle Block.
+A full node communicates these two pieces of information to a light client using a Merkle block.
 
-To((("Merkle Blocks", "binary trees and")))((("binary trees"))) understand what's in a Merkle Block, we need to understand a bit about how a Merkle tree or more generally, Binary Trees, can be traversed.
+To((("Merkle blocks", "binary trees and")))((("binary trees"))) understand what's in a Merkle block, we need to understand a bit about how a Merkle tree or more generally, Binary Trees, can be traversed.
 In((("Merkle trees", "breadth-first versus depth-first ordering"))) a binary tree, nodes can be traversed breadth-first or depth-first.
 Breadth-first traversal would go level by level like <<bread_first_ordering>>.
 
@@ -255,7 +255,7 @@ image::images/prbc_1102.png[Merkle Proof]
 
 ==== Merkle Tree Structure
 
-The((("Merkle Blocks", "Merkle tree structure")))((("Merkle trees", "structure of"))) first thing a light client does is create the general structure of the Merkle tree.
+The((("Merkle blocks", "Merkle tree structure")))((("Merkle trees", "structure of"))) first thing a light client does is create the general structure of the Merkle tree.
 Because Merkle trees are built from the leaves upward, the only thing a light client needs is the number of leaves that exist to know the structure.
 The tree from <<merkle_proof_two>> has 16 leaves.
 A light client can create the empty Merkle tree like so:
@@ -278,7 +278,7 @@ include::code-ch11/answers.py[tag=exercise5,indent=0]
 
 ==== Coding a Merkle Tree
 
-We((("Merkle Blocks", "coding Merkle trees", id="MBcod11")))((("Merkle trees", "coding", id="MTcode11"))) create a `MerkleTree` class:
+We((("Merkle blocks", "coding Merkle trees", id="MBcod11")))((("Merkle trees", "coding", id="MTcode11"))) create a `MerkleTree` class:
 
 [source,python]
 ----
@@ -354,7 +354,7 @@ We can now traverse the tree for the number of leaves that aren't powers of two.
 
 ==== Merkle Block Command
 
-The((("Merkle Blocks", "merkleblock command"))) full node communicating a Merkle Block sends all the information needed to verify that the interesting transaction is in the Merkle tree.
+The((("Merkle blocks", "merkleblock command"))) full node communicating a Merkle block sends all the information needed to verify that the interesting transaction is in the Merkle tree.
 The `merkleblock` network command is what communicates this information and looks like <<parsed_merkleblock>>.
 
 [[parsed_merkleblock]]
@@ -382,7 +382,7 @@ include::code-ch11/answers.py[tag=exercise6,indent=0]
 
 ==== Using Flag Bits and Hashes
 
-The((("Merkle Blocks", "flag bits and hashes", id="MBflag11")))((("flag bits", id="flagbit11")))((("hashes", "using in Merkle Blocks", id="Hblock11"))) flag bits inform where the hashes go using depth-first ordering.
+The((("Merkle blocks", "flag bits and hashes", id="MBflag11")))((("flag bits", id="flagbit11")))((("hashes", "using in Merkle blocks", id="Hblock11"))) flag bits inform where the hashes go using depth-first ordering.
 
 The rules for the flag bits are:
 
@@ -392,7 +392,7 @@ The rules for the flag bits are:
 These are the items proven to be included in the Merkle tree.
 
 [[processing_a_merkle_block]]
-.Processing a Merkle Block
+.Processing a Merkle block
 image::images/prbc_1107.png[Merkle Blocks and Hashes]
 
 Given a tree from <<processing_a_merkle_block>>, the flag bit is 1 for the root node (1), since that hash is calculated by the light node.
