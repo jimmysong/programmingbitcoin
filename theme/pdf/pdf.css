@@ -3,6 +3,11 @@
 /*--------Put Your Custom CSS Rules Below--------*/
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/animal_theme/blob/master/pdf/pdf.css---*/
 
+/* for definition lists, roman term*/
+.dt_plain {
+   font-style: normal;
+}
+
 /*----Uncomment to turn on automatic code wrapping
 
 pre {
