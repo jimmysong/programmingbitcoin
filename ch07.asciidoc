@@ -151,7 +151,7 @@ For `SIGHASH_ALL`, the final transaction must have the exact outputs that were s
 The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like <<append_the_hash_type_sighash_all_or_the_orange_01000000>>.
 
 [[append_the_hash_type_sighash_all_or_the_orange_01000000]]
-.Append the hash type (SIGHASH_ALL), or the orange `01000000`
+.Append the hash type (SIGHASH_ALL), or the brown `01000000`
 image::images/prbc_0705.png[Validation Step 3]
 
 The hash256 of this modified transaction is interpreted as a Big-Endian integer to produce `z`.
