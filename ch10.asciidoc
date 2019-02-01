@@ -4,24 +4,24 @@
 [.lead]
 The((("peer-to-peer network", seealso="networking")))((("networking", "basics of"))) peer-to-peer network that Bitcoin runs on is what gives it a lot of its robustness. More than 65,000 nodes are running on the network as of this writing and are communicating constantly.
 
-The Bitcoin network is a((("broadcast networks", seealso="networking")))((("gossip networks", seealso="networking"))) broadcast network or a gossip network.
+The Bitcoin network is a((("broadcast networks", seealso="networking")))((("gossip networks", seealso="networking"))) broadcast network, or gossip network.
 Every node is announcing different transactions, blocks, and peers that it knows about.
 The protocol is rich and has a lot of features that have been added to it over the years.
 
-One thing to note about the networking protocol is that it is not consensus critical.
-The same data can be sent from one node to another using some other protocol and the blockchain itself would not be affected.
+One thing to note about the networking protocol is that it is not consensus-critical.
+The same data can be sent from one node to another using some other protocol and the blockchain itself will not be affected.
 
 With that in mind, we'll work in this chapter toward requesting, receiving, and validating block headers using the network protocol.
 
 === Network Messages
 
-All((("networking", "network messages"))) network messages looks like <<network_message_or_the_envelope_that_contains_the_actual_payload>>.
+All((("networking", "network messages"))) network messages look like <<network_message_or_the_envelope_that_contains_the_actual_payload>>.
 
 [[network_message_or_the_envelope_that_contains_the_actual_payload]]
-.Network Message or the Envelope that contains the actual payload
+.A network message—the envelope that contains the actual payload
 image::images/prbc_1001.png[Network Message]
 
-The((("networking", "network magic"))) first four bytes are always the same and are referred to as the _network magic_.
+The((("networking", "network magic"))) first 4 bytes are always the same and are referred to as the _network magic_.
 Magic bytes((("magic bytes"))) are common in network programming as the communication is asynchronous and can be intermittent.
 Magic bytes give the receiver of the message a place to start should the communication get interrupted (say, by your phone dropping signal).
 They are also useful for identifying the network.
@@ -31,17 +31,17 @@ Bitcoin testnet also has a different magic, `0b110907`, as opposed to the Bitcoi
 
 The next 12 bytes are the command field, or a description of what the payload actually carries.
 There are many different commands; an exhaustive list can be seen at https://en.bitcoin.it/wiki/Protocol_documentation[].
-The command field is meant to be human readable and this particular message is the byte-string "version" in ASCII with 0-byte padding.
+The command field is meant to be human-readable and this particular message is the byte string "version" in ASCII with 0-byte padding.
 
 The next 4 bytes are the length of the payload in Little-Endian.
-As we saw in the transaction and block parsing sections, the length of the payload is necessary, since the payload is variable.
-2^32^ is about 4 billion, so payloads can be as big as 4GB, though the reference client rejects any payloads over 32MB.
-In the message above, our payload is 101 bytes.
+As we saw in the transaction and block parsing sections, the length of the payload is necessary since the payload is variable.
+2^32^ is about 4 billion, so payloads can be as big as 4 GB, though the reference client rejects any payloads over 32 MB.
+In the message in Figure 10-1, our payload is 101 bytes.
 
 The((("checksum algorithm"))) next 4 bytes are the checksum field.
-The checksum algorithm is something of an odd choice as it's the first 4 bytes of the hash256 of the payload.
+The checksum algorithm is something of an odd choice, as it's the first 4 bytes of the hash256 of the payload.
 It's an odd choice because networking protocol checksums are normally designed to have error-correcting capability and hash256 has none.
-That said, hash256 is common in the rest of the Bitcoin protocol and is probably the reason it's used here.
+That said, hash256 is common in the rest of the Bitcoin protocol, which is probably the reason it's used here.
 
 The code to handle network messages requires us to create a new class:
 
