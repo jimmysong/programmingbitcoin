@@ -2,68 +2,72 @@
 == Elliptic Curve Cryptography
 
 [.lead]
-The((("mathematical tools", "Elliptic Curve Cryptography", id="MTelipcurcrypt03"))) previous two chapters covered some fundamental math.
-We learned how Finite Fields work and what an Elliptic Curve is.
-In this chapter, we're going to combine the two concepts to learn Elliptic Curve Cryptography.
+The((("mathematical tools", "elliptic curve cryptography", id="MTelipcurcrypt03"))) previous two chapters covered some fundamental math.
+We learned how finite fields work and what an elliptic curve is.
+In this chapter, we're going to combine the two concepts to learn elliptic curve cryptography.
 Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
 
 === Elliptic Curves over Reals
 
-We((("Elliptic Curve Cryptography", "elliptic curves over real numbers")))((("real numbers"))) discussed in <<chapter_elliptic_curves>> what an Elliptic Curve looks like visually because we were plotting the curve over _real_ numbers.
-Specifically, it's not just integers or even rational numbers, but all _real_ numbers.
-Pi, sqrt(2), __e__+7th root of 19, and the like are all real numbers.
+We((("elliptic curve cryptography", "elliptic curves over real numbers")))((("real numbers"))) discussed in <<chapter_elliptic_curves>> what an elliptic curve looks like visually because we were plotting the curve over _real_ numbers.
+Specifically, it's not just integers or even rational numbers, but all real numbers.
+Pi, __sqrt__(2), __e__+7th root of 19, and the like are all real numbers.
 
-This worked because _real_ numbers are also a field.
+This worked because real numbers are also a field.
 Unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
 
-1. If _a_ and _b_ are in the set, _a + b_ and _a ⋅ b_ are in the set.
-2. The additive identity: _0_ exists and has the property _a + 0 = a_.
-3. The multiplicative identity: _1_ exists and has the property _a ⋅ 1 = a_.
-4. If _a_ is in the set, _–a_ is in the set, which is defined as the value that makes _a + (–a) = 0_.
-5. If _a_ is in the set and is not 0, _a^–1^_ is in the set, which is defined as the value that makes _a ⋅ a^–1^ = 1_.
+1. If _a_ and _b_ are in the set, _a_ + _b_ and _a_ ⋅ _b_ are in the set.
+2. 0 exists and has the property _a_ + 0 = _a_.
+3. 1 exists and has the property _a_ ⋅ 1 = _a_.
+4. If _a_ is in the set, _–a_ is in the set, which is defined as the value that makes _a_ + (–__a__) = 0.
+5. If _a_ is in the set and is not 0, __a__^–1^ is in the set, which is defined as the value that makes _a_ ⋅ __a__^–1^ = 1.
 
-Clearly, all of these are true, as normal addition and multiplication apply for the first part, additive and multiplicative identities 0 and 1 exist, –__x__ is the additive inverse, and 1/__x__ is the multiplicative inverse.
+Clearly, all of these are true: normal addition and multiplication apply for the first part, the additive and multiplicative identities 0 and 1 exist, –__x__ is the additive inverse, and 1/__x__ is the multiplicative inverse.
 
 Real numbers are easy to plot on a graph.
-For example, __y__^2^ = __x__^3^ + 7 can be plotted like <<secp256k1_over_real_numbers>>:
+For example, __y__^2^ = __x__^3^ + 7 can be plotted like <<secp256k1_over_real_numbers>>.
 
 [[secp256k1_over_real_numbers]]
 .secp256k1 over real numbers
 image::images/prbc_0209.png[secp256k1 Curve]
 
-It turns out we can use the point addition equations over any field, including the Finite Fields we learned in <<chapter_finite_fields>>.
+It turns out we can use the point addition equations over any field, including the finite fields we learned about in <<chapter_finite_fields>>.
 The only difference is that we have to use the addition/subtraction/multiplication/division as defined in <<chapter_finite_fields>>, not the "normal" versions that the real numbers use.
 
 === Elliptic Curves over Finite Fields
 
-So((("Elliptic Curve Cryptography", "elliptic curves over finite fields", id="ECCfinite03")))((("Finite Fields", "elliptic curves over", id="FFelliptic03"))) what does an Elliptic Curve over a Finite Field look like?
+So((("elliptic curve cryptography", "elliptic curves over finite fields", id="ECCfinite03")))((("finite fields", "elliptic curves over", id="FFelliptic03"))) what does an elliptic curve over a finite field look like?
 Let's look at the equation __y__^2^ = _-x__^3^ + 7 over _F_~103~.
 We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
 
-* __y__^2^ = 64^2^ % 103 = 79
-* __x__^3^ + 7 = (17^3^+7) % 103 = 79
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = 64<sup>2</sup> % 103 = 79</li>
+<li><em>x</em><sup>3</sup> + 7 = (17<sup>3</sup>+7) % 103 = 79</li>
+</ul>
+++++
 
-We've verified that the point is on the curve using Finite Field math.
+We've verified that the point is on the curve using finite field math.
 
-Because we're evaluating the equation over a Finite Field, the plot of the equation looks vastly different (<<elliptic_curve_over_a_finite_field>>):
+Because we're evaluating the equation over a finite field, the plot of the equation looks vastly different (<<elliptic_curve_over_a_finite_field>>).
 
 [[elliptic_curve_over_a_finite_field]]
-.Elliptic Curve over a Finite Field
-image::images/prbc_0302.png[Elliptic Curve over a Finite Field]
+.Elliptic curve over a finite field
+image::images/prbc_0302.png[Elliptic curve over a finite field]
 
 As you can see, it's very much a scattershot of points and there's no smooth curve here.
 This is not surprising since the points are discrete.
 About the only pattern is that the curve is symmetric right around the middle, because of the __y__^2^ term.
-The graph is not symmetric over the x-axis as in the curve over reals, but about halfway up the y-axis due to there not being negative numbers in a Finite Field.
+The graph is not symmetric over the x-axis as in the curve over reals, but about halfway up the y-axis due to there not being negative numbers in a finite field.
 
-What's amazing is that we can use the same point addition equations with the addition, subtraction, multiplication, division, and exponentiation as we defined them for Finite Fields and everything still works.
-This may seem surprising, but abstract math has regularities like this despite being different than the traditional modes of calculation you may be familiar with.
+What's amazing is that we can use the same point addition equations with the addition, subtraction, multiplication, division, and exponentiation as we defined them for finite fields, and everything still works.
+This may seem surprising, but abstract math has regularities like this despite being different from the traditional modes of calculation you may be familiar with.
 
 include::code-ch03/answers.py[tag=exercise1,indent=0]
 
 === Coding Elliptic Curves over Finite Fields
 
-Because we defined an Elliptic Curve point and defined the `+`, `-` ,`*` and `/` operators for Finite Fields, we can combine the two classes to create Elliptic Curve points over a Finite Field.
+Because we defined an elliptic curve point and defined the `+`, `-` ,`*` and `/` operators for finite fields, we can combine the two classes to create elliptic curve points over a finite field:
 
 [source,python]
 ----
@@ -77,23 +81,23 @@ When initializing `Point`, we will run through this part of the code:
 include::code-ch03/ecc.py[tag=source1]
 ----
 
-The addition (`+`), multiplication (`*`), exponentiation (`**`), and equality (`!=`) here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField` respectively and _not_ the integer equivalents.
-Being able to do the same equation but with different definitions for the basic arithmetic operators is how we construct an Elliptic Curve Cryptography library.
+The addition (`+`), multiplication (`*`), exponentiation (`**`), and equality (`!=`) operators here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField`, respectively, and _not_ the integer equivalents.
+Being able to do the same equation but with different definitions for the basic arithmetic operators is how we construct an elliptic curve cryptography library.
 
-We've already coded the two classes that we need to implement Elliptic Curve points over a Finite Field.
+We've already coded the two classes that we need to implement elliptic curve points over a finite field.
 However, to check our work, it will be useful to create a test suite.
-We will do this using the results of Exercise 2.
+We will do this using the results of Exercise 2:
 
 [source,python]
 ----
 include::code-ch03/ecc.py[tag=source2]
 ----
-<1> We pass in `FieldElement` objects into the `Point` class for initialization.
+<1> We pass in `FieldElement` objects to the `Point` class for initialization.
 This will, in turn, use all the overloaded math operations in `FieldElement`.
 
 We can now run this test like so:
 
-[source,python]
+[source,pycon]
 ----
 >>> import ecc
 >>> from helper import run  # <1>
@@ -108,7 +112,7 @@ OK
 
 === Point Addition over Finite Fields
 
-We((("Elliptic Curve Cryptography", "point addition over finite fields", id="ECCpoint03")))((("Point Addition", "over finite fields", id="PAfinite03"))) can use all the same equations over Finite Fields, including the linear equation:
+We((("elliptic curve cryptography", "point addition over finite fields", id="ECCpoint03")))((("Point Addition", "over finite fields", id="PAfinite03"))) can use all the same equations over finite fields, including the linear equation:
 
 ++++
 <ul class="simplelist">
@@ -116,36 +120,42 @@ We((("Elliptic Curve Cryptography", "point addition over finite fields", id="ECC
 </ul>
 ++++
 
-It turns out that a "line" in a Finite Field is not quite what you'd expect (<<line_over_a_finite_field>>).
+It turns out that a "line" in a finite field is not quite what you'd expect (<<line_over_a_finite_field>>).
 
 [[line_over_a_finite_field]]
-.Line over a Finite Field
-image::images/prbc_0303.png[Line over a Finite Field]
+.Line over a finite field
+image::images/prbc_0303.png[Line over a finite field]
 
-The equation nevertheless works and we can calculate what `y` should be for a given `x`.
+The equation nevertheless works, and we can calculate what _y_ should be for a given _x_.
 
-Remarkably, point addition works over Finite Fields as well.
-This is because the Elliptic Curve point addition works over all fields!
-The same exact formulas we used to calculate point addition over reals work over Finite Fields.
-Specifically:
+Remarkably, point addition works over finite fields as well.
+This is because elliptic curve point addition works over all fields!
+The same exact formulas we used to calculate point addition over reals work over finite fields.
+Specifically, when __x__~1~ ≠ __x__~2~:
 
-when __x__~1~ ≠ __x__~2~:
-
-* __P__~1~ = (__x__~1~,__y__~1~), __P__~2~ = (__x__~2~,__y__~2~), __P__~3~ = (__x__~3~,__y__~3~)
-* __P__~1~ + __P__~2~ = __P__~3~
-* __s__ = (__y__~2~ – __y__~1~)/(__x__~2~ – __x__~1~)
-* __x__~3~ = __s__^2^ – __x__~1~ – __x__~2~
-* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (<em>y</em><sub>3</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>3</sub> – <em>x</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em>^2^ – <em>x</em><sub>1</sub> – <em>x</em><sub>3</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 when __P__~1~ = __P__~2~:
 
-* __P__~1~ = (__x__~1~,__y__~1~), __P__~3~ = (__x__~3~,__y__~3~)
-* __P__~1~ + __P__~1~ = __P__~3~
-* __s__ = (3__x__~1~^2^ + __a__)/(2__y__~1~)
-* __x__~3~ = __s__^2^ – 2__x__~1~
-* __y__~3~ = __s__(__x__~1~ – __x__~3~) – __y__~1~
+++++
+<ul class="simplelist">
+<li<em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>1</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + <em>a</em>)/(2<em>y</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
-All of the equations for Elliptic Curves work over Finite Fields, which sets us up to create some cryptographic primitives.
+All of the equations for elliptic curves work over finite fields, which sets us up to create some cryptographic primitives.
 
 === Coding Point Addition over Finite Fields
 
@@ -162,7 +172,7 @@ include::code-ch03/answers.py[tag=exercise3,indent=0]
 
 === Scalar Multiplication for Elliptic Curves
 
-Because((("scalar multiplication", "for elliptic curves", id="SMelliptic03")))((("Elliptic Curve Cryptography", "scalar multiplication for elliptic curves", id="ECCscalar03"))) we can add a point to itself, we can introduce some new notation:
+Because((("scalar multiplication", "for elliptic curves", id="SMelliptic03")))((("elliptic curve cryptography", "scalar multiplication for elliptic curves", id="ECCscalar03"))) we can add a point to itself, we can introduce some new notation:
 
 ++++
 <ul class="simplelist">
@@ -194,7 +204,7 @@ You can see that this is a complete scattershot.
 This is because point addition is nonlinear and not easy to calculate.
 Performing scalar multiplication is straightforward, but doing the opposite, point division, is not.
 
-This((("Discrete Log problem"))) is called the Discrete Log problem and is the basis of Elliptic Curve Cryptography.
+This((("Discrete Log problem"))) is called the Discrete Log problem and is the basis of elliptic curve cryptography.
 
 Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, point at infinity is the additive identity or 0).
 If we imagine a point G and scalar-multiply until we get the point at infinity, we end up with a set:
@@ -214,7 +224,7 @@ Groups are interesting mathematically because they behave a lot like addition:
 </ul>
 ++++
 
-When we combine the fact that scalar multiplication is easy to go in one direction but hard in the other and the mathematical properties of a Group, we have exactly what we need for Elliptic Curve Cryptography.
+When we combine the fact that scalar multiplication is easy to go in one direction but hard in the other and the mathematical properties of a Group, we have exactly what we need for elliptic curve cryptography.
 
 .Why Is This Called the Discrete Log Problem?
 ****
@@ -257,7 +267,7 @@ include::code-ch03/answers.py[tag=exercise4,indent=0]
 === Scalar Multiplication Redux
 
 _Scalar multiplication_ is adding the same point to itself some number of times.
-The key to making scalar multiplication into Public Key Cryptography is the fact that scalar multiplication on Elliptic Curves is very hard to reverse.
+The key to making scalar multiplication into Public Key Cryptography is the fact that scalar multiplication on elliptic curves is very hard to reverse.
 Note the previous exercise.
 Most likely, you calculated the point _s_ ⋅ (47,71) in __F__~223~ for `s` from 1 until 21.
 Here are the results:
@@ -289,8 +299,8 @@ We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger
 
 === Mathematical Groups
 
-The((("Elliptic Curve Cryptography", "mathematical groups", id="ECCmath03"))) preceding math (Finite Fields, Elliptic Curves, combining the two), was really to bring us to this point.
-What we actually want to generate for the purposes of Public Key Cryptography are((("Finite Cyclic Groups", "generating"))) Finite Cyclic Groups, and it turns out that if we take a Generator Point from an Elliptic Curve over a Finite Field, we can generate a Finite Cyclic Group.
+The((("elliptic curve cryptography", "mathematical groups", id="ECCmath03"))) preceding math (finite fields, elliptic curves, combining the two), was really to bring us to this point.
+What we actually want to generate for the purposes of Public Key Cryptography are((("Finite Cyclic Groups", "generating"))) Finite Cyclic Groups, and it turns out that if we take a Generator Point from an elliptic curve over a finite field, we can generate a Finite Cyclic Group.
 
 Unlike fields, groups have only a single operation.
 In our case, Point Addition is our operation.
@@ -391,7 +401,7 @@ include::code-ch03/answers.py[tag=exercise5,indent=0]
 
 === Coding Scalar Multiplication
 
-What((("scalar multiplication", "coding for")))((("Elliptic Curve Cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
+What((("scalar multiplication", "coding for")))((("elliptic curve cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
 
 [source,python]
 ----
@@ -439,23 +449,23 @@ If it is, then we add the value of the current bit.
 
 This is an advanced technique and if you don't understand bitwise operators, think of representing the coefficient in binary and only adding the point where there are 1's.
 
-With `__add__` and `__rmul__`, we can start defining some more complicated Elliptic Curves.
+With `__add__` and `__rmul__`, we can start defining some more complicated elliptic curves.
 
 [[definingCurveBC]]
 === Defining the Curve for Bitcoin
 
-While((("Elliptic Curve Cryptography", "secp256k1 curve", id="ECCsecp03")))((("secp256k1 curve", id="secp03")))((("Elliptic Curves", "secp256k1 curve", id="ECsecp03"))) we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
+While((("elliptic curve cryptography", "secp256k1 curve", id="ECCsecp03")))((("secp256k1 curve", id="secp03")))((("elliptic curves", "secp256k1 curve", id="ECsecp03"))) we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
 Small primes mean that we can use a computer to search through the entire Group.
 If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break Discrete Log.
 
 But what if we made the prime larger?
 It turns out that we can choose much larger primes than we've been using.
-The security of Elliptic Curve Cryptography depends on computers _not_ being able to go through an appreciable fraction of the group.
+The security of elliptic curve cryptography depends on computers _not_ being able to go through an appreciable fraction of the group.
 
-An Elliptic Curve for Public Key Cryptography is defined with the following parameters:
+An elliptic curve for Public Key Cryptography is defined with the following parameters:
 
 * We specify the `a` and `b` of the curve __y__^2^ = __x__^3^ + _ax_ + _b_.
-* We specify the prime of the Finite Field, `p`.
+* We specify the prime of the finite field, `p`.
 * We specify the _x_ and _y_ coordinates of the generator point _G_
 * We specify the order of the group generated by _G_, `n`.
 
@@ -577,7 +587,7 @@ include::code-ch03/examples.py[tag=example8]
 
 === Public Key Cryptography
 
-At((("Elliptic Curve Cryptography", "Public Key Cryptography")))((("Public Key Cryptography", "asymmetric equation"))) last, we have the tools that we need to do Public Key Cryptography operations.
+At((("elliptic curve cryptography", "Public Key Cryptography")))((("Public Key Cryptography", "asymmetric equation"))) last, we have the tools that we need to do Public Key Cryptography operations.
 The key operation that we need is `P=eG`, which is an _asymmetric_ equation.
 We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
 This is the Discrete Log Problem described earlier.
@@ -589,7 +599,7 @@ We'll note here that the private key is a single 256-bit number and the public k
 
 === Signing and Verification
 
-To((("Elliptic Curve Cryptography", "signing and verification", id="ECCsign03")))((("signing and verification", "purpose of"))) set up the motivation for why signing and verification exists, imagine this scenario.
+To((("elliptic curve cryptography", "signing and verification", id="ECCsign03")))((("signing and verification", "purpose of"))) set up the motivation for why signing and verification exists, imagine this scenario.
 You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any particular target.
 
 Now if someone could observe you and interact with you, proving this would be easy.
@@ -982,7 +992,7 @@ This makes transactions less malleable (more on that in <<chapter_segwit>>).((("
 
 ### Conclusion
 
-We've covered Elliptic Curve Cryptography and can now prove that we know a secret by signing something. We can also verify that the person with the secret actually signed a message.
+We've covered elliptic curve cryptography and can now prove that we know a secret by signing something. We can also verify that the person with the secret actually signed a message.
 Even if you don't read another page in this book, you've learned to implement what was once considered https://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States["weapons-grade munitions"].
 This is a major step in your journey and will be essential for the rest of the book!
 
