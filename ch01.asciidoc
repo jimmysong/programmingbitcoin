@@ -584,9 +584,7 @@ Namely that these sets are equal:
 
 ++++
 <ul class="simplelist">
-<li>{1, 2, 3, ...</li>
-<li><em>p</em>-2, <em>p</em>-1} = {<em>n</em>%<em>p</em>, 2<em>n</em>%<em>p</em>, 3<em>n</em>%<em>p</em>, ...</li>
-<li>(<em>p</em>-2)<em>n</em>%<em>p</em>, (<em>p</em>-1)<em>n</em>%<em>p</em>}</li>
+<li>{1, 2, 3, ... <em>p</em>-2, <em>p</em>-1} = {<em>n</em>%<em>p</em>, 2<em>n</em>%<em>p</em>, 3<em>n</em>%<em>p</em> (<em>p</em>-2)<em>n</em>%<em>p</em>, (<em>p</em>-1)<em>n</em>%<em>p</em>}</li>
 </ul>
 ++++
 
@@ -605,16 +603,15 @@ The left side is the same as `(p-1)! % p` where `!` is the factorial (e.g.,
 
 ++++
 <ul class="simplelist">
-<li>(<em>p</em>-1)! ⋅ <em>n</em><sup>(<em>p</em> - 1)</sup> % <em>p</em></li>
+<li>(<em>p</em>-1)! ⋅ <em>n</em><sup>(<em>p</em>-1)</sup> % <em>p</em></li>
 </ul>
 ++++
-
 
 Thus:
 
 ++++
 <ul class="simplelist">
-<li>(<em>p</em> - 1)! % <em>p</em> = (<em>p</em> - 1)! ⋅ <em>n</em><sup>(<em>p</em> - 1)</sup> % <em>p</em></li>
+<li>(<em>p</em> - 1)! % <em>p</em> = (p - 1)! ⋅ <em>n</em><sup>(<em>p</em>-1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
