@@ -19,7 +19,7 @@ Calculate the Bloom Filter for "hello world" and "goodbye" using the hash160 has
 # tag::exercise2[]
 ==== Exercise 2
 
-Given a Bloom Filter with size = 10, function count = 5, tweak = 99, what are the bytes that are set after adding these items? (Use `bit_field_to_bytes` to convert to bytes.)
+Given a Bloom Filter with `size=10`, `function_count=5`, `tweak=99`, what are the bytes that are set after adding these items? (Use `bit_field_to_bytes` to convert to bytes.)
 
 * `b'Hello World'`
 * `b'Goodbye!'`
