@@ -5,34 +5,34 @@ This((("Bitcoin", "approach to learning"))) book will teach you the technology o
 It doesn't cover the monetary, economic, or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible.
 There's a tendency to hype Bitcoin and blockchain without really understanding what's going on; this book is meant to be an antidote to that tendency.
 
-After all, there are lots of books about Bitcoin, everything from the history of Bitcoin, the economic aspects to a technical description of Bitcoin.
+After all, there are lots of books about Bitcoin, covering the history and the economic aspects and giving technical descriptions.
 The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library.
 The library is not meant to be exhaustive or efficient.
 The aim of the library is to help you learn.
 
-=== Who Is This Book for?
+=== Who Is This Book For?
 
 This((("Bitcoin", "target audience"))) book is for programmers who want to learn how Bitcoin works by coding it themselves.
 You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch.
 This is not a reference book where you can look up the specification for a particular feature.
 
-The material from this book has been largely taken from my two-day seminar where I teach developers all about Bitcoin (see https://programmingblockchain.com[]).
-The material has been refined extensively, as I've taught this material more than 20 times and have taught more than 400 people as of this writing.
+The material from this book has been largely taken from my https://programmingblockchain.com[two-day seminar] where I teach developers all about Bitcoin.
+The material has been refined extensively, as I've taught this course more than 20 times, to over 400 people as of this writing.
 
-By the time you're done with the book, you'll not only be able to create transactions, but also get all the data you need from peers and send the transaction over the network.
+By the time you're done with the book, you'll not only be able to create transactions, but also get all the data you need from peers and send the transactions over the network.
 It covers everything needed to accomplish this, including the math, parsing, network connectivity, and block validation.
 
 === What Do I Need to Know?
 
-The((("Bitcoin", "prerequisites to learning"))) prerequisites for this book are that you know programming, Python in particular.
+A((("Bitcoin", "prerequisites to learning"))) prerequisite for this book is that you know programming—Python, in particular.
 The library itself is written in Python 3, and a lot of the exercises can be done in a controlled environment like a Jupyter notebook.
-An intermediate knowledge of Python is preferable, but even a beginning knowledge of Python is probably sufficient to get a lot of the concepts.
+An intermediate knowledge of Python is preferable, but even a beginning knowledge is probably sufficient to get a lot of the concepts.
 
 Some knowledge of math is required, especially for Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>].
 These chapters introduce mathematical concepts probably not familiar to those who didn't major in mathematics.
 Math knowledge around algebra level should suffice to understand the new concepts and to code the exercises covered in those chapters.
 
-General computer science knowledge like hash functions will come in handy, but are not strictly necessary to complete the exercises in this book.
+General computer science knowledge, for example of hash functions, will come in handy but is not strictly necessary to complete the exercises in this book.
 
 === How Is the Book Arranged?
 
@@ -46,19 +46,19 @@ Finite Fields and Elliptic Curves are needed to understand Elliptic Curve Crypto
 After we've established the Public Key Cryptography at the end of <<chapter_elliptic_curve_cryptography>>, <<chapter_serialization>> adds parsing and serialization, which are how cryptographic primitives are stored and transmitted.
 
 <<chapter_tx_parsing>> covers the Transaction structure.
-<<chapter_script>> goes into the smart contract language behind Bitcoin called Script.
-<<chapter_tx>> combines all the previous chapters in validating and creating transactions based on the Elliptic Curve Cryptography from the first four chapters.
-<<chapter_p2sh>> establishes how p2sh works, which is a way to make more powerful smart contracts.
+<<chapter_script>> goes into the smart contract language behind Bitcoin, called Script.
+<<chapter_tx>> builds on all the previous chapters, showing how to validate and create transactions based on the Elliptic Curve Cryptography from the first four chapters.
+<<chapter_p2sh>> establishes how pay-to-script-hash (p2sh) works, which is a way to make more powerful smart contracts.
 
 <<chapter_blocks>> covers Blocks, which are groups of ordered Transactions.
 <<chapter_networking>> covers network communication in Bitcoin.
 <<chapter_spv>> and <<chapter_bloom_filters>> go into how a light client, or software without access to the entire blockchain, might request and broadcast data to and from nodes that store the entire blockchain.
 
-<<chapter_segwit>> covers Segwit, a backward-compatible upgrade introduced in 2017, and <<chapter_advanced>> covers suggestions for further study.
-Again, these chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
+<<chapter_segwit>> covers Segwit, a backward-compatible upgrade introduced in 2017, and <<chapter_advanced>> provides suggestions for further study.
+These chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
 
-Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] have exercises that require you to build up the library from scratch.
-The answers are in <<appendix_solutions>> and in the corresponding chapter directory in the GitHub repository (https://github.com/jimmysong/programmingbitcoin).
+Chapters 1–12 have exercises that require you to build up the library from scratch.
+The answers are in <<appendix_solutions>> and in the corresponding chapter directory in the https://github.com/jimmysong/programmingbitcoin[GitHub repository].
 You will be writing many Python classes and building toward not just validating transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
 The last exercise in <<chapter_bloom_filters>> specifically asks you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising, and broadcast that on the network.
@@ -71,67 +71,61 @@ To aid your progress, we will be looking at a lot of code and diagrams throughou
 === Setting Up
 
 To((("Bitcoin", "downloading and installation", id="Bdown00")))((("example code", "environment setup", id="ECset00")))((("environment setup", id="envset00")))((("exercises", "environment setup", id="Eset00"))) get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
-Here are the commands for setting everything up.
+Here are the steps required to set everything up:
 
-Install Python 3.5 or higher on your machine:
-
+. Install Python 3.5 or higher on your machine:
++
 Windows:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe[]
+macOS:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg[]
+Linux:: See your distro docs (many Linux distributions, like Ubuntu, come with Python 3.5+ preinstalled)
 
-Mac OS X:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg[]
-
-Linux:: See your distro docs (many Linux distributions like Ubuntu come with Python 3.5+ pre-installed)
-
-Install pip by downloading this script:
-
-https://bootstrap.pypa.io/get-pip.py[]
-
+. Install pip by downloading this script: https://bootstrap.pypa.io/get-pip.py[].
++
 Run this script using Python 3:
-
++
 [source,bash]
 ----
 $ python3 get-pip.py
 ----
 
-Install git:
+. Install Git. The commands for downloading and installing it are at https://git-scm.com/downloads[].
 
-The commands for downloading and installing are at https://git-scm.com/downloads[].
-
-Download the source code for this book:
-
+. Download the source code for this book:
++
 [source,bash]
 ----
 $ git clone https://github.com/jimmysong/programmingbitcoin
 $ cd programmingbitcoin
 ----
 
-Install virtualenv:
-
+. Install virtualenv:
++
 [source,bash]
 ----
 $ pip install virtualenv
 ----
 
-Install the requirements:
-
-Linux/OSX:
-
+. Install the requirements:
++
+Linux/macOS::
++
 [source,bash]
 ----
 $ virtualenv -p python3 .venv
 $ . .venv/bin/activate
 (.venv) $ pip install -r requirements.txt
 ----
-
-Windows:
-
++
+Windows::
++
 ----
 C:\programmingbitcoin> virtualenv -p C:\PathToYourPythonInstallation\Python.exe .venv
 C:\programmingbitcoin> .venv\Scripts\activate.bat
 C:\programmingbitcoin> pip install -r requirements.txt
 ----
 
-Run Jupyter((("Jupyter Notebook", "running"))) Notebook:
-
+. Run Jupyter((("Jupyter Notebook", "running"))) Notebook:
++
 [source,bash]
 ----
 (.venv) $ jupyter notebook
@@ -140,8 +134,8 @@ Run Jupyter((("Jupyter Notebook", "running"))) Notebook:
 [I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
 [I 11:13:23.061 NotebookApp] http://localhost:8888/?token=
   f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
-[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels 
-  (twice to skip confirmation).
+[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down  
+  all kernels (twice to skip confirmation).
 [C 11:13:23.065 NotebookApp]
 
     Copy/paste this URL into your browser when you connect for the first time,
