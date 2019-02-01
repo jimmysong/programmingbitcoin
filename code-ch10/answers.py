@@ -139,7 +139,7 @@ methods.append(serialize)
 # tag::exercise5[]
 ==== Exercise 5
 
-Write the `handshake` method for `SimpleNode`
+Write the `handshake` method for `SimpleNode`.
 # end::exercise5[]
 '''
 
