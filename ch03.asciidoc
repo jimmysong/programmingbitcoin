@@ -510,8 +510,7 @@ To give you an idea, here are some relative scales:
 
 A trillion (10^12^) computers doing a trillion computations every trillionth (10^–12^) of a second for a trillion years is still less than 10^56^ computations.
 
-Think of finding a private key this way.
-There are as many possible private keys in Bitcoin as there are atoms in a billion galaxies.
+Think of finding a private key this way: there are as many possible private keys in Bitcoin as there are atoms in a billion galaxies.
 ****
 
 ==== Working with secp256k1
