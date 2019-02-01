@@ -458,7 +458,7 @@ Operating in __F__~19~ once again:
 
 ++++
 <ul class="simplelist">
-<li>5 ⋅ 3 = 5 + 5 + 5 = 155 ⋅<sub><em>f</em></sub> 3 = 5 + <sub><em>f</em></sub>5 + <sub><em>f</em></sub>5</li>
+<li>5 ⋅<sub><em>f</em></sub> 3 = 5 +<sub><em>f</em></sub> 5 +<sub><em>f</em></sub>5</li>
 <li>8 ⋅<sub><em>f</em></sub> 17 = 8 + <sub><em>f</em></sub> 8 + <sub><em>f</em></sub> 8 + <sub><em>f</em></sub> ... (17 total 8's) ... + <sub><em>f</em></sub> 8</li>
 </ul>
 ++++
