@@ -186,7 +186,7 @@ def __mul__(self, other):
 
 Write the corresponding `__truediv__` method that defines the division of two field elements.
 
-Note that in Python 3, division is separated into `__truediv__` and `__floordiv__`. The first does normal division, the second does integer division.
+Note that in Python 3, division is separated into `__truediv__` and `__floordiv__`. The first does normal division and the second does integer division.
 # end::exercise9[]
 '''
 
