@@ -161,7 +161,7 @@ def parse(cls, s):
 # tag::exercise7[]
 ==== Exercise 7
 
-Write the `is_valid` method for `MerkleBlock`
+Write the `is_valid` method for `MerkleBlock`.
 # end::exercise7[]
 '''
 
