@@ -703,8 +703,6 @@ In __F__~19~:
 </ul>
 ++++
 
-* 
-*
 
 This is a relatively expensive calculation as exponentiating grows very fast.
 Division is the most expensive operation for that reason.
