@@ -537,7 +537,7 @@ include::code-ch02/answers.py[tag=exercise7,indent=0]
 
 === Coding One More Exception
 
-There is one more exception and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
+There is one more exception, and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
 
 [[vertical_and_tangent_to_the_curve]]
 .Vertical and tangent to the curve
@@ -556,9 +556,9 @@ class Point:
 	if self == other and self.y == 0 * self.x:  # <1>
 	    return self.__class__(None, None, self.a, self.b)
 ----
-<1> If the two points are equal and the _y_ coordinate is zero, we return the point at infinity.((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
+<1> If the two points are equal and the _y_ coordinate is 0, we return the point at infinity.((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
 
 === Conclusion
 
-We've covered what elliptic curves are, how they work and how to do point addition.
-We now combine the concepts from <<chapter_finite_fields>> and <<chapter_elliptic_curves>> to learn elliptic curve cryptography in <<chapter_elliptic_curve_cryptography>>.
+We've covered what elliptic curves are, how they work, and how to do point addition.
+We'll now combine the concepts from the first two chapters to learn elliptic curve cryptography in <<chapter_elliptic_curve_cryptography>>.
