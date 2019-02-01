@@ -80,7 +80,7 @@ def __ne__(self, other):
 # tag::exercise3[]
 ==== Exercise 3
 
-Handle the case where the two points are additive inverses. That is, they have the same `x`, but a different `y`, causing a vertical line. This should return the point at infinity.
+Handle the case where the two points are additive inverses (that is, they have the same `x` but a different `y`, causing a vertical line). This should return the point at infinity.
 # end::exercise3[]
 # tag::exercise5[]
 ==== Exercise 5
