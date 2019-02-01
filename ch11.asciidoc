@@ -24,8 +24,8 @@ Once they've verified that the transaction has been included in a block sufficie
 Once you've sent the transaction to the other party, there really isn't anything for you to do other than wait until you receive whatever it is you're exchanging the Bitcoins for.
 
 When getting paid Bitcoins, however, we have a dilemma.
-If we are connected and have the full blockchain, we can easily see when the transaction is in a sufficiently deep block, at which point we'd give them our goods or services.
-If we don't have the full blockchain, as with a phone, what can we do?
+If we are connected and have the full blockchain, we can easily see when the transaction is in a sufficiently deep block, at which point we give the other party our goods or services.
+But if we don't have the full blockchain, as with a phone, what can we do?
 
 The answer lies in the Merkle Root field from the block header that we saw in <<chapter_blocks>>.
 As we saw in the last chapter, we can download the block headers and verify that they meet the Bitcoin consensus rules.
@@ -38,14 +38,14 @@ The rest of this chapter goes into what the proof of inclusion is and how to ver
 
 A((("Merkle Trees", "constructing"))) Merkle Tree is a computer science structure designed for efficient proofs of inclusion.
 The prerequisites are an ordered list of items and a cryptographic hash function.
-In our case, the ordered list of items are transactions in a block and the hash function, hash256.
+In our case, the items in the ordered list are transactions in a block and the hash function is hash256.
 To construct the Merkle Tree, we follow this algorithm:
 
 1. Hash all the items of the ordered list with the provided hash function.
 2. If there is exactly 1 hash, we are done.
-3. If there is an odd number of hashes, we duplicate the last hash in the list and add it to the end so that we have an even number of hashes.
+3. Otherwise, if there is an odd number of hashes, we duplicate the last hash in the list and add it to the end so that we have an even number of hashes.
 4. We pair the hashes in order and hash the concatenation to get the parent level, which should have half the number of hashes.
-5. Go to 2.
+5. Go to &#35;2.
 
 The idea is to come to a single hash that "represents" the entire ordered list.
 Visually, a Merkle Tree looks like <<merkle_tree_chap_eleven>>.
@@ -54,17 +54,17 @@ Visually, a Merkle Tree looks like <<merkle_tree_chap_eleven>>.
 .Merkle Tree
 image::images/prbc_1101.png[Merkle Tree]
 
-The bottom row is what we call the leaves of the tree.
+The bottom row is what we call the _leaves_ of the tree.
 All((("internal nodes"))) other nodes besides the leaves are called _internal nodes_.
-The leaves get combined to produce its _parent level_ (H~AB~ and H~CD~) and when we calculate the parent level of that, we get the Merkle Root.
+The leaves get combined to produce a _parent level_ (H~AB~ and H~CD~), and when we calculate the parent level of that, we get the Merkle Root.
 
-We'll go through each part of this process below.
+We'll go through each part of this process in the following sections.
 
 [WARNING]
 .Be Careful with Merkle Trees!
 ====
-There((("Denial of Service attack (DoS) attacks"))) was a vulnerability in Bitcoin 0.4-0.6, which is detailed in CVE-2012-2459.
-There was a Denial of Service vector due to the duplication of the last item in Merkle Trees, which caused some nodes to invalidate blocks even if they were valid.
+There((("Denial of Service attack (DoS) attacks"))) was a vulnerability in Bitcoin 0.4&#8211;0.6, which is detailed in CVE-2012-2459.
+There was a denial-of-service vector due to the duplication of the last item in Merkle Trees, which caused some nodes to invalidate blocks even if they were valid.
 ====
 
 === Merkle Parent
@@ -74,7 +74,7 @@ As they are ordered, we will call the two hashes the _left_ hash and the _right_
 The hash of the left and right hashes is what we call the _parent_ hash.
 To clarify, here's the formula for the parent hash:
 
-`H = Hashing function, P = Parent Hash, L = Left Hash, R = Right Hash`
+`H = Hashing function, P = Parent hash, L = Left hash, R = Right hash`
 
 `P=H(L||R)`
 
