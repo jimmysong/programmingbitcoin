@@ -117,7 +117,7 @@ As of this writing there are roughly 550,000 blocks or ~45 megabytes in block he
 The entire blockchain, on the other hand, is roughly 200GB, so the headers are roughly .023% of the size.
 The fact that headers are so much smaller is an important feature when we look at simplified payment verification in <<chapter_spv>>.
 
-Like the transaction ID, the block ID the hex representation of the hash256 of the header interpreted in Little-Endian.
+Like the transaction ID, the block ID is the hex representation of the hash256 of the header interpreted in Little-Endian.
 The block ID is interesting:
 
 [source,python]
