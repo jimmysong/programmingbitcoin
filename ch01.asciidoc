@@ -603,7 +603,7 @@ The left side is the same as `(p-1)! % p` where `!` is the factorial (e.g.,
 
 ++++
 <ul class="simplelist">
-<li>(<em>p</em>-1)! ⋅ <em>n</em><sup>(<em>p</em>-1)</sup> % <em>p</em></li>
+<li>(<em>p</em>-1)! ⋅ <em>n</em><sup>(p-1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
@@ -611,7 +611,7 @@ Thus:
 
 ++++
 <ul class="simplelist">
-<li>(<em>p</em> - 1)! % <em>p</em> = (p - 1)! ⋅ <em>n</em><sup>(<em>p</em>-1)</sup> % <em>p</em></li>
+<li>(<em>p</em> - 1)! % <em>p</em> = (<em>p</em> - 1)! ⋅ <em>n</em><sup>(p-1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
