@@ -2,7 +2,7 @@
 # tag::exercise2[]
 ==== Exercise 2
 
-Solve these problems in __F__~57~ (assume all pass:[+s] here are pass:[+<sub><em>f</em></sub>] and –s here are pass:[–<sub><em>f</em></sub>])
+Solve these problems in __F__~57~ (assume all pass:[+'s] here are pass:[+<sub><em>f</em></sub>] and –'s here are pass:[–<sub><em>f</em></sub>]):
 
 * 44 + 33
 * 9 – 29
