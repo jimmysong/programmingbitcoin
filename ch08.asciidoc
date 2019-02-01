@@ -177,7 +177,7 @@ We put the hash of the RedeemScript as the ScriptPubKey (<<pay_to_script_hash_p2
 image::images/prbc_0811.png[p2sh ScriptPubKey]
 
 The hash digest here is the hash160 of the RedeemScript, or what was previously the ScriptPubKey.
-We're locked the funds to the _hash_ of the RedeemScript, which needs to be revealed at unlock time.
+We're locking the funds to the _hash_ of the RedeemScript, which needs to be revealed at unlock time.
 
 Creating the ScriptSig for a p2sh script involves not only revealing the RedeemScript, but also unlocking the RedeemScript.
 At this point, you might wonder, where is the RedeemScript stored?
