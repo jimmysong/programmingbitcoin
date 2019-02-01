@@ -477,7 +477,7 @@ The rest of the formula goes through as before, except __x__~1~ = __x__~2~, so w
 .Deriving the Slope Tangent to the Curve
 ====
 We can derive the slope of the tangent line using some slightly more advanced math: calculus.
-We know that the slope at a given point is
+We know that the slope at a given point is:
 
 ++++
 <ul class="simplelist">
@@ -515,7 +515,7 @@ Solving for __dy__/__dx__, we get:
 
 
 That's how we arrive at the slope formula.
-The rest of the results from the point-addition formula derivation hold.
+The rest of the results from the point addition formula derivation hold.
 ====
 
 include::code-ch02/answers.py[tag=exercise6,indent=0]
@@ -523,11 +523,15 @@ include::code-ch02/answers.py[tag=exercise6,indent=0]
 === Coding Point Addition for When P~1~ = P~2~
 
 We adjust the `__add__` method to account for this particular case.
-We have the formulas, we now implement them.
+We have the formulas, and now we implement them:
 
-* <em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + __a__)/(2<em>y</em><sub>1</sub>)
-* <em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub>
-* <em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub>
+++++
+<ul class="simplelist">
+<li><em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + <em>a</em>)/(2<em>y</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
 
 include::code-ch02/answers.py[tag=exercise7,indent=0]
 
