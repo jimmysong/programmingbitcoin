@@ -189,19 +189,19 @@ include::code-ch10/answers.py[tag=exercise5,indent=0]
 === Getting Block Headers
 
 Now((("networking", "getting block headers")))((("Blocks", "getting block headers"))) that we have code to connect to a node, what can we do?
-When any node first connects to the network, the data that's most crucial to get and verify are the block headers.
+When any node first connects to the network, the data that's most crucial to get and verify is the block headers.
 For full nodes, downloading the block headers allows them to asynchronously ask for full blocks from multiple nodes, parallelizing the download of the blocks.
 For light clients, downloading headers allows them to verify the proof-of-work in each block.
-As we'll see in <<chapter_spv>>, light clients will be able to get proofs-of-inclusion through the network, but that requires the light clients to have the block headers.
+As we'll see in <<chapter_spv>>, light clients will be able to get proofs of inclusion through the network, but that requires the light clients to have the block headers.
 
 Nodes((("getheaders command"))) can give us the block headers without taking up much bandwidth.
-The command to get the block headers is called `getheaders` and it looks like <<parsed_getheaders>>.
+The command to get the block headers is called `getheaders`, and it looks like <<parsed_getheaders>>.
 
 [[parsed_getheaders]]
-.Parsed `getheaders`
+.Parsed getheaders
 image::images/prbc_1003.png[GetHeaders payload]
 
-As with Version, we start with the protocol version, then the number of block headers in this list (this number can be more than 1 if there's a chain split), then the starting block headers, and the ending block header last.
+As with version, we start with the protocol version, then the number of block headers in this list (this number can be more than 1 if there's a chain split), then the starting block header, and finally the ending block header.
 If we specify the ending block to be `000...000`, we're indicating that we want as many as the other node will give us.
 The maximum number of headers that we can get back is 2,000, or almost a single difficulty adjustment period (2,016 blocks).
 
