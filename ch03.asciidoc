@@ -143,7 +143,7 @@ Specifically, when __x__~1~ ≠ __x__~2~:
 </ul>
 ++++
 
-when __P__~1~ = __P__~2~:
+And when __P__~1~ = __P__~2~:
 
 ++++
 <ul class="simplelist">
@@ -159,7 +159,7 @@ All of the equations for elliptic curves work over finite fields, which sets us 
 
 === Coding Point Addition over Finite Fields
 
-Because we coded FieldElement in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__`, and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will((("", startref="ECCpoint03")))((("", startref="PAfinite03"))) work:
+Because we coded +FieldElement+ in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__`, and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will((("", startref="ECCpoint03")))((("", startref="PAfinite03"))) work:
 
 [source,python]
 ----
@@ -193,7 +193,7 @@ This is what we call _scalar multiplication_.
 That is, we have a _scalar_ number in front of the point.
 We can do this because we have defined point addition and point addition is associative.
 
-One property of scalar multiplication is that it's really hard to predict without calculating (see <<scalar_multiplication_results_for_y_2_x_3_7>>):
+One property of scalar multiplication is that it's really hard to predict without calculating (see <<scalar_multiplication_results_for_y_2_x_3_7>>).
 
 [[scalar_multiplication_results_for_y_2_x_3_7]]
 .Scalar multiplication results for y^2^ = x^3^ + 7 over F~223~ for point (170,142)
@@ -204,31 +204,31 @@ You can see that this is a complete scattershot.
 This is because point addition is nonlinear and not easy to calculate.
 Performing scalar multiplication is straightforward, but doing the opposite, point division, is not.
 
-This((("Discrete Log problem"))) is called the Discrete Log problem and is the basis of elliptic curve cryptography.
+This((("discrete log problem"))) is called the _discrete log problem_ and is the basis of elliptic curve cryptography.
 
-Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, point at infinity is the additive identity or 0).
-If we imagine a point G and scalar-multiply until we get the point at infinity, we end up with a set:
+Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, the point at infinity is the additive identity or 0).
+If we imagine a point _G_ and scalar-multiply until we get the point at infinity, we end up with a set:
 
 ++++
 <ul class="simplelist">
-<li>{ G, 2G, 3G, 4G, ... nG } where nG = 0</li>
+<li>{ <em>G</em>, 2<em>G</em>, 3<em>G</em>, 4<em>G</em>, ... <em>nG</em> } where <em>nG</em> = 0</li>
 </ul>
 ++++
 
-It turns out that this set is called a Group and because `n` is finite, we have a Finite Group (or more specifically, a Finite Cyclic Group).
+It turns out that this set is called a _group_, and because _n_ is finite, we have a _finite group_ (or more specifically, a _finite cyclic group_).
 Groups are interesting mathematically because they behave a lot like addition:
 
 ++++
 <ul class="simplelist">
-<li>G + 4G = 5G or aG + bG = (a + b)G</li>
+<li><em>G</em> + 4<em>G</em> = 5<em>G</em> or <em>aG</em> + <em>bG</em> = (<em>a</em> + <em>b</em>)<em>G</em></li>
 </ul>
 ++++
 
-When we combine the fact that scalar multiplication is easy to go in one direction but hard in the other and the mathematical properties of a Group, we have exactly what we need for elliptic curve cryptography.
+When we combine the fact that scalar multiplication is easy to do in one direction but hard in the other and the mathematical properties of a group, we have exactly what we need for elliptic curve cryptography.
 
 .Why Is This Called the Discrete Log Problem?
 ****
-You may be wondering why the problem of reversing scalar _multiplication_ is referred to as the Discrete _Log_ problem.
+You may be wondering why the problem of reversing scalar _multiplication_ is referred to as the discrete _log_ problem.
 
 We called the operation between the points "addition," but we could easily have called it a point "operation."
 Typically, a new operation that you define in math is denoted with the dot operator (⋅).
@@ -249,7 +249,7 @@ Scalar multiplication when we called it "point addition" becomes scalar exponent
 </ul>
 ++++
 
-The Discrete Log problem in this context is the ability to reverse the above equation, which ends up being:
+The discrete log problem in this context is the ability to reverse this equation, which ends up being:
 
 ++++
 <ul class="simplelist">
@@ -259,17 +259,17 @@ The Discrete Log problem in this context is the ability to reverse the above equ
 
 The log equation on the left has no analytically calculable algorithm.
 That is, there is no known formula that you can plug in to get the answer generally.
-This is all a bit confusing, but it's fair to say that we could call the problem the "Discrete Point Division" problem instead of the Discrete Log problem.
+This is all a bit confusing, but it's fair to say that we could call the problem the "discrete point division" problem instead of the discrete log problem.
 ****
 
 include::code-ch03/answers.py[tag=exercise4,indent=0]
 
 === Scalar Multiplication Redux
 
-_Scalar multiplication_ is adding the same point to itself some number of times.
-The key to making scalar multiplication into Public Key Cryptography is the fact that scalar multiplication on elliptic curves is very hard to reverse.
+Scalar multiplication is adding the same point to itself some number of times.
+The key to making scalar multiplication into public key cryptography is the fact that scalar multiplication on elliptic curves is very hard to reverse.
 Note the previous exercise.
-Most likely, you calculated the point _s_ ⋅ (47,71) in __F__~223~ for `s` from 1 until 21.
+Most likely, you calculated the point _s_ ⋅ (47,71) in __F__~223~ for _s_ from 1 until 21.
 Here are the results:
 
 [source,python]
@@ -277,7 +277,7 @@ Here are the results:
 include::code-ch03/examples.py[tag=example4]
 ----
 
-If we look closely at the numbers, there's no real discernible pattern to the scalar multiplication.
+If you look closely at the numbers, there's no real discernible pattern to the scalar multiplication.
 The _x_ coordinates don't always increase or decrease and neither do the _y_ coordinates.
 About the only pattern is that between 10 and 11, the _x_ coordinates are equal (10 and 11 have the same _x_, as do 9 and 12, 8 and 13, and so on).
 This is due to the fact that 21 ⋅ (47,71) = 0.
@@ -295,7 +295,7 @@ But if we were presented this:
 
 would you be able to solve for _s_?
 We can look up the results show earlier, but that's because we have a small group.
-We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, Discrete Log becomes an intractable problem.((("", startref="ECCscalar03")))((("", startref="SMelliptic03")))
+We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, discrete log becomes an intractable problem.((("", startref="ECCscalar03")))((("", startref="SMelliptic03")))
 
 === Mathematical Groups
 
@@ -456,7 +456,7 @@ With `__add__` and `__rmul__`, we can start defining some more complicated ellip
 
 While((("elliptic curve cryptography", "secp256k1 curve", id="ECCsecp03")))((("secp256k1 curve", id="secp03")))((("elliptic curves", "secp256k1 curve", id="ECsecp03"))) we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
 Small primes mean that we can use a computer to search through the entire Group.
-If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break Discrete Log.
+If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break discrete log.
 
 But what if we made the prime larger?
 It turns out that we can choose much larger primes than we've been using.
@@ -590,9 +590,9 @@ include::code-ch03/examples.py[tag=example8]
 At((("elliptic curve cryptography", "Public Key Cryptography")))((("Public Key Cryptography", "asymmetric equation"))) last, we have the tools that we need to do Public Key Cryptography operations.
 The key operation that we need is `P=eG`, which is an _asymmetric_ equation.
 We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
-This is the Discrete Log Problem described earlier.
+This is the discrete log problem described earlier.
 
-The difficulty of Discrete Log will be essential to understanding signing and verification algorithms.
+The difficulty of discrete log will be essential to understanding signing and verification algorithms.
 
 Generally, we call `e` the _private key_ and P the _public key_.
 We'll note here that the private key is a single 256-bit number and the public key is a coordinate `(x,y)` where `x` and `y` are _each_ 256-bit numbers.
@@ -655,7 +655,7 @@ _R_ is our target that we're aiming for.
 In fact, we're only going to care about the _x_ coordinate of _R_, which we'll call `r`.
 You may have guessed already that `r` here stands for random.
 
-We claim at this point that the following equation is equivalent to the Discrete Log Problem:
+We claim at this point that the following equation is equivalent to the discrete log problem:
 
 ++++
 <ul class="simplelist">
@@ -692,10 +692,10 @@ This means than any `(u,v)` combination that satisfies the above equation will s
 
 If we don't know `e`, we would have to play with `(u,v)` until __e = (k-u)/v__.
 If we could solve this with any `(u,v)` combination, that would mean we'll have solved _P_ = _eG_ while knowing only _P_ and _G_.
-In other words, we'd have broken the Discrete Log problem.
+In other words, we'd have broken the discrete log problem.
 
-This means to provide a correct `u` and `v`, we either have to break the Discrete Log problem or know the secret `e`.
-Since we assume Discrete Log is hard, we can say `e` is assumed to be known by the one who came up with `u` and `v`.
+This means to provide a correct `u` and `v`, we either have to break the discrete log problem or know the secret `e`.
+Since we assume discrete log is hard, we can say `e` is assumed to be known by the one who came up with `u` and `v`.
 
 One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting.
 This is a contract that gets fulfilled as a result of the shooting at the target.
