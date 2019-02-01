@@ -626,11 +626,11 @@ We can then multiply every element in both sets to get this equality:
 ++++
 
 The left side is the same as (__p__–1)! % _p_ where ! is the factorial (e.g.,
-5! = 5 ⋅ 4 ⋅ 3 ⋅ 2 ⋅ 1). On the right side, we can gather up all the __n__'s and get:
+5! = 5 ⋅ 4 ⋅ 3 ⋅ 2 ⋅ 1). On the right side, we can gather up all the __n__`'s and get:
 
 ++++
 <ul class="simplelist">
-<li>(<em>p</em>–1)! ⋅ <em>n</em><sup>(<em>p</em>–1)</sup> % <em>p</em></li>
+<li>(<em>p</em>–1)! ⋅ <em>n</em><sup>(p–1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
@@ -638,15 +638,15 @@ Thus:
 
 ++++
 <ul class="simplelist">
-<li>(<em>p</em>–1)! % <em>p</em> = (<em>p</em>–1)! ⋅ <em>n</em><sup>(<em>p</em>–1)</sup> % <em>p</em></li>
+<li>(<em>p</em>–1)! % <em>p</em> = (<em>p</em>–1)! ⋅ <em>n</em><sup>(p–1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
-The (_p_–1)! on both sides cancel giving us:
+The (_p_–1)! on both sides cancel, giving us:
 
 ++++
 <ul class="simplelist">
-<li>1 = <em>n</em><sup>(<em>p</em>–1)</sup> % <em>p</em></li>
+<li>1 = <em>n</em><sup>(p–1)</sup> % <em>p</em></li>
 </ul>
 ++++
 
@@ -658,7 +658,7 @@ Because division is the inverse of multiplication, we know:
 
 ++++
 <ul class="simplelist">
-<li><em>a</em>/<em>b</em>=<em>a</em> ⋅ <sub><em>f</em></sub>(1/<em>b</em>)=<em>a</em> ⋅ <sub><em>f</em></sub><em>b</em><sup>–1</sup></li>
+<li><em>a</em>/<em>b</em> = <em>a</em>⋅<sub><em>f</em></sub>(1/<em>b</em>) = <em>a</em>⋅<sub><em>f</em></sub><em>b</em><sup>–1</sup></li>
 </ul>
 ++++
 
@@ -669,7 +669,7 @@ We know:
 
 ++++
 <ul class="simplelist">
-<li><em>b</em><sup>(<em>p</em>–1)</sup>=1</li>
+<li><em>b</em><sup>(<em>p</em>–1)</sup> = 1</li>
 </ul>
 ++++
 
@@ -677,32 +677,39 @@ because _p_ is prime. Thus:
 
 ++++
 <ul class="simplelist">
-<li><em>b</em><sup>–1</sup> = <em>b</em><sup>–1</sup> ⋅ <sub><em>f</em></sub>1=<em>b</em><sup>–1</sup> ⋅ <sub><em>f</em></sub><em>b</em><sup>(<em>p</em> – 1)</sup>=<em>b</em><sup>(<em>p</em>–2)</sup></li>
+<li><em>b</em><sup>–1</sup> = <em>b</em><sup>–1</sup>⋅<sub><em>f</em></sub>1=<em>b</em><sup>–1</sup>⋅<sub><em>f</em></sub><em>b</em><sup>(<em>p</em>–1)</sup> = <em>b</em><sup>(<em>p</em>–2)</sup></li>
 </ul>
 ++++
 
 
-or
+or:
 
 ++++
 <ul class="simplelist">
-<li><em>b</em><sup>–1</sup>=<em>b</em><sup>(<em>p</em> – 2)</sup></li>
+<li><em>b</em><sup>–1</sup> = <em>b</em><sup>(<em>p</em>–2)</sup></li>
 </ul>
 ++++
 
 
-In F~19~, this means practically that pass:[<em>b</em><sup>18</sup> = 1 ], which means that __b__^–1^ = __b__^17^ for all _b_ > 0.
+In __F__~19~, this means practically that pass:[<em>b</em><sup>18</sup> = 1 ], which means that __b__^–1^ = __b__^17^ for all _b_ > 0.
 
 So in other words, we can calculate the inverse using the exponentiation operator.
 In __F__~19~:
 
-* 2/7 = 2 ⋅ 7^(19 – 2)^=2 ⋅ 7^17^=465261027974414%19 = 3
-* 7/5 = 7 ⋅ 5^(19 – 2)^=7 ⋅ 5^17^=5340576171875%19 = 9
+++++
+<ul class="simplelist">
+<li>2/7 = 2⋅7<sup>(19 – 2)</sup> = 2⋅7<sup>17</sup>=465261027974414%19 = 3</li>
+<li> 7/5 = 7⋅5<sup>(19 – 2)</sup> = 7⋅5<sup>17</sup>=5340576171875%19 = 9</li>
+</ul>
+++++
+
+* 
+*
 
 This is a relatively expensive calculation as exponentiating grows very fast.
 Division is the most expensive operation for that reason.
-To((("pow function"))) lessen the expensiveness, we can use the `pow` function in Python, which does exponentiation.
-Thus something like `pow(7,17)` does the same thing as `7**17`.
+To((("pow function"))) lessen the expense, we can use the `pow` function in Python, which does exponentiation.
+Thus, something like `pow(7,17)` does the same thing as `7**17`.
 The `pow` function, however, has an optional third argument that makes our calculation more efficient.
 Specifically, `pow` will modulo by the third argument.
 Thus, `pow(7,17,19)` will give the same result as `7**17%19` but do so faster because the modulo function is done after each round of multiplication.((("&#x005F;&#x005F;truediv&#x005F;&#x005F; method")))((("&#x005F;&#x005F;floordiv&#x005F;&#x005F; method")))((("", startref="FFdiv01")))
