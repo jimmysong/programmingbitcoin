@@ -365,7 +365,7 @@ The number of transactions field is how many leaves this particular Merkle Tree 
 This allows a light client to construct an empty Merkle Tree.
 The hashes field are the blue and green boxes from <<merkle_proof_two>>.
 Since the number of hashes in the hashes field is not fixed, it's prefixed with how many there are.
-Last, the flags field give information about where the hashes go within the Merkle Tree.
+Last, the flags field gives information about where the hashes go within the Merkle Tree.
 The flags are parsed using `bytes_to_bits_field` to convert to a list of bits (1's and 0's):
 
 [source,python]
@@ -397,9 +397,7 @@ Given a tree from <<processing_a_merkle_block>>, the flag bit is 1 for the root 
 * The left child, H~ABCDEFGH~ (2), is included in the hashes field, so the flag is 0.
 * From here, we traverse to H~IJKLMNOP~ instead of H~ABCD~ or H~EFGH~ since H~ABCDEFGH~ represents both those nodes and we don't need them.
 * We don't need to traverse any descendants of H~ABCDEFGH~ and can go straight to H~IJKLMNOP~ instead.
-
-The right child, H~IJKLMNOP~ (3) is also calculated, so has a flag bit of 1.
-
+* The right child, H~IJKLMNOP~ (3) is also calculated, so has a flag bit of 1.
 * To calculate H~IJKLMNOP~, we need the values for H~IJKL~ (4) and H~MNOP~ (9).
 * The next node in depth-first order is the left child, H~IJKL~ (4), which is where we traverse to next.
 * H~IJKL~ is an internal node that's calculated, so the flag bit is 1.
