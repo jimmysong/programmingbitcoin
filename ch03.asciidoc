@@ -501,12 +501,8 @@ This means that we can store the private key relatively easily.
 2^256^ doesn't seem that big because we can express it succinctly, but in reality, it is an enormous number.
 To give you an idea, here are some relative scales:
 
-++++
-<ul class="simplelist">
-<li>2<sup>256</sup> ~ 10<sup>77</sup></li>
-</ul>
-++++
-
+2^256^ ~ 10^77^::
++
  * Number of atoms in and on Earth ~ 10^50^
  * Number of atoms in the solar system ~ 10^57^
  * Number of atoms in the Milky Way ~ 10^68^
