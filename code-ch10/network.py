@@ -205,7 +205,8 @@ class PongMessage:
 class GetHeadersMessage:
     command = b'getheaders'
 
-    def __init__(self, version=70015, num_hashes=1, start_block=None, end_block=None):
+    def __init__(self, version=70015, num_hashes=1, 
+        start_block=None, end_block=None):
         self.version = version
         self.num_hashes = num_hashes  # <1>
         if start_block is None:  # <2>
