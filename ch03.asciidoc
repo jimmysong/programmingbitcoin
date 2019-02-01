@@ -502,7 +502,7 @@ This means that we can store the private key relatively easily.
 To give you an idea, here are some relative scales:
 
 ++++
-<dl><dt class="plain>2<sup>256</sup> ~ 10<sup>77</sup></dt>
+<dl><dt class="plain">2<sup>256</sup> ~ 10<sup>77</sup></dt>
 <dd>
 <ul>
 <li>Number of atoms in and on Earth ~ 10<sup>50</sup></li>
