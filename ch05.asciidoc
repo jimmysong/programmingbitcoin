@@ -261,37 +261,37 @@ Like with inputs, output serialization starts with how many outputs there are as
 .Number of outputs
 image::images/prbc_0506.png[Outputs]
 
-Each((("Amount field (outputs)")))((("ScriptPubKey field (outputs)"))) output has two fields: Amount and ScriptPubKey.
-Amount is the amount of Bitcoin being assigned and is specified in satoshis, or 1/100,000,000th of a Bitcoin.
-This allows us to divide Bitcoin very finely, down to 1/300th of a penny in USD terms as of this writing.
-The absolute maximum for the amount is the asymptotic limit of Bitcoin (21 million Bitcoins) in satoshis, which is 2,100,000,000,000,000 (2,100 trillion) satoshis.
+Each((("amount field (outputs)")))((("ScriptPubKey field (outputs)"))) output has two fields: amount and ScriptPubKey.
+The amount is the amount of bitcoins being assigned and is specified in satoshis, or 1/100,000,000ths of a bitcoin.
+This allows us to divide bitcoins very finely, down to 1/300th of a penny in USD terms as of this writing.
+The absolute maximum for the amount is the asymptotic limit of 21 million Bitcoins in satoshis, which is 2,100,000,000,000,000 (2,100 trillion) satoshis.
 This number is greater than 2^32^ (4.3 billion or so) and is thus stored in 64 bits, or 8 bytes.
-Amount is serialized in Little-Endian.
+The amount is serialized in Little-Endian.
 
-ScriptPubKey, like ScriptSig, has to do with Bitcoin's smart contract language Script.
-Think of ScriptPubKey as the locked box that can only be opened by the holder of the key.
-ScriptPubKey can be thought of as a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe.
-We'll explore what this is in more detail in <<chapter_script>>.
+The ScriptPubKey, like the ScriptSig, has to do with Bitcoin's smart contract language, Script.
+Think of the ScriptPubKey as the locked box that can only be opened by the holder of the key.
+It's like a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe.
+We'll explore this in more detail in <<chapter_script>>.
 Like ScriptSig, ScriptPubKey is a variable-length field and is preceded by the length of the field in a varint.
 
 A complete output looks like <<output_fields_amount_and_scriptpubkey_this_one_is_at_index_0>>.
 
 [[output_fields_amount_and_scriptpubkey_this_one_is_at_index_0]]
-.A complete output field, showing Amount and ScriptPubKey. This one is at index 0.
+.A complete output field, showing the amount and ScriptPubKey—this one is at index 0
 image::images/prbc_0507.png[Output Fields]
 
 .UTXO Set
 ****
-UTXO((("UTXO (Unspent Transaction Output) Set"))) stands for Unspent Transaction Output.
-The entire set of unspent transaction outputs at any given moment is called the UTXO Set.
+UTXO((("UTXO (unspent transaction output) Set"))) stands for _unspent transaction output_.
+The entire set of unspent transaction outputs at any given moment is called the _UTXO set_.
 The reason why UTXOs are important is because at any moment in time, they represent all the Bitcoins that are available to be spent.
 In other words, these are the Bitcoins that are in circulation.
-Full nodes on the network must keep track of the UTXO set, and keeping the UTXO indexed makes validating new transactions much faster.
+Full nodes on the network must keep track of the UTXO set, and keeping the UTXO set indexed makes validating new transactions much faster.
 
 For example, it's easy to enforce a no-double-spending rule by looking up the previous transaction output in the UTXO set.
 If the input of a new transaction is using a transaction output that's not in the UTXO set, that's an attempt at a double-spend or a nonexistent output and thus invalid.
 Keeping the UTXO set handy is also very useful for validating transactions.
-As we'll see in <<chapter_script>>, we need to look up the Amount and ScriptPubKey from the previous transaction output to validate transactions, so having these UTXOs handy can speed up transaction validation.
+As we'll see in <<chapter_script>>, we need to look up the amount and ScriptPubKey from the previous transaction output to validate transactions, so having these UTXOs handy can speed up transaction validation.
 ****
 
 We can now start coding the `TxOut` class:
@@ -306,30 +306,30 @@ include::code-ch05/answers.py[tag=exercise3,indent=0]
 === Locktime
 
 Locktime((("Locktime")))((("transactions", "locktime component")))((("high-frequency trades"))) is a way to time-delay a transaction.
-A transaction with a Locktime of 600,000 cannot go into the blockchain until block 600,001.
-This was originally construed as a way to do "high-frequency trades" (see _Sequence and Locktime_), which turned out to be insecure.
-If the Locktime is greater than or equal to 500,000,000, Locktime is a UNIX timestamp.
-If Locktime is less than 500,000,000, it is a block number.
-This way, transactions can be signed, but unspendable until a certain point in UNIX time or block height.
+A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,001.
+This was originally construed as a way to do high-frequency trades (see <<sequence_and_locktime>>), which turned out to be insecure.
+If the locktime is greater than or equal to 500,000,000, it's a Unix timestamp.
+If it's less than 500,000,000, it's a block number.
+This way, transactions can be signed but unspendable until a certain point in Unix time or block height is reached.
 
-.When Locktime is Ignored
+.When Locktime Is Ignored
 [WARNING]
 ====
-Note that Locktime is ignored if the sequence numbers for every input is `ffffffff`.
+Note that locktime is ignored if the sequence numbers for every input are `ffffffff`.
 ====
 
-The serialization is in Little-Endian and 4-bytes (<<locktime>>).
+The serialization is in little-endian and 4 bytes (<<locktime>>).
 
 [[locktime]]
 .Locktime
 image::images/prbc_0508.png[Locktime]
 
-The main problem with using Locktime is that the recipient of the transaction has no certainty that the transaction will be good when the Locktime comes.
+The main problem with using locktime is that the recipient of the transaction has no certainty that the transaction will be good when the locktime comes.
 This is similar to a postdated bank check, which has the possibility of bouncing.
-The sender can spend the inputs prior to the Locktime transaction getting into the blockchain, thus invalidating the transaction at Locktime.
+The sender can spend the inputs prior to the locktime transaction getting into the blockchain, thus invalidating the transaction at locktime.
 
 The((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) uses before BIP0065 were limited.
-BIP0065((("OP_CHECKLOCKTIMEVERIFY operation"))) introduced `OP_CHECKLOCKTIMEVERIFY`, which makes Locktime more useful by making an output unspendable until a certain Locktime.
+BIP0065((("OP_CHECKLOCKTIMEVERIFY operation"))) introduced `OP_CHECKLOCKTIMEVERIFY`, which makes locktime more useful by making an output unspendable until a certain locktime.
 
 include::code-ch05/answers.py[tag=exercise4,indent=0]
 
