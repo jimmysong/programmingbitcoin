@@ -346,9 +346,9 @@ class TxOut:
 ...
 include::code-ch05/tx.py[tag=source4]
 ----
-<1> We're going to serialize the TxOut object to a bunch of bytes.
+<1> We're going to serialize the +TxOut+ object to a bunch of bytes.
 
-We can proceed to `TxIn`:
+We can then proceed to `TxIn`:
 
 [source,python]
 ----
@@ -357,7 +357,7 @@ class TxIn:
 include::code-ch05/tx.py[tag=source5]
 ----
 
-Last, we can serialize `Tx`:
+Lastly, we can serialize `Tx`:
 
 [source,python]
 ----
@@ -369,12 +369,11 @@ include::code-ch05/tx.py[tag=source6]
 We've used the `serialize` methods of both `TxIn` and `TxOut` to serialize `Tx`.
 
 Note that the transaction fee is not specified anywhere!
-This is because the fee is an implied amount.
-Fee is the total of the input amounts minus the total of the output amounts.
+This is because the fee is an implied amount, as described in the next section.
 
 === Transaction Fee
 
-One((("transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-Coinbase transactions (more on Coinbase transactions in <<chapter_p2sh>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
+One((("transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on coinbase transactions in <<chapter_p2sh>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
 You may be wondering why the inputs and outputs can't just be forced to be equal.
 This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks (see <<chapter_blocks>>).
 Fees((("mempool transactions"))) are a way to incentivize miners to include transactions.
@@ -396,18 +395,18 @@ include::code-ch05/tx.py[tag=source7]
 
 You may be wondering why we don't get just the specific output for the transaction and instead get the entire transaction.
 This is because we don't want to be trusting a third party!
-By getting the entire transaction, we can verify the transaction ID (hash256 of its contents) and be sure that we are indeed getting the transaction we asked for.
+By getting the entire transaction, we can verify the transaction ID (the hash256 of its contents) and be sure that we are indeed getting the transaction we asked for.
 This is impossible unless we receive the entire transaction.
 
 .Why We Minimize Trusting Third Parties
 [WARNING]
 ====
 As((("third parties, minimizing risk of")))((("trusted third parties"))) Nick Szabo eloquently wrote in his seminal essay https://nakamotoinstitute.org/trusted-third-parties/["Trusted Third Parties are Security Holes"], trusting third parties to provide correct data is _not_ a good security practice.
-The third party may be behaving well now, but you never know when they may get hacked, may have an employee go rogue, or start implementing policies that are against your interests.
-Part of what makes Bitcoin secure is in _not_ trusting, but verifying the data that we're given.
+The third party may be behaving well now, but you never know when it may get hacked, have an employee go rogue, or start implementing policies that are against your interests.
+Part of what makes Bitcoin secure is _not_ trusting, but verifying the data that we're given.
 ====
 
-We can now create the appropriate method in `TxIn` to fetch the previous transaction and methods to get the previous transaction output's amount and ScriptPubkey (the latter to be used in <<chapter_script>>):
+We can now create the appropriate method in `TxIn` to fetch the previous transaction and methods to get the previous transaction output's amount and ScriptPubKey (the latter to be used in <<chapter_script>>):
 
 [source,python]
 ----
