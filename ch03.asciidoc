@@ -462,7 +462,7 @@ But what if we made the prime larger?
 It turns out that we can choose much larger primes than we've been using.
 The security of elliptic curve cryptography depends on computers _not_ being able to go through an appreciable fraction of the group.
 
-An elliptic curve for Public Key Cryptography is defined with the following parameters:
+An elliptic curve for public key cryptography is defined with the following parameters:
 
 * We specify the _a_ and _b_ of the curve __y__^2^ = __x__^3^ + _ax_ + _b_.
 * We specify the prime of the finite field, _p_.
@@ -519,14 +519,14 @@ Think of finding a private key this way: there are as many possible private keys
 
 ==== Working with secp256k1
 
-Since we know all of the parameters for secp256k1, we can verify in Python whether the generator point, G, is on the curve __y__^2^ = __x__^3^ + 7:
+Since we know all of the parameters for secp256k1, we can verify in Python whether the generator point, _G_, is on the curve __y__^2^ = __x__^3^ + 7:
 
 [source,python]
 ----
 include::code-ch03/examples.py[tag=example6]
 ----
 
-Furthermore, we can verify in Python whether the generator point, _G_, has the order `n`.
+Furthermore, we can verify in Python whether the generator point, _G_, has the order _n_:
 
 [source,python]
 ----
@@ -535,7 +535,7 @@ include::code-ch03/examples.py[tag=example7]
 
 Since we know the curve we will work in, this is a good time to create a subclass in Python to work exclusively with the parameters for secp256k1.
 We'll define the equivalent `FieldElement` and `Point` objects, but specific to the secp256k1 curve.
-Let's start by defining the field we'll be working in.
+Let's start by defining the field we'll be working in:
 
 [source,python]
 ----
@@ -547,7 +547,7 @@ include::code-ch03/ecc.py[tag=source5]
 We're subclassing the `FieldElement` class so we don't have to pass in `P` all the time.
 We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeros.
 
-Similarly, we((("S256Point class", "creating"))) can define a point on the secp256k1 curve and call it `S256Point`.
+Similarly, we((("S256Point class", "creating"))) can define a point on the secp256k1 curve and call it `S256Point`:
 
 [source,python]
 ----
@@ -555,12 +555,12 @@ include::code-ch03/ecc.py[tag=source6]
 ...
 include::code-ch03/ecc.py[tag=source7]
 ----
-<1> In case we initialize with the point at infinity, we need to let x and y through directly instead of using the `S256Field` class.
+<1> In case we initialize with the point at infinity, we need to let _x_ and _y_ through directly instead of using the `S256Field` class.
 
-We now have an easier way to initialize a point on the secp256k1 curve, without having to define the a and b every time like we have to with the `Point` class.
+We now have an easier way to initialize a point on the secp256k1 curve, without having to define +a+ and +b+ every time like we have to with the `Point` class.
 
-We can also define `__rmul__` a bit more efficiently, since we know the order of the group, `n`.
-Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant.
+We can also define `__rmul__` a bit more efficiently, since we know the order of the group, _n_.
+Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant:
 
 [source,python]
 ----
@@ -570,17 +570,17 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source8]
 ----
-<1> We can mod by `n` because _nG_ = 0.
-That is, every `n` times we cycle back to zero or the point at infinity.
+<1> We can mod by _n_ because _nG_ = 0.
+That is, every _n_ times we cycle back to zero or the point at infinity.
 
-We can now define _G_ directly and keep it around since we'll be using it a lot going forward.
+We can now define _G_ directly and keep it around since we'll be using it a lot going forward:
 
 [source,python]
 ----
 include::code-ch03/ecc.py[tag=source10]
 ----
 
-Now((("", startref="ECsecp03")))((("", startref="secp03")))((("", startref="ECCsecp03"))) checking that the order of _G_ is `n` is trivial:
+Now((("", startref="ECsecp03")))((("", startref="secp03")))((("", startref="ECCsecp03"))) checking that the order of _G_ is _n_ is trivial:
 
 [source,python]
 ----
@@ -589,51 +589,51 @@ include::code-ch03/examples.py[tag=example8]
 
 === Public Key Cryptography
 
-At((("elliptic curve cryptography", "Public Key Cryptography")))((("Public Key Cryptography", "asymmetric equation"))) last, we have the tools that we need to do Public Key Cryptography operations.
-The key operation that we need is `P=eG`, which is an _asymmetric_ equation.
-We can easily compute P when we know `e` and G, but we cannot easily compute `e` when we know P and G.
+At((("elliptic curve cryptography", "public key cryptography")))((("public key cryptography", "asymmetric equation"))) last, we have the tools that we need to do public key cryptography operations.
+The key operation that we need is _P_ = _eG_, which is an asymmetric equation.
+We can easily compute _P_ when we know _e_ and _G_, but we cannot easily compute _e_ when we know _P_ and _G_.
 This is the discrete log problem described earlier.
 
 The difficulty of discrete log will be essential to understanding signing and verification algorithms.
 
-Generally, we call `e` the _private key_ and P the _public key_.
-We'll note here that the private key is a single 256-bit number and the public key is a coordinate `(x,y)` where `x` and `y` are _each_ 256-bit numbers.
+Generally, we call _e_ the _private key_ and _P_ the _public key_.
+Note here that the private key is a single 256-bit number and the public key is a coordinate (_x_,_y_), where _x_ and _y_ are _each_ 256-bit numbers.
 
 === Signing and Verification
 
 To((("elliptic curve cryptography", "signing and verification", id="ECCsign03")))((("signing and verification", "purpose of"))) set up the motivation for why signing and verification exists, imagine this scenario.
 You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any particular target.
 
-Now if someone could observe you and interact with you, proving this would be easy.
+Now, if someone could observe you and interact with you, proving this would be easy.
 Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow.
-You, being a very good archer, do this and prove your expertise.
+You, being a very good archer, could do this and prove your expertise.
 The target, if specified by the challenger, makes your archery skill easy to verify.
 
 Unfortunately, this doesn't scale very well.
 If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges.
 You could try to do something like have 10 people watch you shoot a single arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of an arbitrary target.
-What we want is something that you can do once, that requires no interaction back and forth between the archer and the verifiers, but still proves that you are indeed, a good archer that can hit _any_ target.
+What we want is something that you can do once, that requires no interaction back and forth between the archer and the verifiers, but that still proves that you are indeed, a good archer that can hit _any_ target.
 
-If, for example, you shot an arrow into a target of your choosing, then the people observing afterward won't necessarily be convinced.
-After all, you may be a sneaky person that paints the target around wherever your arrow happened to land.
+If, for example, you simply shot an arrow into a target of your choosing, the people observing afterward wouldn't necessarily be convinced.
+After all, you might have painted the target around wherever your arrow happened to land.
 So what can you do?
 
 Here's a very clever thing you can do.
 Inscribe the tip of the arrow with the position of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow.
 Now anyone seeing the target can take an X-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit.
-The tip clearly had to be inscribed before the arrow was shot, so this can prove you are actually  a good archer (provided the actual target isn't just one that you've practiced over and over).
+The tip clearly had to be inscribed before the arrow was shot, so this can prove you are actually  a good archer (provided the actual target isn't just one that you've practiced hitting over and over).
 
 This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number.
 We want to prove possession of the secret without revealing the secret itself.
 We do this by putting the target into our calculation and hitting that target.
 
-Ultimately this is going to be used in Transactions, which will prove that the rightful owners of the secrets are spending the Bitcoins.
+Ultimately this is going to be used in transactions, which will prove that the rightful owners of the secrets are spending the bitcoins.
 
 ==== Inscribing the Target
 
-The((("signing and verification", "signature algorithm")))((("signature algorithm")))((("Elliptic Curve Digital Signature Algorithm (ECDSA)")))((("ECDSA (Elliptic Curve Digital Signature Algorithm)"))) inscribing of the target depends on the _signature algorithm_, and in our case, our signature algorithm is called Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
+The((("signing and verification", "signature algorithm")))((("signature algorithm")))((("Elliptic Curve Digital Signature Algorithm (ECDSA)")))((("ECDSA (Elliptic Curve Digital Signature Algorithm)"))) inscribing of the target depends on the _signature algorithm_, and in our case that algorithm is called the Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
 
-The secret in our case is `e` satisfying the following:
+The secret in our case is _e_ satisfying the following:
 
 ++++
 <ul class="simplelist">
@@ -641,9 +641,9 @@ The secret in our case is `e` satisfying the following:
 </ul>
 ++++
 
-where _P_ is the public key and `e` is the private key.
+where _P_ is the public key and _e_ is the private key.
 
-The target that we're going to aim at is a random 256-bit number, `k`.
+The target that we're going to aim at is a random 256-bit number, _k_.
 We then do this:
 
 ++++
@@ -653,9 +653,9 @@ We then do this:
 ++++
 
 
-_R_ is our target that we're aiming for.
-In fact, we're only going to care about the _x_ coordinate of _R_, which we'll call `r`.
-You may have guessed already that `r` here stands for random.
+_R_ is now the target that we're aiming for.
+In fact, we're only going to care about the _x_ coordinate of _R_, which we'll call _r_.
+You may have guessed already that _r_ here stands for _random_.
 
 We claim at this point that the following equation is equivalent to the discrete log problem:
 
@@ -665,7 +665,7 @@ We claim at this point that the following equation is equivalent to the discrete
 </ul>
 ++++
 
-where `k` was chosen randomly and `u,v≠0` can be chosen by the signer and G and P are known. This is due to the fact that
+where _k_ was chosen randomly, _u_,_v_ ≠ 0 can be chosen by the signer, and _G_ and _P_ are known. This is due to the fact that:
 
 ++++
 <ul class="simplelist">
@@ -673,7 +673,7 @@ where `k` was chosen randomly and `u,v≠0` can be chosen by the signer and G an
 </ul>
 ++++
 
-Since `v≠0`, we can divide by the scalar multiple `v`:
+Since _v_ ≠ 0, we can divide by the scalar multiple _v_:
 
 ++++
 <ul class="simplelist">
@@ -682,33 +682,33 @@ Since `v≠0`, we can divide by the scalar multiple `v`:
 ++++
 
 
-If we know `e`, we have:
+If we know _e_, we have:
 
 ++++
 <ul class="simplelist">
-<li><em>eG</em> = ((<em>k</em> - <em>u</em>)/<em>v</em>)<em>G</em> or <em>e</em> = (<em>k</em> - <em>u</em>)/<em>v</em></li>
+<li><em>eG</em> = ((<em>k</em> – <em>u</em>)/<em>v</em>)<em>G</em> or <em>e</em> = (<em>k</em> – <em>u</em>)/<em>v</em></li>
 </ul>
 ++++
 
-This means than any `(u,v)` combination that satisfies the above equation will suffice.
+This means that any (_u_,_v_) combination that satisfies the preceding equation will suffice.
 
-If we don't know `e`, we would have to play with `(u,v)` until __e = (k-u)/v__.
-If we could solve this with any `(u,v)` combination, that would mean we'll have solved _P_ = _eG_ while knowing only _P_ and _G_.
+If we don't know _e_, we'll have to play with (_u_,_v_) until __e = (k–u)/v__.
+If we could solve this with any (_u_,_v_) combination, that would mean we'd have solved _P_ = _eG_ while knowing only _P_ and _G_.
 In other words, we'd have broken the discrete log problem.
 
-This means to provide a correct `u` and `v`, we either have to break the discrete log problem or know the secret `e`.
-Since we assume discrete log is hard, we can say `e` is assumed to be known by the one who came up with `u` and `v`.
+This means to provide a correct _u_ and _v_, we either have to break the discrete log problem or know the secret _e_.
+Since we assume discrete log is hard, we can say _e_ is assumed to be known by the one who came up with _u_ and _v_.
 
 One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting.
-This is a contract that gets fulfilled as a result of the shooting at the target.
+This is a contract that gets fulfilled as a result of shooting at the target.
 William Tell, for example, was shooting so that he could save his son (shoot the target and you get to save your son).
-You can imagine there would be other reasons to hit the target and the "reward" that the person hitting the target would receive.
+You can imagine there would be other reasons to hit the target and other "rewards" that the person hitting the target would receive.
 This has to be incorporated into our equations.
 
 In((("hashes", "signature hash")))((("signing and verification", "signature hash")))((("signature hash"))) signature/verification parlance, this is called the _signature hash_.
 A hash is a deterministic function that takes arbitrary data into a data of fixed size.
-This is a fingerprint of the message containing the intent of the shooter that anyone verifying the message already knows.
-We denote this with the letter `z`.
+This is a fingerprint of the message containing the intent of the shooter, which anyone verifying the message already knows.
+We denote this with the letter _z_.
 This is incorporated into our _uG_ + _vP_ calculation this way:
 
 ++++
@@ -717,57 +717,69 @@ This is incorporated into our _uG_ + _vP_ calculation this way:
 </ul>
 ++++
 
-Since _r_ is used in the calculation of `v`, we now have the tip of the arrow inscribed.
-We also have the intent of the shooter incorporated into `u`, so both the reason for shooting and the target that is being aimed at are now a part of the equation.
+Since _r_ is used in the calculation of _v_, we now have the tip of the arrow inscribed.
+We also have the intent of the shooter incorporated into _u_, so both the reason for shooting and the target that is being aimed at are now part of the equation.
 
-To make the equation work, we can calculate `s`:
+To make the equation work, we can calculate _s_:
 
-* _uG_ + _vP_ = _R_ = _kG_
-* _uG_ + _veG_ = _kG_
-* _u_ + _ve_ = _k_
-* _z_/_s_ + _re_/_s_ = _k_
-* (_z_ + _re_)/_s_ = _k_
-* _s_ = (_z_ + _re_)/_k_
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>R</em> = <em>kG</em</li>
+<li><em>uG</em> + <em>veG</em> = <em>kG</em></li>
+<li><em>u</em> + <em>ve</em> = <em>k</em></li>
+<li><em>z</em>/<em>s</em> + <em>re</em>/<em>s</em> = <em>k</em></li>
+<li>(<em>z</em> + <em>re</em>)/<em>s</em> = <em>k</em></li>
+<li><em>s</em> = (<em>z</em> + <em>re</em>)/<em>k</em></li>
+</ul>
+++++
 
-This is the basis of the signature algorithm, and the two numbers in a signature are `r` and `s`.
+This is the basis of the signature algorithm, and the two numbers in a signature are _r_ and _s_.
 
 Verification is straightforward:
 
-* __uG__ + __vP__ where __u__,__v__ ≠ 0
-* pass:[<em>uG</em> + <em>vP</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>re</em>/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/((<em>z</em> + <em>re</em>)/<em>k</em>))<em>G</em> = <em>kG</em> = (<em>r</em>,<em>y</em>)]
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> where <em>u</em>,<em>v</em> ≠ 0</li>
+<li><em>uG</em> + <em>vP</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>re</em>/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/((<em>z</em> + <em>re</em>)/<em>k</em>))<em>G</em> = <em>kG</em> = (<em>r</em>,<em>y</em>)</li>
+</ul>
+++++
 
 [WARNING]
 .Why We Don't Reveal `k`
 ====
-At this point, you might be wondering why we don't reveal `k` and instead reveal the _x_ coordinate of _R_ or `r`.
-If we were to reveal `k`, then:
+At this point, you might be wondering why we don't reveal _k_ and instead reveal the _x_ coordinate of _R_, or _r_.
+If we were to reveal _k_, then:
 
-* __uG__ + __vP__ = __R__
-* __uG__ + __veG__ = __kG__
-* __kG__ – __uG__ = __veG__
-* (__k__ – __u__)__G__ = __veG__
-* (__k__ – __u__) = __ve__
-* (__k__ – __u__) &#xd7; 1/__v__ = __e__
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>R</em></li>
+<li><em>uG</em> + <em>veG</em> = <em>kG</em></li>
+<li><em>kG</em> – <em>uG</em> = <em>veG</em></li>
+<li>(<em>k</em> – <em>u</em>)<em>G</em> = <em>veG</em></li>
+<li>(<em>k</em> – <em>u</em>) = <em>ve</em></li>
+<li>(<em>k</em> – <em>u</em>) &#xd7; 1/<em>v</em> = <em>e</em>(<em>r</em>,<em>y</em>)</li>
+</ul>
+++++
 
 means that our secret would be revealed, which would defeat the whole purpose of the signature.
-We can, however, reveal R.
+We can, however, reveal _R_.
 
-It's worth mentioning again: make sure you're using truly random numbers for `k`, as even accidentally revealing `k` for a known signature is the equivalent of revealing your secret and losing your funds!
+It's worth mentioning again: make sure you're using truly random numbers for _k_, as even accidentally revealing _k_ for a known signature is the equivalent of revealing your secret and losing your funds!
 ====
 
 ==== Verification in Depth
 
-Signatures((("signing and verification", "verification process"))) sign some fixed-length value (our "contract"), in our case something that's 32 bytes.
-The fact that 32 bytes is 256 bits is not a coincidence, as the thing we're signing will be a scalar for `G`.
+Signatures((("signing and verification", "verification process"))) sign some fixed-length value (our "contract")—in our case, something that's 32 bytes.
+The fact that 32 bytes is 256 bits is not a coincidence, as the thing we're signing will be a scalar for _G_.
 
 To guarantee that the thing we're signing is 32 bytes, we hash the document first.
 In Bitcoin, the hashing function is hash256, or two rounds of sha256.
 This guarantees the thing that we're signing is exactly 32 bytes.
-We will call the result of the hash the _signature hash_, or `z`.
+We will call the result of the hash the _signature hash_, or _z_.
 
-The signature that we are verifying has two components, (`r`, `s`).
-The `r` is as above; it's the _x_ coordinate of some point R that we'll come back to.
-The formula for `s` is as above:
+The signature that we are verifying has two components, (_r_,_s_).
+_r_ is the _x_ coordinate of some point _R_ that we'll come back to.
+The formula for _s_ is as above:
 
 ++++
 <ul class="simplelist">
@@ -775,12 +787,16 @@ The formula for `s` is as above:
 </ul>
 ++++
 
-Keep in mind that we know `e` (_P_ = _eG_, or what we're proving we know in the first place), we know `k` (_kG_ = _R_, remember?), and we know `z`.
+Keep in mind that we know _e_ (_P_ = _eG_, or what we're proving we know in the first place), we know _k_ (_kG_ = _R_, remember?), and we know _z_.
 
-We will now construct _R_ = _uG_ + _vP_ by defining `u` and `v` this way:
+We will now construct _R_ = _uG_ + _vP_ by defining _u_ and _v_ this way:
 
-* _u_ = _z_/_s_
-* _v_ = _r_/_s_
+++++
+<ul class="simplelist">
+<li><em>u</em> = <em>x</em>/<em>s</em></li>
+<li><em>v</em> = <em>r</em>/<em>s</em></li>
+</ul>
+++++
 
 Thus:
 
@@ -790,7 +806,7 @@ Thus:
 </ul>
 ++++
 
-We know _s_ = (_z_ + _re_)/_k_ so:
+We know _s_ = (_z_ + _re_)/_k_, so:
 
 ++++
 <ul class="simplelist">
@@ -798,21 +814,21 @@ We know _s_ = (_z_ + _re_)/_k_ so:
 </ul>
 ++++
 
-We've successfully chosen `u` and `v` in a way as to generate _R_ as we intended.
-Furthermore, we used `r` in the calculation of `v` proving we knew what R should be.
-The only way we could know the details of _R_ beforehand is if we know `e`.
+We've successfully chosen _u_ and _v_ in such a way as to generate _R_ as we intended.
+Furthermore, we used _r_ in the calculation of _v_, proving we knew what _R_ should be.
+The only way we can know the details of _R_ beforehand is if we know _e_.
 
 To whit, here are the steps:
 
-1. We are given (`r`, `s`) as the signature, `z` as the hash of the thing being signed, and P, the public key (or public point) of the signer.
+1. We are given (_r_, _s_) as the signature, _z_ as the hash of the thing being signed, and P, the public key (or public point) of the signer.
 2. We calculate _u_ = __z__/__s__, _v_ = __r__/__s__.
 3. We calculate _uG_ + _vP_ = _R_.
-4. If __R__'s `x` coordinate equals `r`, the signature is valid.
+4. If __R__'s _x_ coordinate equals _r_, the signature is valid.
 
 [NOTE]
 .Why Two Rounds of sha256?
 ====
-The calculation of `z` requires two rounds of sha256, or hash256.
+The calculation of _z_ requires two rounds of sha256, or hash256.
 You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number.
 The reason is for security.
 
@@ -835,14 +851,14 @@ include::code-ch03/examples.py[tag=example9]
 <2> _u_ = _z_/_s_
 <3> _v_ = _r_/_s_
 <4> _uG_ + _vP_ = (_r_,_y_).
-We need to check that the _x_ coordinate is `r`
+We need to check that the _x_ coordinate is _r_
 
 include::code-ch03/answers.py[tag=exercise6,indent=0]
 
 ==== Programming Signature Verification
 
 We already have a class `S256Point`, which is the public point for the private key.
-We((("Signature class", "creating"))) create a `Signature` class that houses the `r` and `s` values:
+We((("Signature class", "creating"))) create a `Signature` class that houses the _r_ and _s_ values:
 
 [source,python]
 ----
@@ -865,26 +881,26 @@ Note that we can mod by `n` as that's the order of the group.
 <3> _v_ = _r_/_s_.
 Note that we can mod by `n` as that's the order of the group.
 <4> _uG_ + _vP_ should be _R_.
-<5> We check that the _x_ coordinate is `r`
+<5> We check that the _x_ coordinate is _r_
 
-So given a public key, which is a point on the secp256k1 curve and a signature hash, `z`, we can verify whether a signature is valid or not.((("", startref="SAVsign03")))
+So given a public key, which is a point on the secp256k1 curve and a signature hash, _z_, we can verify whether a signature is valid or not.((("", startref="SAVsign03")))
 
 ==== Signing In Depth
 
 Given((("signing and verification", "signing process"))) that we know how verification should work, signing is straightforward.
-The only missing step is figuring out what `k`, and thus _R_ = _kG_ to use.
-We do this by choosing a random `k`.
+The only missing step is figuring out what _k_, and thus _R_ = _kG_ to use.
+We do this by choosing a random _k_.
 
 The signing procedure is as follows:
 
-1. We are given `z` and know `e` such that _eG_ = _P_.
-2. Choose a random `k`.
+1. We are given _z_ and know _e_ such that _eG_ = _P_.
+2. Choose a random _k_.
 3. Calculate _R_ = _kG_ and _r_ = _x_ coordinate of _R_.
 4. Calculate _s_ = (_z_ + _re_)/_k_.
 5. Signature is (_r_,_s_).
 
-Note that the pubkey `P` has to be transmitted to whoever wants to verify and `z` must be known by the verifier.
-We'll see later that `z` is computed and P is sent along with the signature.
+Note that the pubkey `P` has to be transmitted to whoever wants to verify and _z_ must be known by the verifier.
+We'll see later that _z_ is computed and P is sent along with the signature.
 
 ==== Creating a Signature
 
@@ -904,8 +920,8 @@ include::code-ch03/examples.py[tag=example10]
 <1> This is an example of a "brain wallet," which is a way to keep the private key in your head without having to memorize something too difficult.
 Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.
-<3> We're going to use a fixed `k` here for demonstration purposes.
-<4> _kG_ = (_r_,_y_) so we take the `x` coordinate only.
+<3> We're going to use a fixed _k_ here for demonstration purposes.
+<4> _kG_ = (_r_,_y_) so we take the _x_ coordinate only.
 <5> _s_ = (_z_ + _re_)/_k_.
 We can mod by `n` because we know this is a cyclical group of order `n`.
 <6> The public point needs to be known by the verifier.
@@ -941,7 +957,7 @@ class PrivateKey:
 ----
 <1> `randint` chooses a random integer from `[0,n)`.
 Please don't use this function in production as the random number from this library is not nearly random enough.
-<2> `r` is the _x_ coordinate of _kG_.
+<2> _r_ is the _x_ coordinate of _kG_.
 <3> We use Fermat's Little Theorem again and `n`, which is prime.
 <4> _s_ = (_z_ + _re_)/_k_.
 <5> It turns out that using the low-_s_ value will get nodes to relay our transactions easier.
@@ -951,12 +967,12 @@ This is for malleability reasons.
 .Importance of a Unique `k`
 ****
 There's an important rule in signatures that utilize a random component like we have here.
-The `k` needs to be unique per signature.
+The _k_ needs to be unique per signature.
 That is, it cannot get reused.
-In fact, a `k` that's reused will result in you revealing your secret!
+In fact, a _k_ that's reused will result in you revealing your secret!
 This is because:
 
-Our secret is `e`, we are reusing `k` to sign __z__~1~ and __z__~2~.
+Our secret is _e_, we are reusing _k_ to sign __z__~1~ and __z__~2~.
 
 * __kG__ = (__r__,__y__)
 * __s__~1~ = (__z__~1~ + __re__) / __k__, __s__~2~ = (__z__~2~ + __re__) / __k__
@@ -967,9 +983,9 @@ Our secret is `e`, we are reusing `k` to sign __z__~1~ and __z__~2~.
 * __e__ = (__s__~2~__z__~1~ – __s__~1~__z__~2~) / (__rs__~1~ – __rs__~2~)
 
 If anyone sees both signatures, they can use this formula and find our secret!
-The Playstation 3 hack back in 2010 was due to the reuse of the `k` value in multiple signatures (https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/).
+The Playstation 3 hack back in 2010 was due to the reuse of the _k_ value in multiple signatures (https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/).
 
-To combat this, there is a deterministic `k` generation standard that uses our secret and `z` to create a unique, deterministic `k` every time.
+To combat this, there is a deterministic _k_ generation standard that uses our secret and _z_ to create a unique, deterministic _k_ every time.
 The specification is in RFC6979 (https://tools.ietf.org/html/rfc6979) and the code changes to look like this:
 
 [source,python]
@@ -978,16 +994,16 @@ class PrivateKey:
 ...
 include::code-ch03/ecc.py[tag=source14]
 ----
-<1> We are using the deterministic `k` instead of a random one.
+<1> We are using the deterministic _k_ instead of a random one.
 Everything else about `sign` remains the same.
 <2> This algorithm returns a candidate that's suitable.
 
-Deterministic `k` will be unique with very high probability.
+Deterministic _k_ will be unique with very high probability.
 This is because sha256 is collision resistant and no collisions to date have been found.
 
-Another benefit from a testing perspective is that the signature for a given `z` and the same private key will be the same every time.
+Another benefit from a testing perspective is that the signature for a given _z_ and the same private key will be the same every time.
 This makes debugging much easier and unit tests a lot easier to write.
-In addition, transactions that use deterministic `k` will create the same transaction every time, as the signature will not change.
+In addition, transactions that use deterministic _k_ will create the same transaction every time, as the signature will not change.
 This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))((("", startref="SAVsig03")))((("", startref="ECCsign03")))
 
 ****
