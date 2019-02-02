@@ -146,7 +146,7 @@ def sig_hash(self, input_index):
 # tag::exercise2[]
 ==== Exercise 2
 
-Write the `verify_input` method for the `Tx` class. You will want to use the `TxIn.script_pubkey()`, `Tx.sig_hash()`, and `Script.evaluate()` methods.
+Write the `verify_input` method for the `Tx` class. You will want to use the `TxIn.script_pubkey`, `Tx.sig_hash`, and `Script.evaluate` methods.
 # end::exercise2[]
 '''
 
