@@ -636,8 +636,8 @@ include::code-ch06/answers.py[tag=exercise3,indent=0]
 
 ==== Utility of Scripts
 
-The((("Script", "utility of")))((("OP_MUL operation"))) previous exercise was a bit of a cheat as `OP_MUL` is no longer allowed on the Bitcoin network.
-Version 0.3.5 of Bitcoin disabled a lot of different opcodes, as anything that had even a little bit of potential to create vulnerabilities on the network were disabled.
+The((("Script", "utility of")))((("OP_MUL operation"))) previous exercise was a bit of a cheat, as `OP_MUL` is no longer allowed on the Bitcoin network.
+Version 0.3.5 of Bitcoin disabled a lot of different opcodes (anything that had even a little bit of potential to create vulnerabilities on the network).
 
 This is just as well, since most of the functionality in Script is actually not used much.
 From a software maintenance standpoint, this is not a great situation as the code has to be maintained despite its lack of usage.
@@ -649,9 +649,9 @@ include::code-ch06/answers.py[tag=exercise4,indent=0]
 
 ==== SHA-1 Piñata
 
-In((("SHA-1 piñata")))((("Script", "SHA-1 piñata")))((("hash collisions"))) 2013, Peter Todd created a Script very similar to the Script in Exercise 4 and put some bitcoins into it to create an economic incentive for people to find hash collisions.
-The donations reached 2.49153717 BTC, and when Google actually found a https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[hash collision for SHA-1 in February 2017], this Script was promptly redeemed.
-The transaction output was 2.48 BTC, which was $2,848.88 USD at the time.
+In((("SHA-1 piñata")))((("Script", "SHA-1 piñata")))((("hash collisions"))) 2013, Peter Todd created a script very similar to the one in Exercise 4 and put some bitcoins into it to create an economic incentive for people to find hash collisions.
+The donations reached 2.49153717 BTC, and when Google actually found a https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[hash collision for SHA-1 in February 2017], this script was promptly redeemed.
+The transaction output was 2.48 BTC, which was 2,848.88 USD at the time.
 
 Peter created more piñatas for sha256, hash256, and hash160, which add economic incentives to find collisions for these hashing functions.
 
