@@ -5,8 +5,8 @@
 [.lead]
 One of the trickiest things to code in Bitcoin is validating transactions.
 Another one is creating transactions.
-In this chapter, we'll cover the exact steps to doing both.
-Toward the end of this chapter, we'll be creating a testnet transaction and broadcasting it.
+In this chapter, we'll cover the exact steps to do both.
+Toward the end of the chapter, we'll be creating a testnet transaction and broadcasting it.
 
 === Validating Transactions
 
@@ -14,21 +14,21 @@ Every((("Transactions", "validating", id="Tvalid07"))) node, when receiving tran
 This process is called _transaction validation_.
 Here are the main things that a node checks:
 
-1. Inputs of the transaction are previously unspent.
-2. Sum of the inputs are greater than or equal to the sum of the outputs.
-3. ScriptSig successfully unlocks the previous ScriptPubKey.
+1. The inputs of the transaction are previously unspent.
+2. The sum of the inputs is greater than or equal to the sum of the outputs.
+3. The ScriptSig successfully unlocks the previous ScriptPubKey.
 
-(1) prevents double-spending.
+#1 prevents double-spending.
 Any input that's been spent (that is, included in the blockchain) cannot be spent again.
 
-(2) makes sure no new Bitcoins are created (except in a special type of transaction called Coinbase Transactions; more on that in <<chapter_blocks>>).
+#2 makes sure no new Bitcoins are created (except in a special type of transaction called a coinbase transaction; more on that in <<chapter_blocks>>).
 
-(3) makes sure that the combined Script is valid.
+#3 makes sure that the combined script is valid.
 In the vast majority of transactions, this means checking that the one or more signatures in the ScriptSig are valid.
 
-Let's look at how each is checked.
+Let's look at how each condition is checked.
 
-=== Checking the Spentness of Inputs
+==== Checking the Spentness of Inputs
 
 To((("inputs")))((("double-spending, preventing"))) prevent double-spending, a node checks that each input exists and has not been spent.
 This can be checked by any full node by looking at the UTXO set (see <<chapter_tx_parsing>>).
@@ -42,7 +42,7 @@ Light clients that do not have access to the blockchain have to trust other node
 
 A full node can check the spentness of an input pretty easily, but a light client has to get this information from someone else.
 
-=== Checking the Sum of the Inputs versus the Sum of the Outputs
+==== Checking the Sum of the Inputs Versus the Sum of the Outputs
 
 Nodes((("outputs"))) also make sure that the sum of the inputs is greater than or equal to the sum of the outputs.
 This ensures that the transaction does not create new coins.
@@ -51,7 +51,7 @@ Since inputs don't have an amount field, this must be looked up on the blockchai
 Once again, full nodes have access to the amounts associated with the unspent output, but light clients have to depend on full nodes to supply this information.
 
 We covered how to calculate fees in <<chapter_tx_parsing>>.
-Checking that the sum of the inputs being greater than or equal to the sum of the outputs is the same as checking that the fee is not negative (that is, creating money).
+Checking that the sum of the inputs is greater than or equal to the sum of the outputs is the same as checking that the fee is not negative (that is, creating money).
 Recall the last exercise in <<chapter_tx_parsing>>.
 The method `fee` looks like this:
 
@@ -62,16 +62,17 @@ class Tx:
 include::code-ch07/tx.py[tag=source1]
 ----
 
-We can test to see if this transaction is trying to create money by using this method.
+We can test to see if this transaction is trying to create money by using this method:
 
 [source,python]
 ----
 include::code-ch07/examples.py[tag=example1]
 ----
-<1> This only works because we're using Python (see the following Note, "The Value Overflow Incident").
+<1> This only works because we're using Python (see <<valueOverflow>>).
 
 If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create Bitcoins out of the ether.
 
+[[valueOverflow]]
 [NOTE]
 .The Value Overflow Incident
 ====
