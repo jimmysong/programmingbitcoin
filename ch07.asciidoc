@@ -184,7 +184,8 @@ Specifically, not only will the number of hash256 operations for calculating _z_
 This was particularly obvious with the biggest transaction mined to date:
 
 ----
-bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2&#x200b;b4e3e08
+bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2
+b4e3e08
 ----
 
 This transaction had 5,569 inputs and 1 output and took many miners over a minute to validate, as the signature hashes for the transaction were expensive to calculate.
