@@ -2,9 +2,11 @@
 # tag::exercise3[]
 ==== Exercise 3
 
-Create a ScriptSig that can unlock this ScriptPubKey. Note `OP_MUL` multiplies the top two elements of the stack.
+Create a ScriptSig that can unlock this ScriptPubKey:
 
 `767695935687`
+
+Note that `OP_MUL` multiplies the top two elements of the stack.
 
 * `56 = OP_6`
 * `76 = OP_DUP`
@@ -24,7 +26,7 @@ True
 # tag::exercise4[]
 ==== Exercise 4
 
-Figure out what this Script is doing:
+Figure out what this script is doing:
 
 `6e879169a77ca787`
 
