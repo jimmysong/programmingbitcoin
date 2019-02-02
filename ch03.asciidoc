@@ -818,9 +818,9 @@ We've successfully chosen _u_ and _v_ in such a way as to generate _R_ as we int
 Furthermore, we used _r_ in the calculation of _v_, proving we knew what _R_ should be.
 The only way we can know the details of _R_ beforehand is if we know _e_.
 
-To whit, here are the steps:
+To wit, here are the steps:
 
-1. We are given (_r_, _s_) as the signature, _z_ as the hash of the thing being signed, and P, the public key (or public point) of the signer.
+1. We are given (_r_,_s_) as the signature, _z_ as the hash of the thing being signed, and _P_ as the public key (or public point) of the signer.
 2. We calculate _u_ = __z__/__s__, _v_ = __r__/__s__.
 3. We calculate _uG_ + _vP_ = _R_.
 4. If __R__'s _x_ coordinate equals _r_, the signature is valid.
@@ -829,31 +829,34 @@ To whit, here are the steps:
 .Why Two Rounds of sha256?
 ====
 The calculation of _z_ requires two rounds of sha256, or hash256.
-You may be wondering why there are two rounds when only 1 is necessary to get a 256-bit number.
+You may be wondering why there are two rounds when only one is necessary to get a 256-bit number.
 The reason is for security.
 
 There is a well-known hash collision attack on SHA-1 called a _birthday attack_ that makes finding collisions much easier.
-Google found a SHA-1 collision using some modifications of a birthday attack and a lot of other things in 2017 (https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html).
-Using SHA-1 twice, or double-SHA-1, is the way to defeat or slow down some forms of this attack.
+https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[Google found a SHA-1 collision] using some modifications of a birthday attack and a lot of other things in 2017.
+Using SHA-1 twice, or _double SHA-1_, is the way to defeat or slow down some forms of this attack.
 
 Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential weaknesses.
 ====
 
 ==== Verifying a Signature
 
-We((("signing and verification", "signature verification", id="SAVsign03"))) can now verify a signature using some of the primitives that we have.
+We((("signing and verification", "signature verification", id="SAVsign03"))) can now verify a signature using some of the primitives that we have:
 
 [source,python]
 ----
 include::code-ch03/examples.py[tag=example9]
 ----
-<1> Note that we use Fermat's Little Theorem for 1/_s_, since `n` is prime.
-<2> _u_ = _z_/_s_
-<3> _v_ = _r_/_s_
+<1> Note that we use Fermat's Little Theorem for 1/_s_, since _n_ is prime.
+<2> _u_ = _z_/_s_.
+<3> _v_ = _r_/_s_.
 <4> _uG_ + _vP_ = (_r_,_y_).
-We need to check that the _x_ coordinate is _r_
+We need to check that the _x_ coordinate is _r_.
 
+[source,python]
+----
 include::code-ch03/answers.py[tag=exercise6,indent=0]
+----
 
 ==== Programming Signature Verification
 
@@ -875,7 +878,7 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source12]
 ----
-<1> `s_inv` (1/_s_) is calculated using Fermat's Little Theorem on the order of the group `n`, which is prime.
+<1> `s_inv` (1/_s_) is calculated using Fermat's Little Theorem on the order of the group _n_, which is prime.
 <2> _u_ = _z_/_s_.
 Note that we can mod by `n` as that's the order of the group.
 <3> _v_ = _r_/_s_.
