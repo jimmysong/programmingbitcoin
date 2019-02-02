@@ -210,7 +210,7 @@ include::code-ch07/tx.py[tag=source2]
 <1> We make sure that we are not creating money.
 <2> We make sure that each input has a correct ScriptSig.
 
-Note that a full node would verify more things like checking for double-spends and checking some other consensus rules not discussed in this chapter (max sigops, size of ScriptSig, etc), but this is good enough for our library.
+Note that a full node would verify more things, like checking for double-spends and checking some other consensus rules not discussed in this chapter (max sigops, size of ScriptSig, etc.), but this is good enough for our library.
 
 === Creating Transactions
 
@@ -225,13 +225,13 @@ The vast majority of the time, we need one or more private keys corresponding to
 
 The rest of this chapter will be concerned with creating a transaction whose inputs are locked by p2pkh ScriptPubKeys.
 
-=== Creating a Transaction
+==== Constructing the Transaction
 
 The construction of a transaction requires answering some basic questions:
 
 1. Where do we want the bitcoins to go?
 2. What UTXOs can we spend?
-3. How quickly do we want this transactions to get into the blockchain?
+3. How quickly do we want this transaction to get into the blockchain?
 
 We'll be using testnet for this example, though this can easily be applied to mainnet.
 
@@ -241,11 +241,13 @@ In this example, we will pay 0.1 testnet Bitcoins (tBTC) to `mnrVtF8DWjMu839VW3r
 
 The second question is about what's in our wallet.
 What do we have available to spend?
-In this example, we have an output here denoted by transaction ID and output index:
+In this example, we have an output denoted by a transaction ID and output index:
 
-`0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299:13`
+----
+0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299:13
+----
 
-When we view this output on a testnet((("block explorers"))) block explorer (<<utxo_that_were_spending>>), we can see that our output is worth 0.33 tBTC.
+When we view this output on a testnet((("block explorers"))) block explorer (<<utxo_that_were_spending>>), we can see that our output is worth 0.44 tBTC.
 
 [[utxo_that_were_spending]]
 .UTXO that we're spending
@@ -259,58 +261,58 @@ Though it's generally bad privacy and security practice to reuse addresses, we'l
 ====
 Back((("addresses, reusing")))((("privacy issues, reusing addresses"))) in <<chapter_script>>, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA.
 p2pkh, on the other hand, is also protected by sha256 and ripemd160.
-However, because the blockchain is public, once we _spend from_ a ScriptPubKey corresponding to our address, we reveal our public key as part of the ScriptSig.
-Once we've revealed that public key, sha256 and ripemd160 no longer protect us as the attacker knows the public key and doesn't have to guess.
+However, because the blockchain is public, once we spend from a ScriptPubKey corresponding to our address, we reveal our public key as part of the ScriptSig.
+Once we've revealed that public key, sha256 and ripemd160 no longer protect us as the attacker knows the public key and doesn't have to guess it.
 
-That((("Discrete Log problem"))) said, as of this writing, we are still protected by the Discrete Log problem, which is unlikely to be broken any time soon.
+((("discrete log problem")))As of this writing, we are still protected by the discrete log problem, which is unlikely to be broken any time soon.
 It's important from a security perspective, however, to understand what we're protected by.
 
 The other reason to not reuse addresses is for privacy.
 Having a single address for all our transactions means that people can link our transactions together.
-If, for example, we bought something private (medication to treat some disease you don't want others to know about) and spent another output with the same ScriptPubKey for a donation to some charity, the charity and the medication vendor could identify that we did business with the other.
+If, for example, we bought something private (say, medication to treat some disease we don't want others to know about) and spent another output with the same ScriptPubKey for a donation to some charity, the charity and the medication vendor could identify that we had done business with the other.
 
 Privacy leaks tend to become security holes over time.
 ====
 
 The third question is really about fees.
-If we want to get the transaction in the blockchain faster, we'll want to pay more fees; if we don't mind waiting, we'll want to pay less.
+If we want to get the transaction in the blockchain faster, we'll have to pay more fees; if we don't mind waiting, we can pay less.
 In our case, we'll use 0.01 tBTC as our fee.
 
 .Fee Estimation
 [NOTE]
 ====
 Fee((("Transactions", "transaction fees"))) estimation is done on a per-byte basis.
-If your transaction is 600 bytes, you'll want to have double the fees as a transaction that's 300 bytes.
+If your transaction is 600 bytes, it will have double the fees as a transaction that's 300 bytes.
 This is because block space is limited and larger transactions take up more space.
-This calculation has changed a bit since Segwit (segregated witness; see <<chapter_segwit>>), but the general principle still applies.
+This calculation has changed a bit since Segwit (see <<chapter_segwit>>), but the general principle still applies.
 We want to pay enough on a per-byte basis so that miners are motivated to include our transaction as soon as possible.
 
 When blocks aren't full, almost any amount above the default relay limit (1 satoshi/byte) is enough to get a transaction included.
 When blocks are full, this is not an easy thing to estimate.
 There are multiple ways to estimate fees, including:
 
-* Looking at various fee levels and estimating the probability of inclusion based on past blocks and the mempools at the time,
-* Looking at the current mempool and adding a fee that roughly corresponds to enough economic incentivization, and
-* Going with some fixed fee.
+* Looking at various fee levels and estimating the probability of inclusion based on past blocks and the mempools at the time
+* Looking at the current mempool and adding a fee that roughly corresponds to enough economic incentivization
+* Going with some fixed fee
 
-Many wallets use different strategies and this is an active area of research.((("", startref="Tcreate07")))
+Many wallets use different strategies, and this is an active area of research.((("", startref="Tcreate07")))
 ====
 
-=== Combining to Make a Transaction
+==== Making the Transaction
 
 We((("Transactions", "combining to make"))) have a plan for a new transaction with one input and two outputs.
 But first, let's look at some other tools we'll need.
 
 We need a way to take an address and get the 20-byte hash out of it.
-This is the opposite of encoding an address, so we call the function `decode_base58`
+This is the opposite of encoding an address, so we call the function `decode_base58`:
 
 [source,python]
 ----
 include::code-ch07/helper.py[tag=source1]
 ----
-<1> We get what number is encoded in this base58 address.
-<2> Once we have the number, we convert it to Big-Endian bytes.
-<3> The first byte is the network prefix and the last four are the checksum.
+<1> We get what number is encoded in this Base58 address.
+<2> Once we have the number, we convert it to big-endian bytes.
+<3> The first byte is the network prefix and the last 4 are the checksum.
 The middle 20 are the actual 20-byte hash (aka hash160).
 
 We also need a way to convert the 20-byte hash to a ScriptPubKey.
@@ -324,22 +326,21 @@ include::code-ch07/script.py[tag=source1]
 Note((("OP_DUP operation")))((("OP_HASH160 operation")))((("OP_EQUALVERIFY operation")))((("OP_CHECKSIG operation"))) that `0x76` is `OP_DUP`, `0xa9` is `OP_HASH160`, `h160` is a 20-byte element, `0x88` is `OP_EQUALVERIFY`, and `0xac` is `OP_CHECKSIG`.
 This is the p2pkh ScriptPubKey command set from <<chapter_script>>.
 
-Given these tools, we can proceed to transaction creation.
+Given these tools, we can proceed to transaction creation:
 
 [source,python]
 ----
 include::code-ch07/examples.py[tag=example5]
 ----
 <1> The amount must be in satoshis; given there are 100,000,000 satoshis per BTC, we have to multiply and cast to an integer.
-<2> Note we have to designate which network to look up using the `testnet=True` argument.
+<2> We have to designate which network to look up using the `testnet=True` argument.
 
-We have created the actual transaction.
-However, every ScriptSig in this transaction is currently empty. Filling it is where we turn next.
+We have created the actual transaction, but every ScriptSig in this transaction is currently empty. Filling it is where we turn next.
 
-=== Signing a Transaction
+==== Signing the Transaction
 
-Signing((("signing and verification", "signing process", id="SAVsign07")))((("Transactions", "signing", id="Tsign07"))) the transaction would be tricky, but we know how to get the signature hash, or `z`, from earlier in this chapter.
-If we have the private key whose public key hash160s to the 20-byte hash in the ScriptPubKey, we can sign the `z` and produce the DER signature.
+Signing((("signing and verification", "signing process", id="SAVsign07")))((("Transactions", "signing", id="Tsign07"))) the transaction could be tricky, but we know how to get the signature hash, _z_, from earlier in this chapter.
+If we have the private key whose public key hash160s to the 20-byte hash in the ScriptPubKey, we can sign _z_ and produce the DER signature:
 
 [source,python]
 ----
@@ -348,12 +349,12 @@ include::code-ch07/examples.py[tag=example6]
 <1> We only need to sign the first input—there's only one.
 Multiple inputs would require us to sign each input with the right private key.
 <2> The signature is actually a combination of the DER signature and the hash type, which is `SIGHASH_ALL` in our case.
-<3> The ScriptSig of a p2pkh from <<chapter_script>> is exactly two elements: signature and SEC format public key.
-<4> We only have that one input that we need to sign, but if there were more, this process of creating the ScriptSig would need to be done for each input.
+<3> The ScriptSig of a p2pkh has exactly two elements, as we saw in <<chapter_script>>: the signature and SEC format public key.
+<4> We only have one input that we need to sign, but if there were more, this process of creating the ScriptSig would need to be done for each input.
 
 include::code-ch07/answers.py[tag=exercise3,indent=0]
 
-==== Creating Your Own Transactions on testnet
+=== Creating Your Own Transactions on testnet
 
 To((("testnet"))) create your own transaction, get some coins for yourself.
 To do that you'll need an address.
@@ -366,13 +367,13 @@ include::code-ch07/examples.py[tag=example7]
 ----
 <1> Please use a phrase other than `Jimmy Song secret`.
 
-Once you have an address, you can get some coins at a myriad of testnet faucets, which provide testnet coins for free for testing purposes.
-You can Google "testnet bitcoin faucet" to find them or use one from this list: https://en.bitcoin.it/wiki/Testnet#Faucets.
-My website, https://faucet.programmingbitcoin.com/ is updated to point to a testnet faucet that works.
-Enter your new testnet address into these faucets to get some testnet coins.
+Once you have an address, you can get some coins from one of the testnet faucets that provide free testnet coins for testing purposes.
+You can Google "testnet bitcoin faucet" to find one, or use one from the https://en.bitcoin.it/wiki/Testnet#Faucets[list on the wiki].
+My website, https://faucet.programmingbitcoin.com[], is also updated to point to a testnet faucet that works.
+Enter your new testnet address into any of these faucets to get some testnet coins.
 
 After receiving some coins, spend them using this library.
-This is a big accomplishment for a budding Bitcoin developer, so please take some time to complete this exercise.((("", startref="Tsign07")))((("", startref="SAVsign07")))
+This is a big accomplishment for a budding Bitcoin developer, so please take some time to complete these exercises.((("", startref="Tsign07")))((("", startref="SAVsign07")))
 
 include::code-ch07/answers.py[tag=exercise4,indent=0]
 
@@ -380,8 +381,8 @@ include::code-ch07/answers.py[tag=exercise5,indent=0]
 
 === Conclusion
 
-We've successfully validated existing transactions on the blockchain and we've also created our own transactions on testnet!
-This is a major achievement and you should be proud.
+We've successfully validated existing transactions on the blockchain, and you've also created your own transactions on testnet!
+This is a major achievement, and you should be proud.
 
 The code we have so far will do p2pkh and p2pk.
 In the next chapter, we turn to a more advanced smart contract, p2sh.
