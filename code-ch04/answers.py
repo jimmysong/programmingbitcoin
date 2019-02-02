@@ -92,8 +92,8 @@ EQJsjkd6JaGwxrjEhfeqPenqHwrBmPQZjJGNSCHBkcF7
 
 Find the address corresponding to public keys whose private key secrets are:
 
-* 5002 (use uncompressed SEC, on testnet)
-* 2020^5^ (use compressed SEC, on testnet)
+* 5002 (use uncompressed SEC on testnet)
+* 2020^5^ (use compressed SEC on testnet)
 * 0x12345deadbeef (use compressed SEC on mainnet)
 # end::exercise5[]
 # tag::answer5[]
@@ -112,7 +112,7 @@ mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH
 # tag::exercise6[]
 ==== Exercise 6
 
-Find the WIF for private key whose secrets are:
+Find the WIF for the private key whose secrets are:
 
 * 5003 (compressed, testnet)
 * 2021^5^ (uncompressed, testnet)
@@ -134,7 +134,7 @@ KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgiuQJv1h8Ytr2S53a
 # tag::exercise9[]
 ==== Exercise 9
 
-Create a testnet address for yourself using a long secret that only you know. This is important as there are bots on testnet trying to steal testnet coins. Make sure you write this secret down somewhere! You will be using the secret later to sign Transactions.
+Create a testnet address for yourself using a long secret that only you know. This is important as there are bots on testnet trying to steal testnet coins. Make sure you write this secret down somewhere! You will be using it later to sign transactions.
 # end::exercise9[]
 # tag::answer9[]
 >>> from ecc import PrivateKey
