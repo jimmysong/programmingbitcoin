@@ -356,7 +356,7 @@ include::code-ch06/examples.py[tag=example1]
 ----
 <1> The p2pk ScriptPubkey is the SEC format pubkey followed by `OP_CHECKSIG`, which is `0xac` or 172.
 <2> We can do this because of the `__add__` method we just created.
-<3> We want to evaluate the commands and see if the Script validates.
+<3> We want to evaluate the commands and see if the script validates.
 
 Here is the method that we'll use for the _combined_ command set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current transaction):
 
@@ -372,33 +372,33 @@ include::code-ch06/script.py[tag=source5]
 <2> We execute until the commands list is empty.
 <3> The function that executes the opcode is in the `OP_CODE_FUNCTIONS` array (e.g.,
 `OP_DUP`, `OP_CHECKSIG`, etc.).
-<4> 99 and 100 are `OP_IF` and `OP_NOTIF` respectively.
+<4> 99 and 100 are `OP_IF` and `OP_NOTIF`, respectively.
 They require manipulation of the commands array based on the top element of the stack.
-<5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK` respectively.
+<5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK`, respectively.
 They move stack elements to/from an "alternate" stack, which we call _altstack_.
 <6> 172, 173, 174, and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from <<chapter_elliptic_curve_cryptography>> for signature validation.
 <7> If the command is not an opcode, it's an element, so we push that element to the stack.
-<8> If the stack is empty at the end of processing all the commands, we fail the Script by returning `False`.
-<9> If the stack's top element is an empty byte string (which is how the stack stores a 0), then we also fail the Script by returning `False`.
-<10> Any other result means that the Script has validated.
+<8> If the stack is empty at the end of processing all the commands, we fail the script by returning `False`.
+<9> If the stack's top element is an empty byte string (which is how the stack stores a 0), then we also fail the script by returning `False`.
+<10> Any other result means that the script has validated.
 
 [WARNING]
 .Making Script Evaluation Safe
 ====
-The code shown here is a little bit of a cheat, as the combined Script is not exactly executed this way.
-The ScriptSig is evaluated separately from the ScriptPubKey as to not allow operations from ScriptSig to affect the ScriptPubKey commands.
+The code shown here is a little bit of a cheat, as the combined script is not exactly executed this way.
+The ScriptSig is evaluated separately from the ScriptPubKey so as to not allow operations from the ScriptSig to affect the ScriptPubKey commands.
 
-Specifically, the stack after all the ScriptSig commands are evaluated are stored and then the ScriptPubkey commands are evaluated on their own with the stack from the first execution.
+Specifically, the stack after all the ScriptSig commands are evaluated is stored, and then the ScriptPubkey commands are evaluated on their own with the stack from the first execution.
 ====
 
 
 ==== Stack Elements Under the Hood
 
-It((("p2pk (pay-to-pubkey)", "stack elements under the hood"))) may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte-strings like a DER signature or SEC pubkey.
+It((("p2pk (pay-to-pubkey)", "stack elements under the hood"))) may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte strings like a DER signature or SEC pubkey.
 Under the hood, they're all bytes, but some are interpreted as numbers for certain opcodes.
-For example, 1 is stored on the stack as the `01` byte, 2 is stored as the `02` byte, 999 as the `e703` and so on.
-Any byte-string is interpreted as a Little-Endian number for arithmetic opcodes.
-The integer 0 is _not_ stored as the `00` byte, but as the empty byte-string.
+For example, 1 is stored on the stack as the `01` byte, 2 is stored as the `02` byte, 999 as the `e703` byte, and so on.
+Any byte string is interpreted as a Little-Endian number for arithmetic opcodes.
+The integer 0 is _not_ stored as the `00` byte, but as the empty byte string.
 
 The code in _op.py_ can clarify what's going on:
 
@@ -414,20 +414,20 @@ include::code-ch06/answers.py[tag=exercise2,indent=0]
 [[problemsp2pk]]
 === Problems with p2pk
 
-Pay-to-pub-key((("p2pk (pay-to-pubkey)", "problems with"))) is intuitive in the sense that there is a public key that anyone can send bitcoins to and a signature that can only be produced by the owner of the private key.
+Pay-to-pubkey((("p2pk (pay-to-pubkey)", "problems with"))) is intuitive in the sense that there is a public key that anyone can send bitcoins to and a signature that can only be produced by the owner of the private key.
 This works well, but there are some problems.
 
 First, the public keys are long.
-We know from <<chapter_serialization>> that secp256k1 public points are 33 bytes in compressed SEC and 65 bytes in uncompressed SEC.
+We know from <<chapter_serialization>> that secp256k1 public points are 33 bytes in compressed SEC and 65 bytes in uncompressed SEC format.
 Unfortunately, humans can't interpret 33 or 65 raw bytes easily.
-Most character encodings don't render certain byte ranges as they are control characters, newlines, or similar.
+Most character encodings don't render certain byte ranges, as they are control characters, newlines, or similar.
 The SEC format is typically encoded instead in hexadecimal, doubling the length (hex encodes 4 bits per character instead of 8).
-This makes the compressed and uncompressed SEC formats 66 and 130 characters respectively, which is bigger than most identifiers (your username on a website, for instance, is usually less than 20).
+This makes the compressed and uncompressed SEC formats 66 and 130 characters, respectively, which is bigger than most identifiers (your username on a website, for instance, is usually less than 20 characters).
 To compound this, early Bitcoin transactions didn't use the compressed versions, so the hexadecimal addresses were 130 characters each!
 This is not fun or easy for people to transcribe, much less communicate by voice.
 
 That((("IP-to-IP payments"))) said, the original use cases for p2pk were for IP-to-IP payments and mining outputs.
-For IP-to-IP payments, IP addresses were queried for their public keys, so communicating the public keys were done machine-to-machine, which meant that human communication wasn't necessarily a problem.
+For IP-to-IP payments, IP addresses were queried for their public keys; communicating the public keys was done machine-to-machine, which meant that human communication wasn't necessarily a problem.
 Use for mining outputs also doesn't require human communication.
 Incidentally, this IP-to-IP payment system was phased out because it's not secure and prone to man-in-the-middle attacks.
 
@@ -440,36 +440,40 @@ It's speculated this is why Satoshi used the uncompressed SEC format.
 When Pieter Wuille discovered that the compressed SEC format existed in OpenSSL, more people started using the compressed SEC format in Bitcoin.
 ****
 
-Second, because the public keys are long, this causes a more subtle problem: since this large public key has to be kept around and indexed to see if it's spendable, the UTXO set becomes bigger.
+Second, the length of the public keys causes a subtler problem: because they have to be kept around and indexed to see if the outputs are spendable, the UTXO set becomes bigger.
 This requires more resources on the part of full nodes.
 
-Third, because we're storing the public key in the ScriptPubKey field, it's known to everyone.
-That means should ECDSA someday be broken, these outputs could be stolen.
-This is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and would affect all of those things, too.
-For example, quantum computing has the potential to reduce the calculation times significantly for RSA and ECDSA, so having something else in addition to protect these outputs would be more secure.
+Third, because we're storing the public keys in the ScriptPubKey field, they're known to everyone.
+That means should ECDSA someday be broken, these outputs could be stolen. For example, quantum computing has the potential to reduce the calculation times significantly for RSA and ECDSA, so having something else in addition to protect these outputs would be more secure. However, this is not a very big threat since ECDSA is used in a lot of applications besides Bitcoin and breaking it would affect all of those things, too.
 
 === Solving the Problems with p2pkh
 
-Pay-to-pubkey-hash (p2pkh) is((("hashes", "p2pkh (pay-to-pubkey-hash)", id="Hp2pkh06")))((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative Script that has advantages over p2pk:
+Pay-to-pubkey-hash (p2pkh) is((("hashes", "p2pkh (pay-to-pubkey-hash)", id="Hp2pkh06")))((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative script format that has two key advantages over p2pk:
 
 1. The addresses are shorter.
 2. It's additionally protected by sha256 and ripemd160.
 
-Addresses are shorter because it uses the sha256 and ripemd160 hashing algorithms.
+The addresses are shorter because it uses the sha256 and ripemd160 hashing algorithms.
 We do both in succession and call that hash160.
 The result of hash160 is 160 bits or 20 bytes, which are encoded into an address.
 
 The result is what you may have seen on the Bitcoin network and coded in <<chapter_serialization>>:
 
-`1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs`
+----
+1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
+----
 
 This address encodes within 20 bytes that look like this in hexadecimal:
 
-`f54a5851e9372b87810a8e60cdd2e7cfd80b6e31`
+----
+f54a5851e9372b87810a8e60cdd2e7cfd80b6e31
+----
 
 These 20 bytes are the result of doing a hash160 operation on this (compressed) SEC public key:
 
-`0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352`
+----
+0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352
+----
 
 Given p2pkh is shorter and more secure, p2pk use declined significantly after 2010, though it's still fully supported today.((("", startref="Sp2pk06")))
 
