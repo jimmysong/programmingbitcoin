@@ -68,7 +68,7 @@ Find the DER format for a signature whose `r` and `s` values are:
 # tag::exercise4[]
 ==== Exercise 4
 
-Convert the following hex to binary and then to Base58:
+Convert the following hex values to binary and then to Base58:
 
 * `7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d`
 * `eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c`
