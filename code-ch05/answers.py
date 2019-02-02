@@ -2,7 +2,7 @@
 # tag::exercise5[]
 ==== Exercise 5
 
-What is the ScriptSig from the second input, ScriptPubKey from the first output and the amount of the second output for this transaction?
+What are the ScriptSig of the second input, the ScriptPubKey of the first output, and the amount of the second output for this transaction?
 
 ```
 010000000456919960ac691763688d3d3bcea9ad6ecaf875df5339e148a1fc61c6ed7a069e0100
@@ -162,7 +162,7 @@ methods.append(parse)
 # tag::exercise4[]
 ==== Exercise 4
 
-Write the Locktime parsing part of the `parse` method in `Tx`.
+Write the locktime parsing part of the `parse` method in `Tx`.
 # end::exercise4[]
 '''
 
