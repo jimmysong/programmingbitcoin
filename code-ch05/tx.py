@@ -186,15 +186,15 @@ class TxIn:
         return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
 
     def value(self, testnet=False):
-        '''Get the outpoint value by looking up the tx hash
-        Returns the amount in satoshi
+        '''Get the output value by looking up the tx hash.
+        Returns the amount in satoshi.
         '''
         tx = self.fetch_tx(testnet=testnet)
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        '''Get the ScriptPubKey by looking up the tx hash
-        Returns a Script object
+        '''Get the ScriptPubKey by looking up the tx hash.
+        Returns a Script object.
         '''
         tx = self.fetch_tx(testnet=testnet)
         return tx.tx_outs[self.prev_index].script_pubkey
