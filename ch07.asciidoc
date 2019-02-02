@@ -77,33 +77,33 @@ If the fee is negative, we know that the `output_sum` is greater than the `input
 .The Value Overflow Incident
 ====
 Back((("value overflow incident"))) in 2010, there was a transaction that created 184 billion new Bitcoins.
-This is due to the fact that in C++, the amount field is a _signed_ integer and not an _unsigned_ integer.
+This was due to the fact that in C++, the amount field is a _signed_ integer and not an _unsigned_ integer.
 That is, the value could be negative!
 
-The clever transaction passed all the checks including the one for not creating new bitcoins, but only because the output amounts overflowed past the maximum number.
+The clever transaction passed all the checks, including the one for not creating new bitcoins, but only because the output amounts overflowed past the maximum number.
 2^64^ is ~1.84 &#215; 10^19^ satoshis, which is 184 billion Bitcoins.
 The fee was negative by enough that the C++ code was tricked into believing that the fee was actually positive by 0.1 BTC!
 
-The vulnerability is detailed in CVE-2010-5139 and were patched via soft-fork in Bitcoin Core 0.3.11.
-The transaction and the extra Bitcoins it created was invalidated retroactively by a block reorganization, which is another way of saying that the block including the value overflow transaction and all the blocks built on top of it were replaced.
+The vulnerability is detailed in CVE-2010-5139 and was patched via a soft fork in Bitcoin Core 0.3.11.
+The transaction and the extra Bitcoins it created were invalidated retroactively by a block reorganization, which is another way of saying that the block including the value overflow transaction and all the blocks built on top of it were replaced.
 ====
 
-=== Checking the Signature
+==== Checking the Signature
 
 Perhaps((("signing and verification", "signature verification", id="SAVsigver07"))) the trickiest part of validating a transaction is the process of checking its signatures.
 A transaction typically has at least one signature per input.
 If there are multisig outputs being spent, there may be more than one.
-As we learned in <<chapter_elliptic_curve_cryptography>>, the ECDSA signature algorithm requires the public key `P`, the signature hash `z`, and the signature `(r,s)`.
-Once these are known, the process of verifying the signature is pretty simple as we already coded in <<chapter_elliptic_curve_cryptography>>:
+As we learned in <<chapter_elliptic_curve_cryptography>>, the ECDSA signature algorithm requires the public key _P_, the signature hash _z_, and the signature (_r_,_s_).
+Once these are known, the process of verifying the signature is pretty simple, as we already coded in <<chapter_elliptic_curve_cryptography>>:
 
 [source,python]
 ----
 include::code-ch07/examples.py[tag=example2]
 ----
 
-SEC((("OP_CHECKSIG operation"))) public keys and DER signatures are in the stack when a command like `OP_CHECKSIG` is executed, to make getting the public key `P` and signature `(r,s)` pretty straightforward (see <<chapter_script>>).
-The hard part is getting the signature hash, `z`.
-A naive way to get the signature hash would be to hash the transaction serialization as shown in <<a_signature_is_in_the_yellow_highlighted_part_or_the_scriptsig>>.
+SEC((("OP_CHECKSIG operation"))) public keys and DER signatures are in the stack when a command like `OP_CHECKSIG` is executed, making getting the public key and signature pretty straightforward (see <<chapter_script>>).
+The hard part is getting the signature hash.
+A naive way to do this would be to hash the transaction serialization as shown in <<a_signature_is_in_the_yellow_highlighted_part_or_the_scriptsig>>.
 Unfortunately, we can't do that, since the signature is part of the ScriptSig and a signature can't sign itself.
 
 [[a_signature_is_in_the_yellow_highlighted_part_or_the_scriptsig]]
@@ -111,10 +111,10 @@ Unfortunately, we can't do that, since the signature is part of the ScriptSig an
 image::images/prbc_0701.png[Validation Start]
 
 Instead, we modify the transaction before signing it.
-That is, we compute a different signature hash, or `z`, _for each input_.
+That is, we compute a different signature hash _for each input_.
 The procedure is as follows.
 
-==== Step 1: Empty All the ScriptSigs
+===== Step 1: empty all the ScriptSigs
 
 The first step is to empty all the ScriptSigs when checking the signature (<<empty_each_inputs_scriptsig_in_yellow_highlighted_field>>).
 The same procedure is used for creating the signature, except the ScriptSigs are usually already empty.
@@ -123,28 +123,28 @@ The same procedure is used for creating the signature, except the ScriptSigs are
 .Empty each input's ScriptSig (in yellow highlighted field)
 image::images/prbc_0702.png[Validation Step 1]
 
-Note that this example has only 1 input, so only that input's ScriptSig is emptied, but it's possible to have more than 1 input. Each of those would be emptied.
+Note that this example has only one input, so only that input's ScriptSig is emptied, but it's possible to have more than one input. In that case, each of those would be emptied.
 
-==== Step 2: Replace the ScriptSig of the Input Being Signed with the Previous ScriptPubKey
+===== Step 2: replace the ScriptSig of the input being signed with the previous ScriptPubKey
 
-Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>> shown in <<scriptpubkey_and_scriptsig2>>.
+Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>>, shown again in <<scriptpubkey_and_scriptsig2>>.
 
 [[scriptpubkey_and_scriptsig2]]
-.ScriptPubKey and ScriptSig
+.Combining the ScriptPubKey and ScriptSig
 image::images/prbc_0606.png[ScriptPubKey and ScriptSig]
 
 We take the ScriptPubKey that the input is pointing to and put that in place of the empty ScriptSig (<<replace_the_scriptsig_yellow_highlighted_field_for_one_of_the_inputs_with_the_previous_scriptpubkey>>).
-This may require a lookup on the blockchain, but in practice, the signer already knows the ScriptPubKey, as the input is one where the signer has the private key.
+This may require a lookup on the blockchain, but in practice the signer already knows the ScriptPubKey, as the input is one where the signer has the private key.
 
 [[replace_the_scriptsig_yellow_highlighted_field_for_one_of_the_inputs_with_the_previous_scriptpubkey]]
 .Replace the ScriptSig (yellow highlighted field) for one of the inputs with the previous ScriptPubKey
 image::images/prbc_0704.png[Validation Step 2]
 
-==== Step 3: Append the Hash Type
+===== Step 3: Append the hash type
 
 Last, we add a 4-byte((("SIGHASH_ALL"))) hash type to the end.
 This is to specify what the signature is authorizing.
-The signature can authorize that this input has to go with all the other inputs and outputs (`SIGHASH_ALL`), go with a specific output (`SIGHASH_SINGLE`), or go with any output whatsoever (`SIGHASH_NONE`).
+The signature can authorize this input to go with all the other inputs and outputs (`SIGHASH_ALL`), go with a specific output (`SIGHASH_SINGLE`), or go with any output whatsoever (`SIGHASH_NONE`).
 The latter two have some theoretical use cases, but in practice, almost every transaction is signed with `SIGHASH_ALL`.
 There's((("SIGHASH_ANYONECANPAY"))) also a rarely used hash type called `SIGHASH_ANYONECANPAY` that can be combined with any of the previous three, which we won't get into here.
 For `SIGHASH_ALL`, the final transaction must have the exact outputs that were signed or the input signature is invalid.
@@ -152,18 +152,18 @@ For `SIGHASH_ALL`, the final transaction must have the exact outputs that were s
 The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like <<append_the_hash_type_sighash_all_or_the_orange_01000000>>.
 
 [[append_the_hash_type_sighash_all_or_the_orange_01000000]]
-.Append the hash type (SIGHASH_ALL), or the brown `01000000`
+.Append the hash type (SIGHASH_ALL), or the brown 01000000
 image::images/prbc_0705.png[Validation Step 3]
 
-The hash256 of this modified transaction is interpreted as a Big-Endian integer to produce `z`.
-The code for converting the modified transaction to `z` looks like this:
+The hash256 of this modified transaction is interpreted as a Big-Endian integer to produce _z_.
+The code for converting the modified transaction to _z_ looks like this:
 
 [source,python]
 ----
 include::code-ch07/examples.py[tag=example3]
 ----
 
-Now that we have our `z`, we can take the public key in SEC format and the signature in DER format from the ScriptSig to verify the signature.
+Now that we have our _z_, we can take the public key in SEC format and the signature in DER format from the ScriptSig to verify the signature:
 
 [source,python]
 ----
@@ -172,18 +172,20 @@ include::code-ch07/examples.py[tag=example4]
 
 We can code this transaction validation process into a method for `Tx`.
 Thankfully, the Script engine can already handle signature verification (see <<chapter_script>>), so our task here is to glue everything together.
-We need the `z`, or signature hash, to pass into the `evaluate`, method and we need to combine the ScriptSig and ScriptPubKey.
+We need _z_, or the signature hash, to pass into the `evaluate` method and we need to combine the ScriptSig and ScriptPubKey.
 
 [NOTE]
 .Quadratic Hashing
 ====
-The((("Quadratic Hashing problem")))((("signing and verification", "signature hash")))((("signature hash")))((("hashes", "signature hash"))) signature hashing algorithm is inefficient and wasteful and is called the Quadratic Hashing problem.
-The Quadratic Hashing problem states that calculating the signature hashes, or `z`'s, increases quadratically with the number of inputs in a transaction.
-Specifically, the number of hash256 operations for calculating the `z` will increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation because the entire signature hash will need to be calculated anew for each input.
+The((("quadratic hashing problem")))((("signing and verification", "signature hash")))((("signature hash")))((("hashes", "signature hash"))) signature hashing algorithm is inefficient and wasteful.
+The _quadratic hashing problem_ states that time required to calculate the signature hashes increases quadratically with the number of inputs in a transaction.
+Specifically, not only will the number of hash256 operations for calculating _z_ increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation because the entire signature hash will need to be calculated anew for each input.
 
 This was particularly obvious with the biggest transaction mined to date:
 
-pass:[<code>bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2&#x200b;b4e3e08</code>]
+----
+bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2&#x200b;b4e3e08
+----
 
 This transaction had 5,569 inputs and 1 output and took many miners over a minute to validate, as the signature hashes for the transaction were expensive to calculate.
 
