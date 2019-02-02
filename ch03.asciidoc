@@ -847,16 +847,13 @@ We((("signing and verification", "signature verification", id="SAVsign03"))) can
 ----
 include::code-ch03/examples.py[tag=example9]
 ----
-<1> Note that we use Fermat's Little Theorem for 1/_s_, since _n_ is prime.
+<1> Note that we use Fermat's little theorem for 1/_s_, since _n_ is prime.
 <2> _u_ = _z_/_s_.
 <3> _v_ = _r_/_s_.
 <4> _uG_ + _vP_ = (_r_,_y_).
 We need to check that the _x_ coordinate is _r_.
 
-[source,python]
-----
 include::code-ch03/answers.py[tag=exercise6,indent=0]
-----
 
 ==== Programming Signature Verification
 
@@ -870,7 +867,7 @@ include::code-ch03/ecc.py[tag=source11]
 
 We will be doing more with this class in <<chapter_serialization>>.
 
-We can write the `verify` method on `S256Point` based on the above.
+We can now write the `verify` method on `S256Point` based on this:
 
 [source,python]
 ----
@@ -878,20 +875,20 @@ class S256Point(Point):
     ...
 include::code-ch03/ecc.py[tag=source12]
 ----
-<1> `s_inv` (1/_s_) is calculated using Fermat's Little Theorem on the order of the group _n_, which is prime.
+<1> `s_inv` (1/_s_) is calculated using Fermat's little theorem on the order of the group, _n_, which is prime.
 <2> _u_ = _z_/_s_.
-Note that we can mod by `n` as that's the order of the group.
+Note that we can mod by _n_ as that's the order of the group.
 <3> _v_ = _r_/_s_.
-Note that we can mod by `n` as that's the order of the group.
+Note that we can mod by _n_ as that's the order of the group.
 <4> _uG_ + _vP_ should be _R_.
-<5> We check that the _x_ coordinate is _r_
+<5> We check that the _x_ coordinate is _r_.
 
-So given a public key, which is a point on the secp256k1 curve and a signature hash, _z_, we can verify whether a signature is valid or not.((("", startref="SAVsign03")))
+So, given a public key that is a point on the secp256k1 curve and a signature hash, _z_, we can verify whether a signature is valid or not.((("", startref="SAVsign03")))
 
-==== Signing In Depth
+==== Signing in Depth
 
 Given((("signing and verification", "signing process"))) that we know how verification should work, signing is straightforward.
-The only missing step is figuring out what _k_, and thus _R_ = _kG_ to use.
+The only missing step is figuring out what _k_, and thus _R_ = _kG_, to use.
 We do this by choosing a random _k_.
 
 The signing procedure is as follows:
@@ -902,12 +899,12 @@ The signing procedure is as follows:
 4. Calculate _s_ = (_z_ + _re_)/_k_.
 5. Signature is (_r_,_s_).
 
-Note that the pubkey `P` has to be transmitted to whoever wants to verify and _z_ must be known by the verifier.
-We'll see later that _z_ is computed and P is sent along with the signature.
+Note that the public key (pubkey) _P_ has to be transmitted to whoever wants to verify it, and _z_ must be known by the verifier.
+We'll see later that _z_ is computed and _P_ is sent along with the signature.
 
 ==== Creating a Signature
 
-We((("signing and verification", "signature creation", id="SAVsig03"))) can now create a signature using some of the primitives that we have.
+We((("signing and verification", "signature creation", id="SAVsig03"))) can now create a signature.
 
 .Be Careful with Random Number Generation
 [WARNING]
@@ -915,6 +912,8 @@ We((("signing and verification", "signature creation", id="SAVsig03"))) can now 
 Note((("random number generation"))) that using something like the `random` library from Python to do cryptography is generally not a good idea.
 This library is for teaching purposes only, so please don't use any of the code explained to you here for production purposes.
 ====
+
+We do this using some of the primitives that we have:
 
 [source,python]
 ----
@@ -924,16 +923,16 @@ include::code-ch03/examples.py[tag=example10]
 Please don't use this for a real secret.
 <2> This is the signature hash, or hash of the message that we're signing.
 <3> We're going to use a fixed _k_ here for demonstration purposes.
-<4> _kG_ = (_r_,_y_) so we take the _x_ coordinate only.
+<4> _kG_ = (_r_,_y_), so we take the _x_ coordinate only.
 <5> _s_ = (_z_ + _re_)/_k_.
-We can mod by `n` because we know this is a cyclical group of order `n`.
+We can mod by _n_ because we know this is a cyclical group of order _n_.
 <6> The public point needs to be known by the verifier.
 
 include::code-ch03/answers.py[tag=exercise7,indent=0]
 
 ==== Programming Message Signing
 
-To((("PrivateKey class", "creating"))) program message signing, we now create a `PrivateKey` class, which will house our secret.
+To((("PrivateKey class", "creating"))) program message signing, we now create a `PrivateKey` class, which will house our secret:
 
 [source,python]
 ----
@@ -941,7 +940,7 @@ include::code-ch03/ecc.py[tag=source13]
 ----
 <1> We keep around the public key, `self.point`, for convenience.
 
-We now create the `sign` method.
+We then create the `sign` method:
 
 [source,python]
 ----
@@ -958,38 +957,41 @@ class PrivateKey:
             s = N - s
         return Signature(r, s) # <6>
 ----
-<1> `randint` chooses a random integer from `[0,n)`.
-Please don't use this function in production as the random number from this library is not nearly random enough.
+<1> `randint` chooses a random integer from ++[0,__n__)++.
+Please don't use this function in production, because the random number from this library is not nearly random enough.
 <2> _r_ is the _x_ coordinate of _kG_.
-<3> We use Fermat's Little Theorem again and `n`, which is prime.
+<3> We use Fermat's little theorem again, and _n_, which is prime.
 <4> _s_ = (_z_ + _re_)/_k_.
 <5> It turns out that using the low-_s_ value will get nodes to relay our transactions easier.
 This is for malleability reasons.
-<6> We return a `Signature` object from above.
+<6> We return a `Signature` object from the class defined earlier.
 
 .Importance of a Unique `k`
 ****
-There's an important rule in signatures that utilize a random component like we have here.
-The _k_ needs to be unique per signature.
+There's an important rule in signatures that utilize a random component like we have here: the _k_ needs to be unique per signature.
 That is, it cannot get reused.
 In fact, a _k_ that's reused will result in you revealing your secret!
-This is because:
+Why?
 
-Our secret is _e_, we are reusing _k_ to sign __z__~1~ and __z__~2~.
+If our secret is _e_ and we are reusing _k_ to sign __z__~1~ and __z__~2~:
 
-* __kG__ = (__r__,__y__)
-* __s__~1~ = (__z__~1~ + __re__) / __k__, __s__~2~ = (__z__~2~ + __re__) / __k__
-* __s__~1~/__s__~2~ = (__z__~1~ + __re__) / (__z__~2~ + __re__)
-* __s__~1~(__z__~2~ + __re__) = __s__~2~(__z__~1~ + __re__)
-* __s__~1~__z__~2~ + __s__~1~__re__ = __s__~2~__z__~1~ + __s__~2~__re__
-* __s__~1~__re__ – __s__~2~__re__ = __s__~2~__z__~1~ – __s__~1~__z__~2~
-* __e__ = (__s__~2~__z__~1~ – __s__~1~__z__~2~) / (__rs__~1~ – __rs__~2~)
+++++
+<ul class="simplelist">
+<li><em>kG</em> = (<em>r</em>,<em>y</em>)</li>
+<li><em>s</em><sub>1</sub> = (<em>z</em><sub>1</sub> + <em>re</em>) / <em>k</em>, <em>s</em><sub>2</sub> = (<em>z</em><sub>2</sub> + <em>re</em>) / <em>k</em></li>
+<li><em>s</em><sub>1</sub>/<em>s</em><sub>2</sub> = (<em>z</em><sub>1</sub> + <em>re</em>) / (<em>z</em><sub>2</sub> + <em>re</em>)</li>
+<li><em>s</em><sub>1</sub>(<em>z</em><sub>2</sub> + <em>re</em>) = <em>s</em><sub>2</sub>(<em>z</em><sub>1</sub> + <em>re</em>)</li>
+<li>* <em>s</em><sub>1</sub><em>z</em><sub>2</sub> + <em>s</em><sub>1</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> + <em>s</em><sub>2</sub><em>re</em></li>
+<li><em>s</em><sub>1</sub><em>re</em> – <em>s</em><sub>2</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> – <em>s</em><sub>1</sub><em>z</em><sub>2</sub></li>
+<li><em>e</em> = (<em>s</em><sub>2</sub><em>z</em><sub>1</sub> – <em>s</em><sub>1</sub><em>z</em><sub>2</sub>) / (<em>rs</em><sub>1</sub> – <em>rs</em><sub>2</sub>)</li>
+</ul>
+++++
 
 If anyone sees both signatures, they can use this formula and find our secret!
-The Playstation 3 hack back in 2010 was due to the reuse of the _k_ value in multiple signatures (https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/).
+The https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/[PlayStation 3 hack] back in 2010 was due to the reuse of the _k_ value in multiple signatures.
 
-To combat this, there is a deterministic _k_ generation standard that uses our secret and _z_ to create a unique, deterministic _k_ every time.
-The specification is in RFC6979 (https://tools.ietf.org/html/rfc6979) and the code changes to look like this:
+To combat this, there is a deterministic _k_ generation standard that uses the secret and _z_ to create a unique, deterministic _k_ every time.
+The specification is in https://tools.ietf.org/html/rfc6979[RFC 6979] and the code changes to look like this:
 
 [source,python]
 ----
@@ -1001,8 +1003,8 @@ include::code-ch03/ecc.py[tag=source14]
 Everything else about `sign` remains the same.
 <2> This algorithm returns a candidate that's suitable.
 
-Deterministic _k_ will be unique with very high probability.
-This is because sha256 is collision resistant and no collisions to date have been found.
+A deterministic _k_ will be unique with very high probability.
+This is because sha256 is collision-resistant, and no collisions have been found to date.
 
 Another benefit from a testing perspective is that the signature for a given _z_ and the same private key will be the same every time.
 This makes debugging much easier and unit tests a lot easier to write.
