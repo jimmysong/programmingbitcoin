@@ -475,13 +475,13 @@ These 20 bytes are the result of doing a hash160 operation on this (compressed) 
 0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352
 ----
 
-Given p2pkh is shorter and more secure, p2pk use declined significantly after 2010, though it's still fully supported today.((("", startref="Sp2pk06")))
+Given that p2pkh is shorter and more secure, p2pk use declined significantly after 2010, though it's still fully supported today.((("", startref="Sp2pk06")))
 
-=== p2pkh
+==== p2pkh
 
 Pay-to-pubkey-hash((("Script", "p2pkh (pay-to-pubkey-hash)", id="Sp2pkh06"))) was used during the early days of Bitcoin, though not as much as p2pk.
 
-The p2pkh ScriptPubKey, or locking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptpubkey>>.
+The p2pkh ScriptPubKey, or locking script, looks like <<pay_to_pubkey_hash_p2pkh_scriptpubkey>>.
 
 [[pay_to_pubkey_hash_p2pkh_scriptpubkey]]
 .Pay-to-pubkey-hash (p2pkh) ScriptPubKey
@@ -491,7 +491,7 @@ Like p2pk, `OP_CHECKSIG` is here and `OP_HASH160` makes an appearance.
 Unlike p2pk, the SEC pubkey is not here, but a 20-byte hash is.
 There((("OP_EQUALVERIFY operation"))) is also a new opcode here: `OP_EQUALVERIFY`.
 
-The p2pkh ScriptSig, or the unlocking Script, looks like <<pay_to_pubkey_hash_p2pkh_scriptsig>>.
+The p2pkh ScriptSig, or unlocking script, looks like <<pay_to_pubkey_hash_p2pkh_scriptsig>>.
 
 [[pay_to_pubkey_hash_p2pkh_scriptsig]]
 .Pay-to-pubkey-hash (p2pkh) ScriptSig
@@ -499,16 +499,16 @@ image::images/prbc_0616.png[P2PKH ScriptSig]
 
 Like p2pk, the ScriptSig has the DER signature.
 Unlike p2pk, the ScriptSig also has the SEC pubkey.
-The main difference between p2pk and p2pkh ScriptSigs is that the SEC pubkey has moved from ScriptPubKey to ScriptSig.
+The main difference between p2pk and p2pkh ScriptSigs is that the SEC pubkey has moved from the ScriptPubKey to the ScriptSig.
 
-The ScriptPubKey and ScriptSig combine to a list of commands that looks like <<p2pkh_combined>>.
+The ScriptPubKey and ScriptSig combine to form a list of commands that looks like <<p2pkh_combined>>.
 
 [[p2pkh_combined]]
 .p2pkh combined
 image::images/prbc_0617.png[P2PKH Combination]
 
-At this point, the Script is processed one command at a time.
-We start with the commands as in <<p2pkh_start>>.
+At this point, the script is processed one command at a time.
+We start with the commands as combined in <<p2pkh_start>>.
 
 [[p2pkh_start]]
 .p2pkh start
@@ -540,8 +540,8 @@ image::images/prbc_0622.png[P2PKH Step 4]
 
 We are now at `OP_EQUALVERIFY`.
 This opcode consumes the top two elements and checks if they're equal.
-If they are equal, the Script continues execution.
-If they are not equal, the Script stops immediately and fails.
+If they are equal, the script continues execution.
+If they are not equal, the script stops immediately and fails.
 We assume here that they're equal, leading to <<p2pkh_step_5>>.
 
 [[p2pkh_step_5]]
@@ -555,20 +555,20 @@ Once again, we assume that the signature is valid (<<p2pkh_end>>).
 .p2pkh end
 image::images/prbc_0624.png[P2PKH End]
 
-There are two ways this Script can fail.
-If the ScriptSig provides a public key that does not hash160 to the 20-byte hash in the ScriptPubKey, the Script will fail at `OP_EQUALVERIFY` (<<p2pkh_step_4>>).
+There are two ways this script can fail.
+If the ScriptSig provides a public key that does not hash160 to the 20-byte hash in the ScriptPubKey, the script will fail at `OP_EQUALVERIFY` (<<p2pkh_step_4>>).
 The other failure condition is if the ScriptSig has a public key that hash160s to the 20-byte hash in the ScriptPubKey, but has an invalid signature.
-That would end the combined Script evaluation with a 0, ending in failure.
+That would end the combined script evaluation with a 0, ending in failure.
 
-This is why we call this type of Script pay-to-pubkey-_hash_.
+This is why we call this type of script pay-to-pubkey-_hash_.
 The ScriptPubKey has the 20-byte _hash160_ of the public key and not the public key itself.
-We are locking bitcoins to a _hash_ of the public key and the spender is responsible for revealing the public key as part of constructing the ScriptSig.
+We are locking bitcoins to a _hash_ of the public key, and the spender is responsible for revealing the public key as part of constructing the ScriptSig.
 
-The major advantage is that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find pre-images of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))((("", startref="Hp2pkh06")))
+The major advantages are that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find preimages of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))((("", startref="Hp2pkh06")))
 
 === Scripts Can Be Arbitrarily Constructed
 
-Note((("Script", "construction of", id="Sconst06"))) that Scripts can be any arbitrary program.
+Note((("Script", "construction of scripts", id="Sconst06"))) that a script can be any arbitrary program.
 Script is a smart contract language and can lock bitcoins in many different ways.
 <<example_scriptpubkey>> is an example ScriptPubKey.
 
@@ -582,7 +582,7 @@ image::images/prbc_0625.png[Example 1 ScriptPubKey]
 .Example ScriptSig
 image::images/prbc_0626.png[Example 1 ScriptSig]
 
-The combined Script is shown in <<example_combined>>.
+The combined script is shown in <<example_combined>>.
 
 [[example_combined]]
 .Example combined
@@ -618,14 +618,14 @@ image::images/prbc_0631.png[Example 1 Step 3]
 .Example step 4
 image::images/prbc_0632.png[Example 1 Step 4]
 
-`OP_EQUAL` will((("OP_EQUAL operation"))) consume two elements and push a 1 if equal, 0 if not (<<example_end>>).
+`OP_EQUAL` will((("OP_EQUAL operation"))) consume two elements and push a 1 if they're equal and a 0 if not (<<example_end>>).
 
 [[example_end]]
 .Example end
 image::images/prbc_0633.png[Example 1 End]
 
-Note that the ScriptSig isn't particularly hard to figure out and contains no signature.
-As a result, ScriptPubKey is vulnerable to being taken by anyone who can solve it.
+Note that the ScriptSig here isn't particularly hard to figure out and contains no signature.
+As a result, the ScriptPubKey is vulnerable to being taken by anyone who can solve it.
 Think of this ScriptPubKey as a lockbox with a very flimsy lock that anyone can break into.
 It is for this reason that most transactions have a signature requirement in the ScriptSig.
 
