@@ -724,7 +724,7 @@ To make the equation work, we can calculate _s_:
 
 ++++
 <ul class="simplelist">
-<li><em>uG</em> + <em>vP</em> = <em>R</em> = <em>kG</em</li>
+<li><em>uG</em> + <em>vP</em> = <em>R</em> = <em>kG</em></li>
 <li><em>uG</em> + <em>veG</em> = <em>kG</em></li>
 <li><em>u</em> + <em>ve</em> = <em>k</em></li>
 <li><em>z</em>/<em>s</em> + <em>re</em>/<em>s</em> = <em>k</em></li>
