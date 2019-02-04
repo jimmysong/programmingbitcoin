@@ -77,7 +77,7 @@ If the space of all possible items is 50, 10 items on average will make it throu
 
 include::code-ch12/answers.py[tag=exercise1,indent=0]
 
-==== Going a step further
+==== Going a Step Further
 
 Suppose((("Bloom filters", "using multiple hash functions"))) that the space of all items is 1 million and we want bucket sizes to still be 5. We would need a Bloom filter that's 1,000,000 / 5 = 200,000 bits long.
 Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, 20% of which would be items of interest.
