@@ -270,7 +270,7 @@ class Tx:
 ...
 include::code-ch13/tx.py[tag=source3]
 ----
-<1> There are two new fields. One of them is the Segwit marker.
+<1> There are two new fields; one of them is the Segwit marker.
 <2> The second new field is witness, which contains items for each input.
 
 We now code the corresponding changes to the serialization methods:
