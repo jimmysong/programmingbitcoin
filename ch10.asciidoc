@@ -79,7 +79,7 @@ A nonce is a number used by a node to detect a connection to itself.
 The user agent identifies the software being run.
 The height or latest block field helps the other node know which block a node is synced up to.
 
-Relay is used for Bloom Filters, which we'll get to in <<chapter_bloom_filters>>.
+Relay is used for Bloom filters, which we'll get to in <<chapter_bloom_filters>>.
 
 Setting some reasonable defaults, our `VersionMessage` class looks like this:
 
