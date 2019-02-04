@@ -79,7 +79,11 @@ To clarify, here's the formula for the parent hash:
 * _L_ = Left hash
 * _R_ = Right hash
 
-_P_=_H_(_L_||_R_)
+++++
+<ul class="simplelist">
+<li><em>P</em>=<em>H</em>(<em>L</em>||<em>R</em>)</li>
+</ul>
+++++
 
 Note that the || symbol denotes concatenation.
 
@@ -413,6 +417,7 @@ These are the items proven to be included in the Merkle tree.
 image::images/prbc_1107.png[Merkle Blocks and Hashes]
 
 Given the tree from <<processing_a_merkle_block>>: 
+
 * The flag bit is 1 for the root node (1), since that hash is calculated by the light node.
 * The left child, H~ABCDEFGH~ (2), is included in the hashes field, so the flag is 0.
 * From here, we traverse to H~IJKLMNOP~ (3) instead of H~ABCD~ or H~EFGH~ since H~ABCDEFGH~ represents both those nodes and we don't need them.
