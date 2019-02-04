@@ -123,9 +123,10 @@ The((("hashes", "murmur3 hash function")))((("murmur3 hash function"))) hash fun
 Unlike sha256, murmur3 is not cryptographically secure, but it is much faster.
 The task of filtering and getting a deterministic, evenly distributed modulo does not require cryptographic security but benefits from speed, so murmur3 is the appropriate tool for the job.
 The seed formula is defined this way:
-
-`i*0xfba4c795 + tweak`
-
+[source,python]
+----
+i*0xfba4c795 + tweak
+----
 `fba4c795` is a constant for Bitcoin Bloom filters.
 `i` is 0 for the first hash function, 1 for the second, 2 for the third, and so on.
 The `tweak` is a bit of entropy that can be added if the results of of one tweak are not satisfactory.
