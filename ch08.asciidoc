@@ -10,7 +10,7 @@ What can we do to reduce the risk of this single point of failure?
 
 The solution is _multisig_, or multiple signatures.
 This was built into Bitcoin from the beginning, but was clunky at first and so wasn't used.
-As we'll discover later in this chapter, Satoshi probably didn't test multisig, as it has an off-by-one error (see "<<off-by-one>>").
+As we'll discover later in this chapter, Satoshi probably didn't test multisig, as it has an off-by-one error (see <<off-by-one>>).
 The bug has had to stay in the protocol because fixing it would require a hard fork.
 
 [NOTE]
@@ -76,7 +76,7 @@ image::images/prbc_0806.png[Bare multisig step 2]
 .Bare multisig step 3
 image::images/prbc_0807.png[Bare multisig step 3]
 
-At this point, `OP_CHECKMULTISIG` will consume __m__ + __n__ + 3 elements (see "<<off-by-one>>") and push a 1 to the stack if _m_ of the signatures are valid for _m_ distinct public keys from the list of _n_ public keys; otherwise, it pushes a 0.
+At this point, `OP_CHECKMULTISIG` will consume __m__ + __n__ + 3 elements (see <<off-by-one>>) and push a 1 to the stack if _m_ of the signatures are valid for _m_ distinct public keys from the list of _n_ public keys; otherwise, it pushes a 0.
 Assuming that the signatures are valid, the stack has a single 1, which validates the combined script (<<bare_multisig_end>>).
 
 [[bare_multisig_end]]
