@@ -50,15 +50,15 @@ To construct the Merkle tree, we follow this algorithm:
 The idea is to come to a single hash that "represents" the entire ordered list.
 Visually, a Merkle tree looks like <<merkle_tree_chap_eleven>>.
 
-[[merkle_tree_chap_eleven]]
-.Merkle tree
-image::images/prbc_1101.png[Merkle tree]
-
 The bottom row is what we call the _leaves_ of the tree.
 All((("internal nodes"))) other nodes besides the leaves are called _internal nodes_.
 The leaves get combined to produce a _parent level_ (H~AB~ and H~CD~), and when we calculate the parent level of that, we get the Merkle root.
 
 We'll go through each part of this process in the following sections.
+
+[[merkle_tree_chap_eleven]]
+.Merkle tree
+image::images/prbc_1101.png[Merkle tree]
 
 [WARNING]
 .Be Careful with Merkle Trees!
