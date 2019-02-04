@@ -557,7 +557,8 @@ class Tx:
                 command = tx_in.witness[-1]
                 raw_witness = encode_varint(len(command)) + command
                 witness_script = Script.parse(BytesIO(raw_witness))
-                z = self.sig_hash_bip143(input_index, witness_script=witness_script)
+                z = self.sig_hash_bip143(input_index,           
+                                         witness_script=witness_script)
                 witness = tx_in.witness
             else:
                 z = self.sig_hash(input_index, redeem_script)
@@ -570,7 +571,8 @@ class Tx:
                 command = tx_in.witness[-1]
                 raw_witness = encode_varint(len(command)) + command
                 witness_script = Script.parse(BytesIO(raw_witness))
-                z = self.sig_hash_bip143(input_index, witness_script=witness_script)
+                z = self.sig_hash_bip143(input_index, 
+                                         witness_script=witness_script)
                 witness = tx_in.witness
             else:
                 z = self.sig_hash(input_index)
@@ -581,7 +583,7 @@ class Tx:
 <1> This takes care of p2sh-p2wsh.
 <2> This takes care of p2wsh.
 
-We code a way to identify p2wsh in _script.py_:
+Next, we code a way to identify p2wsh in _script.py_:
 
 [source,python]
 ----
@@ -591,7 +593,7 @@ class Script:
 ...
 include::code-ch13/script.py[tag=source5]
 ----
-<1> `OP_0 <32-byte script>` is what we expect.
+<1> `OP_0` _<32-byte script>_ is what we expect.
 
 Last, we handle the special rule for p2wsh:
 
@@ -608,22 +610,22 @@ class Script:
     	        ...
 include::code-ch13/script.py[tag=source6]
 ----
-<1> The top element is the sha256 hash of the WitnessScript.
-<2> The second element is the Witness version, 0.
-<3> Everything but the WitnessScript is added to the command set.
-<4> The WitnessScript is the last item of the Witness.
-<5> The WitnessScript must hash to the sha256 that was in the stack.
-<6> Parse the WitnessScript and add to the command set.((("", startref="p2witscripthash13")))((("", startref="Spaywithash13")))((("", startref="Sp2wshnest13")))((("", startref="p2shnested13")))((("", startref="Hp2wshnest13")))
+<1> The top element is the sha256 hash of the witnessScript.
+<2> The second element is the witness version, 0.
+<3> Everything but the witnessScript is added to the command set.
+<4> The witnessScript is the last item of the witness field.
+<5> The witnessScript must hash to the sha256 that was in the stack.
+<6> We parse the witnessScript and add it to the command set.((("", startref="p2witscripthash13")))((("", startref="Spaywithash13")))((("", startref="Sp2wshnest13")))((("", startref="p2shnested13")))((("", startref="Hp2wshnest13")))
 
 === Other Improvements
 
-Other improvements((("Segwit (segregated witness)", "other improvements"))) to Segwit include fixing the quadratic hashing problem through a different calculation of the signature hash.
-A lot of the calculations for signature hash, or `z`, can be reused instead of requiring a new hash256 hash for each input.
+Segwit((("Segwit (segregated witness)", "other improvements"))) also fixes the quadratic hashing problem through a different calculation of the signature hash.
+A lot of the calculations for the signature hash, _z_, can be reused instead of requiring a new hash256 hash for each input.
 The((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) signature hash calculation is detailed in BIP0143 and can be seen in _code-ch13/tx.py_.
 
-Another improvement is that by policy, uncompressed SEC pubkeys are now forbidden and only compressed SEC pubkeys are used for Segwit, saving space.
+Another improvement is that by policy, uncompressed SEC pubkeys are now forbidden; only compressed SEC pubkeys are used for Segwit, saving space.
 
 === Conclusion
 
-We've now covered the details of Segwit as a taste of what's now possible.
-<<chapter_advanced>> will cover next steps that you can take on your Bitcoin developer journey.
+The chapter covered the details of Segwit as a taste of what's now possible.
+<<chapter_advanced>> discusses the next steps that you can take on your Bitcoin developer journey.
