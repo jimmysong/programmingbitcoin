@@ -109,7 +109,7 @@ We can solve this by duplicating the last item.
 That is, for a list like [A, B, C] we can add C again to get [A, B, C, C].
 Now we can calculate the Merkle parent of A and B and calculate the Merkle parent of C and C to get:
 
-[_H_(_A_||_B_), _H_(_C_||_C_)]
+pass:[<p>[<em>H</em>(<em>A</em>||<em>B</em>), <em>H</em>(<em>C</em>||<em>C</em>)]</p>]
 
 Since the Merkle parent always consists of two hashes, the Merkle parent level always has exactly half the number of hashes, rounded up. Here is how we calculate a Merkle parent level:
 
@@ -130,15 +130,15 @@ include::code-ch11/answers.py[tag=exercise2,indent=0]
 To get((("Merkle root", id="merroot11"))) the Merkle root we calculate successive Merkle parent levels until we get a single hash.
 If, for example, we have items A through G (7 items), we calculate the Merkle parent level first as follows:
 
-[H(A||B), H(C||D), H(E||F), H(G||G)]
+pass:[<p>[<em>H</em>(<em>A</em>||<em>B</em>), <em>H</em>(<em>C</em>||<em>D</em>), <em>H</em>(<em>E</em>||<em>F</em>), <em>H</em>(<em>G</em>||<em>G</em>)]</p>]
 
 Then we calculate the Merkle parent level again:
 
-[H(H(A||B)||H(C||D)), H(H(E||F)||H(G||G))]
+pass:[<p>[<em>H</em>(<em>H</em>(<em>A</em>||<em>B</em>)||<em>H</em>(<em>C</em>||<em>D</em>)), <em>H</em>(<em>H</em>(<em>E</em>||<em>F</em>)||<em>H</em>(<em>G</em>||<em>G</em>))]</p>]
 
 We are left with just two items, so we calculate the Merkle parent level one more time:
 
-H(H(H(A||B)||H(C||D))||H(H(E||F)||H(G||G)))
+pass:[<p><em>H</em>(<em>H</em>(<em>H</em>(<em>A</em>||<em>B</em>)||<em>H</em>(<em>C</em>||<em>D</em>))||<em>H</em>(<em>H</em>(<em>E</em>||<em>F</em>)||<em>H</em>(<em>G</em>||<em>G</em>)))</p>]
 
 Since we are left with exactly one hash, we are done.
 Each level will halve the number of hashes, so doing this process over and over will eventually result in a final single item called the Merkle root:
