@@ -143,6 +143,7 @@ We could, of course, always reserve 8 bytes for the number of inputs, but that w
 This is the case with the number of inputs in a normal transaction, so using varints helps to save space.
 You can see how they work in the following sidebar.
 
+[role="pagebreak-before less_space"]
 .Varints
 ****
 Variable integers work by these rules:
