@@ -28,6 +28,7 @@ In the vast majority of transactions, this means checking that the one or more s
 
 Let's look at how each condition is checked.
 
+[role="pagebreak-before]
 ==== Checking the Spentness of Inputs
 
 To((("inputs")))((("double-spending, preventing"))) prevent double-spending, a node checks that each input exists and has not been spent.
