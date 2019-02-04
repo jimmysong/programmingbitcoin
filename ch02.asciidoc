@@ -419,6 +419,7 @@ QED.
 
 include::code-ch02/answers.py[tag=exercise4,indent=0]
 
+[role="pagebreak-before"]
 === Coding Point Addition for When x~1~≠x~2~
 
 We now code this into our library.
