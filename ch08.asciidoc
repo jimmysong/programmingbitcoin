@@ -150,15 +150,15 @@ There were multiple proposals, but as we'll see, p2sh is kludgy but works.
 In p2sh, a special rule gets executed only when the pattern shown in <<pay_to_script_hash_pattern_that_executes_the_special_rule>> is encountered.
 
 [[pay_to_script_hash_pattern_that_executes_the_special_rule]]
-.Pay-to-script-hash pattern that executes the special rule
+.Pay-to-script-hash pattern (p2sh) that executes the special rule
 image::images/prbc_0809.png[p2sh Pattern]
 
-If((("RedeemScript"))) this exact command set ends with a `1` on the stack, then the RedeemScript (top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
-This((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) special pattern was introduced in BIP0016 and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
-The RedeemScript does not add new Script commands for processing unless this _exact_ sequence is encountered and ends with a `1`.
+If((("RedeemScript"))) this exact command set ends with a 1 on the stack, then the RedeemScript (the top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
+This((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) special pattern was introduced in BIP0016, and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
+The RedeemScript does not add new Script commands for processing unless this _exact_ sequence is encountered and ends with a 1.
 
 If this sounds hacky, it is.
-But before we get to that, let's look a little closer at exactly how this plays out.
+But before we get to that, let's look a little more closely at exactly how this plays out.
 
 Let's say we have a 2-of-2 multisig ScriptPubKey (<<pay_to_script_hash_p2sh_redeemscript>>).
 
@@ -167,8 +167,8 @@ Let's say we have a 2-of-2 multisig ScriptPubKey (<<pay_to_script_hash_p2sh_rede
 image::images/prbc_0810.png[p2sh RedeemScript]
 
 This is a ScriptPubKey for a bare multisig.
-What we need to do to convert this to p2sh is to take a hash of this script and keep this script handy for when we want to redeem it.
-We call this the RedeemScript, because the Script is only revealed during redemption.
+What we need to do to convert this to p2sh is to take a hash of this script and keep the script handy for when we want to redeem it.
+We call this the RedeemScript, because the script is only revealed during redemption.
 We put the hash of the RedeemScript as the ScriptPubKey (<<pay_to_script_hash_p2sh_scriptpubkey>>).
 
 [[pay_to_script_hash_p2sh_scriptpubkey]]
@@ -179,14 +179,13 @@ The hash digest here is the hash160 of the RedeemScript, or what was previously 
 We're locking the funds to the _hash_ of the RedeemScript, which needs to be revealed at unlock time.
 
 Creating the ScriptSig for a p2sh script involves not only revealing the RedeemScript, but also unlocking the RedeemScript.
-At this point, you might wonder, where is the RedeemScript stored?
-The RedeemScript is not on the blockchain until actual redemption, so it must be stored by the creator of the p2sh address.
+At this point, you might be wondering where the RedeemScript is stored. It's not on the blockchain until actual redemption, so it must be stored by the creator of the p2sh address.
 If the RedeemScript is lost and cannot be reconstructed, the funds are lost, so it's very important to keep track of it!
 
 [WARNING]
 .Importance of Keeping the RedeemScript
 ====
-If you are receiving to a p2sh address, be sure to store and backup the RedeemScript!
+If you are receiving to a p2sh address, be sure to store and back up the RedeemScript!
 Better yet, make it easy to reconstruct!
 ====
 
@@ -196,11 +195,11 @@ The ScriptSig for the 2-of-2 multisig looks like <<pay_to_script_has_p2sh_script
 .Pay-to-script-hash (p2sh) ScriptSig
 image::images/prbc_0812.png[p2sh ScriptSig]
 
-This produces the combined Script (<<p2sh_combined>>).
+This produces the combined script in <<p2sh_combined>>.
 
 [[p2sh_combined]]
-.p2sh combined
-image::images/prbc_0813.png[p2sh Combined Script]
+.p2sh combined script
+image::images/prbc_0813.png[p2sh Combined script]
 
 As before, `OP_0` is there because of the `OP_CHECKMULTISIG` bug.
 The key to understanding p2sh is the execution of the exact sequence shown in <<p2sh_pattern_that_executes_the_special_rule>>.
