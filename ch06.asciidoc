@@ -164,8 +164,8 @@ There((("OP_PUSHDATA1 operation")))((("OP_PUSHDATA2 operation")))((("OP_PUSHDATA
 `OP_PUSHDATA4` means that the next 4 bytes contain how many bytes we need to read for the element.
 
 Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use `OP_PUSHDATA1` ++<__1-byte length of the element__>++ ++<__element__>++.
-For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` ++<__2-byte length of the element in Little-Endian>__>++ ++<__element__>++.
-Anything larger than 520 bytes is not allowed on the network, so `OP_PUSHDATA4` is unnecessary, though `OP_PUSHDATA4` ++<__4-byte length of the element in Little-Endian, but value less than or equal to 520__>++ ++<__element__>++ is still legal.
+For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` ++<__2-byte length of the element in little-endian>__>++ ++<__element__>++.
+Anything larger than 520 bytes is not allowed on the network, so `OP_PUSHDATA4` is unnecessary, though `OP_PUSHDATA4` ++<__4-byte length of the element in little-endian, but value less than or equal to 520__>++ ++<__element__>++ is still legal.
 
 It is possible to encode a number below 76 using `OP_PUSHDATA1` or a number below 256 using `OP_PUSHDATA2` or even any number below 521 using `OP_PUSHDATA4`.
 However, these are considered nonstandard transactions, meaning most Bitcoin nodes (particularly those running Bitcoin Core software) will not relay them.
@@ -397,7 +397,7 @@ Specifically, the stack after all the ScriptSig commands are evaluated is stored
 It((("p2pk (pay-to-pubkey)", "stack elements under the hood"))) may be confusing that the stack elements are sometimes numbers like 0 or 1 and other times byte strings like a DER signature or SEC pubkey.
 Under the hood, they're all bytes, but some are interpreted as numbers for certain opcodes.
 For example, 1 is stored on the stack as the `01` byte, 2 is stored as the `02` byte, 999 as the `e703` byte, and so on.
-Any byte string is interpreted as a Little-Endian number for arithmetic opcodes.
+Any byte string is interpreted as a little-endian number for arithmetic opcodes.
 The integer 0 is _not_ stored as the `00` byte, but as the empty byte string.
 
 The code in _op.py_ can clarify what's going on:
@@ -564,7 +564,7 @@ This is why we call this type of script pay-to-pubkey-_hash_.
 The ScriptPubKey has the 20-byte _hash160_ of the public key and not the public key itself.
 We are locking bitcoins to a _hash_ of the public key, and the spender is responsible for revealing the public key as part of constructing the ScriptSig.
 
-The major advantages are that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the Discrete Log problem in ECDSA, but also figure out a way to find preimages of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))((("", startref="Hp2pkh06")))
+The major advantages are that the ScriptPubKey is shorter (just 25 bytes) and a thief would not only have to solve the discrete log problem in ECDSA, but also figure out a way to find preimages of both ripemd160 and sha256.((("", startref="p2pkh06")))((("", startref="Sp2pkh06")))((("", startref="Hp2pkh06")))
 
 === Scripts Can Be Arbitrarily Constructed
 

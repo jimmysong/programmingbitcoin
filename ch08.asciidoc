@@ -376,13 +376,13 @@ image::images/prbc_0827.png[Validation Step 2]
 ===== Step 3: Append the hash type
 
 Last, we add a 4-byte hash type to the end.
-This is the same as in p2pkh. The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the transaction look like <<append_the_hash_type_sighash_all_or_the_blue_part_at_the_end>>.
+This is the same as in p2pkh. The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in little-endian over 4 bytes, which makes the transaction look like <<append_the_hash_type_sighash_all_or_the_blue_part_at_the_end>>.
 
 [[append_the_hash_type_sighash_all_or_the_blue_part_at_the_end]]
 .Append the hash type (SIGHASH_ALL), 1000000
 image::images/prbc_0828.png[Validation Step 3]
 
-The hash256 of this interpreted as a Big-Endian integer is our _z_.
+The hash256 of this interpreted as a big-endian integer is our _z_.
 The code for getting our signature hash looks like this:
 
 [source,python]

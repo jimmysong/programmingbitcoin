@@ -39,7 +39,7 @@ include::code-ch12/examples.py[tag=example1]
 ----
 <1> Our `bit_field` is the list of "buckets," and we want there to be 10.
 <2> We hash the item with hash256.
-<3> We interpret this as a Big-Endian integer and modulo by 10 to determine the bucket this item belongs to.
+<3> We interpret this as a big-endian integer and modulo by 10 to determine the bucket this item belongs to.
 <4> We indicate the bucket we want in the Bloom filter.
 
 Conceptually, what we just did looks like <<ten_bit_bloom_filter_with_1_element>>.

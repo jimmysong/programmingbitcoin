@@ -12,7 +12,7 @@ Ideally, we want to do this efficiently, for reasons we'll see in <<chapter_netw
 === Uncompressed SEC Format
 
 We'll((("S256Point class", "serialization of")))((("serialization", "uncompressed SEC format")))((("SEC serialization format", "uncompressed format"))) start with the `S256Point` class, which is the public key class.
-Recall that the public key in Elliptic Curve Cryptography is really a coordinate in the form of (_x_,_y_).
+Recall that the public key in elliptic curve cryptography is really a coordinate in the form of (_x_,_y_).
 How can we serialize this data?
 
 It turns out there's already a standard for serializing ECDSA public keys, called((("Standard for Efficient Cryptography", see="SEC format"))) _Standards for Efficient Cryptography_ (SEC)—and as the word "Efficient" in the name suggests, it has minimal overhead.
@@ -77,10 +77,10 @@ Recall((("serialization", "compressed SEC format")))((("SEC serialization format
 .The two possible values for y are where this vertical line intersects the curve
 image::images/prbc_0212.png[Elliptic Curve Vertical Line]
 
-It turns out that even over a Finite Field, we have the same symmetry.
+It turns out that even over a finite field, we have the same symmetry.
 
 This is because for any (_x_,_y_) that satisfies __y__^2^ = __x__^3^ + __ax__ + __b__, (_x_,–__y__) also satisfies the equation.
-Furthermore, in a Finite Field, –__y__ (mod _p_) = _p_ – _y_.
+Furthermore, in a finite field, –__y__ (mod _p_) = _p_ – _y_.
 Or, more accurately, if (_x_,_y_) satisfies the elliptic curve equation, (_x_,_p_ – _y_) also satisfies the equation.
 These are the only two solutions for a given _x_, as shown, so if we know _x_, we know the _y_ coordinate has to be either _y_ or _p_ – _y_.
 
@@ -117,7 +117,7 @@ The big advantage of the compressed SEC format is that it only takes up 33 bytes
 This is a big savings when amortized over millions of transactions.
 
 At this point, you may be wondering how you can analytically calculate _y_ given the _x_ coordinate.
-This requires us to calculate a square root in a Finite Field.
+This requires us to calculate a square root in a finite field.
 
 Stated mathematically:
 
@@ -127,7 +127,7 @@ Stated mathematically:
 </ul>
 ++++
 
-It turns out that if the Finite Field prime _p_ % 4 = 3, we can do this rather easily.
+It turns out that if the finite field prime _p_ % 4 = 3, we can do this rather easily.
 Here's how.
 
 First, we know:
@@ -157,7 +157,7 @@ By definition:
 ++++
 
 We are looking for a formula to calculate _w_.
-From Fermat's Little Theorem:
+From Fermat's little theorem:
 
 
 ++++
@@ -229,7 +229,7 @@ include::code-ch04/ecc.py[tag=source3]
 ----
 <1> The uncompressed SEC format is pretty straightforward.
 <2> The evenness of the _y_ coordinate is given in the first byte.
-<3> We take the square root of the right side of the Elliptic Curve equation to get _y_.
+<3> We take the square root of the right side of the elliptic curve equation to get _y_.
 <4> We determine evenness and return the correct point.
 
 include::code-ch04/answers.py[tag=exercise2,indent=0]
@@ -287,7 +287,7 @@ include::code-ch04/answers.py[tag=exercise3,indent=0]
 
 === Base58
 
-In((("serialization", "Base58")))((("Base58", id="base58"))) the early days of Bitcoin, Bitcoins were assigned to public keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
+In((("serialization", "Base58")))((("Base58", id="base58"))) the early days of Bitcoin, bitcoins were assigned to public keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
 For reasons we'll get to in <<chapter_script>>, using this particular very simple script turned out to be both wasteful for storing unspent transaction outputs (UTXOs) and a little less secure than the scripts in more prominent use now.
 For now, we'll go through what addresses are and how they are encoded.
 

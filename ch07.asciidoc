@@ -10,7 +10,7 @@ Toward the end of the chapter, we'll be creating a testnet transaction and broad
 
 === Validating Transactions
 
-Every((("Transactions", "validating", id="Tvalid07"))) node, when receiving transactions, makes sure that each transaction adheres to the network rules.
+Every((("transactions", "validating", id="Tvalid07"))) node, when receiving transactions, makes sure that each transaction adheres to the network rules.
 This process is called _transaction validation_.
 Here are the main things that a node checks:
 
@@ -21,7 +21,7 @@ Here are the main things that a node checks:
 #1 prevents double-spending.
 Any input that's been spent (that is, included in the blockchain) cannot be spent again.
 
-#2 makes sure no new Bitcoins are created (except in a special type of transaction called a coinbase transaction; more on that in <<chapter_blocks>>).
+#2 makes sure no new bitcoins are created (except in a special type of transaction called a coinbase transaction; more on that in <<chapter_blocks>>).
 
 #3 makes sure that the combined script is valid.
 In the vast majority of transactions, this means checking that the one or more signatures in the ScriptSig are valid.
@@ -46,7 +46,7 @@ A full node can check the spentness of an input pretty easily, but a light clien
 
 Nodes((("outputs"))) also make sure that the sum of the inputs is greater than or equal to the sum of the outputs.
 This ensures that the transaction does not create new coins.
-The one exception is a Coinbase Transaction, which we'll study more in <<chapter_blocks>>.
+The one exception is a coinbase transaction, which we'll study more in <<chapter_blocks>>.
 Since inputs don't have an amount field, this must be looked up on the blockchain.
 Once again, full nodes have access to the amounts associated with the unspent output, but light clients have to depend on full nodes to supply this information.
 
@@ -70,22 +70,22 @@ include::code-ch07/examples.py[tag=example1]
 ----
 <1> This only works because we're using Python (see <<valueOverflow>>).
 
-If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create Bitcoins out of the ether.
+If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create bitcoins out of the ether.
 
 [[valueOverflow]]
 [NOTE]
 .The Value Overflow Incident
 ====
-Back((("value overflow incident"))) in 2010, there was a transaction that created 184 billion new Bitcoins.
+Back((("value overflow incident"))) in 2010, there was a transaction that created 184 billion new bitcoins.
 This was due to the fact that in C++, the amount field is a _signed_ integer and not an _unsigned_ integer.
 That is, the value could be negative!
 
 The clever transaction passed all the checks, including the one for not creating new bitcoins, but only because the output amounts overflowed past the maximum number.
-2^64^ is ~1.84 &#215; 10^19^ satoshis, which is 184 billion Bitcoins.
+2^64^ is ~1.84 &#215; 10^19^ satoshis, which is 184 billion bitcoins.
 The fee was negative by enough that the C++ code was tricked into believing that the fee was actually positive by 0.1 BTC!
 
 The vulnerability is detailed in CVE-2010-5139 and was patched via a soft fork in Bitcoin Core 0.3.11.
-The transaction and the extra Bitcoins it created were invalidated retroactively by a block reorganization, which is another way of saying that the block including the value overflow transaction and all the blocks built on top of it were replaced.
+The transaction and the extra bitcoins it created were invalidated retroactively by a block reorganization, which is another way of saying that the block including the value overflow transaction and all the blocks built on top of it were replaced.
 ====
 
 ==== Checking the Signature
@@ -149,13 +149,13 @@ The latter two have some theoretical use cases, but in practice, almost every tr
 There's((("SIGHASH_ANYONECANPAY"))) also a rarely used hash type called `SIGHASH_ANYONECANPAY` that can be combined with any of the previous three, which we won't get into here.
 For `SIGHASH_ALL`, the final transaction must have the exact outputs that were signed or the input signature is invalid.
 
-The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the modified transaction look like <<append_the_hash_type_sighash_all_or_the_orange_01000000>>.
+The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in little-endian over 4 bytes, which makes the modified transaction look like <<append_the_hash_type_sighash_all_or_the_orange_01000000>>.
 
 [[append_the_hash_type_sighash_all_or_the_orange_01000000]]
 .Append the hash type (SIGHASH_ALL), or the brown 01000000
 image::images/prbc_0705.png[Validation Step 3]
 
-The hash256 of this modified transaction is interpreted as a Big-Endian integer to produce _z_.
+The hash256 of this modified transaction is interpreted as a big-endian integer to produce _z_.
 The code for converting the modified transaction to _z_ looks like this:
 
 [source,python]
@@ -199,7 +199,7 @@ include::code-ch07/answers.py[tag=exercise2,indent=0]
 
 ==== Verifying the Entire Transaction
 
-Now((("Transactions", "verifying entire transaction"))) that we can verify an input, the task of verifying the entire transaction is straightforward:
+Now((("transactions", "verifying entire transaction"))) that we can verify an input, the task of verifying the entire transaction is straightforward:
 
 [source,python]
 ----
@@ -214,7 +214,7 @@ Note that a full node would verify more things, like checking for double-spends 
 
 === Creating Transactions
 
-The((("Transactions", "creating", id="Tcreate07"))) code to verify transactions will help quite a bit with creating transactions.
+The((("transactions", "creating", id="Tcreate07"))) code to verify transactions will help quite a bit with creating transactions.
 We can create transactions that fit the verification process.
 Transactions we create will require the sum of the inputs to be greater than or equal to the sum of the outputs.
 Similarly, transactions we create will require a ScriptSig that, when combined with the ScriptPubKey, will be valid.
@@ -237,7 +237,7 @@ We'll be using testnet for this example, though this can easily be applied to ma
 
 The first question is about how much we want to pay whom.
 We can pay one or more addresses.
-In this example, we will pay 0.1 testnet Bitcoins (tBTC) to `mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf`.
+In this example, we will pay 0.1 testnet bitcoins (tBTC) to `mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf`.
 
 The second question is about what's in our wallet.
 What do we have available to spend?
@@ -300,7 +300,7 @@ Many wallets use different strategies, and this is an active area of research.((
 
 ==== Making the Transaction
 
-We((("Transactions", "combining to make"))) have a plan for a new transaction with one input and two outputs.
+We((("transactions", "combining to make"))) have a plan for a new transaction with one input and two outputs.
 But first, let's look at some other tools we'll need.
 
 We need a way to take an address and get the 20-byte hash out of it.
@@ -339,7 +339,7 @@ We have created the actual transaction, but every ScriptSig in this transaction 
 
 ==== Signing the Transaction
 
-Signing((("signing and verification", "signing process", id="SAVsign07")))((("Transactions", "signing", id="Tsign07"))) the transaction could be tricky, but we know how to get the signature hash, _z_, from earlier in this chapter.
+Signing((("signing and verification", "signing process", id="SAVsign07")))((("transactions", "signing", id="Tsign07"))) the transaction could be tricky, but we know how to get the signature hash, _z_, from earlier in this chapter.
 If we have the private key whose public key hash160s to the 20-byte hash in the ScriptPubKey, we can sign _z_ and produce the DER signature:
 
 [source,python]

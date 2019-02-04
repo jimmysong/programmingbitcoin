@@ -33,7 +33,7 @@ The next 12 bytes are the command field, or a description of what the payload ac
 There are many different commands; an exhaustive list can be seen in the https://en.bitcoin.it/wiki/Protocol_documentation[documentation].
 The command field is meant to be human-readable and this particular message is the byte string "version" in ASCII with 0-byte padding.
 
-The next 4 bytes are the length of the payload in Little-Endian.
+The next 4 bytes are the length of the payload in little-endian.
 As we saw in the transaction and block parsing sections, the length of the payload is necessary since the payload is variable.
 2^32^ is about 4 billion, so payloads can be as big as 4 GB, though the reference client rejects any payloads over 32 MB.
 In the message in Figure 10-1, our payload is 101 bytes.
@@ -69,11 +69,11 @@ The fields are meant to give enough information for two nodes to be able to comm
 
 The first field is the network protocol version, which specifies what messages may be communicated.
 The service field gives information about what capabilities are available to connecting nodes.
-The timestamp field is 8 bytes (as opposed to 4 bytes in the block header) and is the Unix timestamp in Little-Endian.
+The timestamp field is 8 bytes (as opposed to 4 bytes in the block header) and is the Unix timestamp in little-endian.
 
 IP addresses can be IPv6, IPv4, or OnionCat (a mapping of TOR's `.onion` addresses to IPv6).
 If IPv4, the first 12 bytes are `00000000000000000000ffff` and the last 4 bytes are the IP.
-The port is 2 bytes in Little-Endian. The default on mainnet is 8333, which maps to `8d20` in Little-Endian hex.
+The port is 2 bytes in little-endian. The default on mainnet is 8333, which maps to `8d20` in little-endian hex.
 
 A nonce is a number used by a node to detect a connection to itself.
 The user agent identifies the software being run.

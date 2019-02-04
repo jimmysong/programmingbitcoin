@@ -19,11 +19,11 @@ For any wallet, there are two scenarios that we're concerned with:
 1. Paying someone
 2. Getting paid by someone
 
-If you are paying someone with your Bitcoin wallet, it is up to the person receiving your Bitcoins to verify that they've been paid.
+If you are paying someone with your Bitcoin wallet, it is up to the person receiving your bitcoins to verify that they've been paid.
 Once they've verified that the transaction has been included in a block sufficiently deep, the other side of the trade, or the good or service, will be given to you.
-Once you've sent the transaction to the other party, there really isn't anything for you to do other than wait until you receive whatever it is you're exchanging the Bitcoins for.
+Once you've sent the transaction to the other party, there really isn't anything for you to do other than wait until you receive whatever it is you're exchanging the bitcoins for.
 
-When getting paid Bitcoins, however, we have a dilemma.
+When getting paid bitcoins, however, we have a dilemma.
 If we are connected and have the full blockchain, we can easily see when the transaction is in a sufficiently deep block, at which point we give the other party our goods or services.
 But if we don't have the full blockchain, as with a phone, what can we do?
 
@@ -172,8 +172,8 @@ include::code-ch11/answers.py[tag=exercise3,indent=0]
 === Merkle Root in Blocks
 
 Calculating the Merkle root in blocks should be pretty straightforward, but due to endianness issues, it turns out to be tricky.
-Specifically, we use Little-Endian ordering for the leaves of the Merkle tree.
-After we calculate the Merkle root, we use Little-Endian ordering again.
+Specifically, we use little-endian ordering for the leaves of the Merkle tree.
+After we calculate the Merkle root, we use little-endian ordering again.
 
 In practice, this means reversing the leaves before we start and reversing the root at the end:
 
