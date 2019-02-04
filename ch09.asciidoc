@@ -2,57 +2,56 @@
 == Blocks
 
 [.lead]
-Transactions((("Blocks", "purpose of"))) transfer Bitcoins from one party to another and are unlocked, or authorized, by signatures.
-This ensures that the sender authorized the transaction, but what if the sender sends the same coins to multiple people?
-This((("double-spending, preventing"))) is called the _double-spending problem_ and is so called because the owner of a lockbox may try to spend the same output twice.
+Transactions((("blocks", "purpose of"))) transfer Bitcoins from one party to another and are unlocked, or authorized, by signatures.
+This ensures that the sender authorized the transaction, but what if the sender sends the same coins to multiple people? The owner of a lockbox may try to spend the same output twice. This((("double-spending, preventing"))) is called the _double-spending problem_.
 Much like being given a check that has the possibility of bouncing, the receiver needs to be assured that the transaction is valid.
 
-This is where a major innovation of Bitcoin comes in with Blocks.
-Think of Blocks as a way to order transactions.
+This is where a major innovation of Bitcoin comes in, with _blocks_.
+Think of blocks as a way to order transactions.
 If we order transactions, a double-spend can be prevented by making any later, conflicting transaction invalid.
 This is the equivalent to accepting the earlier transaction as the valid one.
 
 Implementing this rule would be easy (earliest transaction is valid, subsequent transactions that conflict are invalid) if we could order transactions one at a time.
 Unfortunately, that would require nodes on the network to agree on which transaction is supposed to be next and would cause a lot of transmission overhead in coming to consensus.
-We could also order large batches of transactions, maybe once per day, but that wouldn't be very practical, as transactions would settle only once per day and not have finality before then.
+We could also order large batches of transactions, maybe once per day, but that wouldn't be very practical as transactions would settle only once per day and not have finality before then.
 
 Bitcoin finds a middle ground between these extremes by settling every 10 minutes in batches of transactions.
-These batches of transactions are what we call Blocks.
-In this chapter we'll review how to parse Blocks and how to check the proof-of-work.
-We'll start with a special transaction called the Coinbase Transaction, which is the first transaction of every block.
+These batches of transactions are what we call blocks.
+In this chapter we'll review how to parse blocks and how to check the proof-of-work.
+We'll start with a special transaction called the coinbase transaction, which is the first transaction of every block.
 
 === Coinbase Transactions
 
-Coinbase Transactions((("Blocks", "Coinbase Transactions")))((("Coinbase Transactions"))) have nothing to do with the US company of the same name.
+Coinbase transactions((("blocks", "coinbase transactions")))((("coinbase transactions"))) have nothing to do with the US company of the same name.
 Coinbase is the required first transaction of every block and is the only transaction allowed to bring Bitcoins into existence.
-The((("block rewards"))) Coinbase Transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the _block reward_.
+The((("block rewards"))) Coinbase transaction's outputs are kept by whomever the mining entity designates and usually include all the transaction fees of the other transactions in the block as well as something called the _block reward_.
 
-The Coinbase Transaction is what makes it worthwhile for a miner to mine.
-<<coinbase_transaction>> shows what a Coinbase Transaction looks like:
+The coinbase transaction is what makes it worthwhile for a miner to mine.
+<<coinbase_transaction>> shows what a coinbase transaction looks like.
 
 [[coinbase_transaction]]
-.Coinbase Transaction
-image::images/prbc_0901.png[Coinbase Transaction]
+.Coinbase transaction
+image::images/prbc_0901.png[Coinbase transaction]
 
-The transaction structure is no different than other transactions on the Bitcoin network, with a few exceptions.
+The transaction structure is no different from that of other transactions on the Bitcoin network, with a few exceptions:
 
-1. Coinbase Transactions must have exactly one input.
+1. Coinbase transactions must have exactly one input.
 2. The one input must have a previous transaction of 32 bytes of `00`.
 3. The one input must have a previous index of `ffffffff`.
 
-These three determine whether a transaction is a Coinbase Transaction or not.
+These three conditions determine whether a transaction is a coinbase transaction or not.
 
 include::code-ch09/answers.py[tag=exercise1,indent=0]
 
 ==== ScriptSig
 
-The Coinbase Transaction has no previous output that it's spending, so the input is not unlocking anything.
+The coinbase transaction has no previous output that it's spending, so the input is not unlocking anything.
 So what's in the ScriptSig?
 
-The ScriptSig of the Coinbase Transaction is set by whoever mined the transaction.
+The ScriptSig of the coinbase transaction is set by whoever mined the transaction.
 The main restriction is that the ScriptSig has to be at least 2 bytes and no longer than 100 bytes.
-Other than those restrictions and BIP0034 (see <<BIP0034>>) the ScriptSig can be anything the miner wants as long as the evaluation of the ScriptSig by itself, with no corresponding ScriptPubKey, is valid.
-Here is the ScriptSig for the Genesis BloBIP0066ck's Coinbase Transaction:
+Other than those restrictions and BIP0034 (described in the next section), the ScriptSig can be anything the miner wants as long as the evaluation of the ScriptSig by itself, with no corresponding ScriptPubKey, is valid.
+Here is the ScriptSig for the genesis block's coinbase transaction:
 
 ```
 4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c
@@ -67,57 +66,57 @@ include::code-ch09/examples.py[tag=example1]
 ----
 
 This was the headline from the _Times_ of London on January 3, 2009.
-This proves that the Genesis Block was created some time _at or after_ that date, and not _before_.
-Other Coinbase Transactions' ScriptSigs contain similarly arbitrary data.
+This proves that the genesis block was created some time _at or after_ that date, and not _before_.
+Other coinbase transactions' ScriptSigs contain similarly arbitrary data.
 
 [[BIP0034]]
 ==== BIP0034
 
-BIP0034((("BIP (Bitcoin Improvement Proposals)", "BIP0034"))) regulates the first element of the ScriptSig of Coinbase Transactions.
-This was due to a network problem where miners were using the _same_ Coinbase Transaction for different blocks.
+BIP0034((("BIP (Bitcoin Improvement Proposals)", "BIP0034"))) regulates the first element of the ScriptSig of coinbase transactions.
+This was due to a network problem where miners were using the _same_ coinbase transaction for different blocks.
 
-The Coinbase Transaction being the same byte-wise means that the transaction IDs are also the same, since the hash256 of the transaction is deterministic.
-To prevent transaction ID duplication, Gavin Andresen authored BIP0034, which is a soft-fork rule that adds the height of the block being mined into the first element of the Coinbase ScriptSig.
+The coinbase transaction being the same byte-wise means that the transaction IDs are also the same, since the hash256 of the transaction is deterministic.
+To prevent transaction ID duplication, Gavin Andresen authored BIP0034, which is a soft-fork rule that adds the height of the block being mined into the first element of the coinbase ScriptSig.
 
-The height is interpreted as a Little-Endian integer and must equal the height of the block (that is, the number of blocks since the Genesis Block).
-Thus a Coinbase Transaction cannot be byte-wise the same across different blocks, since the block height will differ.
-Here's how we can parse the height from the Coinbase Transaction in <<coinbase_transaction>>:
+The height is interpreted as a little-endian integer and must equal the height of the block (that is, the number of blocks since the genesis block).
+Thus, a coinbase transaction cannot be byte-wise the same across different blocks, since the block height will differ.
+Here's how we can parse the height from the coinbase transaction in <<coinbase_transaction>>:
 
 [source,python]
 ----
 include::code-ch09/examples.py[tag=example2]
 ----
 
-A Coinbase Transaction reveals the Block it was in!
-Coinbase Transactions in different Blocks are required to have different ScriptSigs and thus different Transaction IDs.
-This rule continues to be needed as it otherwise allow the duplicate Coinbase Transaction IDs across multiple blocks.
+A coinbase transaction reveals the block it was in!
+Coinbase transactions in different blocks are required to have different ScriptSigs and thus different transaction IDs.
+This rule continues to be needed as it would otherwise allow the duplicate coinbase transaction IDs across multiple blocks.
 
 include::code-ch09/answers.py[tag=exercise2,indent=0]
 
-=== Headers versus Full Blocks
+=== Block Headers
 
-Blocks((("Blocks", "headers versus full blocks"))) are batches of transactions, and the block header is metadata about the transactions included in the block.
+Blocks((("blocks", "headers versus full blocks"))) are batches of transactions, and the block header is metadata about the transactions included in a block.
 The block header as shown in <<parsed_block>> consists of:
 
 * Version
-* Previous Block
-* Merkle Root
+* Previous block
+* Merkle root
 * Timestamp
 * Bits
 * Nonce
 
 [[parsed_block]]
-.Parsed Block
-image::images/prbc_0902.png[Block Parsing]
+.Parsed block
+image::images/prbc_0902.png[Block parsing]
 
 The block header is the metadata for the block.
-Unlike transactions, each field in a block header is of a fixed length, as listed in <<parsed_block>>;
+Unlike in transactions, each field in a block header is of a fixed length, as listed in <<parsed_block>>;
 a block header takes up exactly 80 bytes.
-As of this writing there are roughly 550,000 blocks or ~45 megabytes in block headers.
-The entire blockchain, on the other hand, is roughly 200GB, so the headers are roughly .023% of the size.
-The fact that headers are so much smaller is an important feature when we look at simplified payment verification in <<chapter_spv>>.
+As of this writing there are roughly 550,000 blocks, or ~45 MB in block headers.
+The entire blockchain, on the other hand, is roughly 200 GB, so the headers are roughly .023% of the size.
+The fact that headers are so much smaller is an important feature, as we'll see when we look at simplified payment verification in <<chapter_spv>>.
 
-Like the transaction ID, the block ID is the hex representation of the hash256 of the header interpreted in Little-Endian.
+Like the transaction ID, the block ID is the hex representation of the hash256 of the header interpreted in little-endian.
 The block ID is interesting:
 
 [source,python]
@@ -125,9 +124,9 @@ The block ID is interesting:
 include::code-ch09/examples.py[tag=example3]
 ----
 
-This ID is what gets put into prev_block for a block building on top of this one.
+This ID is what gets put into `prev_block` for a block building on top of this one.
 For now, notice that the ID starts with a lot of zeros.
-We'll come back to this in the proof-of-work section later in this chapter.
+We'll come back to this in <<proof_f_work>>, after we take a closer look at the fields in the block header.
 
 We can start coding a `Block` class based on what we already know:
 
@@ -144,10 +143,10 @@ include::code-ch09/answers.py[tag=exercise5,indent=0]
 
 === Version
 
-_Version_ in normal((("Blocks", "versions")))((("version numbers", "of blocks"))) software refers to a particular set of features.
+_Version_ in normal((("blocks", "versions")))((("version numbers", "of blocks"))) software refers to a particular set of features.
 For a block, this is similar, in the sense that the version field reflects the capabilities of the software that produced the block.
 In the past this was used as a way to indicate a single feature that was ready to be deployed by the block's miner.
-Version 2 meant that the software was ready for BIP0034, the Coinbase Transaction block height feature from earlier in this chapter.
+Version 2 meant that the software was ready for BIP0034, the coinbase transaction block height feature from earlier in this chapter.
 Version 3 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0066"))) BIP0066, the enforcement of strict DER encoding.
 Version 4 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) BIP0065, which specified((("OP_CHECKLOCKTIMEVERIFY operation"))) `OP_CHECKLOCKTIMEVERIFY`.
 
@@ -189,19 +188,19 @@ include::code-ch09/answers.py[tag=exercise8,indent=0]
 
 === Previous Block
 
-All((("Blocks", "blockchain data structure")))((("blockchain data structure")))((("Genesis Block"))) blocks have to point to a previous block.
+All((("blocks", "blockchain data structure")))((("blockchain data structure")))((("genesis block"))) blocks have to point to a previous block.
 This is why the data structure is called a _blockchain_.
-Blocks link back all the way to the very first block, or the Genesis Block.
+Blocks link back all the way to the very first block, or the genesis block.
 The previous block field ends in a bunch of `00` bytes, which we will discuss more later in this chapter.
 
 === Merkle Root
 
-The((("Merkle Root")))((("Blocks", "Merkle Root"))) Merkle Root encodes all the ordered transactions in a 32-byte hash.
-We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the Merkle Root along with data from the server to get a proof-of-inclusion in <<chapter_spv>>.
+The((("Merkle root")))((("blocks", "Merkle root"))) Merkle root encodes all the ordered transactions in a 32-byte hash.
+We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the Merkle root along with data from the server to get a proof-of-inclusion in <<chapter_spv>>.
 
 === Timestamp
 
-The((("Blocks", "timestamps")))((("timestamps")))((("UNIX-style timestamps"))) timestamp is a UNIX-style timestamp taking up 4 bytes.
+The((("blocks", "timestamps")))((("timestamps")))((("UNIX-style timestamps"))) timestamp is a UNIX-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
 This timestamp is used in two places: the first for validating timestamp-based Locktimes on transactions included in the block and the second for calculating a new bits/target/difficulty every 2,016 blocks.
 The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) Locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's timestamp directly, but((("median-time-past (MTP)"))) the median-time-past (MTP) of the past 11 blocks.
@@ -220,17 +219,18 @@ In 2106, the block header will need some sort of fork as the timestamp in the bl
 
 === Bits
 
-Bits((("Blocks", "Bits field"))) is a field that encodes the proof-of-work necessary in this block.
+Bits((("blocks", "Bits field"))) is a field that encodes the proof-of-work necessary in this block.
 This will be discussed more in the next section.
 
 === Nonce
 
-Nonce((("Blocks", "nonce field")))((("nonce field"))) stands for "number used only once" or n-once.
+Nonce((("blocks", "nonce field")))((("nonce field"))) stands for "number used only once" or n-once.
 This number is what is changed by miners when looking for proof-of-work.
 
+[[proof_f_work]]
 === Proof-of-Work
 
-Proof-of-work is((("Blocks", "looking for proof-of-work")))((("proof-of-work", "function of"))) what secures Bitcoin and, at a deep level, allows the decentralized mining of Bitcoin.
+Proof-of-work is((("blocks", "looking for proof-of-work")))((("proof-of-work", "function of"))) what secures Bitcoin and, at a deep level, allows the decentralized mining of Bitcoin.
 Finding a proof-of-work gives a miner the right to put the attached block into the blockchain.
 As proof-of-work is very rare, this is not an easy task.
 But because proof-of-work is objective and easy to verify, anyone can be a miner if they so choose.
@@ -284,9 +284,9 @@ Modern ASIC equipment can calculate way more than 2^32^ different hashes per sec
 The((("AntMiner S9"))) AntMiner S9, for example, calculates 12 terahashes per second (Th/s).
 That is approximately 2^43^ hashes per second, which means that the entire nonce space can be consumed in just 0.0003 seconds.
 
-What miners can do when the nonce field is exhausted is change the Coinbase Transaction, which then changes the Merkle Root, giving miners a fresh nonce space each time.
+What miners can do when the nonce field is exhausted is change the coinbase transaction, which then changes the Merkle root, giving miners a fresh nonce space each time.
 The other option is to roll the version field or use overt ASICBOOST.
-The mechanics of how the Merkle Root changes whenever any transaction in the block changes will be discussed in <<chapter_spv>>.
+The mechanics of how the Merkle root changes whenever any transaction in the block changes will be discussed in <<chapter_spv>>.
 
 ==== Target
 
@@ -368,7 +368,7 @@ The code looks like this:
 include::code-ch09/examples.py[tag=example8]
 ----
 
-The difficulty of Bitcoin at the Genesis Block was 1.
+The difficulty of Bitcoin at the genesis block was 1.
 This gives us context for how difficult mainnet currently is.
 The difficulty can be thought of as how much more difficult mining is now than it was at the start.
 The mining difficulty in the preceding code is roughly 888 billion times more difficult than when Bitcoin started.
@@ -387,7 +387,7 @@ include::code-ch09/answers.py[tag=exercise11,indent=0]
 
 === Difficulty Adjustment
 
-In((("Blocks", "difficulty adjustment period")))((("difficulty adjustment period")))((("proof-of-work", "difficulty adjustment period"))) Bitcoin, each group of 2,016 blocks is called a _difficulty adjustment period_.
+In((("blocks", "difficulty adjustment period")))((("difficulty adjustment period")))((("proof-of-work", "difficulty adjustment period"))) Bitcoin, each group of 2,016 blocks is called a _difficulty adjustment period_.
 At the end of every difficulty adjustment period, the target is adjusted according to this formula:
 
 `time_differential = (block timestamp of last block in difficulty adjustment period) -
@@ -443,6 +443,6 @@ include::code-ch09/answers.py[tag=exercise13,indent=0]
 
 === Conclusion
 
-We've learned how to calculate proof-of-work, how to calculate the new bits for a block after a difficulty adjustment period and how to parse Coinbase Transactions.
-We'll now move on to networking in <<chapter_networking>> on our way to the block header field we haven't covered, the Merkle Root, in <<chapter_spv>>.
+We've learned how to calculate proof-of-work, how to calculate the new bits for a block after a difficulty adjustment period and how to parse coinbase transactions.
+We'll now move on to networking in <<chapter_networking>> on our way to the block header field we haven't covered, the Merkle root, in <<chapter_spv>>.
 
