@@ -482,5 +482,5 @@ Simplified payment verification is useful but not without some significant downs
 The full details are outside the scope of this book, but despite the programming being pretty straightforward, most light wallets do not use SPV and instead trust data from the wallet vendor servers.
 The main drawback of SPV is that the nodes you are connecting to know something about the transactions you are interested in.
 That is, you lose some privacy by using SPV.
-This will be covered in more detail in <<chapter_bloom_filters>> as we make Bloom Filters to tell nodes what transactions we are interested in.
+This will be covered in more detail in <<chapter_bloom_filters>> as we make Bloom filters to tell nodes what transactions we are interested in.
 
