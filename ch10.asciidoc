@@ -17,10 +17,6 @@ With that in mind, we'll work in this chapter toward requesting, receiving, and 
 
 All((("networking", "network messages"))) network messages look like <<network_message_or_the_envelope_that_contains_the_actual_payload>>.
 
-[[network_message_or_the_envelope_that_contains_the_actual_payload]]
-.A network message—the envelope that contains the actual payload
-image::images/prbc_1001.png[Network Message]
-
 The((("networking", "network magic"))) first 4 bytes are always the same and are referred to as the _network magic_.
 Magic bytes((("magic bytes"))) are common in network programming as the communication is asynchronous and can be intermittent.
 Magic bytes give the receiver of the message a place to start should the communication get interrupted (say, by your phone dropping signal).
@@ -28,6 +24,10 @@ They are also useful for identifying the network.
 You would not want a Bitcoin node to connect to a((("Litecoin nodes"))) Litecoin node, for example.
 Thus, a Litecoin node has a different magic.
 Bitcoin testnet also has a different magic, `0b110907`, as opposed to the Bitcoin mainnet magic, `f9beb4d9`.
+
+[[network_message_or_the_envelope_that_contains_the_actual_payload]]
+.A network message—the envelope that contains the actual payload
+image::images/prbc_1001.png[Network Message]
 
 The next 12 bytes are the command field, or a description of what the payload actually carries.
 There are many different commands; an exhaustive list can be seen in the https://en.bitcoin.it/wiki/Protocol_documentation[documentation].
