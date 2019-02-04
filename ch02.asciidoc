@@ -46,10 +46,6 @@ Similarly, you're probably familiar with the quadratic equation and its graph (<
 </ul>
 ++++
 
-[[quadratic_equation]]
-.Quadratic equation
-image::images/prbc_0202.png[Quadratic equation]
-
 And sometime around algebra, you did even higher orders of __x__—something called the cubic equation and its graph (<<cubic_equation>>):
 
 ++++
@@ -57,6 +53,10 @@ And sometime around algebra, you did even higher orders of __x__—something cal
 <li><em>y</em> = <em>ax</em><sup>3</sup> + <em>bx</em><sup>2</sup> + <em>cx</em> + <em>d</em></li>
 </ul>
 ++++
+
+[[quadratic_equation]]
+.Quadratic equation
+image::images/prbc_0202.png[Quadratic equation]
 
 [[cubic_equation]]
 .Cubic equation
