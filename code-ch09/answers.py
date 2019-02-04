@@ -4,16 +4,16 @@
 
 Calculate the new bits given the first and last blocks of this 2,016-block difficulty adjustment period:
 
-Block 471744:
-
+* Block 471744:
++
 ```
 000000203471101bbda3fe307664b3283a9ef0e97d9a38a7eacd8800000000000000000010c8ab
 a8479bbaa5e0848152fd3c2289ca50e1c3e58c9a4faaafbdf5803c5448ddb845597e8b0118e43a
 81d3
 ```
 
-Block 473759:
-
+* Block 473759:
++
 ```
 02000020f1472d9db4b563c35f97c428ac903f23b7fc055d1cfc26000000000000000000b3f449
 fcbe1bc4cfbcb8283a0d2c037f961a3fdf2b8bedc144973735eea707e1264258597e8b0118e5f0
