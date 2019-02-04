@@ -20,7 +20,7 @@ We'll start by examining the most basic type of Segwit transaction, pay-to-witne
 
 === Pay-to-Witness-Pubkey- (p2wpkh)
 
-Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "Witness field in"))) one of four types of scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
+Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "witness field in"))) one of four types of scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
 This is a smart contract that acts a lot like pay-to-pubkey-hash and is named similarly for that reason.
 The main change from p2pkh is that the data for the ScriptSig is now in the witness field.
 The rearrangement is to fix transaction malleability.
@@ -132,7 +132,7 @@ Note that less data is sent over the network to older nodes.
 Also, nodes are given the option of not having to download (and hence not verify) transactions that are _x_ blocks old if they don't want to.
 In a sense, the signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating directly if it so chooses.
 
-Note also that((("Segwit (segregated witness)", "Segwit Version 0"))) this is a special rule for Segwit version 0.
+Note also that((("Segwit (segregated witness)", "Segwit version 0"))) this is a special rule for Segwit version 0.
 Segwit version 1 can have a completely different processing path.
 _<20-byte hash>_ `1` could be the special script sequence that triggers a different rule.
 Upgrades((("Schnorr signatures")))((("Graftroot")))((("Simplicity"))) of Segwit can introduce Schnorr signatures, Graftroot, or even a different scripting system altogether, like Simplicity.
