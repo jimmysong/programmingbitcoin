@@ -91,19 +91,19 @@ The processing of the combined script starts like <<p2wpkh_start>>.
 
 [[p2wpkh_start]]
 .p2wpkh start
-image::images/prbc_1304.png[p2wpkh Start]
+image::images/prbc_1304.png[p2wpkh start]
 
 `OP_0` pushes a 0 to the stack (<<p2wpkh_step_1>>).
 
 [[p2wpkh_step_1]]
 .p2wpkh step 1
-image::images/prbc_1305.png[p2wpkh Step 1]
+image::images/prbc_1305.png[p2wpkh step 1]
 
 The 20-byte hash is an element, so it's pushed to the stack (<<p2wpkh_step_2>>).
 
 [[p2wpkh_step_2]]
 .p2wpkh step 2
-image::images/prbc_1306.png[p2wpkh Step 2]
+image::images/prbc_1306.png[p2wpkh step 2]
 
 At this point, older nodes will stop as there are no more Script commands to be processed.
 Since the top element is nonzero, this will be counted as a valid script.
@@ -117,14 +117,14 @@ When that script sequence is encountered, the pubkey and signature from the witn
 
 [[p2wpkh_step_3]]
 .p2wpkh step 3
-image::images/prbc_1307.png[p2wpkh Step 3]
+image::images/prbc_1307.png[p2wpkh step 3]
 
 The rest of the processing of p2wpkh is the same as the processing of p2pkh, as seen in <<chapter_script>>.
 The end state is a single 1 on the stack if and only if the 20-byte hash is the hash160 of the pubkey and the signature is valid (<<p2wpkh_step_4>>).
 
 [[p2wpkh_step_4]]
 .p2wpkh step 4
-image::images/prbc_1308.png[p2wpkh Step 4]
+image::images/prbc_1308.png[p2wpkh step 4]
 
 For an older node, processing stops at _<20-byte hash>_ 0, as older nodes don't know the special Segwit rule.
 Only upgraded nodes do the rest of the validation, much like with p2sh.
@@ -171,26 +171,26 @@ We start the script evaluation like in <<p2sh_p2wpkh_start>>.
 
 [[p2sh_p2wpkh_start]]
 .p2sh-p2wpkh start
-image::images/prbc_1312.png[p2sh-p2wpkh Start]
+image::images/prbc_1312.png[p2sh-p2wpkh start]
 
 Notice that the commands to be processed are exactly what triggers the p2sh special rule.
 The redeemScript goes on the stack (<<p2sh_p2wpkh_step_1>>).
 
 [[p2sh_p2wpkh_step_1]]
 .p2sh-p2wpkh step 1
-image::images/prbc_1313.png[p2sh-p2wpkh Step 1]
+image::images/prbc_1313.png[p2sh-p2wpkh step 1]
 
 The `OP_HASH160` will return the redeemScript's hash (<<p2sh_p2wpkh_step_2>>).
 
 [[p2sh_p2wpkh_step_2]]
 .p2sh-p2wpkh step 2
-image::images/prbc_1314.png[p2sh-p2wpkh Step 2]
+image::images/prbc_1314.png[p2sh-p2wpkh step 2]
 
 The hash will go on the stack, and we then get to `OP_EQUAL` (<<p2sh_p2wpkh_step_3>>).
 
 [[p2sh_p2wpkh_step_3]]
 .p2sh-p2wpkh step 3
-image::images/prbc_1315.png[p2sh-p2wpkh Step 3]
+image::images/prbc_1315.png[p2sh-p2wpkh step 3]
 
 At((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid, as they are unaware of the p2sh validation rules.
 However, post-BIP0016 nodes recognize the special script sequence for p2sh, so the redeemScript will then be evaluated as Script commands.
@@ -199,14 +199,14 @@ This makes the script state look like <<p2sh_p2wpkh_step_4>>.
 
 [[p2sh_p2wpkh_step_4]]
 .p2sh-p2wpkh step 4
-image::images/prbc_1316.png[p2sh-p2wpkh Step 4]
+image::images/prbc_1316.png[p2sh-p2wpkh step 4]
 
 This should look familiar, as this is the state that p2wpkh starts with.
 After `OP_0` and the 20-byte hash we are left with <<p2sh_p2wpkh_step_5>>.
 
 [[p2sh_p2wpkh_step_5]]
 .p2sh-p2wpkh step 5
-image::images/prbc_1317.png[p2sh-p2wpkh Step 5]
+image::images/prbc_1317.png[p2sh-p2wpkh step 5]
 
 At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules.
 However, post-Segwit nodes will recognize the special script sequence for p2wpkh.
@@ -214,14 +214,14 @@ The signature and pubkey from the witness field along with the 20-byte hash will
 
 [[p2sh_p2wpkh_step_6]]
 .p2sh-p2wpkh step 6
-image::images/prbc_1318.png[p2sh-p2wpkh Step 6]
+image::images/prbc_1318.png[p2sh-p2wpkh step 6]
 
 The rest of the processing is the same as p2pkh (<<chapter_script>>).
 Assuming the signature and pubkey are valid, we are left with <<p2sh_p2wpkh_end>>.
 
 [[p2sh_p2wpkh_end]]
 .p2sh-p2wpkh end
-image::images/prbc_1319.png[p2sh-p2wpkh End]
+image::images/prbc_1319.png[p2sh-p2wpkh end]
 
 As you can see, a p2sh-p2wpkh transaction is backward compatible all the way to before BIP0016.
 A pre-BIP0016 node would consider the script valid once the redeemScripts were equal, and a post-BIP0016, pre-Segwit node would consider the script valid at the 20-byte hash.
@@ -387,7 +387,7 @@ The processing of this script starts similarly to p2wpkh (Figures pass:[<a data-
 
 [[p2wsh_start]]
 .p2sh start
-image::images/prbc_1323.png[p2wsh Start]
+image::images/prbc_1323.png[p2wsh start]
 
 [[p2wsh_step_1]]
 .p2wsh step 1
@@ -427,13 +427,13 @@ As you can see, this is a 2-of-3 multisig much like what was explored in <<chapt
 
 [[p2wsh_step_4]]
 .p2wsh step 4
-image::images/prbc_1329.png[p2wsh Step 4]
+image::images/prbc_1329.png[p2wsh step 4]
 
 If the signatures are valid, we end like <<p2wsh_step_5>>.
 
 [[p2wsh_step_5]]
 .p2wsh step 5
-image::images/prbc_1330.png[p2wsh Step 5]
+image::images/prbc_1330.png[p2wsh step 5]
 
 The witnessScript is very similar to the redeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
 Once the sha256 of the witnessScript is found to be the same as the 32-byte hash, the witnessScript is interpreted as script commands and added to the command set.
@@ -463,25 +463,25 @@ We start the p2sh-p2wsh script evaluation in exactly the same way that p2sh-p2wp
 
 [[p2sh_p2wsh_start]]
 .p2sh-p2wsh start
-image::images/prbc_1312.png[p2sh-p2wsh Start]
+image::images/prbc_1312.png[p2sh-p2wsh start]
 
 The redeemScript is pushed to the stack (<<p2sh_p2wsh_step_1>>).
 
 [[p2sh_p2wsh_step_1]]
 .p2sh-p2wsh step 1
-image::images/prbc_1313.png[p2sh-p2wsh Step 1]
+image::images/prbc_1313.png[p2sh-p2wsh step 1]
 
 The `OP_HASH160` will return the redeemScript's hash (<<p2sh_p2wsh_step_2>>).
 
 [[p2sh_p2wsh_step_2]]
 .p2sh-p2wsh step 2
-image::images/prbc_1314.png[p2sh-p2wsh Step 2]
+image::images/prbc_1314.png[p2sh-p2wsh step 2]
 
 The hash is pushed to the stack, and we then get to `OP_EQUAL` (<<p2sh_p2wsh_step_3>>).
 
 [[p2sh_p2wsh_step_3]]
 .p2sh-p2wsh step 3
-image::images/prbc_1315.png[p2sh-p2wsh Step 3]
+image::images/prbc_1315.png[p2sh-p2wsh step 3]
 
 As((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) with p2sh-p2wpkh, if the hashes are equal, pre-BIP0016 nodes will mark the input as valid as they are unaware of the p2sh validation rules.
 However, post-BIP0016 nodes will recognize the special script sequence for p2sh, so the redeemScript will be interpreted as new script commands.
@@ -495,13 +495,13 @@ This makes the script state look like <<p2sh_p2wsh_step_4>>.
 
 [[p2sh_p2wsh_step_4]]
 .p2sh-p2wsh step 4
-image::images/prbc_1323.png[p2sh-p2wsh Step 4]
+image::images/prbc_1323.png[p2sh-p2wsh step 4]
 
 Of course, this is the exact same starting state as for p2wsh (<<p2sh_p2wsh_step_5>>).
 
 [[p2sh_p2wsh_step_5]]
 .p2sh-p2wsh step 5
-image::images/prbc_1324.png[p2sh-p2wsh Step 5]
+image::images/prbc_1324.png[p2sh-p2wsh step 5]
 
 The 32-byte hash is an element, so it is pushed to the stack (<<p2sh_p2wsh_step_6>>).
 
