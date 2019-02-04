@@ -969,6 +969,7 @@ Please don't use this function in production, because the random number from thi
 This is for malleability reasons.
 <6> We return a `Signature` object from the class defined earlier.
 
+[role="pagebreak-before"]
 .Importance of a Unique `k`
 ****
 There's an important rule in signatures that utilize a random component like we have here: the _k_ needs to be unique per signature.
