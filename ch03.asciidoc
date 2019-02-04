@@ -49,6 +49,7 @@ We can verify that the point (17,64) is on the curve by calculating both sides o
 
 We've verified that the point is on the curve using finite field math.
 
+[role="pagebreak-before"]
 Because we're evaluating the equation over a finite field, the plot of the equation looks vastly different (<<elliptic_curve_over_a_finite_field>>).
 
 [[elliptic_curve_over_a_finite_field]]
