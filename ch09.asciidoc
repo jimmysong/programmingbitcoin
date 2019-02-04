@@ -234,15 +234,15 @@ As proof-of-work is very rare, this is not an easy task.
 But because proof-of-work is objective and easy to verify, anyone can be a miner if they so choose.
 
 Proof-of-work((("mining"))) is called "mining" for a very good reason.
-Like physical mining, there is something that miners are searching for.
-A typical gold-mining operation processes 45 tons of dirt and rock before accumulating 1 oz of gold.
+Like with physical mining, there is something that miners are searching for.
+A typical gold mining operation processes 45 tons of dirt and rock before accumulating 1 oz of gold.
 This is because gold is very rare.
 However, once gold is found, it's very easy to verify that the gold is real.
 There are chemical tests, touchstones, and many other ways to tell relatively cheaply whether the thing found is gold.
 
 Similarly, proof-of-work is a number that provides a very rare result.
-To find a proof-of-work, the miners on the Bitcoin network have to churn through the numerical equivalent of dirt and rock to find that proof-of-work.
-Like gold, verifying proof-of-work is much cheaper than actually finding it.
+To find a proof-of-work, the miners on the Bitcoin network have to churn through the numerical equivalent of dirt and rock.
+Like with gold, verifying proof-of-work is much cheaper than actually finding it.
 
 So what is proof-of-work?
 Let's look at the hash256 of the block header we saw before to find out:
@@ -259,25 +259,24 @@ include::code-ch09/examples.py[tag=example5]
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small it is in 256-bit terms.
 
-Sha256 is known to generate uniformly distributed values.
+sha256 is known to generate uniformly distributed values.
 Given this, we can treat two rounds of sha256, or hash256, as a random number.
 The probability of any random 256-bit number being this small is tiny.
-The probability of the first bit in a 256-bit number being 0 is 0.5: the first two bits being 00, 0.25, the first three bits being 000, 0.125, and so on.
-Note that each 0 in the hexadecimal above represents four 0-bits.
-In this case, we have the first 73 bits being 0, which is 0.5^73^ or about 1 in 10^22^.
+The probability of the first bit in a 256-bit number being 0 is 0.5, the first two bits being 00, 0.25, the first three bits being 000, 0.125, and so on.
+Note that each 0 in the hexadecimal just shown represents four 0- bits.
+In this case, we have the first 73 bits being 0, which has a probability of 0.5^73^, or about 1 in 10^22^.
 This is a really tiny probability.
-On average 10^22^ or 10 trillion trillion random 256-bit numbers have to be generated before finding one this small.
+On average, 10^22^ (or 10 trillion trillion) random 256-bit numbers have to be generated before finding one this small.
 In other words, we need to calculate 10^22^ in hashes on average to find one this small.
-Getting back to the analogy, the process of finding proof-of-work requires us to process around 10^22^ numerical dirt and rock to find our numerical gold nugget.
+Getting back to the analogy, the process of finding proof-of-work requires us to process around 10^22^ numerical bits of dirt and rock to find our numerical gold nugget.
 
 ==== How a Miner Generates New Hashes
 
 Where((("proof-of-work", "generating new hashes")))((("hashes", "generating new"))) does the miner get new numerical dirt to process to see if it satisfies proof-of-work?
 This is where the nonce field comes in.
-The miners can change the nonce field at will.
+The miners can change the nonce field at will to change the hash of the block header.
 
-Unfortunately, the 4 bytes or 32-bits, or 2^32^ possible nonces that a miner can try, is insufficient space.
-This is because the required proof-of-work is much more difficult than can be done in 32 bits.
+Unfortunately, the 4 bytes or 32 bits of the nonce field (or 2^32^ possible nonces that a miner can try) is insufficient for the required proof-of-work.
 Modern ASIC equipment can calculate way more than 2^32^ different hashes per second.
 The((("AntMiner S9"))) AntMiner S9, for example, calculates 12 terahashes per second (Th/s).
 That is approximately 2^43^ hashes per second, which means that the entire nonce space can be consumed in just 0.0003 seconds.
@@ -286,17 +285,15 @@ What miners can do when the nonce field is exhausted is change the coinbase tran
 The other option is to roll the version field or use overt ASICBOOST.
 The mechanics of how the Merkle root changes whenever any transaction in the block changes will be discussed in <<chapter_spv>>.
 
-==== Target
+==== The Target
 
 Proof-of-work((("proof-of-work", "targets")))((("targets"))) is the requirement that the hash of every block header in Bitcoin must be below a certain target.
-_Target_ is a 256-bit number that is computed directly from the bits field.
+The _target_ is a 256-bit number that is computed directly from the bits field (in our example, +e93c0118+).
 The target is very small compared to an average 256-bit number.
-
-`e93c0118`
 
 The bits field is actually two different numbers.
 The first is the exponent, which is the last byte.
-The second is the coefficient, which is the other three bytes in Little-Endian.
+The second is the coefficient, which is the other three bytes in little-endian.
 The formula for calculating the target from these two numbers is:
 
 ++++
@@ -318,12 +315,12 @@ include::code-ch09/examples.py[tag=example6]
 ----
 <1> We are purposefully printing this number as 64 hexadecimal digits to show how small the number is in 256-bit terms.
 
-A valid proof-of-work is a hash of the block header that, when interpreted as a Little-Endian integer, is below the target number.
-Proof-of-work hashes are exceedingly rare and the process of mining is the process of finding one of these hashes.
-To find a single proof-of-work with the above target, the network as a whole must calculate 3.8 &#215; 10^21^ hashes, which, when this block was found, was roughly every 10 minutes.
+A valid proof-of-work is a hash of the block header that, when interpreted as a little-endian integer, is below the target number.
+Proof-of-work hashes are exceedingly rare, and the process of mining is the process of finding one of these hashes.
+To find a single proof-of-work with the preceding target, the network as a whole must calculate 3.8 &#215; 10^21^ hashes, which, when this block was found, could be done roughly every 10 minutes.
 To give this number some context, the best GPU mining card in the world would need to run for 50,000 years on average to find a single proof-of-work below this target.
 
-We can check that this block header's hash satisfies the proof-of-work:
+We can check that this block header's hash satisfies the proof-of-work as follows:
 
 [source,python]
 ----
@@ -333,20 +330,21 @@ include::code-ch09/examples.py[tag=example7]
 
 We can see that the proof-of-work is lower by lining up the numbers in 64 hex characters:
 
-`TG: 0000000000000000013ce9000000000000000000000000000000000000000000`
+----
+TG: 0000000000000000013ce9000000000000000000000000000000000000000000
 
-`ID: 0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523`
+ID: 0000000000000000007e9e4c586439b0cdbe13b1370bdd9435d76a644d047523
+----
 
 include::code-ch09/answers.py[tag=exercise9,indent=0]
 
 ==== Difficulty
 
-Target((("proof-of-work", "difficulty"))) is hard to comprehend for human beings.
-Target is the number that the hash must be below, but as humans, it's hard to easily see the difference between a 180-bit number and a 190-bit number.
+Targets((("proof-of-work", "difficulty"))) are hard for human beings to comprehend. The target is the number that the hash must be below, but as humans, it's not easy to see the difference between a 180-bit number and a 190-bit number.
 The first is a thousand times smaller, but from looking at targets, such large numbers are not easy to contextualize.
 
-To make different targets easier to compare, the concept of difficulty was born.
-The trick is that difficulty is inversely proportional to target to make comparisons easier.
+To make different targets easier to compare, the concept of _difficulty_ was born.
+The trick is that difficulty is inversely proportional to the target, to make comparisons easier.
 The specific formula is:
 
 ++++
@@ -369,7 +367,7 @@ include::code-ch09/examples.py[tag=example8]
 The difficulty of Bitcoin at the genesis block was 1.
 This gives us context for how difficult mainnet currently is.
 The difficulty can be thought of as how much more difficult mining is now than it was at the start.
-The mining difficulty in the preceding code is roughly 888 billion times more difficult than when Bitcoin started.
+The mining difficulty in the preceding code is roughly 888 billion times harder than when Bitcoin started.
 
 Difficulty is often shown in block explorers and Bitcoin price charting services, as it's a much more intuitive way to understand the effort required to create a new block.
 
@@ -377,34 +375,38 @@ include::code-ch09/answers.py[tag=exercise10,indent=0]
 
 ==== Checking That the Proof-of-Work Is Sufficient
 
-We((("proof-of-work", "validity"))) already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a Little-Endian integer.
+We((("proof-of-work", "validity"))) already learned that proof-of-work can be calculated by computing the hash256 of the block header and interpreting this as a little-endian integer.
 If this number is lower than the target, we have a valid proof-of-work.
 If not, the block is not valid as it doesn't have proof-of-work.
 
 include::code-ch09/answers.py[tag=exercise11,indent=0]
 
-=== Difficulty Adjustment
+==== Difficulty Adjustment
 
 In((("blocks", "difficulty adjustment period")))((("difficulty adjustment period")))((("proof-of-work", "difficulty adjustment period"))) Bitcoin, each group of 2,016 blocks is called a _difficulty adjustment period_.
 At the end of every difficulty adjustment period, the target is adjusted according to this formula:
 
-`time_differential = (block timestamp of last block in difficulty adjustment period) -
-(block timestamp of first block in difficulty adjustment period)`
+++++
+<ul class="simplelist">
+<li><em>time_differential</em> = (block timestamp of last block in difficulty adjustment period) –
+(block timestamp of first block in difficulty adjustment period)</li>
 
-`new_target = previous_target * time_differential / (2 weeks)`
+<li><em>new_target</em> = <em>previous_target</em> * <em>time_differential</em> / (2 weeks)</li>
+</ul>
+++++
 
-The((("time_differential number"))) `time_differential` number is calculated so that if it's greater than 8 weeks, 8 weeks is used, and if it's less than 3.5 days, 3.5 days is used.
-This way, the new target cannot change more than four times in either direction.
+The((("time_differential number"))) __time_differential__ is calculated so that if it's greater than 8 weeks, 8 weeks is used, and if it's less than 3.5 days, 3.5 days is used.
+This way, the new target cannot change more than four times in a row in either direction.
 That is, the target will be reduced or increased by four times at the most.
 
-If each block took on average 10 minutes, 2,016 blocks should take 20,160 minutes.
-There are 1,440 minutes per day, which means that 2,016 blocks take 20,160 / 1,440 = 14 days.
+If each block took on average 10 minutes to create, 2,016 blocks should take 20,160 minutes.
+There are 1,440 minutes per day, which means that 2,016 blocks will take 20,160 / 1,440 = 14 days to create.
 The effect of the difficulty adjustment is that block times are regressed toward the mean of 10 minutes per block.
 This means that long-term blocks will always go toward 10-minute blocks even if a lot of hashing power has entered or left the network.
 
 The new bits calculation should be using the timestamp field of the last block of each of the current and previous difficulty adjustment periods.
 Satoshi unfortunately had another off-by-one error here, as the timestamp differential calculation looks at the first and last blocks of the 2,016-block difficulty adjustment period instead.
-The time differential is the difference of blocks that are 2,015 blocks apart instead of 2,016 blocks apart.
+The time differential is therefore the difference of blocks that are 2,015 blocks apart instead of 2,016 blocks apart.
 
 We can code this formula like so:
 
@@ -412,13 +414,12 @@ We can code this formula like so:
 ----
 include::code-ch09/examples.py[tag=example9]
 ----
-<1> Note that `TWO_WEEKS = 60*60*24*14` is the number of seconds in 2 weeks.
-60 seconds times 60 minutes times 24 hours times 14 days.
+<1> Note that `TWO_WEEKS = 60*60*24*14` is the number of seconds in 2 weeks: 60 seconds &#xd7; 60 minutes &#xd7; 24 hours &#xd7; 14 days.
 <2> This makes sure that if it took more than 8 weeks to find the last 2,015 blocks, we don't decrease the difficulty too much.
-<3> This part makes sure that if it took less than 3.5 days to find the last 2,015 blocks, we don't increase the difficulty too much.
+<3> This makes sure that if it took less than 3.5 days to find the last 2,015 blocks, we don't increase the difficulty too much.
 
-Note that you only need the headers to calculate what the next block's target should be.
-Once we have the target, we can convert target to bits.
+Note that we only need the headers to calculate what the next block's target should be.
+Once we have the target, we can convert the target to bits.
 The inverse operation looks like this:
 
 [source,python]
@@ -428,10 +429,10 @@ include::code-ch09/helper.py[tag=source1]
 <1> Get rid of all the leading zeros.
 <2> The bits format is a way to express really large numbers succinctly and can be used with both negative and positive numbers.
 If the first bit in the coefficient is a 1, the bits field is interpreted as a negative number.
-Since target is always positive for us, we shift everything over by 1 byte if the first bit is 1.
+Since the target is always positive for us, we shift everything over by 1 byte if the first bit is 1.
 <3> The exponent is how long the number is in base 256.
 <4> The coefficient is the first three digits of the base 256 number.
-<5> The coefficient is in Little-Endian and the exponent goes last in the bits format.
+<5> The coefficient is in little-endian and the exponent goes last in the bits format.
 
 If the block doesn't have the correct bits calculated using the difficulty adjustment formula, then we can safely reject that block.
 
