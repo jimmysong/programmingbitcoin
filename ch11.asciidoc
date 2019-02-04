@@ -210,12 +210,12 @@ Say that a light client has two transactions that are of interest, which would b
 A full node can construct a proof of inclusion by sending us all of the hashes marked by blue boxes: H~ABCDEFGH~, H~IJ~, H~L~, H~M~, and H~OP~.
 The light client would then perform these calculations:
 
-* H~KL~ = merkle_parent(H~K~, H~L~)
-* H~MN~ = merkle_parent(H~M~, H~N~)
-* H~IJKL~ = merkle_parent(H~IJ~, H~KL~)
-* H~MNOP~ = merkle_parent(H~MN~, H~OP~)
-* H~IJKLMNOP~ = merkle_parent(H~IJKL~, H~MNOP~)
-* H~ABCDEFGHIJKLMNOP~ = merkle_parent(H~ABCDEFGH~, H~IJKLMNOP~)
+* H~KL~ = __merkle_parent__(H~K~, H~L~)
+* H~MN~ = __merkle_parent__(H~M~, H~N~)
+* H~IJKL~ = __merkle_parent__(H~IJ~, H~KL~)
+* H~MNOP~ = __merkle_parent__(H~MN~, H~OP~)
+* H~IJKLMNOP~ = __merkle_parent__(H~IJKL~, H~MNOP~)
+* H~ABCDEFGHIJKLMNOP~ = __merkle_parent__(H~ABCDEFGH~, H~IJKLMNOP~)
 
 You can see that in Figure 11-2, the dotted boxes correspond to the hashes that the light client calculates. In particular, the Merkle root is H~ABCDEFGHIJKLMNOP~, which can then be checked against the block header whose proof-of-work has been validated.
 
