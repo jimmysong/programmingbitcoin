@@ -85,13 +85,13 @@ e2917636'
 >>> # connect to testnet.programmingbitcoin.com in testnet mode
 >>> node = SimpleNode('testnet.programmingbitcoin.com', testnet=True, logging=\
 False)
->>> # create a bloom filter of size 30 and 5 functions. Add a tweak.
+>>> # Create a Bloom Filter of size 30 and 5 functions. Add a tweak.
 >>> bf = BloomFilter(30, 5, 90210)
->>> # add the h160 to the bloom filter
+>>> # add the h160 to the Bloom Filter
 >>> bf.add(h160)
 >>> # complete the handshake
 >>> node.handshake()
->>> # load the bloom filter with the filterload command
+>>> # load the Bloom Filter with the filterload command
 >>> node.send(bf.filterload())
 >>> # set start block to last_block from above
 >>> start_block = bytes.fromhex(last_block_hex)
@@ -119,7 +119,7 @@ False)
 ...     last_block = b.hash()
 >>> # send the getdata message
 >>> node.send(getdata)
->>> # initialize prev_tx, prev_index and prev_amount to None
+>>> # initialize prev_tx, prev_index, and prev_amount to None
 >>> prev_tx, prev_index, prev_amount = None, None, None
 >>> # loop while prev_tx is None
 >>> while prev_tx is None:
@@ -138,7 +138,7 @@ False)
 ...         for i, tx_out in enumerate(message.tx_outs):
 ...             # if our output has the same address as our address we found it
 ...             if tx_out.script_pubkey.address(testnet=True) == addr:
-...                 # we found our utxo. set prev_tx, prev_index, and tx
+...                 # we found our utxo; set prev_tx, prev_index, and tx
 ...                 prev_tx = message.hash()
 ...                 prev_index = i
 ...                 prev_amount = tx_out.amount
