@@ -55,12 +55,12 @@ And sometime around algebra, you did even higher orders of __x__—something cal
 ++++
 
 [[quadratic_equation]]
-[role="width-75"]
+[role="width-90"]
 .Quadratic equation
 image::images/prbc_0202.png[Quadratic equation]
 
 [[cubic_equation]]
-[role="width-75"]
+[role="width-90"]
 .Cubic equation
 image::images/prbc_0203.png[Cubic equation]
 
