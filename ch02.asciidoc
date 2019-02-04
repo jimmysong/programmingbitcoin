@@ -223,15 +223,15 @@ That is:
 
 Visually, these points are opposite one another over the x-axis on the curve (see <<vertical_line_intersection>>).
 
-[[vertical_line_intersection]]
-.Vertical line intersection
-image::images/prbc_0212.png[Vertical Line]
-
 This is why we call this point the point at infinity.
 We have one extra point in the elliptic curve, which makes the vertical line intersect the curve a third time.
 
 _Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
 This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place, no matter the order.
+
+[[vertical_line_intersection]]
+.Vertical line intersection
+image::images/prbc_0212.png[Vertical Line]
 
 _Associativity_ means((("associativity"))) that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
 This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
