@@ -401,6 +401,7 @@ Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_, proving associativity.((("", 
 
 include::code-ch03/answers.py[tag=exercise5,indent=0]
 
+[role="pagebreak-before"]
 === Coding Scalar Multiplication
 
 What((("scalar multiplication", "coding for")))((("elliptic curve cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
