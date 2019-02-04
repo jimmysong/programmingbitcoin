@@ -30,7 +30,7 @@ Thus, a Litecoin node has a different magic.
 Bitcoin testnet also has a different magic, `0b110907`, as opposed to the Bitcoin mainnet magic, `f9beb4d9`.
 
 The next 12 bytes are the command field, or a description of what the payload actually carries.
-There are many different commands; an exhaustive list can be seen at https://en.bitcoin.it/wiki/Protocol_documentation[].
+There are many different commands; an exhaustive list can be seen in the https://en.bitcoin.it/wiki/Protocol_documentation[documentation].
 The command field is meant to be human-readable and this particular message is the byte string "version" in ASCII with 0-byte padding.
 
 The next 4 bytes are the length of the payload in Little-Endian.
