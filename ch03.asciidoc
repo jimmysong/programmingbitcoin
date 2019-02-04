@@ -384,6 +384,7 @@ image::images/prbc_0214.png[Point addition]
 
 This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
 
+[role="pagebreak-before"]
 ==== Associativity
 
 We((("associativity")))((("finite cyclic groups", "associativity property"))) know from point addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
