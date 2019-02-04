@@ -423,9 +423,10 @@ We will be traversing to H~KL~ (6) when we come back to this node.
 * Finally, we traverse to H~ABCDEFGHIJKLMNOP~, which is the Merkle root, and calculate it!
 
 The flag bits for nodes (1) through (13) are:
-
+[source,python]
+----
 `1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0`
-
+----
 There should be seven hashes in the hashes field, in this order:
 
 * H~ABCDEFGH~
