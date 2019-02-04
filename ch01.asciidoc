@@ -616,9 +616,7 @@ There are many proofs of this theorem, but perhaps the simplest is using what we
 </ul>
 ++++
 
-The resulting numbers might not be in the right order, but the same numbers are in both sets.
-
-We can then multiply every element in both sets to get this equality:
+The resulting numbers might not be in the right order, but the same numbers are in both sets. We can then multiply every element in both sets to get this equality:
 
 ++++
 <ul class="simplelist">
