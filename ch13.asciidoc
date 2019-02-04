@@ -453,6 +453,7 @@ image::images/prbc_1331.png[p2sh-p2wsh to Old Nodes]
 .p2sh-p2wsh to post-BIP0141 software
 image::images/prbc_1332.png[p2sh-p2wsh to New Nodes]
 
+[role="pagebreak-before"]
 As with p2sh-p2wpkh, the ScriptPubKey is indistinguishable from any other p2sh address and the ScriptSig is only the RedeemScript (<<p2sh_p2wsh_scriptpubkey>>).
 
 [[p2sh_p2wsh_scriptpubkey]]
