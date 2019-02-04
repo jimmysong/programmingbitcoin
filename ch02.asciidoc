@@ -155,6 +155,7 @@ image::images/prbc_0210.png[Line intersecting at one point]
 .Line intersects at three points
 image::images/prbc_0211.png[Line intersecting at three points]
 
+[role="pagebreak-before"]
 The two exceptions are when a line is exactly vertical (<<line_intersects_at_2_points_because_its_vertical>>) and when a line is _tangent_ to the curve (<<line_intersects_at_2_points_because_its_tangent_to_the_curve>>).
 
 [[line_intersects_at_2_points_because_its_vertical]]
