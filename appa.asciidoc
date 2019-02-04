@@ -421,6 +421,7 @@ include::code-ch08/answers.py[tag=exercise3,indent=0]
 include::code-ch08/answers.py[tag=answer3,indent=0]
 ----
 
+[role="pagebreak-before"]
 include::code-ch08/answers.py[tag=exercise4,indent=0]
 
 [source,python]
