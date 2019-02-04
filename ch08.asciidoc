@@ -61,44 +61,43 @@ image::images/prbc_0804.png[Bare multisig start]
 `OP_0` will((("OP_0 operation"))) push the number 0 to the stack (<<bare_multisig_step_1>>).
 
 [[bare_multisig_step_1]]
-.Bare multisig Step 1
-image::images/prbc_0805.png[Bare multisig Step 1]
+.Bare multisig step 1
+image::images/prbc_0805.png[Bare multisig step 1]
 
-The signatures are elements so they'll be pushed directly to the stack (<<bare_multisig_step_2>>).
+The signatures are elements, so they'll be pushed directly to the stack (<<bare_multisig_step_2>>).
 
 [[bare_multisig_step_2]]
-.Bare multisig Step 2
-image::images/prbc_0806.png[Bare multisig Step 2]
+.Bare multisig step 2
+image::images/prbc_0806.png[Bare multisig step 2]
 
-`OP_m` will((("OP_m operation")))((("OP_n operation"))) push the number `m` on the stack, the public keys will be pushed to the stack, and `OP_n` will push the number `n` to the stack (<<bare_multisig_step_3>>).
+`OP_m` will((("OP_m operation")))((("OP_n operation"))) push the number _m_ to the stack, the public keys will be pushed to the stack, and `OP_n` will push the number _n_ to the stack (<<bare_multisig_step_3>>).
 
 [[bare_multisig_step_3]]
-.Bare multisig Step 3
-image::images/prbc_0807.png[Bare multisig Step 3]
+.Bare multisig step 3
+image::images/prbc_0807.png[Bare multisig step 3]
 
-At this point, `OP_CHECKMULTISIG` will consume `m` + `n` + 3 elements (see <<off-by-one>>) and push a 1 to the stack if `m` of the signatures are valid for `m` distinct public keys from the list of `n` public keys; otherwise it pushes a 0.
-Assuming that the signatures are valid, the stack has a single `1`, which validates the combined Script (<<bare_multisig_end>>).
+At this point, `OP_CHECKMULTISIG` will consume __m__ + __n__ + 3 elements (see "<<off-by-one>>") and push a 1 to the stack if _m_ of the signatures are valid for _m_ distinct public keys from the list of _n_ public keys; otherwise, it pushes a 0.
+Assuming that the signatures are valid, the stack has a single 1, which validates the combined script (<<bare_multisig_end>>).
 
 [[bare_multisig_end]]
 .Bare multisig end
-image::images/prbc_0808.png[Bare multisig End]
+image::images/prbc_0808.png[Bare multisig end]
 
 [[off-by-one]]
 [NOTE]
 .OP_CHECKMULTISIG Off-by-One Bug
 ====
-The stack elements consumed by `OP_CHECKMULTISIG` are supposed to be `m`, `m` different signatures, `n`, `n` different pubkeys. The number of elements consumed should be 2 (`m` and `n` themselves) + `m` (signatures) + `n` (pubkeys).
-Unfortunately, the opcode consumes 1 more element than the `m` + `n` + 2 elements that it's supposed to.
-`OP_CHECKMULTISIG` consumes `m` + `n` + 3, so an extra element is added (`OP_0` in our example) so as to not cause a failure.
-The opcode does nothing with that extra element and that extra element can be anything.
+The stack elements consumed by `OP_CHECKMULTISIG` are supposed to be _m_, _m_ different signatures, _n_ and _n_ different pubkeys. The number of elements consumed should be 2 (_m_ and _n_ themselves) + _m_ (signatures) + _n_ (pubkeys).
+Unfortunately, the opcode consumes one more element than the _m_ + _n_ + 2 elements that it's supposed to.
+`OP_CHECKMULTISIG` consumes _m_ + _n_ + 3 elements, so an extra element is added (`OP_0` in our example) so as to not cause a failure.
 
-As a way to combat malleability, however, most nodes on the Bitcoin network will not relay the transaction unless that extra element is `OP_0`.
-Note that if we had `m` + `n` + 2 elements, that `OP_CHECKMULTISIG` will just fail as there are not enough elements to be consumed and the combined Script will fail causing the transaction to be invalid.
+The opcode does nothing with that extra element, and that extra element can be anything. As a way to combat malleability, however, most nodes on the Bitcoin network will not relay the transaction unless the extra element is `OP_0`.
+Note that if we had _m_ + _n_ + 2 elements, `OP_CHECKMULTISIG` would fail as there are not enough elements to be consumed and the combined script would fail, causing the transaction to be invalid.
 ====
 
 === Coding OP_CHECKMULTISIG
 
-In an `m`-of-`n` bare multisig, the stack contains `n` as the top element, then `n` pubkeys, then `m`, then `m` signatures, and finally, a filler item due to the off-by-one bug.
+In an __m__-of-__n__ bare multisig, the stack contains _n_ as the top element, then _n_ pubkeys, then _m_, then _m_ signatures, and finally a filler item due to the off-by-one bug.
 The code for `OP_CHECKMULTISIG` in _op.py_ is mostly written here:
 
 [source,python]
@@ -114,24 +113,26 @@ include::code-ch08/answers.py[tag=exercise1,indent=0]
 === Problems with Bare Multisig
 
 Bare multisig is a bit ugly, but it is functional.
-This reduces the single point of failure by requiring `m` of `n` signatures to unlock a UTXO.
+It avoids the single point of failure by requiring _m_ of _n_ signatures to unlock a UTXO.
 There is plenty of utility in making outputs multisig, especially if you're a business.
 However, bare multisig suffers from a few problems:
 
 . A bare multisig ScriptPubKey has many different public keys, and that makes the ScriptPubKey long.
-Unlike p2pkh or even p2pk, these are not easily communicated using voice or even text message.
+Unlike p2pkh or even p2pk ScriptPubKeys, these are not easily communicated using voice or even text messages.
 
-. Because the output is so long, it requires more resources for node software.
-Nodes keep track of the UTXO set, so a big ScriptPubKey is more expensive to keep track of.
-A large output is more expensive to keep in fast-access storage (like RAM), being 5 to 20 times larger than a normal p2pkh output.
+. Because the output is so long—5 to 20 times larger than a normal p2pkh output—it requires more resources for node software.
+Nodes keep track of the UTXO set, and a big ScriptPubKey is more expensive to keep track of.
+A large output is more expensive to keep in fast-access storage (like RAM).
 
-. Because the ScriptPubKey can be so much bigger, bare multisig can and has been abused.
-The entire PDF of the Satoshi's original whitepaper is encoded in this transaction in block 230009:
+. Because the ScriptPubKey can be so big, bare multisig can and has been abused.
+The entire PDF of Satoshi's original whitepaper is encoded in this transaction in block 230009:
 +
-`54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713`
+----
+54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713
+----
 +
 The creator of this transaction split up the whitepaper PDF into 64-byte chunks, which were then made into invalid uncompressed public keys.
-The whitepaper was encoded into 947 outputs as 1-of-3 bare multisig outputs.
+The whitepaper was encoded into 947 1-of-3 bare multisig outputs.
 These outputs are not spendable but have to be indexed in the UTXO sets of full nodes.
 This is a tax every full node has to pay and is in that sense abusive.
 
@@ -140,11 +141,11 @@ To mitigate these problems, pay-to-script-hash (p2sh) was born.((("", startref="
 === Pay-to-Script-Hash (p2sh)
 
 Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) operation", id="MSp2shoper08")))((("hashes", "p2sh (pay-to-script-hash)", id="Hp2sh08"))) is a general solution to the long address/ScriptPubKey problem.
-More complicated ScriptPubKeys than bare multisig can easily be made and they have the same problems as bare multisig.
+More complicated ScriptPubKeys than bare multisig can easily be made, and they have the same problems as bare multisig.
 
-The solution that p2sh implements is to take the hash of some Script commands and then reveal the pre-image Script commands later.
+The solution that p2sh implements is to take the hash of some Script commands and then reveal the preimage Script commands later.
 Pay-to-script-hash was introduced in 2011 to a lot of controversy.
-There were multiple proposals, but as we'll see, p2sh is kludgy, but works.
+There were multiple proposals, but as we'll see, p2sh is kludgy but works.
 
 In p2sh, a special rule gets executed only when the pattern shown in <<pay_to_script_hash_pattern_that_executes_the_special_rule>> is encountered.
 
