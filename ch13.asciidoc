@@ -18,7 +18,7 @@ As a brief overview, Segwit incorporated a multitude of changes:
 It's not entirely obvious what Segwit is without looking at how it's implemented.
 We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
 
-=== Pay-to-Witness-Pubkey- (p2wpkh)
+=== Pay-to-Witness-Pubkey-Hash (p2wpkh)
 
 Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "witness field in"))) one of four types of scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
 This is a smart contract that acts a lot like pay-to-pubkey-hash and is named similarly for that reason.
@@ -180,7 +180,7 @@ The redeemScript goes on the stack (<<p2sh_p2wpkh_step_1>>).
 .p2sh-p2wpkh step 1
 image::images/prbc_1313.png[p2sh-p2wpkh Step 1]
 
-The `OP_HASH160` will return the RedeemScript's hash (<<p2sh_p2wpkh_step_2>>).
+The `OP_HASH160` will return the redeemScript's hash (<<p2sh_p2wpkh_step_2>>).
 
 [[p2sh_p2wpkh_step_2]]
 .p2sh-p2wpkh step 2
@@ -391,13 +391,13 @@ image::images/prbc_1323.png[p2wsh Start]
 
 [[p2wsh_step_1]]
 .p2wsh step 1
-image::images/prbc_1324.png[p2wsh Step 1]
+image::images/prbc_1324.png[p2wsh step 1]
 
 The 32-byte hash is an element, so it is pushed to the stack (<<p2wsh_step_2>>).
 
 [[p2wsh_step_2]]
 .p2wsh step 2
-image::images/prbc_1325.png[p2wsh Step 2]
+image::images/prbc_1325.png[p2wsh step 2]
 
 As with p2wpkh, older nodes will stop here because there are no more Script commands to be processed.
 Newer nodes will recognize the special sequence and do additional validation by looking at the witness field.
@@ -406,7 +406,7 @@ The witness field for p2wsh in our case is a 2-of-3 multisig (<<p2wsh_witness>>)
 
 [[p2wsh_witness]]
 .p2wsh witness
-image::images/prbc_1326.png[p2wsh Witness]
+image::images/prbc_1326.png[p2wsh witness]
 
 The last item of the witness is called the _witnessScript_ and must sha256 to the 32-byte hash from the ScriptPubKey.
 Note this is sha256, not hash256.
@@ -415,13 +415,13 @@ The witnessScript looks like <<p2wsh_witness_script>>.
 
 [[p2wsh_witness_script]]
 .p2wsh witnessScript
-image::images/prbc_1327.png[p2wsh Witness Script]
+image::images/prbc_1327.png[p2wsh witnessScript]
 
 The rest of the witness field is put on top to produce the command set in <<p2wsh_step_3>>.
 
 [[p2wsh_step_3]]
 .p2wsh step 3
-image::images/prbc_1328.png[p2wsh Step 3]
+image::images/prbc_1328.png[p2wsh step 3]
 
 As you can see, this is a 2-of-3 multisig much like what was explored in <<chapter_p2sh>> (<<p2wsh_step_4>>).
 
@@ -489,7 +489,7 @@ The redeemScript is `OP_0` _32-byte hash_, which is the same as the ScriptPubKey
 
 [[p2sh_p2wsh_redeemscript]]
 .p2sh-p2wsh redeemScript
-image::images/prbc_1338.png[p2sh-p2wsh RedeemScript]
+image::images/prbc_1338.png[p2sh-p2wsh redeemScript]
 
 This makes the script state look like <<p2sh_p2wsh_step_4>>.
 
@@ -507,7 +507,7 @@ The 32-byte hash is an element, so it is pushed to the stack (<<p2sh_p2wsh_step_
 
 [[p2sh_p2wsh_step_6]]
 .p2sh-p2wsh step 6
-image::images/prbc_1325.png[p2sh-p2wsh Step 6]
+image::images/prbc_1325.png[p2sh-p2wsh step 6]
 
 At this point, pre-Segwit nodes will mark this input as valid, as they are unaware of the Segwit validation rules.
 However, post-Segwit nodes will recognize the special script sequence for p2wsh.
@@ -515,22 +515,22 @@ The witness field (<<p2sh_p2wsh_witness>>) contains the witnessScript (<<p2sh_p2
 
 [[p2sh_p2wsh_witness]]
 .p2sh-p2wsh witness
-image::images/prbc_1342.png[p2sh-p2wsh Witness]
+image::images/prbc_1342.png[p2sh-p2wsh witness]
 
 [[p2sh_p2wsh_witness_script]]
 .p2sh-p2wsh witnessScript
-image::images/prbc_1327.png[p2wsh Witness Script]
+image::images/prbc_1327.png[p2wsh witnessScript]
 
 [[p2sh_p2wsh_step_7]]
 .p2sh-p2wsh step 7
-image::images/prbc_1328.png[p2sh-p2wsh Step 7]
+image::images/prbc_1328.png[p2sh-p2wsh step 7]
 
 As you can see, this is a 2-of-3 multisig as in <<chapter_p2sh>>.
 If the signatures are valid, we end like <<p2sh_p2wsh_end>>.
 
 [[p2sh_p2wsh_end]]
 .p2sh-p2wsh end
-image::images/prbc_1330.png[p2sh-p2wsh End]
+image::images/prbc_1330.png[p2sh-p2wsh end]
 
 This makes p2wsh backward compatible, allowing older wallets to send to p2sh ScriptPubKeys that they can handle.
 
