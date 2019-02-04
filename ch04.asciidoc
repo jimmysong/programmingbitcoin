@@ -73,7 +73,7 @@ include::code-ch04/answers.py[tag=exercise1,indent=0]
 
 Recall((("serialization", "compressed SEC format")))((("SEC serialization format", "compressed format"))) that for any _x_ coordinate, there are at most two _y_ coordinates due to the __y__^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>).
 
-[role="width-50"]
+[role="width-75"]
 [[the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve]]
 .The two possible values for y are where this vertical line intersects the curve
 image::images/prbc_0212.png[Elliptic Curve Vertical Line]
