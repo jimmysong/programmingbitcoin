@@ -260,7 +260,7 @@ The first four are the version, the fifth is the Segwit marker.
 <2> The fifth byte being 0 is how we tell that this transaction is Segwit (this is not foolproof, but it's what we're going to use).
 We use different parsers depending on whether it's Segwit.
 <3> We put the stream back to the position before we examined the first 5 bytes.
-<4>We've moved the old `parse` method to `parse_legacy`.
+<4> We've moved the old `parse` method to `parse_legacy`.
 
 Here's a parser for the Segwit serialization: 
 
