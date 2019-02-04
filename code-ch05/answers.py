@@ -53,7 +53,8 @@ df2b3eda8db57397088ac46430600'
 b422690b8461cb52c3cc30330b23d574351872b7c361e9aae3649071c1a71601 035d5c93d9ac9\
 6881f19ba1f686f15f009ded7c62efe85a872e6a19b43c15a2937
 >>> print(tx_obj.tx_outs[0].script_pubkey)
-OP_DUP OP_HASH160 ab0c0b2e98b1ab6dbf67d4750b0a56244948a879 OP_EQUALVERIFY OP_CHECKSIG
+OP_DUP OP_HASH160 ab0c0b2e98b1ab6dbf67d4750b0a56244948a879 \
+OP_EQUALVERIFY OP_CHECKSIG
 >>> print(tx_obj.tx_outs[1].amount)
 40000000
 
@@ -104,8 +105,8 @@ Write the inputs parsing part of the `parse` method in `Tx` and the `parse` meth
 # tag::answer2.2[]
 @classmethod
 def parse(cls, s):
-    '''Takes a byte stream and parses the tx_input at the start
-    return a TxIn object
+    '''Takes a byte stream and parses the tx_input at the start.
+    Returns a TxIn object.
     '''
     prev_tx = s.read(32)[::-1]
     prev_index = little_endian_to_int(s.read(4))
@@ -146,8 +147,8 @@ class Tx:
 # tag::answer3.2[]
 @classmethod
 def parse(cls, s):
-    '''Takes a byte stream and parses the tx_output at the start
-    return a TxOut object
+    '''Takes a byte stream and parses the tx_output at the start.
+    Returns a TxOut object.
     '''
     amount = little_endian_to_int(s.read(8))
     script_pubkey = Script.parse(s)
