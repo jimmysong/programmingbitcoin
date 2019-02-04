@@ -76,7 +76,7 @@ methods = []
 # tag::exercise1[]
 ==== Exercise 1
 
-Write the version parsing part of the `parse` method that we've defined. To do this properly, you'll have to convert 4 bytes into a Little-Endian integer.
+Write the version parsing part of the `parse` method that we've defined. To do this properly, you'll have to convert 4 bytes into a little-endian integer.
 # end::exercise1[]
 # tag::answer1[]
     @classmethod
