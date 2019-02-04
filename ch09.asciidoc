@@ -390,7 +390,7 @@ At the end of every difficulty adjustment period, the target is adjusted accordi
 <ul class="simplelist">
 <li><em>time_differential</em> = (block timestamp of last block in difficulty adjustment period) –
 (block timestamp of first block in difficulty adjustment period)</li>
-
+<li>&nbsp;</li>
 <li><em>new_target</em> = <em>previous_target</em> * <em>time_differential</em> / (2 weeks)</li>
 </ul>
 ++++
