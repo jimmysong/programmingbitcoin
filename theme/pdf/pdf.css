@@ -8,6 +8,9 @@
    font-style: normal;
 }
 
+/*sidebar less space in pagebreaks */
+.less_space {margin-top: 0 !important;}
+
 /*----Uncomment to turn on automatic code wrapping
 
 pre {
