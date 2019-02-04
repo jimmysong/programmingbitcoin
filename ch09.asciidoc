@@ -442,6 +442,6 @@ include::code-ch09/answers.py[tag=exercise13,indent=0]
 
 === Conclusion
 
-We've learned how to calculate proof-of-work, how to calculate the new bits for a block after a difficulty adjustment period and how to parse coinbase transactions.
+We've learned how to calculate proof-of-work, how to calculate the new bits for a block after a difficulty adjustment period, and how to parse coinbase transactions.
 We'll now move on to networking in <<chapter_networking>> on our way to the block header field we haven't covered, the Merkle root, in <<chapter_spv>>.
 
