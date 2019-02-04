@@ -53,14 +53,14 @@ A((("Bitcoin", "open source projects")))((("open source projects"))) large part 
 The main way you can do that is through open source projects.
 There are almost too many to list, but here's a sample:
 
-[Bitcoin Core](https://github.com/bitcoin/bitcoin) The reference client
-[Libbitcoin](https://github.com/libbitcoin/libbitcoin) An alternate implementation of Bitcoin in C++
-[BitcoinDark](https://github.com/btcsuite/btcd) A Golang-based implementation of Bitcoin
-[Bcoin](https://github.com/bcoin-org/bcoin) A JavaScript-based implementation of Bitcoin, maintained by purse.io
-[pycoin](https://github.com/richardkiss/pycoin) A Python library for Bitcoin
-[Bitcoinj](https://github.com/bitcoinj/bitcoinj) A Java library for Bitcoin
-[BitcoinJS](https://github.com/bitcoinjs/bitcoinjs-lib) A JavaScript library for Bitcoin
-[BTCPay](https://github.com/btcpayserver/btcpayserver) A Bitcoin payment processing engine written in C#
+https://github.com/bitcoin/bitcoin[Bitcoin Core]:: The reference client
+https://github.com/libbitcoin/libbitcoin[Libbitcoin]:: An alternate implementation of Bitcoin in C++
+https://github.com/btcsuite/btcd[BitcoinDark]:: A Golang-based implementation of Bitcoin
+https://github.com/bcoin-org/bcoin[Bcoin]:: A JavaScript-based implementation of Bitcoin, maintained by purse.io
+https://github.com/richardkiss/pycoin[pycoin]:: A Python library for Bitcoin
+https://github.com/bitcoinj/bitcoinj[Bitcoinj]:: A Java library for Bitcoin
+https://github.com/bitcoinjs/bitcoinjs-lib[BitcoinJS]:: A JavaScript library for Bitcoin
+https://github.com/btcpayserver/btcpayserver[BTCPay]:: A Bitcoin payment processing engine written in C#
 
 Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas, and so on.
 
