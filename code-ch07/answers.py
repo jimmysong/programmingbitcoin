@@ -46,7 +46,7 @@ c5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca539012103\
 # tag::exercise5[]
 ==== Exercise 5
 
-Advanced: Gget some more testnet coins from a testnet faucet and create a two-input, one-output transaction. One input should be from the faucet, the other should be from the previous exercise; the output can be your own address.
+Advanced: Get some more testnet coins from a testnet faucet and create a two-input, one-output transaction. One input should be from the faucet, the other should be from the previous exercise; the output can be your own address.
 
 You can broadcast the transaction at https://live.blockcypher.com/btc/pushtx/[].
 # end::exercise5[]
