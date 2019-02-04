@@ -217,7 +217,7 @@ The light client would then perform these calculations:
 * H~IJKLMNOP~ = __merkle_parent__(H~IJKL~, H~MNOP~)
 * H~ABCDEFGHIJKLMNOP~ = __merkle_parent__(H~ABCDEFGH~, H~IJKLMNOP~)
 
-You can see that in Figure 11-2, the dotted boxes correspond to the hashes that the light client calculates. In particular, the Merkle root is H~ABCDEFGHIJKLMNOP~, which can then be checked against the block header whose proof-of-work has been validated.
+You can see that in <<merkle_proof>>, the dotted boxes correspond to the hashes that the light client calculates. In particular, the Merkle root is H~ABCDEFGHIJKLMNOP~, which can then be checked against the block header whose proof-of-work has been validated.
 
 [NOTE]
 .How Secure Is an SPV Proof?
