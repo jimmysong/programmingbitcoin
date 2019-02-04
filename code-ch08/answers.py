@@ -117,7 +117,7 @@ def op_checkmultisig(stack, z):
 # tag::exercise2[]
 ==== Exercise 2
 
-Write `h160_to_p2pkh_address` that converts a 20-byte hash160 into a p2pkh address.
+Write the `h160_to_p2pkh_address` function that converts a 20-byte hash160 into a p2pkh address.
 # end::exercise2[]
 '''
 
@@ -136,7 +136,7 @@ def h160_to_p2pkh_address(h160, testnet=False):
 # tag::exercise3[]
 ==== Exercise 3
 
-Write `h160_to_p2sh_address` that converts a 20-byte hash160 into a p2sh address.
+Write the `h160_to_p2sh_address` function that converts a 20-byte hash160 into a p2sh address.
 # end::exercise3[]
 '''
 
