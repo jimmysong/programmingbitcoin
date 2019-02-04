@@ -341,21 +341,20 @@ include::code-ch08/answers.py[tag=exercise3,indent=0]
 
 ==== p2sh Signature Verification
 
-As((("p2sh (pay-to-script-hash)", "signature verification", id="p2shsignver08"))) with p2pkh, one of the tricky aspects of p2sh is verifying the signatures.
-The p2sh signature verification is different than the p2pkh process covered in <<chapter_tx>>.
+As((("p2sh (pay-to-script-hash)", "signature verification", id="p2shsignver08"))) with p2pkh, one of the tricky aspects of p2sh is verifying the signatures. p2sh signature verification is different from the p2pkh process covered in <<chapter_tx>>.
 
-Unlike p2pkh where there's only one signature and one public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some equal or smaller number of signatures (in DER format in the ScriptSig).
-Thankfully, signatures have to be in the same order as the pubkeys or the signatures are not considered valid.
+Unlike with p2pkh, where there's only one signature and one public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some equal or smaller number of signatures (in DER format in the ScriptSig).
+Thankfully, the signatures have to be in the same order as the pubkeys or the signatures are not considered valid.
 
-Once we have a particular signature and public key, we only need the signature hash, or `z` to figure out whether the signature is valid (<<validation_of_p2sh_inputs>>).
+Once we have a particular signature and public key, we only need the signature hash, or _z_, to figure out whether the signature is valid (<<validation_of_p2sh_inputs>>).
 
 [[validation_of_p2sh_inputs]]
 .Validation of p2sh inputs
 image::images/prbc_0825.png[Validation Start]
 
-As with p2pkh, finding the signature hash is the most difficult part of the p2sh signature validation process and we'll now proceed to cover this in detail.
+As with p2pkh, finding the signature hash is the most difficult part of the p2sh signature validation process. We'll now proceed to cover this in detail.
 
-==== Step 1: Empty All the ScriptSigs
+===== Step 1: Empty aAll the ScriptSigs
 
 The first step is to empty all the ScriptSigs when checking the signature (<<empty_each_inputs_scriptsig>>).
 The same procedure is used for creating the signature.
@@ -364,7 +363,7 @@ The same procedure is used for creating the signature.
 .Empty each input's ScriptSig
 image::images/prbc_0826.png[Validation Step 1]
 
-==== Step 2: Replace the ScriptSig of the p2sh Input Being Signed with the RedeemScript
+===== Step 2: Replace the ScriptSig of the p2sh input being signed with the RedeemScript
 
 Each p2sh input has a RedeemScript.
 We take the RedeemScript and put that in place of the empty ScriptSig (<<replace_the_scriptsig_of_the_input_were_checking_with_the_redeemscript>>).
@@ -374,27 +373,27 @@ This is different from p2pkh in that it's not the ScriptPubKey.
 .Replace the ScriptSig of the input we're checking with the RedeemScript
 image::images/prbc_0827.png[Validation Step 2]
 
-==== Step 3: Append the Hash Type
+===== Step 3: Append the hash type
 
 Last, we add a 4-byte hash type to the end.
-This is the same as in p2pkh. The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the transaction look like (<<append_the_hash_type_sighash_all_or_the_blue_part_at_the_end>>).
+This is the same as in p2pkh. The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in Little-Endian over 4 bytes, which makes the transaction look like <<append_the_hash_type_sighash_all_or_the_blue_part_at_the_end>>.
 
 [[append_the_hash_type_sighash_all_or_the_blue_part_at_the_end]]
-.Append the hash type `SIGHASH_ALL`, or the blue part at the end
+.Append the hash type (SIGHASH_ALL), 1000000
 image::images/prbc_0828.png[Validation Step 3]
 
-The hash256 of this interpreted as a Big-Endian integer is our `z`.
-The code for getting our signature hash, or `z`, looks like this:
+The hash256 of this interpreted as a Big-Endian integer is our _z_.
+The code for getting our signature hash looks like this:
 
 [source,python]
 ----
 include::code-ch08/examples.py[tag=example2]
 ----
 
-Now that we have our `z`, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript  (<<der_and_sec_within_the_p2sh_scriptsig_and_redeemscript>>).
+Now that we have our _z_, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript  (<<der_and_sec_within_the_p2sh_scriptsig_and_redeemscript>>).
 
 [[der_and_sec_within_the_p2sh_scriptsig_and_redeemscript]]
-.DER and SEC within the p2sh ScriptSig and RedeemScript
+.DER signature and SEC pubkey within the p2sh ScriptSig and RedeemScript
 image::images/prbc_0829.png[DER and SEC]
 
 We can now validate the signature:
@@ -413,5 +412,5 @@ include::code-ch08/answers.py[tag=exercise5,indent=0]
 
 === Conclusion
 
-We learned how p2sh ScriptPubKeys are created and how they're redeemed.
-We've covered Transactions for the last four chapters; we now turn to how they are grouped in Blocks.
+In this chapter we learned how p2sh ScriptPubKeys are created and how they're redeemed.
+We've covered transactions for the last four chapters; we now turn to how they are grouped in blocks.
