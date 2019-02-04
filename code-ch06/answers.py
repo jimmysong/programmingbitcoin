@@ -4,7 +4,9 @@
 
 Create a ScriptSig that can unlock this ScriptPubKey:
 
-`767695935687`
+----
+767695935687
+----
 
 Note that `OP_MUL` multiplies the top two elements of the stack.
 
