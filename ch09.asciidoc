@@ -141,31 +141,29 @@ include::code-ch09/answers.py[tag=exercise4,indent=0]
 
 include::code-ch09/answers.py[tag=exercise5,indent=0]
 
-=== Version
+==== Version
 
 _Version_ in normal((("blocks", "versions")))((("version numbers", "of blocks"))) software refers to a particular set of features.
 For a block, this is similar, in the sense that the version field reflects the capabilities of the software that produced the block.
 In the past this was used as a way to indicate a single feature that was ready to be deployed by the block's miner.
-Version 2 meant that the software was ready for BIP0034, the coinbase transaction block height feature from earlier in this chapter.
-Version 3 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0066"))) BIP0066, the enforcement of strict DER encoding.
+Version 2 meant that the software was ready for BIP0034, which introduced the coinbase transaction block height feature mentioned earlier in this chapter.
+Version 3 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0066"))) BIP0066, which enforced strict DER encoding.
 Version 4 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) BIP0065, which specified((("OP_CHECKLOCKTIMEVERIFY operation"))) `OP_CHECKLOCKTIMEVERIFY`.
 
 Unfortunately, the incremental increase in version number meant that only one feature was signaled on the network at a time.
 To alleviate this, the developers came up with((("BIP (Bitcoin Improvement Proposals)", "BIP9"))) BIP9, which allows up to 29 different features to be signaled at the same time.
 
-==== BIP9
-
-The way BIP9 works is by fixing the first three bits of the 4-byte (32-bit) header to be `001` to indicate that the miner is using BIP9.
-The first three bits have to be `001`, as that forces older clients to interpret the version field as a number greater than or equal to 4, which was the last version number that was used pre-BIP9.
+The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be `001` to indicate that the miner is using BIP9.
+The first 3 bits have to be `001`, as that forces older clients to interpret the version field as a number greater than or equal to 4, which was the last version number that was used pre-BIP9.
 
 This means that in hexadecimal, the first character will always be 2 or 3.
-The other 29 bits can be assigned to different soft-fork features, which miners can signal readiness.
+The other 29 bits can be assigned to different soft-fork features for which miners can signal readiness.
 For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another, and so on.
 
-BIP9 requires that 95% of blocks signal readiness in a given 2,016 block epoch (the period for a difficulty adjustment; more on that later in this chapter) before the soft fork feature gets activated on the network.
+BIP9 requires that 95% of blocks signal readiness in a given 2,016-block epoch (the period for a difficulty adjustment; more on that later in this chapter) before the soft fork feature gets activated on the network.
 Soft forks that used BIP9 as of this writing have been((("BIP (Bitcoin Improvement Proposals)", "BIP68")))((("BIP (Bitcoin Improvement Proposals)", "BIP112")))((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) BIP68/BIP112/BIP113 (`OP_CHECKSEQUENCEVERIFY` and related changes) and((("BIP (Bitcoin Improvement Proposals)", "BIP141"))) BIP141 (Segwit).
 These BIPs used bits 0 and 1 for signaling, respectively.
-BIP91((("BIP (Bitcoin Improvement Proposals)", "BIP91"))) used something like BIP9, but used an 80% threshold and a smaller block period, so wasn't strictly using BIP9.
+BIP91((("BIP (Bitcoin Improvement Proposals)", "BIP91"))) used something like BIP9 but with an 80% threshold and a smaller block period, so it wasn't strictly using BIP9.
 Bit 4 was used to signal BIP91.
 
 Checking for these features is relatively straightforward:
@@ -186,30 +184,30 @@ include::code-ch09/answers.py[tag=exercise7,indent=0]
 
 include::code-ch09/answers.py[tag=exercise8,indent=0]
 
-=== Previous Block
+==== Previous Block
 
 All((("blocks", "blockchain data structure")))((("blockchain data structure")))((("genesis block"))) blocks have to point to a previous block.
 This is why the data structure is called a _blockchain_.
-Blocks link back all the way to the very first block, or the genesis block.
+Blocks link back all the way to the very first block, or the _genesis block_.
 The previous block field ends in a bunch of `00` bytes, which we will discuss more later in this chapter.
 
-=== Merkle Root
+==== Merkle root
 
 The((("Merkle root")))((("blocks", "Merkle root"))) Merkle root encodes all the ordered transactions in a 32-byte hash.
-We will discuss how this is important for SPV (simplified payment verification) clients and how they can use the Merkle root along with data from the server to get a proof-of-inclusion in <<chapter_spv>>.
+We will discuss how this is important for simplified payment verification (SPV) clients and how they can use the Merkle root along with data from the server to get a proof of inclusion in <<chapter_spv>>.
 
-=== Timestamp
+==== Timestamp
 
-The((("blocks", "timestamps")))((("timestamps")))((("UNIX-style timestamps"))) timestamp is a UNIX-style timestamp taking up 4 bytes.
+The((("blocks", "timestamps")))((("timestamps")))((("Unix-style timestamps"))) timestamp is a Unix-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
-This timestamp is used in two places: the first for validating timestamp-based Locktimes on transactions included in the block and the second for calculating a new bits/target/difficulty every 2,016 blocks.
-The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) Locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's timestamp directly, but((("median-time-past (MTP)"))) the median-time-past (MTP) of the past 11 blocks.
+This timestamp is used in two places: for validating timestamp-based locktimes on transactions included in the block and for calculating a new bits/target/difficulty every 2,016 blocks.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's timestamp directly, but((("median-time-past (MTP)"))) the median time past (MTP) of the past 11 blocks.
 
 [NOTE]
 .Will Bitcoin Overflow on the Timestamp?
 ====
-Bitcoin's timestamp field in the block header is 4 bytes or 32 bits.
-This means that once the UNIX timestamp exceeds 2^32^ – 1, there is no room to go further.
+Bitcoin's timestamp field in the block header is 4 bytes, or 32 bits.
+This means that once the Unix timestamp exceeds 2^32^ – 1, there is no room to go further.
 2^32^ seconds is roughly 136 years, which means that this field will have no more room in 2106 (136 years after 1970).
 
 Many people mistakenly believe that we only have until 68 years after 1970, or 2038, but that's only when the field is a signed integer (2^31^ seconds is 68 years), so we get the benefit of that extra bit, giving us until 2106.
@@ -217,14 +215,14 @@ Many people mistakenly believe that we only have until 68 years after 1970, or 2
 In 2106, the block header will need some sort of fork as the timestamp in the block header will no longer continuously increase.
 ====
 
-=== Bits
+==== Bits
 
 Bits((("blocks", "Bits field"))) is a field that encodes the proof-of-work necessary in this block.
 This will be discussed more in the next section.
 
-=== Nonce
+==== Nonce
 
-Nonce((("blocks", "nonce field")))((("nonce field"))) stands for "number used only once" or n-once.
+Nonce((("blocks", "nonce field")))((("nonce field"))) stands for "number used only once," or _n-once_.
 This number is what is changed by miners when looking for proof-of-work.
 
 [[proof_f_work]]
