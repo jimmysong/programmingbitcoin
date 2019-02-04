@@ -58,7 +58,7 @@ After we've established the public key cryptography at the end of <<chapter_elli
 These chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
 
 Chapters 1–12 have exercises that require you to build up the library from scratch.
-The answers are in <<appendix_solutions>> and in the corresponding chapter directory in the https://github.com/jimmysong/programmingbitcoin[GitHub repository].
+The answers are in <<appendix_solutions>> and in the corresponding chapter directory in the https://github.com/jimmysong/programmingbitcoin[GitHub repo].
 You will be writing many Python classes and building toward not just validating transactions/blocks, but also creating your own transactions and broadcasting them on the network.
 
 The last exercise in <<chapter_bloom_filters>> specifically asks you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising, and broadcast that on the network.
