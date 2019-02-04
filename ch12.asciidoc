@@ -3,7 +3,7 @@
 == Bloom Filters
 
 [.lead]
-In <<chapter_spv>> we learned how to validate a Merkle Block.
+In <<chapter_spv>> we learned how to validate a Merkle block.
 A full node can provide a proof of inclusion for transactions of interest through the `merkleblock` command.
 But how does the full node know which transactions are of interest?
 
@@ -176,11 +176,11 @@ include::code-ch12/answers.py[tag=exercise4,indent=0]
 
 === Getting Merkle Blocks
 
-There((("Bloom Filters", "getting Merkle Blocks")))((("Merkle Blocks", "filtered")))((("filtered blocks"))) is one more command that a light client needs: Merkle Block information about transactions of interest from the full node.
+There((("Bloom Filters", "getting Merkle blocks")))((("Merkle blocks", "filtered")))((("filtered blocks"))) is one more command that a light client needs: Merkle block information about transactions of interest from the full node.
 The `getdata` command is what communicates blocks and transactions.
 The specific type of data that a light client will want from a full node is something called a _filtered block_.
-A filtered block is asking for transactions that pass through the Bloom Filter in the form of Merkle Blocks.
-In other words, the light client can ask for Merkle Blocks whose transactions of interest match the Bloom Filter.
+A filtered block is asking for transactions that pass through the Bloom Filter in the form of Merkle blocks.
+In other words, the light client can ask for Merkle blocks whose transactions of interest match the Bloom Filter.
 
 <<parsed_getdata>> depicts the payload for `getdata`.
 
@@ -215,12 +215,12 @@ include::code-ch12/examples.py[tag=example5]
 <2> We filter for the address above.
 <3> We send the `filterload` command from the Bloom Filter we made.
 <4> We get the block headers after `last_block_hex`.
-<5> We create a getdata message for Merkle Blocks that may have transactions of interest.
-<6> We request a Merkle Block proving transactions of interest to us are included.
+<5> We create a getdata message for Merkle blocks that may have transactions of interest.
+<6> We request a Merkle block proving transactions of interest to us are included.
 Most blocks will probably be complete misses.
-<7> The getdata message asks for 2,000 Merkle Blocks after the block defined by `last_block_hex`.
+<7> The getdata message asks for 2,000 Merkle blocks after the block defined by `last_block_hex`.
 <8> We wait for the `merkleblock` command, which proves inclusion, and the `tx` command, which gives us the transaction of interest.
-<9> We check that the Merkle Block proves transaction inclusion.
+<9> We check that the Merkle block proves transaction inclusion.
 <10> We're looking for UTXOs for `address`, and we print to screen if we find one.
 
 What we've done is look at 2,000 blocks after a particular block for UTXOs corresponding to a particular address.
