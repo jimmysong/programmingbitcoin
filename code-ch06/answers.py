@@ -30,7 +30,9 @@ True
 
 Figure out what this script is doing:
 
-`6e879169a77ca787`
+----
+6e879169a77ca787
+----
 
 * `69 = OP_VERIFY`
 * `6e = OP_2DUP`
