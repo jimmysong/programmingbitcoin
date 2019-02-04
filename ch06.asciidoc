@@ -194,6 +194,7 @@ include::code-ch06/script.py[tag=source2]
 <9> We have an opcode that we store.
 <10> The script should have consumed exactly the length of bytes we expected; otherwise, we raise an error.
 
+[role="pagebreak-before]
 We can similarly write a script serializer:
 
 [source,python]
