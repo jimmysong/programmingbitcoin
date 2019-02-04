@@ -4,7 +4,9 @@
 
 Determine what this network message is:
 
-`f9beb4d976657261636b000000000000000000005df6e0e2`
+----
+f9beb4d976657261636b000000000000000000005df6e0e2
+----
 # end::exercise2[]
 # tag::answer2[]
 >>> from network import NetworkEnvelope
