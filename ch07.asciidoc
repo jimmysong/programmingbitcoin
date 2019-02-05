@@ -132,7 +132,7 @@ Each input points to a previous transaction output, which has a ScriptPubKey. Re
 
 [[scriptpubkey_and_scriptsig2]]
 .Combining the ScriptPubKey and ScriptSig
-image::images/prbc_0606.png[ScriptPubKey and ScriptSig]
+image::images/prbc_0703.png[ScriptPubKey and ScriptSig]
 
 We take the ScriptPubKey that the input is pointing to and put that in place of the empty ScriptSig (<<replace_the_scriptsig_yellow_highlighted_field_for_one_of_the_inputs_with_the_previous_scriptpubkey>>).
 This may require a lookup on the blockchain, but in practice the signer already knows the ScriptPubKey, as the input is one where the signer has the private key.
