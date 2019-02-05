@@ -243,7 +243,7 @@ Transactions that large should generally be validated using a full node.
 
 === Merkle Block
 
-When((("Blocks", "Merkle blocks", id="Bmerkel11")))((("Merkle blocks", "role in proof of inclusion"))) a full node sends a proof of inclusion, there are two pieces of information that need to be included.
+When((("blocks", "Merkle blocks", id="Bmerkel11")))((("Merkle blocks", "role in proof of inclusion"))) a full node sends a proof of inclusion, there are two pieces of information that need to be included.
 First, the light client needs the Merkle tree structure, and second, the light client needs to know which hash is at which position in the Merkle tree.
 Once both pieces of information are given, the light client can reconstruct the partial Merkle tree to reconstruct the Merkle root and validate the proof of inclusion.
 A full node communicates these two pieces of information to a light client using a Merkle block.
