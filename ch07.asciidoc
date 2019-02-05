@@ -121,7 +121,7 @@ The first step is to empty all the ScriptSigs when checking the signature (<<emp
 The same procedure is used for creating the signature, except the ScriptSigs are usually already empty.
 
 [[empty_each_inputs_scriptsig_in_yellow_highlighted_field]]
-.Empty each input's ScriptSig (in yellow highlighted field)
+.Empty each input's ScriptSig (in yellow highlighted field, now 00)
 image::images/prbc_0702.png[Validation Step 1]
 
 Note that this example has only one input, so only that input's ScriptSig is emptied, but it's possible to have more than one input. In that case, each of those would be emptied.
