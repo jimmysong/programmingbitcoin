@@ -283,7 +283,7 @@ In our case, we'll use 0.01 tBTC as our fee.
 .Fee Estimation
 [NOTE]
 ====
-Fee((("Transactions", "transaction fees"))) estimation is done on a per-byte basis.
+Fee((("transactions", "transaction fees"))) estimation is done on a per-byte basis.
 If your transaction is 600 bytes, it will have double the fees as a transaction that's 300 bytes.
 This is because block space is limited and larger transactions take up more space.
 This calculation has changed a bit since Segwit (see <<chapter_segwit>>), but the general principle still applies.
