@@ -294,7 +294,7 @@ For now, we'll go through what addresses are and how they are encoded.
 
 ==== Transmitting Your Public Key
 
-In((("serialization", "transmitting public keys")))((("Public Key Cryptography", "transmitting public keys"))) order for Alice to pay Bob, she has to know where to send the money.
+In((("serialization", "transmitting public keys")))((("public key cryptography", "transmitting public keys"))) order for Alice to pay Bob, she has to know where to send the money.
 This is true not just in Bitcoin, but for any method of payment.
 Since Bitcoin is a digital bearer instrument, the address can be something like a public key in a public key cryptography scheme.
 Unfortunately, SEC format, especially uncompressed, is a bit long (65 or 33 bytes).
