@@ -206,7 +206,7 @@ The key to understanding p2sh is the execution of the exact sequence shown in <<
 
 [[p2sh_pattern_that_executes_the_special_rule]]
 .p2sh pattern that executes the special rule
-image::images/prbc_0809.png[p2sh Pattern]
+image::images/prbc_0814.png[p2sh Pattern]
 
 Upon execution of this sequence, if the stack is left with a 1, the RedeemScript is inserted into the Script command set.
 In other words, if we reveal a RedeemScript whose hash160 is the same as the hash160 in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead.
