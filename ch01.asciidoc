@@ -6,7 +6,7 @@
 One of the most difficult things about learning how to program Bitcoin is knowing where to start.
 There are so many components that depend on each other that learning one thing may lead you to have to learn another, which in turn may lead you to need to learn something else before you can understand the original thing.
 
-This((("Bitcoin", "overview of components")))((("elliptic curve cryptography", "role in Bicoin")))((("signing and verification", "purpose of")))((("Transactions", "role in Bitcoin"))) chapter is going to get you off to a more manageable start.
+This((("Bitcoin", "overview of components")))((("elliptic curve cryptography", "role in Bitcoin")))((("signing and verification", "purpose of")))((("transactions", "role in Bitcoin"))) chapter is going to get you off to a more manageable start.
 It may seem strange, but we'll start with the basic math that you need to understand elliptic curve cryptography.
 Elliptic curve cryptography, in turn, gives us the signing and verification algorithms.
 These are at the heart of how transactions work, and transactions are the atomic unit of value transfer in Bitcoin.
