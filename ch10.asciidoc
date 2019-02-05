@@ -188,7 +188,7 @@ include::code-ch10/answers.py[tag=exercise5,indent=0]
 
 === Getting Block Headers
 
-Now((("networking", "getting block headers")))((("Blocks", "getting block headers"))) that we have code to connect to a node, what can we do?
+Now((("networking", "getting block headers")))((("blocks", "getting block headers"))) that we have code to connect to a node, what can we do?
 When any node first connects to the network, the data that's most crucial to get and verify is the block headers.
 For full nodes, downloading the block headers allows them to asynchronously ask for full blocks from multiple nodes, parallelizing the download of the blocks.
 For light clients, downloading headers allows them to verify the proof-of-work in each block.
