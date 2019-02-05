@@ -191,7 +191,7 @@ This is why the data structure is called a _blockchain_.
 Blocks link back all the way to the very first block, or the _genesis block_.
 The previous block field ends in a bunch of `00` bytes, which we will discuss more later in this chapter.
 
-==== Merkle root
+==== Merkle Root
 
 The((("Merkle root")))((("blocks", "Merkle root"))) Merkle root encodes all the ordered transactions in a 32-byte hash.
 We will discuss how this is important for simplified payment verification (SPV) clients and how they can use the Merkle root along with data from the server to get a proof of inclusion in <<chapter_spv>>.
