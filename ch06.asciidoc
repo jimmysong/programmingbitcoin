@@ -449,7 +449,7 @@ That means should ECDSA someday be broken, these outputs could be stolen. For ex
 
 === Solving the Problems with p2pkh
 
-Pay-to-pubkey-hash (p2pkh) is((("hashes", "p2pkh (pay-to-pubkey-hash)", id="Hp2pkh06")))((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative script format that has two key advantages over p2pk:
+Pay-to-pubkey-hash (p2pkh) is((("ScriptPubKeys", "p2pkh (pay-to-pubkey-hash)", id="Hp2pkh06")))((("p2pkh (pay-to-pubkey-hash)", id="p2pkh06")))((("p2pk (pay-to-pubkey)", "solving problems with p2pkh"))) an alternative script format that has two key advantages over p2pk:
 
 1. The addresses are shorter.
 2. It's additionally protected by sha256 and ripemd160.
@@ -480,7 +480,7 @@ Given that p2pkh is shorter and more secure, p2pk use declined significantly aft
 
 ==== p2pkh
 
-Pay-to-pubkey-hash((("Script", "p2pkh (pay-to-pubkey-hash)", id="Sp2pkh06"))) was used during the early days of Bitcoin, though not as much as p2pk.
+Pay-to-pubkey-hash((("ScriptPubKeys", "p2pkh (pay-to-pubkey-hash)", id="Sp2pkh06"))) was used during the early days of Bitcoin, though not as much as p2pk.
 
 The p2pkh ScriptPubKey, or locking script, looks like <<pay_to_pubkey_hash_p2pkh_scriptpubkey>>.
 
