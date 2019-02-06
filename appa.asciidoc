@@ -467,6 +467,7 @@ class Block:
 include::code-ch09/answers.py[tag=answer3,indent=4]
 ----
 
+[role="pagebreak-before"]
 include::code-ch09/answers.py[tag=exercise4,indent=0]
 
 [source,python]
