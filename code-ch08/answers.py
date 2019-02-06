@@ -155,7 +155,7 @@ def h160_to_p2sh_address(h160, testnet=False):
 # tag::exercise5[]
 ==== Exercise 5
 
-Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh transactions.
+Modify the `sig_hash` and `verify_input` methods to be able to verify p2sh pass:[<span class="keep-together">transactions</span>].
 # end::exercise5[]
 '''
 
