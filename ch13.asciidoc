@@ -109,7 +109,7 @@ At this point, older nodes will stop as there are no more Script commands to be 
 Since the top element is nonzero, this will be counted as a valid script.
 This is very similar to p2sh (<<chapter_p2sh>>) in that older nodes cannot validate further.
 Newer nodes, however, have a special Segwit rule much like the special rule for p2sh (see <<chapter_p2sh>>).
-Recall that with p2sh, the exact script sequence of _<redeem_Script>_ `OP_HASH160` _<hash>_ `OP_EQUAL` triggers a special rule.
+Recall that with p2sh, the exact script sequence of _<RedeemScript>_ `OP_HASH160` _<hash>_ `OP_EQUAL` triggers a special rule.
 
 In the case of p2wpkh, the script sequence is `OP_0` _<20-byte hash>_.
 When that script sequence is encountered, the pubkey and signature from the witness field and the 20-byte hash are added to the command set in exactly the same sequence as with p2pkh, namely _<signature>_ _<pubkey>_ `OP_DUP OP_HASH160` _<20-byte hash>_ `OP_EQUALVERIFY OP_CHECKSIG`.
@@ -377,7 +377,7 @@ image::images/prbc_1321.png[p2wsh to new nodes]
 The ScriptPubKey for p2wsh script is `OP_0` _<32-byte hash>_.
 This sequence triggers another special rule.
 The ScriptSig, as with p2wpkh, is empty.
-When p2wsh is being spent, the combined script looks like <<p2wsh_scriptpubkey>>.
+When p2wsh outputs are being spent, the combined script looks like <<p2wsh_scriptpubkey>>.
 
 [[p2wsh_scriptpubkey]]
 .Pay-to-witness-script-hash (p2wsh) ScriptPubKey
@@ -435,7 +435,7 @@ If the signatures are valid, we end like <<p2wsh_step_5>>.
 .p2wsh step 5
 image::images/prbc_1330.png[p2wsh step 5]
 
-The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when being spent.
+The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when the output is being spent.
 Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as script commands and added to the command set.
 The rest of the witness field is then added to the command set as well, producing the final set of commands to be evaluated.
 p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional payment channels for the Lightning Network.((("", startref="Hp2wsh13")))
