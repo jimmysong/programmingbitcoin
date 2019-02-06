@@ -151,7 +151,7 @@ Version 3 meant that the software was ready for((("BIP (Bitcoin Improvement Prop
 Version 4 meant that the software was ready for((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) BIP0065, which specified((("OP_CHECKLOCKTIMEVERIFY operation"))) `OP_CHECKLOCKTIMEVERIFY`.
 
 Unfortunately, the incremental increase in version number meant that only one feature was signaled on the network at a time.
-To alleviate this, the developers came up with((("BIP (Bitcoin Improvement Proposals)", "BIP9"))) BIP9, which allows up to 29 different features to be signaled at the same time.
+To alleviate this, the developers came up with((("BIP (Bitcoin Improvement Proposals)", "BIP0009"))) BIP9, which allows up to 29 different features to be signaled at the same time.
 
 The way BIP9 works is by fixing the first 3 bits of the 4-byte (32-bit) header to be `001` to indicate that the miner is using BIP9.
 The first 3 bits have to be `001`, as that forces older clients to interpret the version field as a number greater than or equal to 4, which was the last version number that was used pre-BIP9.
@@ -161,9 +161,9 @@ The other 29 bits can be assigned to different soft-fork features for which mine
 For example, bit 0 (the rightmost bit) can be flipped to 1 to signal readiness for one soft fork, bit 1 (the second bit from the right) can be flipped to 1 to signal readiness for another, bit 2 (the third bit from the right) can be flipped to 1 to signal readiness for another, and so on.
 
 BIP9 requires that 95% of blocks signal readiness in a given 2,016-block epoch (the period for a difficulty adjustment; more on that later in this chapter) before the soft fork feature gets activated on the network.
-Soft forks that used BIP9 as of this writing have been((("BIP (Bitcoin Improvement Proposals)", "BIP68")))((("BIP (Bitcoin Improvement Proposals)", "BIP112")))((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) BIP68/BIP112/BIP113 (`OP_CHECKSEQUENCEVERIFY` and related changes) and((("BIP (Bitcoin Improvement Proposals)", "BIP141"))) BIP141 (Segwit).
+Soft forks that used BIP9 as of this writing have been((("BIP (Bitcoin Improvement Proposals)", "BIP0068")))((("BIP (Bitcoin Improvement Proposals)", "BIP0112")))((("BIP (Bitcoin Improvement Proposals)", "BIP0113"))) BIP68/BIP112/BIP113 (`OP_CHECKSEQUENCEVERIFY` and related changes) and((("BIP (Bitcoin Improvement Proposals)", "BIP0141"))) BIP141 (Segwit).
 These BIPs used bits 0 and 1 for signaling, respectively.
-BIP91((("BIP (Bitcoin Improvement Proposals)", "BIP91"))) used something like BIP9 but with an 80% threshold and a smaller block period, so it wasn't strictly using BIP9.
+BIP91((("BIP (Bitcoin Improvement Proposals)", "BIP0091"))) used something like BIP9 but with an 80% threshold and a smaller block period, so it wasn't strictly using BIP9.
 Bit 4 was used to signal BIP91.
 
 Checking for these features is relatively straightforward:
@@ -172,7 +172,7 @@ Checking for these features is relatively straightforward:
 ----
 include::code-ch09/examples.py[tag=example4]
 ----
-<1> The `>>` operator((("&gt;&gt; (left bit-shift) operator")))((("left bit-shift (&gt;&gt;) operator"))) is the right bit-shift operator, which throws away the rightmost 29 bits, leaving just the top 3 bits.
+<1> The `>>` operator((("&gt;&gt; (right bit-shift) operator")))((("right bit-shift (&gt;&gt;) operator"))) is the right bit-shift operator, which throws away the rightmost 29 bits, leaving just the top 3 bits.
 The `0b001` is a way of writing a number in binary in Python.
 <2> The `&` operator is the "bitwise and" operator.
 In our case, we right-shift by 4 bits first and then check that the rightmost bit is 1.
@@ -201,7 +201,7 @@ We will discuss how this is important for simplified payment verification (SPV) 
 The((("blocks", "timestamps")))((("timestamps")))((("Unix-style timestamps"))) timestamp is a Unix-style timestamp taking up 4 bytes.
 Unix timestamps are the number of seconds since January 1, 1970.
 This timestamp is used in two places: for validating timestamp-based locktimes on transactions included in the block and for calculating a new bits/target/difficulty every 2,016 blocks.
-The((("BIP (Bitcoin Improvement Proposals)", "BIP113"))) locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's timestamp directly, but((("median-time-past (MTP)"))) the median time past (MTP) of the past 11 blocks.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP0113"))) locktimes were at one point used directly for transactions within a block, but BIP113 changed the behavior to not use the current block's timestamp directly, but((("median-time-past (MTP)"))) the median time past (MTP) of the past 11 blocks.
 
 [NOTE]
 .Will Bitcoin Overflow on the Timestamp?
