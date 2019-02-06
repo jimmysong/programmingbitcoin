@@ -147,7 +147,7 @@ Last, we add a 4-byte((("SIGHASH_ALL"))) hash type to the end.
 This is to specify what the signature is authorizing.
 The signature can authorize this input to go with all the other inputs and outputs (`SIGHASH_ALL`), go with a specific output (`SIGHASH_SINGLE`), or go with any output whatsoever (`SIGHASH_NONE`).
 The latter two have some theoretical use cases, but in practice, almost every transaction is signed with `SIGHASH_ALL`.
-There's((("SIGHASH_ANYONECANPAY"))) also a rarely used hash type called `SIGHASH_ANYONECANPAY` that can be combined with any of the previous three, which we won't get into here.
+There's also a rarely used hash type called `SIGHASH_ANYONECANPAY` that can be combined with any of the previous three, which we won't get into here.
 For `SIGHASH_ALL`, the final transaction must have the exact outputs that were signed or the input signature is invalid.
 
 The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in little-endian over 4 bytes, which makes the modified transaction look like <<append_the_hash_type_sighash_all_or_the_orange_01000000>>.
