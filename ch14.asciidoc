@@ -6,12 +6,14 @@ You've learned a lot about Bitcoin's inner workings, and hopefully you are inspi
 This book has only scratched the surface.
 In this chapter, we'll go through some other topics you might want to explore, how to bootstrap your career as a Bitcoin developer, and ways to contribute to the community.
 
-=== Wallets
+=== Suggested Topics to Study Next
+
+==== Wallets
 
 Creating((("Bitcoin wallets")))((("wallets"))) a wallet is a challenging task because securing private keys is very difficult.
 That said, there are a bunch of standards for creating wallets that can help.
 
-==== Hierarchical Deterministic Wallets
+===== Hierarchical Deterministic Wallets
 
 For((("deterministic wallets")))((("hierarchical deterministic (HD) wallets")))((("addresses, reusing")))((("privacy issues, reusing addresses"))) privacy purposes, reusing addresses is very bad (see <<chapter_tx>>).
 That means we need to create lots of addresses.
@@ -32,7 +34,7 @@ Additionally, BIP0044((("BIP (Bitcoin Improvement Proposals)", "BIP0044"))) defi
 Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better.
 While((("Trezor")))((("Coinomi")))((("Electrum")))((("Edge"))) many wallets (Trezor, Coinomi, etc.) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and use their own BIP0032 hierarchy (Electrum and Edge being two examples).
 
-==== Mnemonic Seeds
+===== Mnemonic Seeds
 
 Writing((("mnemonic seeds")))((("backup and restoration"))) down and transcribing a 256-bit seed is a pain, and fraught with errors.
 To combat this, BIP0039((("BIP (Bitcoin Improvement Proposals)", "BIP0039"))) describes a way to encode the seed into a bunch of English words.
@@ -41,7 +43,7 @@ The standard defines exactly how the mnemonic backup gets translated to a BIP003
 BIP0039 along with BIP0032 and BIP0044 is how most wallets implement backup and restoration.
 Writing a testnet wallet that implements BIP0039 is another good way to get a taste for Bitcoin development.
 
-=== Payment Channels and Lightning Network
+==== Payment Channels and Lightning Network
 
 Payment channels((("payment channels")))((("Lightning Network")))((("BOLT standard"))) are the atomic unit of the Lightning Network, and learning how they work is a good next step.
 There are many ways to implement payment channels, but the BOLT standard is the specification that lightning nodes use.
@@ -55,10 +57,10 @@ There are almost too many to list, but here's a sample:
 
 https://github.com/bitcoin/bitcoin[Bitcoin Core]:: The reference client
 https://github.com/libbitcoin/libbitcoin[Libbitcoin]:: An alternate implementation of Bitcoin in C++
-https://github.com/btcsuite/btcd[BitcoinDark]:: A Golang-based implementation of Bitcoin
+https://github.com/btcsuite/btcd[btcd]:: A Golang-based implementation of Bitcoin
 https://github.com/bcoin-org/bcoin[Bcoin]:: A JavaScript-based implementation of Bitcoin, maintained by purse.io
 https://github.com/richardkiss/pycoin[pycoin]:: A Python library for Bitcoin
-https://github.com/bitcoinj/bitcoinj[Bitcoinj]:: A Java library for Bitcoin
+https://github.com/bitcoinj/bitcoinj[BitcoinJ]:: A Java library for Bitcoin
 https://github.com/bitcoinjs/bitcoinjs-lib[BitcoinJS]:: A JavaScript library for Bitcoin
 https://github.com/btcpayserver/btcpayserver[BTCPay]:: A Bitcoin payment processing engine written in C#
 
