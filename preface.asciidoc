@@ -301,7 +301,7 @@ Jim Calvin helped me get in contact with people at O'Reilly, and Mike Loukides w
 
 The crew of Bitcoiners in Austin have helped keep me on track. They include Bryan Bishop, Will Cole, Napoleon Cole, Tipton Cole, Tuur Demeester, Johnny Dilley, Michael Flaxman, Parker Lewis, Justin Moon, Alan Piscitello, and Andrew Poelstra. There's also a Slack channel (TAAS) where Saifedean Ammous announced that he was writing a book whose success inspired me. 
 
-Alumni of my course, Programming Blockchain, in addition to Bitcoiners on GitHub also did tech reviews of my book. Jeff Flowers, Brian Liotti, Casey Bowman, Johnson Lau, Albert Chen, Jason Les, Thomas Braunberger, Eduardo Cobain, and Spencer Hanson are among the people who found issues.
+Alumni of my course, Programming Blockchain, in addition to Bitcoiners on GitHub also did tech reviews of my book. Jeff Flowers, Brian Liotti, Casey Bowman, Johnson Lau, Albert Chen, Jason Les, Thomas Braunberger, Eduardo Cobain, and Spencer Hanson are among the people who found issues. Katrina Javier is my faithful assistant that helped me make a lot of the diagrams.
 
 My subscribers on YouTube, my followers on Twitter, and my readers on Medium have been instrumental in helping me find my voice and setting me on my path as an entrepreneur.
 
