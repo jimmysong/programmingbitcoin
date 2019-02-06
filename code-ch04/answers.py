@@ -92,7 +92,7 @@ EQJsjkd6JaGwxrjEhfeqPenqHwrBmPQZjJGNSCHBkcF7
 # tag::exercise5[]
 ==== Exercise 5
 
-Find the address corresponding to public keys whose private key secrets are:
+Find the addresses corresponding to the public keys whose private key secrets are:
 
 * 5002 (use uncompressed SEC on testnet)
 * 2020^5^ (use compressed SEC on testnet)
