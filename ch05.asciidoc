@@ -92,7 +92,7 @@ You could specify just "Windows," but specifying the version number after the op
 image::images/prbc_0502.png[Version]
 
 Similarly, Bitcoin transactions have version numbers.
-In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions((("OP_CHECKSEQUENCEVERIFY operation"))) using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in((("BIP (Bitcoin Improvement Proposals)", "BIP112"))) BIP112 require use of version > 1).
+In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions((("OP_CHECKSEQUENCEVERIFY operation"))) using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in((("BIP (Bitcoin Improvement Proposals)", "BIP0112"))) BIP112 require use of version > 1).
 
 You may notice here that the actual value in hexadecimal is `01000000`, which doesn't look like 1.
 Interpreted as a little-endian integer, however, this number is actually 1 (recall the discussion from <<chapter_serialization>>).
