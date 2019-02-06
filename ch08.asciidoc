@@ -70,7 +70,7 @@ The signatures are elements, so they'll be pushed directly to the stack (<<bare_
 .Bare multisig step 2
 image::images/prbc_0806.png[Bare multisig step 2]
 
-`OP_m` will((("OP_m operation")))((("OP_n operation"))) push the number _m_ to the stack, the public keys will be pushed to the stack, and `OP_n` will push the number _n_ to the stack (<<bare_multisig_step_3>>).
+`OP_m` will push the number _m_ to the stack, the public keys will be pushed to the stack, and `OP_n` will push the number _n_ to the stack (<<bare_multisig_step_3>>).
 
 [[bare_multisig_step_3]]
 .Bare multisig step 3
