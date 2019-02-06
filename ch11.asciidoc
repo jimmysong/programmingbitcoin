@@ -63,7 +63,7 @@ image::images/prbc_1101.png[Merkle tree]
 [WARNING]
 .Be Careful with Merkle Trees!
 ====
-There((("Denial of Service attack (DoS) attacks"))) was a vulnerability in Bitcoin 0.4&#8211;0.6, which is detailed in CVE-2012-2459.
+There((("Denial of Service attack (DoS) attacks"))) was a vulnerability in Bitcoin 0.4&#8211;0.6 related to the Merkle root, which is detailed in CVE-2012-2459.
 There was a denial-of-service vector due to the duplication of the last item in Merkle trees, which caused some nodes to invalidate blocks even if they were valid.
 ====
 
@@ -89,14 +89,14 @@ Note that the || symbol denotes concatenation.
 
 Here's how we can code this process in Python:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example1]
 ----
 
 The reason why we hash the concatenation to get the parent is because we can provide a proof of inclusion.
 Specifically, we can show that _L_ is represented in the parent, _P_, by revealing _R_.
-That is, if we want proof _L_ is represented in _P_, the producer of _P_ can show us _P_ and let us know that _L_ is the left child of _P_.
+That is, if we want proof _L_ is represented in _P_, the producer of _P_ can show us _R_ and let us know that _L_ is the left child of _P_.
 We can then combine _L_ and _R_ to produce _P_ and have proof that _L_ was used to produce _P_.
 If _L_ is not represented in _P_, being able to provide _R_ would be the equivalent to providing a hash pre-image, which we know is very difficult.
 This is what we mean by a proof of inclusion.
@@ -122,7 +122,7 @@ Now we can calculate the Merkle parent of A and B and calculate the Merkle paren
 
 Since the Merkle parent always consists of two hashes, the Merkle parent level always has exactly half the number of hashes, rounded up. Here is how we calculate a Merkle parent level:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example2]
 ----
@@ -181,7 +181,7 @@ After we calculate the Merkle root, we use little-endian ordering again.
 
 In practice, this means reversing the leaves before we start and reversing the root at the end:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example4]
 ----
@@ -365,11 +365,11 @@ include::code-ch11/examples.py[tag=example8]
 ----
 <1> If we don't have the left node's value, we traverse to the left node, since all internal nodes are guaranteed a left child.
 <2> We check first if this node has a right child.
-This is true unless this node happens to be the furthest-right node and the child level has an odd number of nodes.
+This is true unless this node happens to be the rightmost node and the child level has an odd number of nodes.
 <3> If we don't have the right node's value, we traverse to that node.
 <4> If we have both the left and the right node's values, we calculate the current node's value using `merkle_parent`.
 <5> We have the left node's value, but the right child doesn't exist.
-This is the furthest-right node of this level, so we combine the left value twice.
+This is the rightmost node of this level, so we combine the left value twice.
 
 We can now traverse the tree for the number of leaves that aren't powers of two.((("", startref="MTcode11")))((("", startref="MBcod11")))
 
@@ -418,7 +418,7 @@ image::images/prbc_1107.png[Merkle Blocks and Hashes]
 
 Given the tree from <<processing_a_merkle_block>>: 
 
-* The flag bit is 1 for the root node (1), since that hash is calculated by the light node.
+* The flag bit is 1 for the root node (1), since that hash is calculated by the light client.
 * The left child, H~ABCDEFGH~ (2), is included in the hashes field, so the flag is 0.
 * From here, we traverse to H~IJKLMNOP~ (3) instead of H~ABCD~ or H~EFGH~ since H~ABCDEFGH~ represents both those nodes and we don't need them.
 * The right child, H~IJKLMNOP~, is also calculated, so it has a flag bit of 1.
