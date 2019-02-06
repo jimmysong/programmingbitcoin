@@ -34,7 +34,8 @@ There are many different commands; an exhaustive list can be seen in the https:/
 The command field is meant to be human-readable and this particular message is the byte string "version" in ASCII with 0-byte padding.
 
 The next 4 bytes are the length of the payload in little-endian.
-As we saw in the transaction and block parsing sections, the length of the payload is necessary since the payload is variable.
+As we saw in Chapters pass:[<a data-type="xref" href="#chapter_tx_parsing" data-xrefstyle="select:labelnumber">#chapter_tx_parsing</a> and 
+<a data-type="xref" href="#chapter_blocks" data-xrefstyle="select:labelnumber">#chapter_blocks</a>], the length of the payload is necessary since the payload is variable.
 2^32^ is about 4 billion, so payloads can be as big as 4 GB, though the reference client rejects any payloads over 32 MB.
 In the message in Figure 10-1, our payload is 101 bytes.
 
@@ -65,7 +66,7 @@ Each((("networking", "parsing payloads"))) command has a separate payload specif
 .Parsed version
 image::images/prbc_1002.png[Version Message]
 
-The fields are meant to give enough information for two nodes to be able to communicate.
+The fields are meant to give enough information for two nodes to be able to pass:[<span class="keep-together">communicate</span>].
 
 The first field is the network protocol version, which specifies what messages may be communicated.
 The service field gives information about what capabilities are available to connecting nodes.
@@ -201,7 +202,7 @@ The command to get the block headers is called `getheaders`, and it looks like <
 .Parsed getheaders
 image::images/prbc_1003.png[GetHeaders payload]
 
-As with version, we start with the protocol version, then the number of block headers in this list (this number can be more than 1 if there's a chain split), then the starting block header, and finally the ending block header.
+As with version, we start with the protocol version, then the number of block header groups in this list (this number can be more than 1 if there's a chain split), then the starting block header, and finally the ending block header.
 If we specify the ending block to be `000...000`, we're indicating that we want as many as the other node will give us.
 The maximum number of headers that we can get back is 2,000, or almost a single difficulty adjustment period (2,016 blocks).
 
@@ -261,7 +262,7 @@ include::code-ch10/network.py[tag=source6]
 
 Given the network connection that we've set up, we can download the headers, check their proof-of-work, and validate the block header difficulty adjustments as follows:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch10/examples.py[tag=example1]
 ----
