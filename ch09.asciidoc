@@ -119,7 +119,7 @@ The fact that headers are so much smaller is an important feature, as we'll see 
 Like the transaction ID, the block ID is the hex representation of the hash256 of the header interpreted in little-endian.
 The block ID is interesting:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch09/examples.py[tag=example3]
 ----
@@ -253,7 +253,7 @@ Let's look at the hash256 of the block header we saw before to find out:
 e93c0118a4ffd71d
 ```
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch09/examples.py[tag=example5]
 ----
@@ -309,7 +309,7 @@ The formula for calculating the target from these two numbers is:
 
 This is how we calculate the target given the bits field in Python:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch09/examples.py[tag=example6]
 ----
@@ -328,7 +328,7 @@ include::code-ch09/examples.py[tag=example7]
 ----
 <1> `target` is calculated above.
 
-We can see that the proof-of-work is lower by lining up the numbers in 64 hex characters:
+We can see that the proof-of-work is lower by lining up the numbers in 64 hex pass:[<span class="keep-together">characters</span>]:
 
 ----
 TG: 0000000000000000013ce9000000000000000000000000000000000000000000
@@ -384,7 +384,7 @@ include::code-ch09/answers.py[tag=exercise11,indent=0]
 ==== Difficulty Adjustment
 
 In((("blocks", "difficulty adjustment period")))((("difficulty adjustment period")))((("proof-of-work", "difficulty adjustment period"))) Bitcoin, each group of 2,016 blocks is called a _difficulty adjustment period_.
-At the end of every difficulty adjustment period, the target is adjusted according to this formula:
+At the end of every difficulty adjustment period, the target is adjusted according to this pass:[<span class="keep-together">formula</span>]:
 
 ++++
 <ul class="simplelist">
@@ -396,13 +396,13 @@ At the end of every difficulty adjustment period, the target is adjusted accordi
 ++++
 
 The((("time_differential number"))) __time_differential__ is calculated so that if it's greater than 8 weeks, 8 weeks is used, and if it's less than 3.5 days, 3.5 days is used.
-This way, the new target cannot change more than four times in a row in either direction.
+This way, the new target cannot change more than four times in either direction.
 That is, the target will be reduced or increased by four times at the most.
 
 If each block took on average 10 minutes to create, 2,016 blocks should take 20,160 minutes.
 There are 1,440 minutes per day, which means that 2,016 blocks will take 20,160 / 1,440 = 14 days to create.
 The effect of the difficulty adjustment is that block times are regressed toward the mean of 10 minutes per block.
-This means that long-term blocks will always go toward 10-minute blocks even if a lot of hashing power has entered or left the network.
+This means that long-term, blocks will always go toward 10-minute blocks even if a lot of hashing power has entered or left the network.
 
 The new bits calculation should be using the timestamp field of the last block of each of the current and previous difficulty adjustment periods.
 Satoshi unfortunately had another off-by-one error here, as the timestamp differential calculation looks at the first and last blocks of the 2,016-block difficulty adjustment period instead.
