@@ -24,7 +24,7 @@ Solve these problems in __F__~57~ (assume all pass:[+'s] here are pass:[+<sub><e
 # tag::exercise4[]
 ==== Exercise 4
 
-Solve the following equations in __F__~97~ (again, assume ⋅ and exponentiation are field versions):
+Solve the following equations in __F__~97~ (again, assume ⋅ and exponentiation are field pass:[<span class="keep-together">versions</span>]):
 
 * 95 ⋅ 45 ⋅ 31
 * 17 ⋅ 13 ⋅ 19 ⋅ 44
