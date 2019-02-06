@@ -134,7 +134,7 @@ def bits_to_target(bits):
 
 # tag::source1[]
 def target_to_bits(target):
-    '''Turns a target integer back into bits, which is 4 bytes'''
+    '''Turns a target integer back into bits'''
     raw_bytes = target.to_bytes(32, 'big')
     raw_bytes = raw_bytes.lstrip(b'\x00')  # <1>
     if raw_bytes[0] > 0x7f:  # <2>
