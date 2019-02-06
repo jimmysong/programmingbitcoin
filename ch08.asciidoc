@@ -140,7 +140,7 @@ To mitigate these problems, pay-to-script-hash (p2sh) was born.((("", startref="
 
 === Pay-to-Script-Hash (p2sh)
 
-Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) operation", id="MSp2shoper08")))((("hashes", "p2sh (pay-to-script-hash)", id="Hp2sh08"))) is a general solution to the long address/ScriptPubKey problem.
+Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) operation", id="MSp2shoper08")))((("ScriptPubKeys", "p2sh (pay-to-script-hash)", id="Hp2sh08"))) is a general solution to the long address/ScriptPubKey problem.
 More complicated ScriptPubKeys than bare multisig can easily be made, and they have the same problems as bare multisig.
 
 The solution that p2sh implements is to take the hash of some Script commands and then reveal the preimage Script commands later.
