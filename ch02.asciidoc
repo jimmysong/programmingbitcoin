@@ -65,6 +65,13 @@ image::images/prbc_0202.png[Quadratic equation]
 image::images/prbc_0203.png[Cubic equation]
 
 An elliptic curve isn't all that different.
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
+
 The only real difference between the elliptic curve and the cubic curve in <<cubic_equation>> is the __y__^2^ term on the left side.
 This has the effect of making the graph symmetric over the x-axis, as shown in <<continuous_elliptic_curve>>.
 
@@ -102,7 +109,7 @@ Specifically, the((("secp256k1 curve")))((("elliptic curves", "secp256k1 curve")
 </ul>
 ++++
 
-The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>], so the curve is defined by the constants _a_ = 0, _b_ = 7.
+The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>], so the curve is defined by the constants _a_ = 0, pass:[<span class="keep-together"><em>b</em> = 7</span>].
 It looks like <<secp256k1_curve>>.
 
 [[secp256k1_curve]]
@@ -169,7 +176,7 @@ image::images/prbc_0213.png[Tangent Line]
 We will come back to these two cases later.
 
 We can define point addition using the fact that lines intersect one or three times with the elliptic curve.
-Two points define a line, so since that line must intersect the curve at some point one more time, that third point reflected over the x-axis is the result of the point addition.
+Two points define a line, so since that line must intersect the curve one more time, that third point reflected over the x-axis is the result of the point addition.
 
 So, for any two points __P__~1~ = (__x__~1~,__y__~1~) and __P__~2~ = (__x__~2~,__y__~2~), we get __P__~1~ + __P__~2~ as follows:
 
@@ -381,7 +388,7 @@ From earlier, we know that:
 </ul>
 ++++
 
-There's((("Vieta’s Formula"))) a result from what's called https://en.wikipedia.org/wiki/Vieta%27s_formulas[Vieta's formula], which states that the coefficients have to equal each other if the roots are the same.
+There's((("Vieta’s Formula"))) a result from what's called http://bit.ly/2HXJtMp[Vieta's formula], which states that the coefficients have to equal each other if the roots are the same.
 The first coefficient that's interesting is the coefficient in front of __x__^2^:
 
 ++++
@@ -561,7 +568,7 @@ class Point:
 	if self == other and self.y == 0 * self.x:  # <1>
 	    return self.__class__(None, None, self.a, self.b)
 ----
-<1> If the two points are equal and the _y_ coordinate is 0, we return the point at infinity.((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
+<1> If the two points are equal and the _y_ coordinate is 0, we return the point at pass:[<span class="keep-together">infinity</span>].((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
 
 === Conclusion
 
