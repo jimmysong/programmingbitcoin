@@ -46,7 +46,7 @@ Given a Bloom Filter with `size=10`, `function_count=5`, `tweak=99`, what are th
 # tag::exercise6[]
 ==== Exercise 6
 
-Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coin _without using a block explorer_, create a transaction using that UTXO as an input, and broadcast the tx message on the  testnet network.
+Get the current testnet block ID, send yourself some testnet coins, find the UTXO corresponding to the testnet coins _without using a block explorer_, create a transaction using that UTXO as an input, and broadcast the tx message on the  testnet network.
 # end::exercise6[]
 # tag::answer6[]
 >>> import time
