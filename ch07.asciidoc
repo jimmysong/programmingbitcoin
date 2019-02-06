@@ -115,7 +115,7 @@ Instead, we modify the transaction before signing it.
 That is, we compute a different signature hash _for each input_.
 The procedure is as follows.
 
-===== Step 1: empty all the ScriptSigs
+===== Step 1: Empty all the ScriptSigs
 
 The first step is to empty all the ScriptSigs when checking the signature (<<empty_each_inputs_scriptsig_in_yellow_highlighted_field>>).
 The same procedure is used for creating the signature, except the ScriptSigs are usually already empty.
@@ -126,7 +126,7 @@ image::images/prbc_0702.png[Validation Step 1]
 
 Note that this example has only one input, so only that input's ScriptSig is emptied, but it's possible to have more than one input. In that case, each of those would be emptied.
 
-===== Step 2: replace the ScriptSig of the input being signed with the previous ScriptPubKey
+===== Step 2: Replace the ScriptSig of the input being signed with the previous ScriptPubKey
 
 Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>>, shown again in <<scriptpubkey_and_scriptsig2>>.
 
@@ -264,7 +264,7 @@ Though it's generally bad privacy and security practice to reuse addresses, we'l
 Back((("addresses, reusing")))((("privacy issues, reusing addresses"))) in <<chapter_script>>, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA.
 p2pkh, on the other hand, is also protected by sha256 and ripemd160.
 However, because the blockchain is public, once we spend from a ScriptPubKey corresponding to our address, we reveal our public key as part of the ScriptSig.
-Once we've revealed that public key, sha256 and ripemd160 no longer protect us as the attacker knows the public key and doesn't have to guess it.
+Once we've revealed that public key, sha256 and ripemd160 no longer protect us, as the attacker knows the public key and doesn't have to guess it.
 
 ((("discrete log problem")))As of this writing, we are still protected by the discrete log problem, which is unlikely to be broken any time soon.
 It's important from a security perspective, however, to understand what we're protected by.
@@ -330,12 +330,12 @@ This is the p2pkh ScriptPubKey command set from <<chapter_script>>.
 
 Given these tools, we can proceed to transaction creation:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch07/examples.py[tag=example5]
 ----
 <1> The amount must be in satoshis; given there are 100,000,000 satoshis per BTC, we have to multiply and cast to an integer.
-<2> We have to designate which network to look up using the `testnet=True` argument.
+<2> We have to designate which network to look up using the `testnet=True` pass:[<span class="keep-together">argument</span>].
 
 We have created the actual transaction, but every ScriptSig in this transaction is currently empty. Filling it is where we turn next.
 
@@ -344,7 +344,7 @@ We have created the actual transaction, but every ScriptSig in this transaction 
 Signing((("signing and verification", "signing process", id="SAVsign07")))((("transactions", "signing", id="Tsign07"))) the transaction could be tricky, but we know how to get the signature hash, _z_, from earlier in this chapter.
 If we have the private key whose public key hash160s to the 20-byte hash in the ScriptPubKey, we can sign _z_ and produce the DER signature:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch07/examples.py[tag=example6]
 ----
