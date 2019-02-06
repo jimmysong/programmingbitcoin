@@ -74,8 +74,8 @@ class MerkleTree:
         return self.current_depth == self.max_depth
 
     def right_exists(self):  # <3>
-        return len(self.nodes[self.current_depth + 1]) 
-        > self.current_index * 2 + 1
+        return len(self.nodes[self.current_depth + 1]) > \
+            self.current_index * 2 + 1
     # end::source2[]
 
     # tag::source3[]
