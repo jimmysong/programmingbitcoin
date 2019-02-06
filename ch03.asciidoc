@@ -37,7 +37,7 @@ The only difference is that we have to use the addition/subtraction/multiplicati
 === Elliptic Curves over Finite Fields
 
 So((("elliptic curve cryptography", "elliptic curves over finite fields", id="ECCfinite03")))((("finite fields", "elliptic curves over", id="FFelliptic03"))) what does an elliptic curve over a finite field look like?
-Let's look at the equation __y__^2^ = _-x__^3^ + 7 over _F_~103~.
+Let's look at the equation __y__^2^ = __x__^3^ + 7 over _F_~103~.
 We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
 
 ++++
