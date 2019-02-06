@@ -2,7 +2,7 @@
 # tag::exercise4[]
 ==== Exercise 4
 
-Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a one-input, two-output transaction.
+Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a one-input, two-output pass:[<span class="keep-together">transaction</span>].
 
 You can broadcast the transaction at  https://live.blockcypher.com/btc/pushtx[].
 # end::exercise4[]
