@@ -8,7 +8,7 @@ _Locking_ is giving some bitcoins to some entity.
 _Unlocking_ is spending some bitcoins that you have received.
 
 In((("smart contract language"))) this chapter we examine this locking/unlocking mechanism, which is often called a _smart contract_.
-elliptic curve cryptography (<<chapter_elliptic_curve_cryptography>>) is used by Script to validate that a transaction was properly authorized (<<chapter_tx_parsing>>).
+Elliptic curve cryptography (<<chapter_elliptic_curve_cryptography>>) is used by Script to validate that a transaction was properly authorized (<<chapter_tx_parsing>>).
 Script essentially allows people to prove that they have the right to spend certain UTXOs.
 We're getting a little ahead of ourselves, though, so let's start with how Script works and go from there.
 
@@ -16,7 +16,7 @@ We're getting a little ahead of ourselves, though, so let's start with how Scrip
 
 If((("Script", "mechanics of"))) you are confused about what a smart contract is, don't worry.
 "Smart contract" is a fancy way of saying "programmable," and the "smart contract language" is simply a programming language.
-In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which bitcoins are spendable.
+In Bitcoin, Script is the smart contract language, or the programming language used to express the conditions under which bitcoins are pass:[<span class="keep-together">spendable</span>].
 
 Bitcoin((("Forth"))) has the digital equivalent of a contract in Script.
 Script is a stack-based language similar to Forth.
@@ -35,7 +35,7 @@ If Script were Turing complete, it would be possible for the loop to go on execu
 This((("Denial of Service attack (DoS) attacks"))) would cause validating nodes to enter and never leave that loop.
 This would be an easy way to attack the network through what would be called a denial-of-service (DoS) attack.
 A single Script program with an infinite loop could take down Bitcoin!
-This would be a large systematic vulnerability, and protecting against this vulnerability is one of the major reasons why Turing cCompleteness is avoided.
+This would be a large systematic vulnerability, and protecting against this vulnerability is one of the major reasons why Turing completeness is avoided.
 Ethereum,((("Ethereum"))) which has Turing completeness in its smart contract language, Solidity, handles this problem by forcing contracts to pay for program execution with something called "gas."
 An infinite loop will exhaust whatever gas is in the contract because, by definition, it will run an infinite number of times.
 
@@ -164,7 +164,7 @@ There((("OP_PUSHDATA1 operation")))((("OP_PUSHDATA2 operation")))((("OP_PUSHDATA
 `OP_PUSHDATA4` means that the next 4 bytes contain how many bytes we need to read for the element.
 
 Practically speaking, this means if we have an element that's between 76 and 255 bytes inclusive, we use `OP_PUSHDATA1` ++<__1-byte length of the element__>++ ++<__element__>++.
-For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` ++<__2-byte length of the element in little-endian>__>++ ++<__element__>++.
+For anything between 256 bytes and 520 bytes inclusive, we use `OP_PUSHDATA2` ++<__2-byte length of the element in little-endian__>++ ++<__element__>++.
 Anything larger than 520 bytes is not allowed on the network, so `OP_PUSHDATA4` is unnecessary, though `OP_PUSHDATA4` ++<__4-byte length of the element in little-endian, but value less than or equal to 520__>++ ++<__element__>++ is still legal.
 
 It is possible to encode a number below 76 using `OP_PUSHDATA1` or a number below 256 using `OP_PUSHDATA2` or even any number below 521 using `OP_PUSHDATA4`.
@@ -188,7 +188,7 @@ include::code-ch06/script.py[tag=source2]
 <3> We parse until the right amount of bytes are consumed.
 <4> The byte determines if we have an opcode or element.
 <5> This converts the byte into an integer in Python.
-<6> For a number between 1 and 75 inclusive, we know the next +n+ bytes are an element.
+<6> For a number between 1 and 75 inclusive, we know the next +n+ bytes are an pass:[<span class="keep-together">element</span>].
 <7> 76 is `OP_PUSHDATA1`, so the next byte tells us how many bytes to read.
 <8> 77 is `OP_PUSHDATA2`, so the next two bytes tell us how many bytes to read.
 <9> We have an opcode that we store.
@@ -204,7 +204,7 @@ class Script:
 include::code-ch06/script.py[tag=source3]
 ----
 <1> If the command is an integer, we know that's an opcode.
-<2> If the byte is between 1 and 75 inclusive, we encode the length as a single byte.
+<2> If the length is between 1 and 75 inclusive, we encode the length as a single byte.
 <3> For any element with length from 76 to 255, we put `OP_PUSHDATA1` first, then encode the length as a single byte, followed by the element.
 <4> For an element with a length from 256 to 520, we put `OP_PUSHDATA2` first, then encode the length as two bytes in little endian, followed by the element.
 <5> Any element longer than 520 bytes cannot be serialized.
@@ -255,7 +255,7 @@ p2sh:: Pay-to-script-hash
 p2wpkh:: Pay-to-witness-pubkey-hash
 p2wsh:: Pay-to-witness-script-hash
 
-Addresses are data that fits into known script templates like these.
+Addresses are known script templates like these.
 Wallets know how to interpret various address types (p2pkh, p2sh, p2wpkh) and create the appropriate ScriptPubKeys.
 All of the examples here have a particular type of address format (Base58, Bech32) so wallets can pay to them.
 
@@ -268,7 +268,7 @@ Most coins thought to belong to Satoshi are in p2pk UTXOs—that is, transaction
 There are some limitations that we'll discuss in <<problemsp2pk>>, but first, let's look at how p2pk works.
 
 Back in <<chapter_elliptic_curve_cryptography>>, we learned about both ECDSA signing and verification.
-To verify an ECDSA signature, we need the message, _z_, the public key, _P_, and the signature, _r_ and _s_`.
+To verify an ECDSA signature, we need the message, _z_, the public key, _P_, and the signature, _r_ and _s_.
 In p2pk, bitcoins are sent to a public key, and the owner of the private key can unlock or spend the bitcoins by creating a signature.
 The ScriptPubKey of a transaction puts the assigned bitcoins under the control of the private key owner.
 
@@ -343,7 +343,7 @@ In other words, only someone with knowledge of the private key can produce a val
 
 Incidentally, we can see where ScriptPubKey got its name.
 The public key in uncompressed SEC format is the main command in the ScriptPubKey for p2pk (the other command being `OP_CHECKSIG`).
-Similarly, ScriptSig is named as such because the ScriptSig for p2pk is a single element: the DER signature.((("", startref="P2oper06")))
+Similarly, ScriptSig is named as such because the ScriptSig for p2pk has the DER signature.((("", startref="P2oper06")))
 
 ==== Coding Script Evaluation
 
@@ -359,7 +359,7 @@ include::code-ch06/examples.py[tag=example1]
 <2> We can do this because of the `__add__` method we just created.
 <3> We want to evaluate the commands and see if the script validates.
 
-Here is the method that we'll use for the _combined_ command set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current transaction):
+Here is the method that we'll use for the _combined_ command set (combination of the ScriptPubKey of the previous transaction and the ScriptSig of the current pass:[<span class="keep-together">transaction</span>]):
 
 [source,python]
 ----
@@ -374,9 +374,9 @@ include::code-ch06/script.py[tag=source5]
 <3> The function that executes the opcode is in the `OP_CODE_FUNCTIONS` array (e.g.,
 `OP_DUP`, `OP_CHECKSIG`, etc.).
 <4> 99 and 100 are `OP_IF` and `OP_NOTIF`, respectively.
-They require manipulation of the commands array based on the top element of the stack.
+They require manipulation of the `cmds` array based on the top element of the stack.
 <5> 107 and 108 are `OP_TOALTSTACK` and `OP_FROMALTSTACK`, respectively.
-They move stack elements to/from an "alternate" stack, which we call _altstack_.
+They move stack elements to/from an "alternate" stack, which we call `altstack`.
 <6> 172, 173, 174, and 175 are `OP_CHECKSIG`, `OP_CHECKSIGVERIFY`, `OP_CHECKMULTISIG`, and `OP_CHECKMULTISIGVERIFY`, which all require the signature hash, `z`, from <<chapter_elliptic_curve_cryptography>> for signature validation.
 <7> If the command is not an opcode, it's an element, so we push that element to the stack.
 <8> If the stack is empty at the end of processing all the commands, we fail the script by returning `False`.
@@ -595,6 +595,7 @@ Script evaluation will start as shown in <<example_start>>.
 .Example start
 image::images/prbc_0628.png[Example 1 Start]
 
+[role="pagebreak-before"]
 `OP_4` will push a 4 to the stack (<<example_step_1>>).
 
 [[example_step_1]]
@@ -613,6 +614,7 @@ image::images/prbc_0630.png[Example 1 Step 2]
 .Example step 3
 image::images/prbc_0631.png[Example 1 Step 3]
 
+[role="pagebreak-before"]
 `OP_9` will((("OP_9 operation"))) push a 9 to the stack (<<example_step_4>>).
 
 [[example_step_4]]
@@ -633,6 +635,7 @@ It is for this reason that most transactions have a signature requirement in the
 Once a UTXO has been spent, included in a block, and secured by proof-of-work, the coins are locked to a different ScriptPubKey and no longer as easily spendable.
 Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (see <<chapter_blocks>>).((("", startref="Sconst06")))
 
+[role="pagebreak-before"]
 include::code-ch06/answers.py[tag=exercise3,indent=0]
 
 ==== Utility of Scripts
