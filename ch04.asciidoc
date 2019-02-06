@@ -81,12 +81,12 @@ image::images/prbc_0212.png[Elliptic Curve Vertical Line]
 It turns out that even over a finite field, we have the same symmetry.
 
 This is because for any (_x_,_y_) that satisfies __y__^2^ = __x__^3^ + __ax__ + __b__, (_x_,–__y__) also satisfies the equation.
-Furthermore, in a finite field, –__y__ (mod _p_) = _p_ – _y_.
+Furthermore, in a finite field, –__y__ % _p_ = (_p_ – _y_) % _p_.
 Or, more accurately, if (_x_,_y_) satisfies the elliptic curve equation, (_x_,_p_ – _y_) also satisfies the equation.
 These are the only two solutions for a given _x_, as shown, so if we know _x_, we know the _y_ coordinate has to be either _y_ or _p_ – _y_.
 
 Since _p_ is a prime number greater than 2, we know that _p_ is odd.
-Thus, if _y_ is even, _p_ – _y_ (odd minus even) will be odd.
+Thus, if _y_ is even, pass:[<span class="keep-together"><em>p</em> – <em>y</em></span>] (odd minus even) will be odd.
 If _y_ is odd, _p_ – _y_ will be even.
 In other words, between _y_ and _p_ – _y_, exactly one will be even and one will be odd.
 This is something we can use to our advantage to shorten the uncompressed SEC format: we can provide the _x_ coordinate and the evenness of the _y_ coordinate.
@@ -124,7 +124,7 @@ Stated mathematically:
 
 ++++
 <ul class="simplelist">
-<li>Find <em>w</em> such that <em>w</em><sup>2</sup> = _v_ when we know <em>v</em>.</li>
+<li>Find <em>w</em> such that <em>w</em><sup>2</sup> = <em>v</em> when we know <em>v</em>.</li>
 </ul>
 ++++
 
@@ -282,7 +282,7 @@ include::code-ch04/ecc.py[tag=source4]
 ----
 <1> In Python 3, you can convert a list of numbers to the byte equivalents using `bytes([some_integer1, some_integer2])`.
 
-Overall, this is an inefficient way to encode `r` and `s` as there are at least 4 bytes that aren't strictly necessary.
+Overall, this is an inefficient way to encode `r` and `s` as there are at least 6 bytes that aren't strictly necessary.
 
 include::code-ch04/answers.py[tag=exercise3,indent=0]
 
@@ -349,6 +349,7 @@ Bech32 uses a 32-character alphabet that's just numbers and lowercase letters, e
 Thus far, it's only used for Segwit (<<chapter_segwit>>).((("", startref="base58")))
 ====
 
+[role="pagebreak-before"]
 include::code-ch04/answers.py[tag=exercise4,indent=0]
 
 ==== Address Format
@@ -381,7 +382,7 @@ The coins on there are not worth anything and the proof-of-work required to find
 The mainnet chain as of this writing has around 550,000 blocks, while testnet has significantly more (around 1,450,000 blocks).
 ====
 
-((("ripemd160 operation")))((("sha256 operation")))((("hash160 operation")))We can implement the hash260 operation in _helper.py_:
+((("ripemd160 operation")))((("sha256 operation")))((("hash160 operation")))We can implement the hash160 operation in _helper.py_:
 
 [source,python]
 ----
