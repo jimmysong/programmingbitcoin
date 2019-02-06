@@ -27,7 +27,7 @@ The idea is to change from a single point of failure to something a little more 
 To((("OP_CHECKMULTISIG operation", id="opcheck08"))) understand bare multisig, one must first understand the `OP_CHECKMULTISIG` opcode.
 As discussed in <<chapter_script>>, Script has a lot of different opcodes.
 `OP_CHECKMULTISIG` is one of them, at `0xae`.
-The opcode consumes a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
+The opcode pass:[<span class="keep-together">consumes</span>] a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
 
 The transaction output is called "bare" multisig because it's a long ScriptPubKey.
 <<bare_multisig_scriptpubkey>> shows what a ScriptPubKey for a 1-of-2 multisig looks like.
@@ -330,7 +330,7 @@ The hash160 is prepended with a prefix byte and appended with a checksum.
 Mainnet p2sh uses the `0x05` byte, which causes addresses to start with a `3` in Base58, while testnet p2sh uses the `0xc4` byte to cause addresses to start with a `2`.
 We can calculate the address using the `encode_base58_checksum` function from _helper.py_:((("", startref="p2shcode08")))
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch08/examples.py[tag=example1]
 ----
@@ -354,7 +354,7 @@ image::images/prbc_0825.png[Validation Start]
 
 As with p2pkh, finding the signature hash is the most difficult part of the p2sh signature validation process. We'll now proceed to cover this in detail.
 
-===== Step 1: Empty aAll the ScriptSigs
+===== Step 1: Empty all the ScriptSigs
 
 The first step is to empty all the ScriptSigs when checking the signature (<<empty_each_inputs_scriptsig>>).
 The same procedure is used for creating the signature.
@@ -379,7 +379,7 @@ Last, we add a 4-byte hash type to the end.
 This is the same as in p2pkh. The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in little-endian over 4 bytes, which makes the transaction look like <<append_the_hash_type_sighash_all_or_the_blue_part_at_the_end>>.
 
 [[append_the_hash_type_sighash_all_or_the_blue_part_at_the_end]]
-.Append the hash type (SIGHASH_ALL), 1000000
+.Append the hash type (SIGHASH_ALL), 01000000
 image::images/prbc_0828.png[Validation Step 3]
 
 The hash256 of this interpreted as a big-endian integer is our _z_.
@@ -404,7 +404,7 @@ include::code-ch08/examples.py[tag=example3]
 ----
 <1> `z` is from the code on page 185.
 
-We've verified one of the two signatures that are required to unlock this p2sh multisig.((("", startref="p2shsignver08")))((("", startref="MSp2shcode08")))((("", startref="Hp2sh08")))
+We've verified one of the two signatures that are required to unlock this p2sh pass:[<span class="keep-together">multisig</span>].((("", startref="p2shsignver08")))((("", startref="MSp2shcode08")))((("", startref="Hp2sh08")))
 
 include::code-ch08/answers.py[tag=exercise4,indent=0]
 
