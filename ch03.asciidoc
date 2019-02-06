@@ -139,7 +139,7 @@ Specifically, when __x__~1~ ≠ __x__~2~:
 <li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
 <li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
 <li><em>s</em> = (<em>y</em><sub>3</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>3</sub> – <em>x</em><sub>1</sub>)</li>
-<li><em>x</em><sub>3</sub> = <em>s</em>^2^ – <em>x</em><sub>1</sub> – <em>x</em><sub>3</sub></li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>3</sub></li>
 <li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
 </ul>
 ++++
@@ -217,7 +217,7 @@ If we imagine a point _G_ and scalar-multiply until we get the point at infinity
 ++++
 
 It turns out that this set is called a _group_, and because _n_ is finite, we have a _finite group_ (or more specifically, a _finite cyclic group_).
-Groups are interesting mathematically because they behave a lot like addition:
+Groups are interesting mathematically because they behave well with respect to addition:
 
 ++++
 <ul class="simplelist">
@@ -268,7 +268,7 @@ include::code-ch03/answers.py[tag=exercise4,indent=0]
 === Scalar Multiplication Redux
 
 Scalar multiplication is adding the same point to itself some number of times.
-The key to making scalar multiplication into public key cryptography is the fact that scalar multiplication on elliptic curves is very hard to reverse.
+The key to making scalar multiplication into public key cryptography is using the fact that scalar multiplication on elliptic curves is very hard to reverse.
 Note the previous exercise.
 Most likely, you calculated the point _s_ ⋅ (47,71) in __F__~223~ for _s_ from 1 until 21.
 Here are the results:
@@ -465,7 +465,7 @@ But what if we made the prime larger?
 It turns out that we can choose much larger primes than we've been using.
 The security of elliptic curve cryptography depends on computers _not_ being able to go through an appreciable fraction of the group.
 
-An elliptic curve for public key cryptography is defined with the following parameters:
+An elliptic curve for public key cryptography is defined with the following pass:[<span class="keep-together">parameters</span>]:
 
 * We specify the _a_ and _b_ of the curve __y__^2^ = __x__^3^ + _ax_ + _b_.
 * We specify the prime of the finite field, _p_.
@@ -547,7 +547,7 @@ include::code-ch03/ecc.py[tag=source4]
 include::code-ch03/ecc.py[tag=source5]
 ----
 
-We're subclassing the `FieldElement` class so we don't have to pass in `P` all the time.
+We're subclassing the `FieldElement` class so we don't have to pass in _P_ all the time.
 We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeros.
 
 Similarly, we((("S256Point class", "creating"))) can define a point on the secp256k1 curve and call it `S256Point`:
@@ -615,7 +615,7 @@ The target, if specified by the challenger, makes your archery skill easy to ver
 Unfortunately, this doesn't scale very well.
 If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges.
 You could try to do something like have 10 people watch you shoot a single arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of an arbitrary target.
-What we want is something that you can do once, that requires no interaction back and forth between the archer and the verifiers, but that still proves that you are indeed, a good archer that can hit _any_ target.
+What we want is something that you can do once, that requires no interaction back and forth with the verifiers, but that still proves that you are indeed, a good archer that can hit _any_ target.
 
 If, for example, you simply shot an arrow into a target of your choosing, the people observing afterward wouldn't necessarily be convinced.
 After all, you might have painted the target around wherever your arrow happened to land.
@@ -709,7 +709,7 @@ You can imagine there would be other reasons to hit the target and other "reward
 This has to be incorporated into our equations.
 
 In((("hashes", "signature hash")))((("signing and verification", "signature hash")))((("signature hash"))) signature/verification parlance, this is called the _signature hash_.
-A hash is a deterministic function that takes arbitrary data into a data of fixed size.
+A hash is a deterministic function that takes arbitrary data into data of fixed size.
 This is a fingerprint of the message containing the intent of the shooter, which anyone verifying the message already knows.
 We denote this with the letter _z_.
 This is incorporated into our _uG_ + _vP_ calculation this way:
@@ -760,7 +760,7 @@ If we were to reveal _k_, then:
 <li><em>kG</em> – <em>uG</em> = <em>veG</em></li>
 <li>(<em>k</em> – <em>u</em>)<em>G</em> = <em>veG</em></li>
 <li>(<em>k</em> – <em>u</em>) = <em>ve</em></li>
-<li>(<em>k</em> – <em>u</em>) &#xd7; 1/<em>v</em> = <em>e</em>(<em>r</em>,<em>y</em>)</li>
+<li>(<em>k</em> – <em>u</em>)/<em>v</em> = <em>e</em></li>
 </ul>
 ++++
 
@@ -796,7 +796,7 @@ We will now construct _R_ = _uG_ + _vP_ by defining _u_ and _v_ this way:
 
 ++++
 <ul class="simplelist">
-<li><em>u</em> = <em>x</em>/<em>s</em></li>
+<li><em>u</em> = <em>z</em>/<em>s</em></li>
 <li><em>v</em> = <em>r</em>/<em>s</em></li>
 </ul>
 ++++
@@ -818,7 +818,7 @@ We know _s_ = (_z_ + _re_)/_k_, so:
 ++++
 
 We've successfully chosen _u_ and _v_ in such a way as to generate _R_ as we intended.
-Furthermore, we used _r_ in the calculation of _v_, proving we knew what _R_ should be.
+Furthermore, we used _r_ in the calculation of _v_, proving we knew what _R_ would be.
 The only way we can know the details of _R_ beforehand is if we know _e_.
 
 To wit, here are the steps:
@@ -839,7 +839,7 @@ There is a well-known hash collision attack on SHA-1 called a _birthday attack_ 
 https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[Google found a SHA-1 collision] using some modifications of a birthday attack and a lot of other things in 2017.
 Using SHA-1 twice, or _double SHA-1_, is the way to defeat or slow down some forms of this attack.
 
-Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential weaknesses.
+Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential pass:[<span class="keep-together">weaknesses</span>].
 ====
 
 ==== Verifying a Signature
@@ -918,7 +918,7 @@ This library is for teaching purposes only, so please don't use any of the code 
 
 We do this using some of the primitives that we have:
 
-[source,python]
+[source,pycon]
 ----
 include::code-ch03/examples.py[tag=example10]
 ----
@@ -985,7 +985,7 @@ If our secret is _e_ and we are reusing _k_ to sign __z__~1~ and __z__~2~:
 <li><em>s</em><sub>1</sub> = (<em>z</em><sub>1</sub> + <em>re</em>) / <em>k</em>, <em>s</em><sub>2</sub> = (<em>z</em><sub>2</sub> + <em>re</em>) / <em>k</em></li>
 <li><em>s</em><sub>1</sub>/<em>s</em><sub>2</sub> = (<em>z</em><sub>1</sub> + <em>re</em>) / (<em>z</em><sub>2</sub> + <em>re</em>)</li>
 <li><em>s</em><sub>1</sub>(<em>z</em><sub>2</sub> + <em>re</em>) = <em>s</em><sub>2</sub>(<em>z</em><sub>1</sub> + <em>re</em>)</li>
-<li>* <em>s</em><sub>1</sub><em>z</em><sub>2</sub> + <em>s</em><sub>1</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> + <em>s</em><sub>2</sub><em>re</em></li>
+<li><em>s</em><sub>1</sub><em>z</em><sub>2</sub> + <em>s</em><sub>1</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> + <em>s</em><sub>2</sub><em>re</em></li>
 <li><em>s</em><sub>1</sub><em>re</em> – <em>s</em><sub>2</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> – <em>s</em><sub>1</sub><em>z</em><sub>2</sub></li>
 <li><em>e</em> = (<em>s</em><sub>2</sub><em>z</em><sub>1</sub> – <em>s</em><sub>1</sub><em>z</em><sub>2</sub>) / (<em>rs</em><sub>1</sub> – <em>rs</em><sub>2</sub>)</li>
 </ul>
