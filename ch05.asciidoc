@@ -374,7 +374,7 @@ This is because the fee is an implied amount, as described in the next section.
 
 === Transaction Fee
 
-One((("transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on coinbase transactions in <<chapter_p2sh>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
+One((("transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on coinbase transactions in <<chapter_blocks>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
 You may be wondering why the inputs and outputs can't just be forced to be equal.
 This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks (see <<chapter_blocks>>).
 Fees((("mempool transactions"))) are a way to incentivize miners to include transactions.
@@ -418,7 +418,7 @@ include::code-ch05/tx.py[tag=source8]
 
 ==== Calculating the Fee
 
-Now that we have the `amount` method in `TxIn` that lets us access how many bitcoins are in each transaction input, we can calculate the fee for a transaction.
+Now that we have the `value` method in `TxIn` that lets us access how many bitcoins are in each transaction input, we can calculate the fee for a transaction.
 
 include::code-ch05/answers.py[tag=exercise6,indent=0]
 
