@@ -535,7 +535,6 @@ image::images/prbc_1330.png[p2sh-p2wsh end]
 
 This makes p2wsh backward compatible, allowing older wallets to send to p2sh ScriptPubKeys that they can handle.
 
-[role="pagebreak-before"]
 === Coding p2wsh and p2sh-p2wsh
 
 The parsing and serialization are exactly the same as before.
