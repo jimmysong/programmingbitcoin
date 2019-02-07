@@ -51,7 +51,7 @@ After we've established the public key cryptography at the end of <<chapter_elli
 <<chapter_p2sh>> establishes how pay-to-script-hash (p2sh) works, which is a way to make more powerful smart contracts.
 
 <<chapter_blocks>> covers blocks, which are groups of ordered transactions.
-<<chapter_networking>> covers network communication in Bitcoin. Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_spv">#chapter_spv</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] go into how a light client, or software without access to the entire blockchain, might request and broadcast data to and from nodes that store the entire blockchain.
+<<chapter_networking>> covers network communication in Bitcoin. Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_spv">#chapter_spv</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] go into how a light client, or software without access to the entire blockchain, might request and broadcast data to and from nodes that store the entire blockchain.
 
 <<chapter_segwit>> covers Segwit, a backward-compatible upgrade introduced in 2017, and <<chapter_advanced>> provides suggestions for further study.
 These chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
