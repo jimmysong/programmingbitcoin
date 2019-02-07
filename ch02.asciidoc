@@ -98,12 +98,12 @@ image::images/prbc_0206.png[Start]
 
 [[step_2_a_cubic_equation]]
 .Step 2: Stretched cubic equation
-[role="width-75"]
+[role="width-50"]
 image::images/prbc_0207.png[Stretch]
 
 [[step_3_a_cubic_equation]]
 .Step 3: Reflected over the x-axis
-[role="width-75"]
+[role="width-50"]
 image::images/prbc_0208.png[Symmetric]
 
 Specifically, the((("secp256k1 curve")))((("elliptic curves", "secp256k1 curve"))) elliptic curve used in Bitcoin is called _secp256k1_ and it uses this particular equation:
@@ -161,12 +161,12 @@ It turns out that for every elliptic curve, a line will intersect it at either o
 
 [[line_intersects_at_only_1_point]]
 .Line intersects at only one point
-[role="width-75"]
+[role="width-50"]
 image::images/prbc_0210.png[Line intersecting at one point]
 
 [[line_intersects_at_3_points]]
 .Line intersects at three points
-[role="width-75"]
+[role="width-50"]
 image::images/prbc_0211.png[Line intersecting at three points]
 
 [role="pagebreak-before"]
