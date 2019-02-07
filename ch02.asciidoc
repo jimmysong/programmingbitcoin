@@ -80,6 +80,7 @@ This has the effect of making the graph symmetric over the x-axis, as shown in <
 [role="width-75"]
 image::images/prbc_0204.png[Elliptic curve equation]
 
+[role="pagebreak-before"]
 The elliptic curve is also less steep than the cubic curve.
 Again, this is because of the __y__^2^ term on the left side.
 At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
@@ -89,6 +90,7 @@ At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
 [role="width-75"]
 image::images/prbc_0205.png[Elliptic curve equation]
 
+[role="pagebreak-before"]
 If it helps, an elliptic curve can be thought of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), flattening out the part above the x-axis (<<step_2_a_cubic_equation>>), and then mirroring that part below the x-axis (<<step_3_a_cubic_equation>>).
 
 [[step_1_a_cubic_equation]]
