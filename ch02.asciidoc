@@ -77,6 +77,7 @@ This has the effect of making the graph symmetric over the x-axis, as shown in <
 
 [[continuous_elliptic_curve]]
 .Continuous elliptic curve
+[role="width-75"]
 image::images/prbc_0204.png[Elliptic curve equation]
 
 The elliptic curve is also less steep than the cubic curve.
@@ -85,20 +86,24 @@ At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
 
 [[disjoint_elliptic_curve]]
 .Disjoint elliptic curve
+[role="width-75"]
 image::images/prbc_0205.png[Elliptic curve equation]
 
 If it helps, an elliptic curve can be thought of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), flattening out the part above the x-axis (<<step_2_a_cubic_equation>>), and then mirroring that part below the x-axis (<<step_3_a_cubic_equation>>).
 
 [[step_1_a_cubic_equation]]
 .Step 1: A cubic equation
+[role="width-75"]
 image::images/prbc_0206.png[Start]
 
 [[step_2_a_cubic_equation]]
 .Step 2: Stretched cubic equation
+[role="width-75"]
 image::images/prbc_0207.png[Stretch]
 
 [[step_3_a_cubic_equation]]
 .Step 3: Reflected over the x-axis
+[role="width-75"]
 image::images/prbc_0208.png[Symmetric]
 
 Specifically, the((("secp256k1 curve")))((("elliptic curves", "secp256k1 curve"))) elliptic curve used in Bitcoin is called _secp256k1_ and it uses this particular equation:
@@ -156,10 +161,12 @@ It turns out that for every elliptic curve, a line will intersect it at either o
 
 [[line_intersects_at_only_1_point]]
 .Line intersects at only one point
+[role="width-75"]
 image::images/prbc_0210.png[Line intersecting at one point]
 
 [[line_intersects_at_3_points]]
 .Line intersects at three points
+[role="width-75"]
 image::images/prbc_0211.png[Line intersecting at three points]
 
 [role="pagebreak-before"]
@@ -167,10 +174,12 @@ The two exceptions are when a line is exactly vertical (<<line_intersects_at_2_p
 
 [[line_intersects_at_2_points_because_its_vertical]]
 .Line intersects at two points because it's vertical
+[role="width-75"]
 image::images/prbc_0212.png[Vertical Line]
 
 [[line_intersects_at_2_points_because_its_tangent_to_the_curve]]
 .Line intersects at two points because it's tangent to the curve
+[role="width-75"]
 image::images/prbc_0213.png[Tangent Line]
 
 We will come back to these two cases later.
@@ -187,6 +196,7 @@ Visually, it looks like <<point_addition>>.
 
 [[point_addition]]
 .Point addition
+[role="width-75"]
 image::images/prbc_0214.png[Point addition]
 
 We first draw a line through the two points we're adding (_A_ and _B_).
@@ -238,6 +248,7 @@ This is obvious since the line going through _A_ and _B_ will intersect the curv
 
 [[vertical_line_intersection]]
 .Vertical line intersection
+[role="width-75"]
 image::images/prbc_0212.png[Vertical Line]
 
 [role="pagebreak-before"]
@@ -251,10 +262,12 @@ While this doesn't prove the associativity of point addition, the visual should 
 
 [[a_b_c_case_1]]
 .(A + B) + C
+[role="width-75"]
 image::images/prbc_0216.png[Case 1]
 
 [[a_b_c_case_2]]
 .A + (B + C)
+[role="width-75"]
 image::images/prbc_0217.png[Case 2]
 
 To code point addition, we're going to split it up into three steps:
@@ -464,6 +477,7 @@ The situation looks like <<line_thats_tangent_to_the_curve>>, as we saw before.
 
 [[line_thats_tangent_to_the_curve]]
 .Line that's tangent to the curve
+[role="width-75"]
 image::images/prbc_0213.png[Tangent Line]
 
 Once again, we'll find the slope of the tangent point:
@@ -553,6 +567,7 @@ There is one more exception, and this involves the case where the tangent line i
 
 [[vertical_and_tangent_to_the_curve]]
 .Vertical and tangent to the curve
+[role="width-75"]
 image::images/prbc_0219.png[Tangent Vertical]
 
 This can only happen if __P__~1~ = __P__~2~ and the _y_ coordinate is 0, in which case the slope calculation will end up with a 0 in the denominator.
