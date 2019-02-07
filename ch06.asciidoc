@@ -52,6 +52,7 @@ The money inside, of course, can only be accessed by the owner who has the key.
 
 The unlocking of the lockbox is done in the ScriptSig field (see <<chapter_tx_parsing>>); this proves ownership of the locked box, which authorizes spending of the funds.
 
+[role="pagebreak-before"]
 === How Script Works
 
 Script((("Script", "operation of"))) is a programming language, and like most programming languages, it processes one command at a time.
