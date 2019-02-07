@@ -64,7 +64,7 @@ image::images/prbc_0202.png[Quadratic equation]
 .Cubic equation
 image::images/prbc_0203.png[Cubic equation]
 
-An elliptic curve isn't all that different.
+An elliptic curve isn't all that different:
 
 ++++
 <ul class="simplelist">
