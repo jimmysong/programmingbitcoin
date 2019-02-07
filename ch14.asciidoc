@@ -97,7 +97,7 @@ A utility library((("utility libraries"))) like the one built in this book is an
 Writing((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) the BIP0143 serialization for the signature hash of Segwit, for example, can be instructive in getting used to protocol programming.
 Porting the code from this book to another language would also be a great learning tool.
 
-=== Finding a Job
+==== Finding a Job
 
 If((("Bitcoin", "opportunities for developers")))((("developers, opportunities for"))) you are interested in getting into this industry in more depth, there are lots of great opportunities for developers.
 The key to proving that you know something is to have a portfolio of projects that you've done on your own.
