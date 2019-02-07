@@ -124,6 +124,7 @@ OP_CODE_FUNCTIONS = {
 Note that we return a Boolean with this opcode, as a way to tell whether the operation was successful.
 A failed operation automatically fails script evaluation.
 
+[role="pagebreak-after"]
 Here's((("OP_HASH256 operation"))) another one, for `OP_HASH256`.
 This opcode will consume the top element, perform a hash256 operation on it, and push the result onto the stack:
 
@@ -634,7 +635,6 @@ It is for this reason that most transactions have a signature requirement in the
 Once a UTXO has been spent, included in a block, and secured by proof-of-work, the coins are locked to a different ScriptPubKey and no longer as easily spendable.
 Someone attempting to spend already spent coins would have to provide proof-of-work, which is expensive (see <<chapter_blocks>>).((("", startref="Sconst06")))
 
-[role="pagebreak-before"]
 include::code-ch06/answers.py[tag=exercise3,indent=0]
 
 ==== Utility of Scripts
