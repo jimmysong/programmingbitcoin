@@ -228,7 +228,7 @@ Copyright 2019 Jimmy Song, 978-1-492-03149-9.”
 
 If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
 
-=== O'Reilly 
+=== O'Reilly Online Learning 
 
 [role = "ormenabled"]
 [NOTE]
