@@ -222,9 +222,8 @@ image::images/prbc_1102.png[Merkle Proof]
 
 You can see that in <<merkle_proof>>, the dotted boxes correspond to the hashes that the light client calculates. In particular, the Merkle root is H~ABCDEFGHIJKLMNOP~, which can then be checked against the block header whose proof-of-work has been validated.
 
-[NOTE]
 .How Secure Is an SPV Proof?
-====
+****
 The((("SPV (Simplified Payment Verification)", "security of")))((("Simplified Payment Verification (SPV)", "security of"))) full node can send a limited amount of information about the block and the light client can recalculate the Merkle root, which can then be verified against the Merkle root in the block header.
 This does not guarantee that the transaction is in the longest blockchain, but it does assure the light client that the full node would have had to spend a lot of hashing power or energy creating a valid proof-of-work.
 As long as the reward for creating such a proof-of-work is greater than the amounts in the transactions, the light client can at least know that the full node has no clear economic incentive to lie.
@@ -238,7 +237,7 @@ In((("light client security"))) other words, light client security is based on a
 For small transactions relative to the block subsidy (currently 12.5 BTC), there's probably little to worry about.
 For large transactions (say, 100 BTC), the full nodes may have an economic incentive to deceive you.
 Transactions that large should generally be validated using a full node.
-====
+****
 
 === Merkle Block
 
