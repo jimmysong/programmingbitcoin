@@ -326,6 +326,7 @@ We call 0 the point at infinity because visually, it's the point that exists to 
 
 [[vertical_line_intersects_a_third_time]]
 .Vertical line "intersects" a third time at the point at infinity
+[role="width-75"]
 image::images/prbc_0212.png[Vertical Line]
 
 ==== Closure
@@ -369,6 +370,7 @@ Invertibility((("invertibility")))((("finite cyclic groups", "invertibility prop
 
 [[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
 .Each point is invertible by taking the reflection over the x-axis
+[role="width-75"]
 image::images/prbc_0212.png[Vertical Line]
 
 Mathematically, we know that if _aG_ is in the group, (__n__ – __a__)__G__ is also in the group.
@@ -380,6 +382,7 @@ We((("finite cyclic groups", "commutativity property")))((("commutativity"))) kn
 
 [[the_line_through_the_points_doesnt_change]]
 .The line through the points doesn't change
+[role="width-75"]
 image::images/prbc_0214.png[Point addition]
 
 This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
@@ -391,10 +394,12 @@ We((("associativity")))((("finite cyclic groups", "associativity property"))) kn
 
 [[a_b_c_case_one]]
 .(A + B) + C: A + B is computed first before C is added
+[role="width-75"]
 image::images/prbc_0216.png[Case 1]
 
 [[a_b_c_case_two]]
 .A + (B + C): B + C is added first before adding A (note that this results in the same point as in <<a_b_c_case_one>>)
+[role="width-75"]
 image::images/prbc_0217.png[Case 2]
 
 Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_, proving associativity.((("", startref="ECCmath03")))
