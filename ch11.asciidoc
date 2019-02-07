@@ -205,10 +205,6 @@ include::code-ch11/answers.py[tag=exercise4,indent=0]
 Now((("Merkle trees", "using"))) that we know how a Merkle tree is constructed, we can create and verify((("proofs of inclusion"))) proofs of inclusion.
 Light nodes can get proofs that transactions of interest were included in a block without having to know all the transactions of a block (<<merkle_proof>>).
 
-[[merkle_proof]]
-.Merkle proof
-image::images/prbc_1102.png[Merkle Proof]
-
 Say that a light client has two transactions that are of interest, which would be the hashes represented by the green boxes, H~K~ and H~N~ in <<merkle_proof>>.
 A full node can construct a proof of inclusion by sending us all of the hashes marked by blue boxes: H~ABCDEFGH~, H~IJ~, H~L~, H~M~, and H~OP~.
 The light client would then perform these calculations:
@@ -219,6 +215,10 @@ The light client would then perform these calculations:
 * H~MNOP~ = __merkle_parent__(H~MN~, H~OP~)
 * H~IJKLMNOP~ = __merkle_parent__(H~IJKL~, H~MNOP~)
 * H~ABCDEFGHIJKLMNOP~ = __merkle_parent__(H~ABCDEFGH~, H~IJKLMNOP~)
+
+[[merkle_proof]]
+.Merkle proof
+image::images/prbc_1102.png[Merkle Proof]
 
 You can see that in <<merkle_proof>>, the dotted boxes correspond to the hashes that the light client calculates. In particular, the Merkle root is H~ABCDEFGHIJKLMNOP~, which can then be checked against the block header whose proof-of-work has been validated.
 
