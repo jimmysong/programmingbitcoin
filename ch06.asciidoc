@@ -651,7 +651,6 @@ This is in stark contrast to other projects, which try to expand their smart con
 
 include::code-ch06/answers.py[tag=exercise4,indent=0]
 
-[role="pagebreak-before"]
 ==== SHA-1 Piñata
 
 In((("SHA-1 piñata")))((("Script", "SHA-1 piñata")))((("hash collisions"))) 2013, Peter Todd created a script very similar to the one in Exercise 4 and put some bitcoins into it to create an economic incentive for people to find hash collisions.
