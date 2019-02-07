@@ -376,6 +376,7 @@ image::images/prbc_0212.png[Vertical Line]
 Mathematically, we know that if _aG_ is in the group, (__n__ – __a__)__G__ is also in the group.
 You can add them together to get __aG__ + (__n__ – __a__)__G__ = (__a__ + __n__ – __a__)__G__ = _nG_ = 0.
 
+[role="pagebreak-before"]
 ==== Commutativity
 
 We((("finite cyclic groups", "commutativity property")))((("commutativity"))) know from point addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>).
