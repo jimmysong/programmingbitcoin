@@ -221,6 +221,7 @@ In our example, Bob could be a miner; he could ignore the updated trade transact
 A much better design was created later with "payment channels," which is the basis for the Lightning Network.
 ****
 
+[role="pagebreak-before"]
 Now that we know what the fields are, we can start creating a `TxIn` class in Python:
 
 [source,python]
