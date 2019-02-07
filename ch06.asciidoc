@@ -596,7 +596,6 @@ Script evaluation will start as shown in <<example_start>>.
 .Example start
 image::images/prbc_0628.png[Example 1 Start]
 
-[role="pagebreak-before"]
 `OP_4` will push a 4 to the stack (<<example_step_1>>).
 
 [[example_step_1]]
@@ -615,7 +614,6 @@ image::images/prbc_0630.png[Example 1 Step 2]
 .Example step 3
 image::images/prbc_0631.png[Example 1 Step 3]
 
-[role="pagebreak-before"]
 `OP_9` will((("OP_9 operation"))) push a 9 to the stack (<<example_step_4>>).
 
 [[example_step_4]]
