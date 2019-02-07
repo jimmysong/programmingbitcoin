@@ -89,7 +89,6 @@ Note that the || symbol denotes concatenation.
 
 Here's how we can code this process in Python:
 
-[source,pycon]
 ----
 include::code-ch11/examples.py[tag=example1]
 ----
