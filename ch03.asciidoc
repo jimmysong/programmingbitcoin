@@ -283,6 +283,7 @@ The _x_ coordinates don't always increase or decrease, and neither do the _y_ co
 About the only pattern is that between 10 and 11, the _x_ coordinates are equal (10 and 11 have the same _x_, as do 9 and 12, 8 and 13, and so on).
 This is due to the fact that 21 ⋅ (47,71) = 0.
 
+[role="pagebreak-before"]
 Scalar multiplication looks really random, and that's what gives this equation _asymmetry_.
 An((("asymmetric problems"))) _asymmetric_ problem is one that's easy to calculate in one direction, but hard to reverse.
 For example, it's easy enough to calculate 12 ⋅ (47,71).
