@@ -242,7 +242,7 @@ Visually, these points are opposite one another over the x-axis on the curve (se
 
 [[vertical_line_intersection]]
 .Vertical line intersection
-[role="width-75"]
+[role="width-50"]
 image::images/prbc_0212.png[Vertical Line]
 
 This is why we call this point the point at infinity.
