@@ -251,7 +251,7 @@ On the other hand, BIP0016 nodes, which as of this writing are the vast majority
 
 [[p2sh_redeemscript]]
 .p2sh RedeemScript
-image::images/prbc_0810.png[p2sh RedeemScript]
+image::images/prbc_0820.png[p2sh RedeemScript]
 
 These go into the Script column as commands (<<p2sh_step_4>>).
 
