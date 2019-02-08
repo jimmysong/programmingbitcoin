@@ -142,7 +142,7 @@ Software that understands how to validate Segwit version X will validate such tr
 === p2sh-p2wpkh
 
 p2wpkh((("Segwit (segregated witness)", "p2sh-p2wpkh nested transactions", id="Sp2sh13")))((("p2sh (pay-to-script-hash)", "backward compatibility", id="p2shback13")))((("ScriptPubKeys", "p2sh-p2wpkh nested transactions", id="Hnest13")))((("p2sh-p2wpkh nested transactions", id="P2sh-p2wpkhnest13"))) is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to p2wpkh ScriptPubKeys.
-p2wpkh uses a new address format called Bech32, defined((("BIP (Bitcoin Improvement Proposals)", "BIP0173"))) in BIP173, whose ScriptPubKeys older wallets don't know how to create.
+p2wpkh uses a new address format called Bech32, defined((("BIP (Bitcoin Improvement Proposals)", "BIP0173"))) in BIP0173, whose ScriptPubKeys older wallets don't know how to create.
 
 The Segwit authors found an ingenious way to make Segwit backward compatible by "wrapping" p2wpkh inside p2sh.
 This is called "nested" Segwit as the Segwit script is nested in a p2sh RedeemScript.
