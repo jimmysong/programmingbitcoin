@@ -82,7 +82,7 @@ When initializing `Point`, we will run through this part of the code:
 include::code-ch03/ecc.py[tag=source1]
 ----
 
-The addition (`+`), multiplication (`*`), exponentiation (`**`), and equality (`!=`) operators here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField`, respectively, and _not_ the integer equivalents.
+The addition (`+`), multiplication (`*`), exponentiation (`**`), and not equals (`!=`) operators here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField`, respectively, and _not_ the integer equivalents.
 Being able to do the same equation but with different definitions for the basic arithmetic operators is how we construct an elliptic curve cryptography library.
 
 We've already coded the two classes that we need to implement elliptic curve points over a finite field.
@@ -972,7 +972,7 @@ Please don't use this function in production, because the random number from thi
 <2> _r_ is the _x_ coordinate of _kG_.
 <3> We use Fermat's little theorem again, and _n_, which is prime.
 <4> _s_ = (_z_ + _re_)/_k_.
-<5> It turns out that using the low-_s_ value will get nodes to relay our transactions easier.
+<5> It turns out that using the low-_s_ value will get nodes to relay our transactions.
 This is for malleability reasons.
 <6> We return a `Signature` object from the class defined earlier.
 
