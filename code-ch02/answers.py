@@ -42,7 +42,7 @@ For the curve __y__^2^ = __x__^3^ + 5__x__ + 7, what is (2,5) + (–1,–1)?
 # tag::exercise6[]
 ==== Exercise 6
 
-For the curve __y__^2^ = __x__^3^ + 5__x__ + 7, what is (–1,1) + (–1,–1)?
+For the curve __y__^2^ = __x__^3^ + 5__x__ + 7, what is (–1,–1) + (–1,–1)?
 # end::exercise6[]
 # tag::answer6[]
 >>> a, x1, y1 = 5, -1, 1
