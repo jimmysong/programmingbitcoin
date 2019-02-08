@@ -65,13 +65,14 @@ Let's create a Bloom filter with two items, "hello world" and "goodbye", using t
 ----
 include::code-ch12/examples.py[tag=example2]
 ----
+
+<1> We are creating a filter for two items here, but this can be extended to many more.
+
 <<ten_bit_bloom_filter_with_two_elements>> shows what this looks like conceptually.
 
 [[ten_bit_bloom_filter_with_two_elements]]
 .10-bit Bloom filter with two elements
 image::images/prbc_1202.png[Two Item Bloom filter]
-
-<1> We are creating a filter for two items here, but this can be extended to many more.
 
 If the space of all possible items is 50, 10 items on average will make it through this filter instead of the 5 when we only had 1 item of interest, because 2 buckets are returned, not 1.((("", startref="BFpurpose12")))
 
