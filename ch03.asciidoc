@@ -702,8 +702,8 @@ If we know _e_, we have:
 
 This means that any (_u_,_v_) combination that satisfies the preceding equation will suffice.
 
-If we don't know _e_, we'll have to play with (_u_,_v_) until __e = (k–u)/v__.
-If we could solve this with any (_u_,_v_) combination, that would mean we'd have solved _P_ = _eG_ while knowing only _P_ and _G_.
+Now suppose we don't know _e_, but we can solve __uG + vP = kG__ with some (_u_,_v_) combination.
+Then __e = (k–u)/v__ gives a solution to _P_ = _eG_ while knowing only _P_ and _G_.
 In other words, we'd have broken the discrete log problem.
 
 This means to provide a correct _u_ and _v_, we either have to break the discrete log problem or know the secret _e_.
