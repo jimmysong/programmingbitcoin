@@ -83,7 +83,7 @@ class Script:
                 result += int_to_little_endian(cmd, 1)
             else:
                 length = len(cmd)
-                if length < 75:  # <2>
+                if length <= 75:  # <2>
                     result += int_to_little_endian(length, 1)
                 elif length > 75 and length < 0x100:  # <3>
                     result += int_to_little_endian(76, 1)
