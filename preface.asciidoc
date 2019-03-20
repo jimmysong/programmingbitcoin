@@ -79,15 +79,6 @@ Windows:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe[]
 macOS:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg[]
 Linux:: See your distro docs (many Linux distributions, like Ubuntu, come with Python 3.5+ preinstalled)
 
-. Install pip by downloading this script: https://bootstrap.pypa.io/get-pip.py[].
-
-. Run this script using Python 3:
-+
-[source,bash]
-----
-$ python3 get-pip.py
-----
-
 . Install Git. The commands for downloading and installing it are at https://git-scm.com/downloads[].
 
 . Download the source code for this book:
