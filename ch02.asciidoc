@@ -580,7 +580,7 @@ class Point:
     ...
     def __add__(self, other):
     	...
-	if self == other and self.y == 0 * self.x:  # <1>
+	if self == other and self.y == 0:  # <1>
 	    return self.__class__(None, None, self.a, self.b)
 ----
 <1> If the two points are equal and the _y_ coordinate is 0, we return the point at pass:[<span class="keep-together">infinity</span>].((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
