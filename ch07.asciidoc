@@ -63,7 +63,7 @@ class Tx:
 include::code-ch07/tx.py[tag=source1]
 ----
 
-We can test to see if this transaction is trying to create money by using this method:
+We can test to see if this testnet transaction is trying to create money by using this method:
 
 [source,python]
 ----
