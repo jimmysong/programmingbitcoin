@@ -4,7 +4,7 @@
 
 Create a testnet transaction that sends 60% of a single UTXO to `mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv`. The remaining amount minus fees should go back to your own change address. This should be a one-input, two-output pass:[<span class="keep-together">transaction</span>].
 
-You can broadcast the transaction at  https://live.blockcypher.com/btc/pushtx[].
+You can broadcast the transaction at https://blockstream.info/testnet/tx/push[].
 # end::exercise4[]
 # tag::answer4[]
 >>> from ecc import PrivateKey
@@ -48,7 +48,7 @@ c5dd02205ed21dfede5925362b8d9833e908646c54be7ac6664e31650159e8f69b6ca539012103\
 
 Advanced: Get some more testnet coins from a testnet faucet and create a two-input, one-output transaction. One input should be from the faucet, the other should be from the previous exercise; the output can be your own address.
 
-You can broadcast the transaction at https://live.blockcypher.com/btc/pushtx/[].
+You can broadcast the transaction at https://blockstream.info/testnet/tx/push[].
 # end::exercise5[]
 # tag::answer5[]
 >>> from ecc import PrivateKey
