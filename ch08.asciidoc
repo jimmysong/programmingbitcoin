@@ -105,7 +105,7 @@ The code for `OP_CHECKMULTISIG` in _op.py_ is mostly written here:
 include::code-ch08/op.py[tag=source1]
 ----
 <1> Each DER signature is assumed to be signed with `SIGHASH_ALL`.
-<2> We take care of the off-by-one error by consuming the top element of the stack and not doing anything with the element.
+<2> We take care of the off-by-one error by consuming the only remaining element of the stack and not doing anything with the element.
 <3> This is the part that you will need to code for the next exercise.((("", startref="opcheck08")))
 
 include::code-ch08/answers.py[tag=exercise1,indent=0]
