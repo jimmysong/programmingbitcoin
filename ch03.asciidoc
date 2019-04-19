@@ -87,7 +87,7 @@ Being able to do the same equation but with different definitions for the basic 
 
 We've already coded the two classes that we need to implement elliptic curve points over a finite field.
 However, to check our work, it will be useful to create a test suite.
-We will do this using the results of Exercise 2:
+We will do this using the results of Exercise 1:
 
 [source,python]
 ----

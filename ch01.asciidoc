@@ -505,10 +505,10 @@ include::code-ch01/answers.py[tag=exercise4,indent=0]
 
 include::code-ch01/answers.py[tag=exercise5,indent=0]
 
-.Why Fields Are Prime
+.Why Prime Fields are Useful
 [NOTE]
 ====
-The answer to Exercise 5 is why fields have to have a _prime_ power number of elements.
+The answer to Exercise 5 is why we choose to use finite fields with a _prime_ number of elements.
 No matter what _k_ you choose, as long as it's greater than 0, multiplying the entire set by _k_ will result in the same set as you started with.
 
 Intuitively, the fact that we have a prime order results in every element of a finite field being equivalent.

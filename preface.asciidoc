@@ -206,7 +206,7 @@ This element signifies a general note.
 
 [WARNING]
 ====
-This element indicates a waning or caution.
+This element indicates a warning or caution.
 ====
 
 === Using Code Examples
