@@ -32,7 +32,7 @@ from ecc import Point
 
 a = 5
 b = 7
-x1, y1 = -1, 1
-# (-1,1) + (-1,1)
+x1, y1 = -1, -1
+# (-1,-1) + (-1,-1)
 ---
 exercise7:ecc:PointTest:test_add2

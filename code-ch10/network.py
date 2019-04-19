@@ -138,10 +138,10 @@ class VersionMessage:
         # timestamp is 8 bytes little endian
         # receiver services is 8 bytes little endian
         # IPV4 is 10 00 bytes and 2 ff bytes then receiver ip
-        # receiver port is 2 bytes, little endian should be 0
+        # receiver port is 2 bytes, big endian
         # sender services is 8 bytes little endian
         # IPV4 is 10 00 bytes and 2 ff bytes then sender ip
-        # sender port is 2 bytes, little endian should be 0
+        # sender port is 2 bytes, big endian
         # nonce should be 8 bytes
         # useragent is a variable string, so varint first
         # latest block is 4 bytes little endian
@@ -153,7 +153,7 @@ class VersionMessageTest(TestCase):
 
     def test_serialize(self):
         v = VersionMessage(timestamp=0, nonce=b'\x00' * 8)
-        self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d200000000000000000182f70726f6772616d6d696e67626974636f696e3a302e312f0000000000')
+        self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff00000000208d000000000000000000000000000000000000ffff00000000208d0000000000000000182f70726f6772616d6d696e67626974636f696e3a302e312f0000000000')
 
 
 # tag::source3[]

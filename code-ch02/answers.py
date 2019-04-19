@@ -45,12 +45,12 @@ For the curve __y__^2^ = __x__^3^ + 5__x__ + 7, what is (2,5) + (–1,–1)?
 For the curve __y__^2^ = __x__^3^ + 5__x__ + 7, what is (–1,–1) + (–1,–1)?
 # end::exercise6[]
 # tag::answer6[]
->>> a, x1, y1 = 5, -1, 1
+>>> a, x1, y1 = 5, -1, -1
 >>> s = (3 * x1**2 + a) / (2 * y1)
 >>> x3 = s**2 - 2*x1
 >>> y3 = s*(x1-x3)-y1
 >>> print(x3,y3)
-18.0 -77.0
+18.0 77.0
 
 # end::answer6[]
 '''

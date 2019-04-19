@@ -152,14 +152,14 @@ class VersionMessage:
         result += int_to_little_endian(self.receiver_services, 8)
         # IPV4 is 10 00 bytes and 2 ff bytes then receiver ip
         result += b'\x00' * 10 + b'\xff\xff' + self.receiver_ip
-        # receiver port is 2 bytes, little endian should be 0
-        result += int_to_little_endian(self.receiver_port, 2)
+        # receiver port is 2 bytes, big endian
+        result += self.receiver_port.to_bytes(2, 'big')
         # sender services is 8 bytes little endian
         result += int_to_little_endian(self.sender_services, 8)
         # IPV4 is 10 00 bytes and 2 ff bytes then sender ip
         result += b'\x00' * 10 + b'\xff\xff' + self.sender_ip
-        # sender port is 2 bytes, little endian should be 0
-        result += int_to_little_endian(self.sender_port, 2)
+        # sender port is 2 bytes, big endian
+        result += self.sender_port.to_bytes(2, 'big')
         # nonce should be 8 bytes
         result += self.nonce
         # useragent is a variable string, so varint first
@@ -179,7 +179,7 @@ class VersionMessageTest(TestCase):
 
     def test_serialize(self):
         v = VersionMessage(timestamp=0, nonce=b'\x00' * 8)
-        self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff000000008d20000000000000000000000000000000000000ffff000000008d200000000000000000182f70726f6772616d6d696e67626974636f696e3a302e312f0000000000')
+        self.assertEqual(v.serialize().hex(), '7f11010000000000000000000000000000000000000000000000000000000000000000000000ffff00000000208d000000000000000000000000000000000000ffff00000000208d0000000000000000182f70726f6772616d6d696e67626974636f696e3a302e312f0000000000')
 
 
 class VerAckMessage:

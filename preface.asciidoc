@@ -101,7 +101,7 @@ $ cd programmingbitcoin
 +
 [source,bash]
 ----
-$ pip install virtualenv
+$ pip install virtualenv --user
 ----
 
 . Install the requirements:

@@ -11,7 +11,7 @@ f9beb4d976657261636b000000000000000000005df6e0e2
 # tag::answer2[]
 >>> from network import NetworkEnvelope
 >>> from io import BytesIO
->>> message_hex = `f9beb4d976657261636b000000000000000000005df6e0e2`
+>>> message_hex = 'f9beb4d976657261636b000000000000000000005df6e0e2'
 >>> stream = BytesIO(bytes.fromhex(message_hex))
 >>> envelope = NetworkEnvelope.parse(stream)
 >>> print(envelope.command)
@@ -118,10 +118,10 @@ def serialize(self):
     result += int_to_little_endian(self.timestamp, 8)
     result += int_to_little_endian(self.receiver_services, 8)
     result += b'\x00' * 10 + b'\xff\xff' + self.receiver_ip
-    result += int_to_little_endian(self.receiver_port, 2)
+    result += self.receiver_port.to_bytes(2, 'big')
     result += int_to_little_endian(self.sender_services, 8)
     result += b'\x00' * 10 + b'\xff\xff' + self.sender_ip
-    result += int_to_little_endian(self.sender_port, 2)
+    result += self.sender_port.to_bytes(2, 'big')
     result += self.nonce
     result += encode_varint(len(self.user_agent))
     result += self.user_agent
