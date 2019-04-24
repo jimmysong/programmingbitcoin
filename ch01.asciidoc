@@ -481,7 +481,7 @@ Exponentiation is simply multiplying a number many times:
 
 ++++
 <ul class="simplelist">
-<li>7<sup>3</sup>=7⋅<sub><em>f</em></sub>7⋅<sub><em>f</em></sub>7 = 343</li>
+<li>7<sup>3</sup>=7⋅7⋅7 = 343</li>
 </ul>
 ++++
 
