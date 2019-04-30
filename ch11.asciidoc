@@ -437,7 +437,7 @@ We will be traversing to H~KL~ (6) when we come back to this node.
 * H~N~ (12) is of interest, so the flag is 1 and its value is in the hashes field.
 * We traverse up to H~MN~, whose value can now be calculated.
 * We traverse up again to H~MNOP~, whose value cannot be calculated because we haven't been to H~OP~ yet.
-* H~OP~ (13) is given, so the flag is 1 and its hash is the final hash in the hashes field.
+* H~OP~ (13) is given, so the flag is 0 and its hash is the final hash in the hashes field.
 * We traverse to H~MNOP~, which can now be calculated.
 * We traverse to H~IJKLMNOP~, which can now be calculated.
 * Finally, we traverse to H~ABCDEFGHIJKLMNOP~, which is the Merkle root, and calculate it!
