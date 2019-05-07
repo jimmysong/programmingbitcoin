@@ -40,7 +40,7 @@ def p2wpkh_script(h160):
 
 # tag::source4[]
 def p2wsh_script(h256):
-    '''Takes a hash160 and returns the p2wsh ScriptPubKey'''
+    '''Takes a sha256 (of the WitnessScript) and returns the p2wsh ScriptPubKey'''
     return Script([0x00, h256])  # <1>
 # end::source4[]
 
