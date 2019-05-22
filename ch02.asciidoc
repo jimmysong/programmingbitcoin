@@ -14,7 +14,7 @@ In this chapter, we'll explore what these curves are and what we can do with the
 
 Elliptic curves((("elliptic curves", "definition of"))) are like many equations you've seen since pre-algebra.
 They have _y_ on one side and _x_ on the other, in some form.
-elliptic curves have a form like this:
+Elliptic curves have a form like this:
 
 ++++
 <ul class="simplelist">
