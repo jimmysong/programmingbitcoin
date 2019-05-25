@@ -298,9 +298,9 @@ class Script:
 ...
     def evaluate(self, z):
 ...
-        while len(commands) > 0:
-            command = commands.pop(0)
-            if type(command) == int:
+        while len(cmds) > 0:
+            cmd = cmds.pop(0)
+            if type(cmd) == int:
 ...
 include::code-ch08/script.py[tag=source1]
 ----
