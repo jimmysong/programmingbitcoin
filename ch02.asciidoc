@@ -398,7 +398,7 @@ From earlier, we know that:
 
 ++++
 <ul class="simplelist">
-<li><em>x</em><sup>3</sup> – <em>s</em><sup>2</sup><em>x</em><sup>2</sup> + (<em>a</em> + 2<em>s</em><sup>2</sup><em>x</em><sub>1</sub> – 2<em>sy</em>~1~)<em>x</em> + <em>b</em> – <em>s</em><sup>2</sup><em>x</em><sub>1</sub><sup>2</sup> + 2<em>sx</em><sub>1</sub><em>y</em><sub>1</sub> – <em>y</em><sub>1</sub><sup>2</sup> = 0</li>
+<li><em>x</em><sup>3</sup> – <em>s</em><sup>2</sup><em>x</em><sup>2</sup> + (<em>a</em> + 2<em>s</em><sup>2</sup><em>x</em><sub>1</sub> – 2<em>sy</em><sub>1</sub>)<em>x</em> + <em>b</em> – <em>s</em><sup>2</sup><em>x</em><sub>1</sub><sup>2</sup> + 2<em>sx</em><sub>1</sub><em>y</em><sub>1</sub> – <em>y</em><sub>1</sub><sup>2</sup> = 0</li>
 </ul>
 ++++
 
