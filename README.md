@@ -39,9 +39,11 @@ Linux
 
 ###5. Download the source code for this book:
 
-`$ git clone https://github.com/jimmysong/programmingbitcoin`		
-`$ cd programmingbitcoin`
-		
+```
+$ git clone https://github.com/jimmysong/programmingbitcoin
+$ cd programmingbitcoin
+```
+
 ###6. Install virtualenv:
 
 `$ pip install virtualenv`
@@ -50,29 +52,34 @@ Linux
 
 Linux/macOS
 
-`$ virtualenv -p python3 .venv`		
-`$ . .venv/bin/activate`
-`(.venv) $ pip install -r requirements.txt`
+```
+$ virtualenv -p python3 .venv
+$ . .venv/bin/activate
+(.venv) $ pip install -r requirements.txt
+```
 
 Windows
 
-`C:\programmingbitcoin> virtualenv -p`		
-`C:\PathToYourPythonInstallation\Python.exe .venv`		
-`C:\programmingbitcoin> .venv\Scripts\activate.bat`		
-`C:\programmingbitcoin> pip install -r requirements.txt`		
+```
+C:\programmingbitcoin> virtualenv -p
+C:\PathToYourPythonInstallation\Python.exe .venv
+C:\programmingbitcoin> .venv\Scripts\activate.bat
+C:\programmingbitcoin> pip install -r requirements.txt
+```
+
 ###8. Run Jupyter Notebook:
 
-`(.venv) $ jupyter notebook`
-`[I 11:13:23.061 NotebookApp] Serving notebooks from local directory:
-  /home/jimmy/programmingbitcoin`
-  `[I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
-	[I 11:13:23.061 NotebookApp] http://localhost:8888/?token=
-  f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7`
-  `[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).`
-  `[C 11:13:23.065 NotebookApp]`
-  `Copy/paste this URL into your browser when you connect for`
-  `the first time, to login with a token:`
-  `http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7`
+```
+(.venv) $ jupyter notebook
+[I 11:13:23.061 NotebookApp] Serving notebooks from local directory: /home/jimmy/programmingbitcoin
+[I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
+[I 11:13:23.061 NotebookApp] http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 11:13:23.065 NotebookApp]`
+Copy/paste this URL into your browser when you connect for
+the first time, to login with a token:
+http://localhost:8888/?token=f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+```
 
 
 You should have a browser open up automatically, as shown in [Figure P-1](https://raw.githubusercontent.com/jimmysong/programmingbitcoin/master/images/prbc_0001.png).
