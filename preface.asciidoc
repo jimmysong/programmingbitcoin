@@ -248,7 +248,7 @@ Please((("contact information")))((("questions and comments")))((("comments and 
   <li>1005 Gravenstein Highway North</li>
   <li>Sebastopol, CA 95472</li>
   <li>800-998-9938 (in the United States or Canada)</li>
-  <li>707-829-0515 (intenational or local)</li>
+  <li>707-829-0515 (international or local)</li>
   <li>707-829-0104 (fax)</li>
 </ul>
 ++++
@@ -294,7 +294,7 @@ Vortex, Thomas Hunt, and Tone Vays brought me into the World Crypto Network back
 
 John Newbery was very helpful to me when I first contributed to Bitcoin Core, and he's just a really good person, period. He's become such a significant contributor in a relatively short time, which speaks to his talent and dedication. I'm grateful to other Core developers too, like Marco Falke, Wladimir van der Laan, Alex Morcos, Pieter Wuille, Matt Corallo, Suhas Daftuar, and Greg Maxwell, who have reviewed some of my code and blog posts.
 
-David Harding was exceptional in his technical review of this book. He reviewed the text three times, with a lot of great comments. He'd better write a book about Bitcoin at some point, because he has an encyclopedic knowledge of nearly everything that's happend in Bitcoin's history.
+David Harding was exceptional in his technical review of this book. He reviewed the text three times, with a lot of great comments. He'd better write a book about Bitcoin at some point, because he has an encyclopedic knowledge of nearly everything that's happened in Bitcoin's history.
 
 Jim Calvin helped me get in contact with people at O'Reilly, and Mike Loukides was the intake editor who green-lighted the project. Andreas Antonopolous gave me some great pointers and recommended me to people at O'Reilly. Michele Cronin kept me on track during my year-long writing spree. Kristen Brown was the production editor who did a lot to get this book out on time. James Fraleigh did copyediting. I'm a big fan of this publisher, and Tim O'Reilly has done a great service to the tech community by making such great books available.
 
