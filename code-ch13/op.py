@@ -285,7 +285,7 @@ def op_2over(stack):
 def op_2rot(stack):
     if len(stack) < 6:
         return False
-    stack.extend(stack[-6:-4])
+    stack[-6:] = stack[-4:] + stack[-6:-4]
     return True
 
 
