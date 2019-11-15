@@ -282,10 +282,14 @@ def op_2over(stack):
     return True
 
 
+# The fifth and sixth items back are moved to the top of the stack.
 def op_2rot(stack):
     if len(stack) < 6:
         return False
-    stack.extend(stack[-6:-4])
+    # Pop sixth item and push it to the top of the stack.
+    stack.append(stack.pop(-6))
+    # Fifth item becomes sixth, pop it and push it to the top of the stack.
+    stack.append(stack.pop(-6))
     return True
 
 
