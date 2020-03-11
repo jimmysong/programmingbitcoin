@@ -310,7 +310,7 @@ class Tx:
             # the last cmd has to be the RedeemScript to trigger
             cmd = tx_in.script_sig.cmds[-1]
             # parse the RedeemScript
-            raw_redeem = int_to_little_endian(len(cmd), 1) + cmd
+            raw_redeem = encode_varint(len(cmd)) + cmd
             redeem_script = Script.parse(BytesIO(raw_redeem))
             # the RedeemScript might be p2wpkh or p2wsh
             if redeem_script.is_p2wpkh_script_pubkey():
