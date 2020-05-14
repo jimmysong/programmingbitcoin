@@ -234,7 +234,7 @@ Therefore, isolation of a light client (that is, control of who the light client
 The security of SPV requires that there be lots of honest nodes on the network.
 
 In((("light client security"))) other words, light client security is based on a robust network of nodes and the economic cost of producing proof-of-work.
-For small transactions relative to the block subsidy (currently 12.5 BTC), there's probably little to worry about.
+For small transactions relative to the block subsidy (currently 6.25 BTC), there's probably little to worry about.
 For large transactions (say, 100 BTC), the full nodes may have an economic incentive to deceive you.
 Transactions that large should generally be validated using a full node.
 ****
