@@ -121,10 +121,10 @@ To experiment, we can establish a connection to a node on the network synchronou
 >>> socket.connect((host, port))
 >>> stream = socket.makefile('rb', None)  # <2>
 >>> version = VersionMessage()  # <3>
->>> envelope = NetworkEnvelope(version.command, version.serialize())
+>>> envelope = NetworkEnvelope(version.command, version.serialize(), testnet=True)
 >>> socket.sendall(envelope.serialize())  # <4>
 >>> while True:
-...     new_message = NetworkEnvelope.parse(stream)  # <5>
+...     new_message = NetworkEnvelope.parse(stream, testnet=True)  # <5>
 ...     print(new_message)
 ----
 <1> This is a server I've set up for testnet.
