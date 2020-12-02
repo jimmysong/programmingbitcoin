@@ -22,9 +22,9 @@ class TxFetcher:
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://testnet.programmingbitcoin.com'
+            return 'https://blockstream.info/testnet/api'
         else:
-            return 'http://mainnet.programmingbitcoin.com'
+            return 'https://blockstream.info/api'
 
     @classmethod
     def fetch(cls, tx_id, testnet=False, fresh=False):
