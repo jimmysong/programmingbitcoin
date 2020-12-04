@@ -18,18 +18,18 @@ from script import p2pkh_script, Script
 
 class TxFetcher:
     cache = {}
-
+    
     @classmethod
     def get_url(cls, testnet=False):
         if testnet:
-            return 'http://testnet.programmingbitcoin.com'
+            return 'https://blockstream.info/testnet/api'
         else:
-            return 'http://mainnet.programmingbitcoin.com'
+            return 'https://blockstream.info/api'
 
     @classmethod
     def fetch(cls, tx_id, testnet=False, fresh=False):
         if fresh or (tx_id not in cls.cache):
-            url = '{}/tx/{}.hex'.format(cls.get_url(testnet), tx_id)
+            url = '{}/tx/{}/hex'.format(cls.get_url(testnet), tx_id)
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
