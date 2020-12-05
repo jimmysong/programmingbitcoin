@@ -612,7 +612,7 @@ There are many proofs of this theorem, but perhaps the simplest is using what we
 
 ++++
 <ul class="simplelist">
-<li>{1, 2, 3, ... <em>p</em>–2, <em>p</em>–1} = {<em>n</em>%<em>p</em>, 2<em>n</em>%<em>p</em>, 3<em>n</em>%<em>p</em> (<em>p</em>–2)<em>n</em>%<em>p</em>, (<em>p</em>–1)<em>n</em>%<em>p</em>}</li>
+<li>{1, 2, 3, ... <em>p</em>–2, <em>p</em>–1} = {<em>n</em>%<em>p</em>, 2<em>n</em>%<em>p</em>, 3<em>n</em>%<em>p</em>, ... (<em>p</em>–2)<em>n</em>%<em>p</em>, (<em>p</em>–1)<em>n</em>%<em>p</em>}</li>
 </ul>
 ++++
 
