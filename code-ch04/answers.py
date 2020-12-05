@@ -184,7 +184,7 @@ Write a function `int_to_little_endian` that does the reverse of the last exerci
 
 # tag::answer8[]
 def int_to_little_endian(n, length):
-    '''endian_to_little_endian takes an integer and returns the little-endian
+    '''int_to_little_endian takes an integer and returns the little-endian
     byte sequence of length'''
     return n.to_bytes(length, 'little')
 # end::answer8[]
