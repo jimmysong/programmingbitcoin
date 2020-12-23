@@ -171,11 +171,11 @@ Write the `sign_input` method for the `Tx` class.
 
 
 # tag::answer3[]
-def sign_input(self, input_index, private_key):
+def sign_input(self, input_index, private_key, compressed=True):
     z = self.sig_hash(input_index)
     der = private_key.sign(z).der()
     sig = der + SIGHASH_ALL.to_bytes(1, 'big')
-    sec = private_key.point.sec()
+    sec = private_key.point.sec(compressed)
     self.tx_ins[input_index].script_sig = Script([sig, sec])
     return self.verify_input(input_index)
 # end::answer3[]

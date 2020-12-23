@@ -196,7 +196,7 @@ class Tx:
         return True
     # end::source2[]
 
-    def sign_input(self, input_index, private_key):
+    def sign_input(self, input_index, private_key, compressed=True):
         # get the signature hash (z)
         # get der signature of z from private key
         # append the SIGHASH_ALL to der (use SIGHASH_ALL.to_bytes(1, 'big'))
