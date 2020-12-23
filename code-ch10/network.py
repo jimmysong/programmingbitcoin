@@ -284,10 +284,11 @@ class SimpleNode:
 
     def handshake(self):
         '''Do a handshake with the other node.
-        Handshake is sending a version message and getting a verack back.'''
+        Handshake is sending a version message, getting a verack back,
+        receiving a version, and sending a verack.'''
         # create a version message
         # send the command
-        # wait for a verack message
+        # wait for verack and version messages
         raise NotImplementedError
     # tag::source4[]
 

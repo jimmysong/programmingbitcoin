@@ -150,7 +150,14 @@ Write the `handshake` method for `SimpleNode`.
 def handshake(self):
     version = VersionMessage()
     self.send(version)
-    self.wait_for(VerAckMessage)
+    verack_received = False
+    version_received = False
+    while not (verack_received and version_received):
+        message = self.wait_for(VerAckMessage, VersionMessage)
+        if message.command == VerAckMessage.command:
+            verack_received = True
+        else:
+            version_received = True
 # end::answer5[]
 
 
