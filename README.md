@@ -28,6 +28,8 @@ macOS:
 
 Linux		
 #####See your distro docs (many Linux distributions, like Ubuntu, come with Python 3.5+ preinstalled)
+You need distutils to run get-pip.py :
+`sudo apt-get install python3-distutils`
 
 ###2. Install pip by downloading this script: [https://bootstrap.pypa.io/get-pip.py](https://bootstrap.pypa.io/get-pip.py).
 
