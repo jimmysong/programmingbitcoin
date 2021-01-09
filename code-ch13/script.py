@@ -153,7 +153,7 @@ class Script:
         # encode_varint the total length of the result and prepend
         return encode_varint(total) + result
 
-    def evaluate(self, z, witness):
+    def evaluate(self, z, witness, version=None, locktime=None, sequence=None):
         # create a copy as we may need to add to this list if we have a
         # RedeemScript
         cmds = self.cmds[:]
@@ -179,6 +179,16 @@ class Script:
                     # to check against
                     if not operation(stack, z):
                         LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
+                        return False
+                elif cmd == 177:
+                    # 177 is OP_CHECKLOCKTIMEVERIFY. Operation requires locktime and sequence.
+                    if not operation(stack, locktime, sequence):
+                        LOGGER.info(f"bad op: {OP_CODE_NAMES[cmd]}")
+                        return False
+                elif cmd == 178:
+                    # 178 is OP_CHECKSEQUENCEVERIFY. Operation requires sequence and version.
+                    if not operation(stack, version, sequence):
+                        LOGGER.info(f"bad op: {OP_CODE_NAMES[cmd]}")
                         return False
                 else:
                     if not operation(stack):
