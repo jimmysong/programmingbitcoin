@@ -285,7 +285,7 @@ include::code-ch11/examples.py[tag=example5]
 ----
 <1> Since we halve at every level, log~2~ of the number of leaves is how many levels there are in the Merkle tree.
 Note we round up using `math.ceil` as we round up for halving at each level.
-We could also be clever and use `len(bin(total))-2`.
+We could also be clever and use `len(bin(total))-3`.
 <2> The Merkle tree will hold the root level at index 0, the level below at index 1, and so on.
 In other words, the index is the "depth" from the top.
 <3> There are levels 0 to `max_depth` in this Merkle tree.
