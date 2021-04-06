@@ -7,9 +7,9 @@ Validate the second signature from the preceding transaction.
 # tag::answer4[]
 >>> from io import BytesIO
 >>> from ecc import S256Point, Signature
->>> from helper import hash256, int_to_little_endian
+>>> from helper import hash256, int_to_little_endian, encode_varint
 >>> from script import Script
->>> from tx import Tx, SIGHASH_ALL
+>>> from tx import Tx, SIGHASH_ALL, TxIn
 >>> hex_tx = '0100000001868278ed6ddfb6c1ed3ad5f8181eb0c7a385aa0836f01d5e4789e6\
 bd304d87221a000000db00483045022100dc92655fe37036f47756db8102e0d7d5e28b3beb83a8\
 fef4f5dc0559bddfb94e02205a36d4e4e6c7fcd16658c50783e00c341609977aed3ad00937bf4e\
