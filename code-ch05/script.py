@@ -95,7 +95,7 @@ class Script:
                 # get the length in bytes
                 length = len(cmd)
                 # for large lengths, we have to use a pushdata opcode
-                if length < 75:
+                if length <= 75:
                     # turn the length into a single byte integer
                     result += int_to_little_endian(length, 1)
                 elif length > 75 and length < 0x100:
