@@ -973,7 +973,7 @@ Please don't use this function in production, because the random number from thi
 <3> We use Fermat's little theorem again, and _n_, which is prime.
 <4> _s_ = (_z_ + _re_)/_k_.
 <5> It turns out that using the low-_s_ value will get nodes to relay our transactions.
-This is for malleability reasons.
+This is for malleability reasons (as explained in chapter 13).
 <6> We return a `Signature` object from the class defined earlier.
 
 [role="pagebreak-before less_space"]
