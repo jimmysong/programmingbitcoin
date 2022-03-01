@@ -2,7 +2,7 @@ from io import BytesIO
 from unittest import TestCase
 
 import json
-import requests
+# import requests
 
 from helper import (
     encode_varint,
@@ -25,27 +25,27 @@ class TxFetcher:
         else:
             return 'https://blockstream.info/api/'
 
-    @classmethod
-    def fetch(cls, tx_id, testnet=False, fresh=False):
-        if fresh or (tx_id not in cls.cache):
-            url = '{}/tx/{}/hex'.format(cls.get_url(testnet), tx_id)
-            response = requests.get(url)
-            try:
-                raw = bytes.fromhex(response.text.strip())
-            except ValueError:
-                raise ValueError('unexpected response: {}'.format(response.text))
-            if raw[4] == 0:
-                raw = raw[:4] + raw[6:]
-                tx = Tx.parse(BytesIO(raw), testnet=testnet)
-                tx.locktime = little_endian_to_int(raw[-4:])
-            else:
-                tx = Tx.parse(BytesIO(raw), testnet=testnet)
-            if tx.id() != tx_id:  # <1>
-                raise ValueError('not the same id: {} vs {}'.format(tx.id(), 
-                                  tx_id))
-            cls.cache[tx_id] = tx
-        cls.cache[tx_id].testnet = testnet
-        return cls.cache[tx_id]
+    # @classmethod
+    # def fetch(cls, tx_id, testnet=False, fresh=False):
+    #     if fresh or (tx_id not in cls.cache):
+    #         url = '{}/tx/{}/hex'.format(cls.get_url(testnet), tx_id)
+    #         response = requests.get(url)
+    #         try:
+    #             raw = bytes.fromhex(response.text.strip())
+    #         except ValueError:
+    #             raise ValueError('unexpected response: {}'.format(response.text))
+    #         if raw[4] == 0:
+    #             raw = raw[:4] + raw[6:]
+    #             tx = Tx.parse(BytesIO(raw), testnet=testnet)
+    #             tx.locktime = little_endian_to_int(raw[-4:])
+    #         else:
+    #             tx = Tx.parse(BytesIO(raw), testnet=testnet)
+    #         if tx.id() != tx_id:  # <1>
+    #             raise ValueError('not the same id: {} vs {}'.format(tx.id(),
+    #                               tx_id))
+    #         cls.cache[tx_id] = tx
+    #     cls.cache[tx_id].testnet = testnet
+    #     return cls.cache[tx_id]
     # end::source7[]
 
     @classmethod
@@ -108,15 +108,8 @@ class Tx:
         '''Takes a byte stream and parses the transaction at the start
         return a Tx object
         '''
-        # s.read(n) will return n bytes
-        # version is an integer in 4 bytes, little-endian
-        # num_inputs is a varint, use read_varint(s)
-        # parse num_inputs number of TxIns
-        # num_outputs is a varint, use read_varint(s)
-        # parse num_outputs number of TxOuts
-        # locktime is an integer in 4 bytes, little-endian
-        # return an instance of the class (see __init__ for args)
-        raise NotImplementedError
+        version = little_endian_to_int(s.read(4))
+        return cls(version, None, None, None, testnet=testnet)
 
     # tag::source6[]
     def serialize(self):
