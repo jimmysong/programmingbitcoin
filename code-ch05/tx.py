@@ -105,11 +105,12 @@ class Tx:
 
     @classmethod
     def parse(cls, s, testnet=False):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
         version = little_endian_to_int(s.read(4))
-        return cls(version, None, None, None, testnet=testnet)
+        num_inputs = read_varint(s)
+        inputs = []
+        for _ in range(num_inputs):
+            inputs.append(TxIn.parse(s))
+        return cls(version, inputs, None, None, testnet=testnet)
 
     # tag::source6[]
     def serialize(self):
@@ -154,15 +155,11 @@ class TxIn:
 
     @classmethod
     def parse(cls, s):
-        '''Takes a byte stream and parses the tx_input at the start
-        return a TxIn object
-        '''
-        # prev_tx is 32 bytes, little endian
-        # prev_index is an integer in 4 bytes, little endian
-        # use Script.parse to get the ScriptSig
-        # sequence is an integer in 4 bytes, little-endian
-        # return an instance of the class (see __init__ for args)
-        raise NotImplementedError
+        prev_tx = s.read(32)[::-1]
+        prev_index = little_endian_to_int(s.read(4))
+        script_sig = Script.parse(s)
+        sequence = little_endian_to_int(s.read(4))
+        return cls(prev_tx, prev_index, script_sig, sequence)
 
     # tag::source5[]
     def serialize(self):
