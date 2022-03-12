@@ -10,7 +10,7 @@ from helper import encode_base58_checksum, hash160
 
 class FieldElement:
 
-    def __init__(self, num, prime):
+    def __init__(self, num, prime): 
         if num >= prime or num < 0:
             error = 'Num {} not in field range 0 to {}'.format(
                 num, prime - 1)

@@ -644,10 +644,16 @@ def op_sha256(stack):
 
 
 def op_hash160(stack):
+    if len(stack) < 1:
+        return False
+    else: 
+        element = stack.pop()
+        stack.append(hash160(element))
+        return True
     # check that there's at least 1 element on the stack
     # pop off the top element from the stack
     # push a hash160 of the popped off element to the stack
-    raise NotImplementedError
+    
 
 
 # tag::source2[]
