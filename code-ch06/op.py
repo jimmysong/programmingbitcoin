@@ -647,8 +647,7 @@ def op_hash160(stack):
     if len(stack) < 1:
         return False
     else: 
-        element = stack.pop()
-        stack.append(hash160(element))
+        stack.append(hash160(stack.pop()))
         return True
     # check that there's at least 1 element on the stack
     # pop off the top element from the stack
