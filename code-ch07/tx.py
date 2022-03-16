@@ -177,7 +177,7 @@ class Tx:
                     sequence=tx_in.sequence
                 ).serialize()  # add the serialization of the input with the ScriptSig we want
             # Otherwise, the ScriptSig is empty
-            else:
+            else: 
                 s += TxIn(
                     prev_tx=tx_in.prev_tx,
                     prev_index=tx_in.prev_index,
