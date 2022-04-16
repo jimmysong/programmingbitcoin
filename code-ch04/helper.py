@@ -66,14 +66,14 @@ def little_endian_to_int(b):
     '''little_endian_to_int takes byte sequence as a little-endian number.
     Returns an integer'''
     # use int.from_bytes()
-    raise NotImplementedError
+    return int.from_bytes(b,'little')
 
 
 def int_to_little_endian(n, length):
     '''endian_to_little_endian takes an integer and returns the little-endian
     byte sequence of length'''
     # use n.to_bytes()
-    raise NotImplementedError
+    return n.to_bytes(length, 'little')
 
 
 class HelperTest(TestCase):
@@ -93,3 +93,7 @@ class HelperTest(TestCase):
         n = 10011545
         want = b'\x99\xc3\x98\x00\x00\x00\x00\x00'
         self.assertEqual(int_to_little_endian(n, 8), want)
+        
+        # 
+# test = HelperTest()
+# test.test_int_to_little_endian()

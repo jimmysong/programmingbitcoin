@@ -293,7 +293,17 @@ class ECCTest(TestCase):
         # initialize x's and y's as FieldElements
         # create p1, p2 and p3 as Points
         # check p1+p2==p3
-        raise NotImplementedError
+        for points in additions:
+            x1 = FieldElement(points[0], prime)
+            y1 = FieldElement(points[1], prime)
+            x2 = FieldElement(points[2], prime)
+            y2 = FieldElement(points[3], prime)
+            x3 = FieldElement(points[4], prime)
+            y3 = FieldElement(points[5], prime)
+            p1 = Point(x1, y1, a, b)
+            p2 = Point(x2, y2, a, b)
+            p3 = Point(x3, y3, a, b)
+            assert p1 + p2 == p3
 
     def test_rmul(self):
         # tests the following scalar multiplications
@@ -396,6 +406,7 @@ G = S256Point(
     0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 # end::source10[]
 
+print(N*G)
 
 class S256Test(TestCase):
 

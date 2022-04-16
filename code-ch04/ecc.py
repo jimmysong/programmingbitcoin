@@ -136,7 +136,7 @@ class FieldElementTest(TestCase):
 
 class Point:
 
-    def __init__(self, x, y, a, b):
+    def __init__(self, x, y, a, b): 
         self.a = a
         self.b = b
         self.x = x
@@ -164,14 +164,14 @@ class Point:
         if self.x is None:
             return 'Point(infinity)'
         elif isinstance(self.x, FieldElement):
-            return 'Point({},{})_{}_{} FieldElement({})'.format(
-                self.x.num, self.y.num, self.a.num, self.b.num, self.x.prime)
+            return f'Point({self.x.num},{self.y.num})_{self.a.num}_{self.b.num} FieldElement({self.x.prime})'
+
         else:
-            return 'Point({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
+            return f'Point({self.x},{self.y})_{self.a}_{self.b}'
 
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
-            raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
+            raise TypeError(f'Points {self}, {other} are not on the same curve')
         # Case 0.0: self is the point at infinity, return other
         if self.x is None:
             return other
@@ -424,10 +424,7 @@ class S256Point(Point):
     def address(self, compressed=True, testnet=False):
         '''Returns the address string'''
         h160 = self.hash160(compressed)
-        if testnet:
-            prefix = b'\x6f'
-        else:
-            prefix = b'\x00'
+        prefix = b'\x6f' if testnet else b'\x00'
         return encode_base58_checksum(prefix + h160)
     # end::source5[]
 
@@ -451,10 +448,7 @@ class S256Point(Point):
         else:
             even_beta = S256Field(P - beta.num)
             odd_beta = beta
-        if is_even:
-            return S256Point(x, even_beta)
-        else:
-            return S256Point(x, odd_beta)
+        return S256Point(x, even_beta) if is_even else S256Point(x, odd_beta)
     # end::source3[]
 
 
