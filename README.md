@@ -59,7 +59,8 @@ Windows
 `C:\programmingbitcoin> virtualenv -p`		
 `C:\PathToYourPythonInstallation\Python.exe .venv`		
 `C:\programmingbitcoin> .venv\Scripts\activate.bat`		
-`C:\programmingbitcoin> pip install -r requirements.txt`		
+`C:\programmingbitcoin> pip install -r requirements.txt`
+
 ###8. Run Jupyter Notebook:
 
 `(.venv) $ jupyter notebook`
