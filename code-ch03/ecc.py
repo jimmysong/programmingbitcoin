@@ -274,7 +274,7 @@ class ECCTest(TestCase):
     # end::source2[]
 
     def test_add(self):
-        # tests the following additions on curve y^2=x^3-7 over F_223:
+        # tests the following additions on curve y^2=x^3+7 over F_223:
         # (192,105) + (17,56)
         # (47,71) + (117,141)
         # (143,98) + (76,66)
