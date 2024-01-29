@@ -292,8 +292,19 @@ class ECCTest(TestCase):
         # loop over additions
         # initialize x's and y's as FieldElements
         # create p1, p2 and p3 as Points
-        # check p1+p2==p3
-        raise NotImplementedError
+        
+        for x1_raw, y1_raw, x2_raw, y2_raw, x3_raw, y3_raw in additions:
+            x1, y1 = FieldElement(x1_raw, prime), FieldElement(y1_raw, prime)
+            x2, y2 = FieldElement(x2_raw, prime), FieldElement(y2_raw, prime)
+            x3, y3 = FieldElement(x3_raw, prime), FieldElement(y3_raw, prime)
+
+            p1 = Point(x1, y1, a, b)
+            p2 = Point(x2, y2, a, b)
+            p3 = Point(x3, y3, a, b)
+
+            # Check if p1 + p2 equals p3
+            assert p1 + p2 == p3, f"Error: {p1} + {p2} does not equal {p3}"
+
 
     def test_rmul(self):
         # tests the following scalar multiplications
@@ -391,9 +402,14 @@ class S256Point(Point):
 
 
 # tag::source10[]
-G = S256Point(
-    0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
-    0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
+# Define the generator point G for secp256k1
+prime = 2**256 - 2**32 - 977
+a = FieldElement(0, prime)
+b = FieldElement(7, prime)
+
+Gx = FieldElement(55066263022277343669578718895168534326250603453777594175500187360389116729240, prime)
+Gy = FieldElement(32670510020758816978083085130507043184471273380659243275938904335757337482424, prime)
+G = Point(Gx, Gy, a, b)
 # end::source10[]
 
 
