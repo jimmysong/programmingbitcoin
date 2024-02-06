@@ -635,7 +635,7 @@ class PrivateKey:
             s = N - s
         # return an instance of Signature:
         # Signature(r, s)
-        return Signature(r, s)
+        return Signature(r, s)   
 
     def deterministic_k(self, z):
         k = b'\x00' * 32
