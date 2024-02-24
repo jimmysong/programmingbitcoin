@@ -642,12 +642,16 @@ def op_sha256(stack):
     stack.append(hashlib.sha256(element).digest())
     return True
 
-
 def op_hash160(stack):
     # check that there's at least 1 element on the stack
+    if len(stack) < 1:
+        return False
     # pop off the top element from the stack
+    element = stack.pop()
     # push a hash160 of the popped off element to the stack
-    raise NotImplementedError
+    h160 = hash160(element)
+    stack.append(h160)
+    return True
 
 
 # tag::source2[]
@@ -662,13 +666,27 @@ def op_hash256(stack):
 
 def op_checksig(stack, z):
     # check that there are at least 2 elements on the stack
+    if len(stack) < 2:
+        return False
     # the top element of the stack is the SEC pubkey
+    sec_pubkey = stack.pop()
     # the next element of the stack is the DER signature
     # take off the last byte of the signature as that's the hash_type
+    der_signature = stack.pop()[:-1]
     # parse the serialized pubkey and signature into objects
+    try:
+        point = S256Point.parse(sec_pubkey)
+        sig = Signature.parse(der_signature)
+    except (ValueError, SyntaxError) as e:
+        return False
     # verify the signature using S256Point.verify()
     # push an encoded 1 or 0 depending on whether the signature verified
-    raise NotImplementedError
+    if point.verify(z, sig):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+    return True
+
 
 
 def op_checksigverify(stack, z):
