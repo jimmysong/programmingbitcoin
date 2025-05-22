@@ -1,0 +1,390 @@
+[[chapter_tx]]
+
+== Transaction Creation and Validation
+
+[.lead]
+One of the trickiest things to code in Bitcoin is validating transactions.
+Another one is creating transactions.
+In this chapter, we'll cover the exact steps to do both.
+Toward the end of the chapter, we'll be creating a testnet transaction and broadcasting it.
+
+=== Validating Transactions
+
+Every((("transactions", "validating", id="Tvalid07"))) node, when receiving transactions, makes sure that each transaction adheres to the network rules.
+This process is called _transaction validation_.
+Here are the main things that a node checks:
+
+1. The inputs of the transaction are previously unspent.
+2. The sum of the inputs is greater than or equal to the sum of the outputs.
+3. The ScriptSig successfully unlocks the previous ScriptPubKey.
+
+#1 prevents double-spending.
+Any input that's been spent (that is, included in the blockchain) cannot be spent again.
+
+#2 makes sure no new bitcoins are created (except in a special type of transaction called a coinbase transaction; more on that in <<chapter_blocks>>).
+
+#3 makes sure that the combined script is valid.
+In the vast majority of transactions, this means checking that the one or more signatures in the ScriptSig are valid.
+
+Let's look at how each condition is checked.
+
+[role="pagebreak-before"]
+==== Checking the Spentness of Inputs
+
+To((("inputs")))((("double-spending, preventing"))) prevent double-spending, a node checks that each input exists and has not been spent.
+This can be checked by any full node by looking at the UTXO set (see <<chapter_tx_parsing>>).
+We cannot determine from the transaction itself whether it's double-spending, much like we cannot look at a personal check and determine whether it's overdrafting.
+The only way to know is to have access to the UTXO set, which requires calculation from the entire set of transactions.
+
+In Bitcoin, we can determine whether an input is being double-spent by keeping track of the UTXOs.
+If an input is in the UTXO set, that transaction input both exists and is _not_ double-spending.
+If the transaction passes the rest of the validity tests, then we remove all the inputs of the transaction from the UTXO set.
+Light clients that do not have access to the blockchain have to trust other nodes for a lot of the information, including whether an input has already been spent.
+
+A full node can check the spentness of an input pretty easily, but a light client has to get this information from someone else.
+
+==== Checking the Sum of the Inputs Versus the Sum of the Outputs
+
+Nodes((("outputs"))) also make sure that the sum of the inputs is greater than or equal to the sum of the outputs.
+This ensures that the transaction does not create new coins.
+The one exception is a coinbase transaction, which we'll study more in <<chapter_blocks>>.
+Since inputs don't have an amount field, this must be looked up on the blockchain.
+Once again, full nodes have access to the amounts associated with the unspent output, but light clients have to depend on full nodes to supply this information.
+
+We covered how to calculate fees in <<chapter_tx_parsing>>.
+Checking that the sum of the inputs is greater than or equal to the sum of the outputs is the same as checking that the fee is not negative (that is, creating money).
+Recall the last exercise in <<chapter_tx_parsing>>.
+The method `fee` looks like this:
+
+[source,python]
+----
+class Tx:
+    ...
+include::code-ch07/tx.py[tag=source1]
+----
+
+We can test to see if this transaction is trying to create money by using this method:
+
+[source,python]
+----
+include::code-ch07/examples.py[tag=example1]
+----
+<1> This only works because we're using Python (see <<valueOverflow>>).
+
+If the fee is negative, we know that the `output_sum` is greater than the `input_sum`, which is another way of saying that this transaction is trying to create bitcoins out of the ether.
+
+[[valueOverflow]]
+[NOTE]
+.The Value Overflow Incident
+====
+Back((("value overflow incident"))) in 2010, there was a transaction that created 184 billion new bitcoins.
+This was due to the fact that in C++, the amount field is a _signed_ integer and not an _unsigned_ integer.
+That is, the value could be negative!
+
+The clever transaction passed all the checks, including the one for not creating new bitcoins, but only because the output amounts overflowed past the maximum number.
+2^64^ is ~1.84 &#215; 10^19^ satoshis, which is 184 billion bitcoins.
+The fee was negative by enough that the C++ code was tricked into believing that the fee was actually positive by 0.1 BTC!
+
+The vulnerability is detailed in CVE-2010-5139 and was patched via a soft fork in Bitcoin Core 0.3.11.
+The transaction and the extra bitcoins it created were invalidated retroactively by a block reorganization, which is another way of saying that the block including the value overflow transaction and all the blocks built on top of it were replaced.
+====
+
+==== Checking the Signature
+
+Perhaps((("signing and verification", "signature verification", id="SAVsigver07"))) the trickiest part of validating a transaction is the process of checking its signatures.
+A transaction typically has at least one signature per input.
+If there are multisig outputs being spent, there may be more than one.
+As we learned in <<chapter_elliptic_curve_cryptography>>, the ECDSA signature algorithm requires the public key _P_, the signature hash _z_, and the signature (_r_,_s_).
+Once these are known, the process of verifying the signature is pretty simple, as we already coded in <<chapter_elliptic_curve_cryptography>>:
+
+[source,python]
+----
+include::code-ch07/examples.py[tag=example2]
+----
+
+SEC((("OP_CHECKSIG operation"))) public keys and DER signatures are in the stack when a command like `OP_CHECKSIG` is executed, making getting the public key and signature pretty straightforward (see <<chapter_script>>).
+The hard part is getting the signature hash.
+A naive way to do this would be to hash the transaction serialization as shown in <<a_signature_is_in_the_yellow_highlighted_part_or_the_scriptsig>>.
+Unfortunately, we can't do that, since the signature is part of the ScriptSig and a signature can't sign itself.
+
+[[a_signature_is_in_the_yellow_highlighted_part_or_the_scriptsig]]
+.A signature is in the yellow highlighted part, or the ScriptSig
+image::images/prbc_0701.png[Validation Start]
+
+Instead, we modify the transaction before signing it.
+That is, we compute a different signature hash _for each input_.
+The procedure is as follows.
+
+===== Step 1: Empty all the ScriptSigs
+
+The first step is to empty all the ScriptSigs when checking the signature (<<empty_each_inputs_scriptsig_in_yellow_highlighted_field>>).
+The same procedure is used for creating the signature, except the ScriptSigs are usually already empty.
+
+[[empty_each_inputs_scriptsig_in_yellow_highlighted_field]]
+.Empty each input's ScriptSig (in yellow highlighted field, now 00)
+image::images/prbc_0702.png[Validation Step 1]
+
+Note that this example has only one input, so only that input's ScriptSig is emptied, but it's possible to have more than one input. In that case, each of those would be emptied.
+
+===== Step 2: Replace the ScriptSig of the input being signed with the previous ScriptPubKey
+
+Each input points to a previous transaction output, which has a ScriptPubKey. Recall the diagram from <<chapter_script>>, shown again in <<scriptpubkey_and_scriptsig2>>.
+
+[[scriptpubkey_and_scriptsig2]]
+.Combining the ScriptPubKey and ScriptSig
+image::images/prbc_0703.png[ScriptPubKey and ScriptSig]
+
+We take the ScriptPubKey that the input is pointing to and put that in place of the empty ScriptSig (<<replace_the_scriptsig_yellow_highlighted_field_for_one_of_the_inputs_with_the_previous_scriptpubkey>>).
+This may require a lookup on the blockchain, but in practice the signer already knows the ScriptPubKey, as the input is one where the signer has the private key.
+
+[[replace_the_scriptsig_yellow_highlighted_field_for_one_of_the_inputs_with_the_previous_scriptpubkey]]
+.Replace the ScriptSig (yellow highlighted field) for one of the inputs with the previous ScriptPubKey
+image::images/prbc_0704.png[Validation Step 2]
+
+===== Step 3: Append the hash type
+
+Last, we add a 4-byte((("SIGHASH_ALL"))) hash type to the end.
+This is to specify what the signature is authorizing.
+The signature can authorize this input to go with all the other inputs and outputs (`SIGHASH_ALL`), go with a specific output (`SIGHASH_SINGLE`), or go with any output whatsoever (`SIGHASH_NONE`).
+The latter two have some theoretical use cases, but in practice, almost every transaction is signed with `SIGHASH_ALL`.
+There's also a rarely used hash type called `SIGHASH_ANYONECANPAY` that can be combined with any of the previous three, which we won't get into here.
+For `SIGHASH_ALL`, the final transaction must have the exact outputs that were signed or the input signature is invalid.
+
+The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in little-endian over 4 bytes, which makes the modified transaction look like <<append_the_hash_type_sighash_all_or_the_orange_01000000>>.
+
+[[append_the_hash_type_sighash_all_or_the_orange_01000000]]
+.Append the hash type (SIGHASH_ALL), or the brown 01000000
+image::images/prbc_0705.png[Validation Step 3]
+
+The hash256 of this modified transaction is interpreted as a big-endian integer to produce _z_.
+The code for converting the modified transaction to _z_ looks like this:
+
+[source,python]
+----
+include::code-ch07/examples.py[tag=example3]
+----
+
+Now that we have our _z_, we can take the public key in SEC format and the signature in DER format from the ScriptSig to verify the signature:
+
+[source,python]
+----
+include::code-ch07/examples.py[tag=example4]
+----
+
+We can code this transaction validation process into a method for `Tx`.
+Thankfully, the Script engine can already handle signature verification (see <<chapter_script>>), so our task here is to glue everything together.
+We need _z_, or the signature hash, to pass into the `evaluate` method and we need to combine the ScriptSig and ScriptPubKey.
+
+[NOTE]
+.Quadratic Hashing
+====
+The((("quadratic hashing problem")))((("signing and verification", "signature hash")))((("signature hash")))((("hashes", "signature hash"))) signature hashing algorithm is inefficient and wasteful.
+The _quadratic hashing problem_ states that time required to calculate the signature hashes increases quadratically with the number of inputs in a transaction.
+Specifically, not only will the number of hash256 operations for calculating _z_ increase on a per-input basis, but in addition, the length of the transaction will increase, slowing down each hash256 operation because the entire signature hash will need to be calculated anew for each input.
+
+This was particularly obvious with the biggest transaction mined to date:
+
+----
+bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2
+b4e3e08
+----
+
+This transaction had 5,569 inputs and 1 output and took many miners over a minute to validate, as the signature hashes for the transaction were expensive to calculate.
+
+Segwit (<<chapter_segwit>>) fixes this with a different way of calculating the signature hash, which is specified in((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) BIP0143.((("", startref="Tvalid07")))((("", startref="SAVsigver07")))
+====
+
+include::code-ch07/answers.py[tag=exercise1,indent=0]
+
+include::code-ch07/answers.py[tag=exercise2,indent=0]
+
+==== Verifying the Entire Transaction
+
+Now((("transactions", "verifying entire transaction"))) that we can verify an input, the task of verifying the entire transaction is straightforward:
+
+[source,python]
+----
+class Tx:
+...
+include::code-ch07/tx.py[tag=source2]
+----
+<1> We make sure that we are not creating money.
+<2> We make sure that each input has a correct ScriptSig.
+
+Note that a full node would verify more things, like checking for double-spends and checking some other consensus rules not discussed in this chapter (max sigops, size of ScriptSig, etc.), but this is good enough for our library.
+
+=== Creating Transactions
+
+The((("transactions", "creating", id="Tcreate07"))) code to verify transactions will help quite a bit with creating transactions.
+We can create transactions that fit the verification process.
+Transactions we create will require the sum of the inputs to be greater than or equal to the sum of the outputs.
+Similarly, transactions we create will require a ScriptSig that, when combined with the ScriptPubKey, will be valid.
+
+To create a transaction, we need at least one output we've received.
+That is, we need an output from the UTXO set whose ScriptPubKey we can unlock.
+The vast majority of the time, we need one or more private keys corresponding to the public keys that are hashed in the ScriptPubKey.
+
+The rest of this chapter will be concerned with creating a transaction whose inputs are locked by p2pkh ScriptPubKeys.
+
+==== Constructing the Transaction
+
+The construction of a transaction requires answering some basic questions:
+
+1. Where do we want the bitcoins to go?
+2. What UTXOs can we spend?
+3. How quickly do we want this transaction to get into the blockchain?
+
+We'll be using testnet for this example, though this can easily be applied to mainnet.
+
+The first question is about how much we want to pay whom.
+We can pay one or more addresses.
+In this example, we will pay 0.1 testnet bitcoins (tBTC) to `mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf`.
+
+The second question is about what's in our wallet.
+What do we have available to spend?
+In this example, we have an output denoted by a transaction ID and output index:
+
+----
+0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299:13
+----
+
+[role="pagebreak-before"]
+When we view this output on a testnet((("block explorers"))) block explorer (<<utxo_that_were_spending>>), we can see that our output is worth 0.44 tBTC.
+
+[[utxo_that_were_spending]]
+.UTXO that we're spending
+image::images/prbc_0706.png[Transaction seen on the blockchain]
+
+Since this is more than 0.1 tBTC, we'll want to send the rest back to ourselves.
+Though it's generally bad privacy and security practice to reuse addresses, we'll send the bitcoins back to `mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2` to make the transaction construction easier.
+
+.Why Reusing Addresses Is a Bad Idea
+[WARNING]
+====
+Back((("addresses, reusing")))((("privacy issues, reusing addresses"))) in <<chapter_script>>, we went through how p2pk was inferior to p2pkh, in part because it was only protected by ECDSA.
+p2pkh, on the other hand, is also protected by sha256 and ripemd160.
+However, because the blockchain is public, once we spend from a ScriptPubKey corresponding to our address, we reveal our public key as part of the ScriptSig.
+Once we've revealed that public key, sha256 and ripemd160 no longer protect us, as the attacker knows the public key and doesn't have to guess it.
+
+((("discrete log problem")))As of this writing, we are still protected by the discrete log problem, which is unlikely to be broken any time soon.
+It's important from a security perspective, however, to understand what we're protected by.
+
+The other reason to not reuse addresses is for privacy.
+Having a single address for all our transactions means that people can link our transactions together.
+If, for example, we bought something private (say, medication to treat some disease we don't want others to know about) and spent another output with the same ScriptPubKey for a donation to some charity, the charity and the medication vendor could identify that we had done business with the other.
+
+Privacy leaks tend to become security holes over time.
+====
+
+The third question is really about fees.
+If we want to get the transaction in the blockchain faster, we'll have to pay more fees; if we don't mind waiting, we can pay less.
+In our case, we'll use 0.01 tBTC as our fee.
+
+.Fee Estimation
+[NOTE]
+====
+Fee((("transactions", "transaction fees"))) estimation is done on a per-byte basis.
+If your transaction is 600 bytes, it will have double the fees as a transaction that's 300 bytes.
+This is because block space is limited and larger transactions take up more space.
+This calculation has changed a bit since Segwit (see <<chapter_segwit>>), but the general principle still applies.
+We want to pay enough on a per-byte basis so that miners are motivated to include our transaction as soon as possible.
+
+When blocks aren't full, almost any amount above the default relay limit (1 satoshi/byte) is enough to get a transaction included.
+When blocks are full, this is not an easy thing to estimate.
+There are multiple ways to estimate fees, including:
+
+* Looking at various fee levels and estimating the probability of inclusion based on past blocks and the mempools at the time
+* Looking at the current mempool and adding a fee that roughly corresponds to enough economic incentivization
+* Going with some fixed fee
+
+Many wallets use different strategies, and this is an active area of research.((("", startref="Tcreate07")))
+====
+
+==== Making the Transaction
+
+We((("transactions", "combining to make"))) have a plan for a new transaction with one input and two outputs.
+But first, let's look at some other tools we'll need.
+
+We need a way to take an address and get the 20-byte hash out of it.
+This is the opposite of encoding an address, so we call the function `decode_base58`:
+
+[source,python]
+----
+include::code-ch07/helper.py[tag=source1]
+----
+<1> We get what number is encoded in this Base58 address.
+<2> Once we have the number, we convert it to big-endian bytes.
+<3> The first byte is the network prefix and the last 4 are the checksum.
+The middle 20 are the actual 20-byte hash (aka hash160).
+
+We also need a way to convert the 20-byte hash to a ScriptPubKey.
+We call this function `p2pkh_script` since we're converting the hash160 to a p2pkh:
+
+[source,python]
+----
+include::code-ch07/script.py[tag=source1]
+----
+
+Note((("OP_DUP operation")))((("OP_HASH160 operation")))((("OP_EQUALVERIFY operation")))((("OP_CHECKSIG operation"))) that `0x76` is `OP_DUP`, `0xa9` is `OP_HASH160`, `h160` is a 20-byte element, `0x88` is `OP_EQUALVERIFY`, and `0xac` is `OP_CHECKSIG`.
+This is the p2pkh ScriptPubKey command set from <<chapter_script>>.
+
+Given these tools, we can proceed to transaction creation:
+
+[source,pycon]
+----
+include::code-ch07/examples.py[tag=example5]
+----
+<1> The amount must be in satoshis; given there are 100,000,000 satoshis per BTC, we have to multiply and cast to an integer.
+<2> We have to designate which network to look up using the `testnet=True` pass:[<span class="keep-together">argument</span>].
+
+We have created the actual transaction, but every ScriptSig in this transaction is currently empty. Filling it is where we turn next.
+
+==== Signing the Transaction
+
+Signing((("signing and verification", "signing process", id="SAVsign07")))((("transactions", "signing", id="Tsign07"))) the transaction could be tricky, but we know how to get the signature hash, _z_, from earlier in this chapter.
+If we have the private key whose public key hash160s to the 20-byte hash in the ScriptPubKey, we can sign _z_ and produce the DER signature:
+
+[source,pycon]
+----
+include::code-ch07/examples.py[tag=example6]
+----
+<1> We only need to sign the first input—there's only one.
+Multiple inputs would require us to sign each input with the right private key.
+<2> The signature is actually a combination of the DER signature and the hash type, which is `SIGHASH_ALL` in our case.
+<3> The ScriptSig of a p2pkh has exactly two elements, as we saw in <<chapter_script>>: the signature and SEC format public key.
+<4> We only have one input that we need to sign, but if there were more, this process of creating the ScriptSig would need to be done for each input.
+
+include::code-ch07/answers.py[tag=exercise3,indent=0]
+
+=== Creating Your Own Transactions on testnet
+
+To((("testnet"))) create your own transaction, get some coins for yourself.
+To do that you'll need an address.
+If you completed the last exercise in <<chapter_serialization>>, you should have your own testnet address and private key.
+If you don't remember, here's how:
+
+[source,python]
+----
+include::code-ch07/examples.py[tag=example7]
+----
+<1> Please use a phrase other than `Jimmy Song secret`.
+
+Once you have an address, you can get some coins from one of the testnet faucets that provide free testnet coins for testing purposes.
+You can Google "testnet bitcoin faucet" to find one, or use one from the https://en.bitcoin.it/wiki/Testnet#Faucets[list on the wiki].
+My website, https://faucet.programmingbitcoin.com[], is also updated to point to a testnet faucet that works.
+Enter your new testnet address into any of these faucets to get some testnet coins.
+
+After receiving some coins, spend them using this library.
+This is a big accomplishment for a budding Bitcoin developer, so please take some time to complete these exercises.((("", startref="Tsign07")))((("", startref="SAVsign07")))
+
+include::code-ch07/answers.py[tag=exercise4,indent=0]
+
+include::code-ch07/answers.py[tag=exercise5,indent=0]
+
+=== Conclusion
+
+We've successfully validated existing transactions on the blockchain, and you've also created your own transactions on testnet!
+This is a major achievement, and you should be proud.
+
+The code we have so far will do p2pkh and p2pk.
+In the next chapter, we turn to a more advanced smart contract, p2sh.

@@ -1,0 +1,238 @@
+[[chapter_bloom_filters]]
+
+== Bloom Filters
+
+[.lead]
+In <<chapter_spv>> we learned how to validate a Merkle block.
+A full node can provide a proof of inclusion for transactions of interest through the `merkleblock` command.
+But how does the full node know which transactions are of interest?
+
+A light client could tell the full node its addresses (or ScriptPubKeys).
+The full node can check for transactions that are relevant to these addresses, but that would be compromising the light client's privacy.
+A light client wouldn't want to reveal, for example, that it has 1,000 BTC to a full node.
+Privacy leaks are security leaks, and in Bitcoin, it's generally a good idea to not leak any privacy whenever possible.
+
+One((("Bloom filters", "purpose of", id="BFpurpose12"))) solution is for the light client to tell the full node enough information to create a _superset_ of all transactions of interest.
+To create this superset, we use what's called a _Bloom filter_.
+
+=== What Is a Bloom Filter?
+
+A Bloom filter is a filter for all possible transactions.
+Full nodes run transactions through a Bloom filter and send `merkleblock` commands for transactions that make it through.
+
+Suppose there are 50 total transactions.
+There is one transaction a light client is interested in.
+The light client wants to "hide" the transaction among a group of five transactions.
+This requires a function that groups the 50 transactions into 10 different buckets, and the full node can then send a single bucket of transactions, in a manner of speaking.
+This grouping would have to be _deterministic_—that is, be the same each time.
+How can this be accomplished?
+
+The solution is to use a hash function to get a deterministic number and modulo to organize transactions into buckets.
+
+A Bloom filter is a computer science structure that can be used on any data in a set, so suppose that we have one item, "hello world", that we want to create a Bloom filter for.
+We need a hash function, so we'll use one we already have: hash256.
+The process of figuring out what bucket our item goes into looks like this:
+
+[source,python]
+----
+include::code-ch12/examples.py[tag=example1]
+----
+<1> Our `bit_field` is the list of "buckets," and we want there to be 10.
+<2> We hash the item with hash256.
+<3> We interpret this as a big-endian integer and modulo by 10 to determine the bucket this item belongs to.
+<4> We indicate the bucket we want in the Bloom filter.
+
+Conceptually, what we just did looks like <<ten_bit_bloom_filter_with_1_element>>.
+
+[[ten_bit_bloom_filter_with_1_element]]
+.10-bit Bloom filter with one element
+image::images/prbc_1201.png[Simple Bloom filter]
+
+Our Bloom filter consists of:
+
+1. The size of the bit field
+2. The hash function used (and how we converted that to a number)
+3. The bit field, which indicates the bucket we're interested in
+
+This works great for a single item, so it would work for a single address/ScriptPubKey/transaction ID of interest.
+What do we do when we're interested in more than one item?
+
+We can run a second item through the same filter and set that bit to 1 as well.
+The full node can then send multiple buckets of transactions instead of a single bucket.
+Let's create a Bloom filter with two items, "hello world" and "goodbye", using the following code:
+
+[source,python]
+----
+include::code-ch12/examples.py[tag=example2]
+----
+
+<1> We are creating a filter for two items here, but this can be extended to many more.
+
+<<ten_bit_bloom_filter_with_two_elements>> shows what this looks like conceptually.
+
+[[ten_bit_bloom_filter_with_two_elements]]
+.10-bit Bloom filter with two elements
+image::images/prbc_1202.png[Two Item Bloom filter]
+
+If the space of all possible items is 50, 10 items on average will make it through this filter instead of the 5 when we only had 1 item of interest, because 2 buckets are returned, not 1.((("", startref="BFpurpose12")))
+
+include::code-ch12/answers.py[tag=exercise1,indent=0]
+
+==== Going a Step Further
+
+Suppose((("Bloom filters", "using multiple hash functions"))) that the space of all items is 1 million and we want bucket sizes to still be 5. We would need a Bloom filter that's 1,000,000 / 5 = 200,000 bits long.
+Each bucket would have on average 5 items and we would get 5 times the number of items we're interested in, 20% of which would be items of interest.
+200,000 bits is 25,000 bytes and is a lot to transmit.
+Can we do better?
+
+A Bloom filter using multiple hash functions can shorten the bit field considerably.
+If we use 5 hash functions over a bit field of 32, we have 32!/(27!5!) ~ 200,000 possible 5-bit combinations in that 32-bit field.
+Of 1 million possible items, 5 items on average should have that 5-bit combination.
+Instead of transmitting 25K bytes, we can transmit just 32 bits, or 4 bytes!
+
+Here's what that would look like.
+For simplicity, we stick to the same 10-bit field but still have two items of interest:
+
+[source,python]
+----
+include::code-ch12/examples.py[tag=example3]
+----
+<1> We iterate over two different hash functions (hash256 and hash160), but we could just as easily have more.
+
+Conceptually, <<ten_bit_bloom_filter_with_two_elements_and_two_hash_functions>> shows what the preceding code does.
+
+[[ten_bit_bloom_filter_with_two_elements_and_two_hash_functions]]
+.10-bit Bloom filter with two elements and two hash functions
+image::images/prbc_1203.png[Multiple Hash Functions]
+
+A Bloom filter can be optimized by changing the number of hash functions and bit field size to get a desirable false-positive rate.
+
+=== BIP0037 Bloom Filters
+
+BIP0037((("Bloom filters", "BIP0037 Bloom filters")))((("BIP (Bitcoin Improvement Proposals)", "BIP0037"))) specifies Bloom filters in network communication. The information contained in a Bloom filter is:
+
+1. The size of the bit field, or how many buckets there are.
+The size is specified in bytes (8 bits per byte) and rounded up if necessary.
+2. The number of hash functions.
+3. A "tweak" to be able to change the Bloom filter slightly if it hits too many items.
+4. The bit field that results from running the Bloom filter over the items of interest.
+
+While we could define lots of hash functions (sha512, keccak384, ripemd160, blake256, etc.), in practice, we use a single hash function with a different seed.
+This allows the implementation to be simpler.
+
+The((("hashes", "murmur3 hash function")))((("murmur3 hash function"))) hash function we use is called _murmur3_.
+Unlike sha256, murmur3 is not cryptographically secure, but it is much faster.
+The task of filtering and getting a deterministic, evenly distributed modulo does not require cryptographic security but benefits from speed, so murmur3 is the appropriate tool for the job.
+The seed formula is defined this way:
+[source,python]
+----
+i*0xfba4c795 + tweak
+----
+`fba4c795` is a constant for Bitcoin Bloom filters.
+`i` is 0 for the first hash function, 1 for the second, 2 for the third, and so on.
+The `tweak` is a bit of entropy that can be added if the results of of one tweak are not satisfactory.
+The hash functions and the size of the bit field are used to calculate the bit field, which then gets transmitted:
+
+[source,python]
+----
+include::code-ch12/examples.py[tag=example4]
+----
+<1> `murmur3` is implemented in pure Python in _helper.py_.
+<2> `BIP37_CONSTANT` is the `fba4c795` number specified in BIP0037.
+<3> We iterate over some items of interest.
+<4> We use two hash functions.
+<5> This is the seed formula.
+<6> murmur3 returns a number, so we don't have to do a conversion to an integer.
+
+This 2-byte Bloom filter has 4 bits set to 1 out of 16, so the probability of any random item passing through this filter is 1/4 &#215; 1/4 = 1/16.
+If the space of all items numbers 160, a client will receive 10 items on average, 2 of which will be interesting.
+
+We can start coding a `BloomFilter` class now:
+
+[source,python]
+----
+include::code-ch12/bloomfilter.py[tag=source1]
+----
+
+include::code-ch12/answers.py[tag=exercise2,indent=0]
+
+include::code-ch12/answers.py[tag=exercise3,indent=0]
+
+=== Loading a Bloom Filter
+
+Once((("Bloom filters", "loading"))) a light client has created a Bloom filter, it needs to let the full node know the details of the filter so the full node can send proofs of inclusion.
+The first thing a light client must do is set the optional relay flag in the version message (see <<chapter_networking>>) to 0.
+This tells the full node not to send transaction messages unless they match a Bloom filter or they have been specifically requested.
+After the relay flag, a light client then communicates to the full node the Bloom filter itself.
+The command to set the Bloom filter is called `filterload`.
+The payload looks like <<parsed_filterload>>.
+
+[[parsed_filterload]]
+.Parsed filterload
+image::images/prbc_1204.png[filterload Command]
+
+The elements of a Bloom filter are encoded into bytes. The bit field, hash function count, and tweak are encoded in this message.
+The last field, matched item flag, is a way of asking the full node to add any matched transactions to the Bloom filter.
+
+include::code-ch12/answers.py[tag=exercise4,indent=0]
+
+=== Getting Merkle Blocks
+
+There((("Bloom filters", "getting Merkle blocks")))((("Merkle blocks", "filtered")))((("filtered blocks"))) is one more command that a light client needs: Merkle block information about transactions of interest from the full node.
+The `getdata` command is what communicates blocks and transactions.
+The specific type of data that a light client will want from a full node is something called a _filtered block_.
+A filtered block is asking for transactions that pass through the Bloom filter in the form of Merkle blocks.
+In other words, the light client can ask for Merkle blocks whose transactions of interest match the Bloom filter.
+
+<<parsed_getdata>> depicts the payload for `getdata`.
+
+[[parsed_getdata]]
+.Parsed getdata
+image::images/prbc_1205.png[getdata Command]
+
+The number of items as a varint specifies how many items we want.
+Each item has a type.
+A type value of 1 is a transaction (<<chapter_tx_parsing>>), 2 is a normal block (<<chapter_blocks>>), 3 is a Merkle block (<<chapter_spv>>), and 4 is a compact block (not covered in this book).
+
+We can create this message in _network.py_:
+
+[source,python]
+----
+include::code-ch12/network.py[tag=source1]
+----
+<1> We store the items we want.
+<2> We add items to the message using the `add_data` method.
+
+include::code-ch12/answers.py[tag=exercise5,indent=0]
+
+=== Getting Transactions of Interest
+
+A((("Bloom filters", "getting transactions of interest")))((("transactions of interest, collecting"))) light client that loads a Bloom filter with a full node will get all the information needed to prove that transactions of interest are included in particular blocks:
+
+[source,python]
+----
+include::code-ch12/examples.py[tag=example5]
+----
+<1> We are creating a Bloom filter that's 30 bytes and uses 5 hash functions and a particularly popular '90s tweak.
+<2> We filter for the address above.
+<3> We send the `filterload` command from the Bloom filter we made.
+<4> We get the block headers after `last_block_hex`.
+<5> We create a getdata message for Merkle blocks that may have transactions of interest.
+<6> We request a Merkle block proving transactions of interest to us are included.
+Most blocks will probably be complete misses.
+<7> The getdata message asks for 2,000 Merkle blocks after the block defined by `last_block_hex`.
+<8> We wait for the `merkleblock` command, which proves inclusion, and the `tx` command, which gives us the transaction of interest.
+<9> We check that the Merkle block proves transaction inclusion.
+<10> We're looking for UTXOs for `address`, and we print to screen if we find one.
+
+What we've done is look at 2,000 blocks after a particular block for UTXOs corresponding to a particular address.
+This is without the use of any block explorer, which preserves, to some degree, our privacy.
+
+include::code-ch12/answers.py[tag=exercise6,indent=0]
+
+=== Conclusion
+
+In this chapter, we created everything necessary to connect peer to peer as a light client and ask for and receive the UTXOs necessary to construct a transaction, all while preserving some privacy by using a Bloom filter.
+
+We now turn to Segwit, which is a new type of transaction that was activated in 2017.
+

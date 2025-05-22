@@ -1,0 +1,2 @@
+/* Fix pre spacing in lists (STYL-1162) */
+li pre { line-height: 125% !important; }

@@ -1,0 +1,118 @@
+[[chapter_advanced]]
+== Advanced Topics and Next Steps
+
+If you've made it this far, congratulations!
+You've learned a lot about Bitcoin's inner workings, and hopefully you are inspired to learn a lot more.
+This book has only scratched the surface.
+In this chapter, we'll go through some other topics you might want to explore, how to bootstrap your career as a Bitcoin developer, and ways to contribute to the community.
+
+=== Suggested Topics to Study Next
+
+==== Wallets
+
+Creating((("Bitcoin wallets")))((("wallets"))) a wallet is a challenging task because securing private keys is very difficult.
+That said, there are a bunch of standards for creating wallets that can help.
+
+===== Hierarchical Deterministic Wallets
+
+For((("deterministic wallets")))((("hierarchical deterministic (HD) wallets")))((("addresses, reusing")))((("privacy issues, reusing addresses"))) privacy purposes, reusing addresses is very bad (see <<chapter_tx>>).
+That means we need to create lots of addresses.
+Unfortunately, storing a different secret for each address generated can become a security and backup problem.
+How do you back them all up in a secure way?
+Do you generate a ton of secrets and then back them up?
+What if you run out of secrets?
+How do you back them up again?
+What system can you use to ensure that the backups are current?
+
+To((("Armory"))) combat this problem, Armory, an early Bitcoin wallet, first implemented _deterministic_ wallets.
+The idea of a deterministic wallet is that you can generate one seed and create lots and lots of different addresses with that one seed.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP0032"))) Armory-style deterministic wallets were great, except people wanted some grouping of addresses—so, the _hierarchical deterministic_ (HD) wallet standard, BIP0032, was born.
+BIP0032 wallets have multiple layers and keys, each with a unique derivation path.
+The specifications and test vectors are defined in the BIP0032 standard, so implementing your own HD wallet on testnet is a great way to learn.
+
+Additionally, BIP0044((("BIP (Bitcoin Improvement Proposals)", "BIP0044"))) defines what each layer of the BIP0032 hierarchy can mean and the best practices for using a single HD seed to store coins from a lot of different cryptocurrencies.
+Implementing BIP0044 can also be a way to understand the HD wallet infrastructure a lot better.
+While((("Trezor")))((("Coinomi")))((("Electrum")))((("Edge"))) many wallets (Trezor, Coinomi, etc.) implement both BIP0032 and BIP0044, some wallets ignore BIP0044 altogether and use their own BIP0032 hierarchy (Electrum and Edge being two examples).
+
+===== Mnemonic Seeds
+
+Writing((("mnemonic seeds")))((("backup and restoration"))) down and transcribing a 256-bit seed is a pain, and fraught with errors.
+To combat this, BIP0039((("BIP (Bitcoin Improvement Proposals)", "BIP0039"))) describes a way to encode the seed into a bunch of English words.
+There are 2,048 possible words, or 2^11^, which means that each word encodes 11 bits of the seed.
+The standard defines exactly how the mnemonic backup gets translated to a BIP0032 seed.
+BIP0039 along with BIP0032 and BIP0044 is how most wallets implement backup and restoration.
+Writing a testnet wallet that implements BIP0039 is another good way to get a taste for Bitcoin development.
+
+==== Payment Channels and Lightning Network
+
+Payment channels((("payment channels")))((("Lightning Network")))((("BOLT standard"))) are the atomic unit of the Lightning Network, and learning how they work is a good next step.
+There are many ways to implement payment channels, but the BOLT standard is the specification that lightning nodes use.
+The specifications are in progress as of this writing and are available at https://github.com/lightningnetwork/lightning-rfc/.
+
+=== Contributing
+
+A((("Bitcoin", "open source projects")))((("open source projects"))) large part of the Bitcoin ethic is contributing back to the community.
+The main way you can do that is through open source projects.
+There are almost too many to list, but here's a sample:
+
+https://github.com/bitcoin/bitcoin[Bitcoin Core]:: The reference client
+https://github.com/libbitcoin/libbitcoin[Libbitcoin]:: An alternate implementation of Bitcoin in C++
+https://github.com/btcsuite/btcd[btcd]:: A Golang-based implementation of Bitcoin
+https://github.com/bcoin-org/bcoin[Bcoin]:: A JavaScript-based implementation of Bitcoin, maintained by purse.io
+https://github.com/richardkiss/pycoin[pycoin]:: A Python library for Bitcoin
+https://github.com/bitcoinj/bitcoinj[BitcoinJ]:: A Java library for Bitcoin
+https://github.com/bitcoinjs/bitcoinjs-lib[BitcoinJS]:: A JavaScript library for Bitcoin
+https://github.com/btcpayserver/btcpayserver[BTCPay]:: A Bitcoin payment processing engine written in C#
+
+Contributing can be very beneficial for a lot of reasons, including future employment opportunities, learning, getting good business ideas, and so on.
+
+=== Suggested Next Projects
+
+If((("Bitcoin", "suggested next projects"))) at this point you're still wondering what projects would be beneficial for you, what follows are some suggestions.
+
+==== Testnet Wallet
+
+It's hard((("testnet")))((("Bitcoin wallets")))((("wallets"))) to understate the importance of security in Bitcoin.
+Writing a wallet even on testnet will help you understand the various considerations that go into creating a wallet.
+UI, backups, address books, and transaction histories are just some of the things that you have to deal with when creating a wallet.
+As this is the most popular application of Bitcoin, creating a wallet will give you a lot of insight into users' needs.
+
+==== Block Explorer
+
+A((("block explorers"))) more ambitious project would be to write your own block explorer.
+The key to making your own block explorer is to store the blockchain data in an easy-to-access fashion.
+Using a traditional database like Postgres or MySQL may be useful here.
+As Bitcoin Core does not have address indexes, adding one will make it possible for you to allow lookups of UTXOs and past transactions by address, which is what most users desire.
+
+==== Web Shop
+
+A Bitcoin-based shop((("Bitcoin-based shops"))) is another project that helps you learn.
+This is particularly appropriate for web developers as they typically know how to create a web application.
+A web application with a Bitcoin backend can be a powerful way to avoid third-party dependencies for payment.
+Once again, it's advised that you start on testnet and use the cryptographically secure libraries that are available to hook up the plumbing for payments.
+
+==== Utility Library
+
+A utility library((("utility libraries"))) like the one built in this book is another great way to learn more about Bitcoin.
+Writing((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) the BIP0143 serialization for the signature hash of Segwit, for example, can be instructive in getting used to protocol programming.
+Porting the code from this book to another language would also be a great learning tool.
+
+==== Finding a Job
+
+If((("Bitcoin", "opportunities for developers")))((("developers, opportunities for"))) you are interested in getting into this industry in more depth, there are lots of great opportunities for developers.
+The key to proving that you know something is to have a portfolio of projects that you've done on your own.
+Contributing to an existing open source project or making your own project will help you get noticed by companies.
+In addition, programming against the API of any particular company is a great way to get an interview!
+
+Generally, local work is going to be a lot easier to get as companies don't like the risk profile of remote workers.
+Go to local meetups and network with people that you meet there, and the local Bitcoin jobs will be a lot easier to come by.
+
+Similarly, remote work requires that you put yourself out there to be noticed.
+Besides open source contributions, go to conferences, network, and create technical content (YouTube videos, blog posts, etc.).
+These will help quite a bit in getting noticed and getting a remote job.
+
+=== Conclusion
+
+I'm excited that you've made it to the end.
+If you are so inclined, please send me notes about your progress, as I would love to hear from you!
+I can be reached at jimmy@programmingblockchain.com.

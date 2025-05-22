@@ -1,0 +1,57 @@
+import ecc
+import helper
+
+from ecc import FieldElement
+---
+example1
+---
+exercise1:ecc:FieldElementTest:test_ne
+---
+example2
+---
+example3
+---
+exercise2:
+# remember that % is the modulo operator
+prime = 57
+# 44+33
+# 9-29
+# 17+42+49
+# 52-30-38
+---
+example4
+---
+exercise3:ecc:FieldElementTest:test_sub
+---
+exercise4:
+prime = 97
+
+# 95*45*31
+# 17*13*19*44
+# 12**7*77**49
+---
+exercise5:
+prime = 19
+k = 1  # 3, 7, 13 and 18 are the other possibilities
+# loop through all possible k's 0 up to prime-1
+# calculate k*iterator % prime
+
+# Hint - sort!
+---
+example5
+---
+exercise6:ecc:FieldElementTest:test_mul
+---
+example6
+---
+exercise7:
+primes = [7, 11, 17, 31, 43]
+---
+exercise8:
+# 3/24
+# 17**-3
+# 4**-4*11
+---
+exercise9:ecc:FieldElementTest:test_div
+---
+example7

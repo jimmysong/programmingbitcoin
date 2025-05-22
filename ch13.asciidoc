@@ -1,0 +1,632 @@
+[[chapter_segwit]]
+
+== Segwit
+
+[.lead]
+_Segwit_ stands for "segregated witness" and is a backward-compatible upgrade or "soft fork" that activated on the Bitcoin network in August 2017.
+While the activation was controversial, the features of this technology require some explanation.
+In this chapter, we'll explore how Segwit works, why it's backward compatible, and what Segwit enables.
+
+As a brief overview, Segwit incorporated a multitude of changes:
+
+* Block size increase
+* Transaction malleability fix
+* Segwit versioning for clear upgrade paths
+* Quadratic hashing fix
+* Offline wallet fee calculation security
+
+It's not entirely obvious what Segwit is without looking at how it's implemented.
+We'll start by examining the most basic type of Segwit transaction, pay-to-witness-pubkey-hash.
+
+=== Pay-to-Witness-Pubkey-Hash (p2wpkh)
+
+Pay-to-witness-pubkey-hash (p2wpkh) is((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "witness field in"))) one of four types of scripts((("BIP (Bitcoin Improvement Proposals)", "BIP0141")))((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) defined by Segwit in BIP0141 and BIP0143.
+This is a smart contract that acts a lot like pay-to-pubkey-hash and is named similarly for that reason.
+The main change from p2pkh is that the data for the ScriptSig is now in the witness field.
+The rearrangement is to fix transaction malleability.
+
+==== Transaction Malleability
+
+_Transaction malleability_ is the((("transaction malleability")))((("malleability")))((("Segwit (segregated witness)", "transaction malleability")))((("p2wpkh (pay-to-witness-pubkey-hash)", "transaction malleability and"))) ability to change the transaction's ID without altering the transaction's meaning.
+Mt. Gox CEO Mark Karpeles cited transaction malleability as the reason why his exchange was not allowing withdrawals back in 2013.
+
+Malleability((("payment channels"))) of the ID is an important consideration when creating payment channels, which are the atomic unit of the Lightning Network.
+A malleable transaction ID makes the safe creation of payment channel transactions much more difficult.
+
+The reason why transaction malleability is a problem at all is because the transaction ID is calculated from the entire transaction.
+The ID of the transaction is the hash256 of the transaction.
+Most of the fields in a transaction cannot be changed without invalidating the transaction's signature (and thus the transaction itself), so from a malleability standpoint, these fields are not a problem.
+
+The((("ScriptSig field (inputs)"))) one field that does allow for some manipulation without invalidating the signature is the ScriptSig field on each input.
+The ScriptSig is emptied before creating the signature hash (see <<chapter_tx>>), so it's possible to change the ScriptSig without invalidating the signature.
+Also, as we learned in <<chapter_elliptic_curve_cryptography>>, signatures contain a random component.
+This means that two different ScriptSigs can essentially mean the same thing but be different byte-wise.
+
+This makes the ScriptSig field _malleable_—that is, able to be changed without changing the meaning—and means that the entire transaction, and the transaction ID, are malleable.
+A malleable transaction ID means that any _dependent_ transactions (that is, any transaction spending one of the malleable transaction's outputs) cannot be constructed in such a way as to guarantee validity.
+The previous transaction hash is uncertain, so the dependent transaction's transaction input field cannot be guaranteed to be valid.
+
+This is not usually a problem as once a transaction enters the blockchain, the transaction ID is fixed and no longer malleable (at least without finding a proof-of-work!).
+However, with payment channels, there are dependent transactions created _before_ the funding transaction is added to the blockchain.
+
+==== Fixing Malleability
+
+Transaction malleability is fixed by emptying the ScriptSig field and putting the data in another field that's not used for ID calculation.
+For p2wpkh, the signature and pubkey are the items from ScriptSig, so those get moved to the witness field, which is not used for ID calculation.
+This way, the transaction ID stays stable as the malleability vector disappears.
+The witness field, and the whole Segwit serialization of a transaction, is only sent to nodes that ask for it.
+In other words, old nodes that haven't upgraded to Segwit don't receive the witness field and don't verify the pubkey and signature.
+
+If this sounds familiar, it should.
+This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do additional validation that older nodes do not, and is the basis for why Segwit is a soft fork (backward-compatible upgrade) and not a hard fork (backward-incompatible upgrade).
+
+=== p2wpkh Transactions
+
+To((("Segwit (segregated witness)", "p2wpkh (pay-to-witness-pubkey-hash)", id="Sp2wpkh13")))((("p2wpkh (pay-to-witness-pubkey-hash)", "transactions using", id="p2wpkh13"))) understand Segwit, it helps to look at what a transaction looks like when sent to an old node (<<pay_to_witness_pubkey_hash_as_seen_by_pre_bip0141_software>>) versus a new node (<<pay_to_witness_pubkey_hash_as_seen_by_post_bip0141_software>>).
+
+[[pay_to_witness_pubkey_hash_as_seen_by_pre_bip0141_software]]
+.Pay-to-witness-pubkey-hash (p2wpkh) as seen by pre-BIP0141 software
+image::images/prbc_1301.png[p2wpkh to old nodes]
+
+[[pay_to_witness_pubkey_hash_as_seen_by_post_bip0141_software]]
+.Pay-to-witness-pubkey-hash (p2wpkh) as seen by post-BIP0141 software
+image::images/prbc_1302.png[p2wpkh to new nodes]
+
+The difference between these two serializations is that the latter transaction (Segwit serialization) has the marker, flag, and witness fields.
+Otherwise, the two transactions look similar.
+The reason the transaction ID is not malleable is because the first serialization is used for calculating the transaction ID.
+
+The witness field in p2wpkh has the signature and pubkey as its two elements.
+These will be used for validation for upgraded nodes only.
+
+The ScriptPubKey for p2wpkh is `OP_0` _<20-byte hash>_.
+The ScriptSig, as seen in both serializations, is empty.
+The combined script is shown in <<pay_to_witness_pubkey_hash_p2wpkh_scriptpubkey>>.
+
+[[pay_to_witness_pubkey_hash_p2wpkh_scriptpubkey]]
+.Pay-to-witness-pubkey-hash (p2wpkh) ScriptPubKey
+image::images/prbc_1303.png[p2wpkh ScriptPubKey]
+
+The processing of the combined script starts like <<p2wpkh_start>>.
+
+[[p2wpkh_start]]
+.p2wpkh start
+image::images/prbc_1304.png[p2wpkh start]
+
+`OP_0` pushes a 0 to the stack (<<p2wpkh_step_1>>).
+
+[[p2wpkh_step_1]]
+.p2wpkh step 1
+image::images/prbc_1305.png[p2wpkh step 1]
+
+The 20-byte hash is an element, so it's pushed to the stack (<<p2wpkh_step_2>>).
+
+[[p2wpkh_step_2]]
+.p2wpkh step 2
+image::images/prbc_1306.png[p2wpkh step 2]
+
+At this point, older nodes will stop as there are no more Script commands to be processed.
+Since the top element is nonzero, this will be counted as a valid script.
+This is very similar to p2sh (<<chapter_p2sh>>) in that older nodes cannot validate further.
+Newer nodes, however, have a special Segwit rule much like the special rule for p2sh (see <<chapter_p2sh>>).
+Recall that with p2sh, the exact script sequence of _<RedeemScript>_ `OP_HASH160` _<hash>_ `OP_EQUAL` triggers a special rule.
+
+In the case of p2wpkh, the script sequence is `OP_0` _<20-byte hash>_.
+When that script sequence is encountered, the pubkey and signature from the witness field and the 20-byte hash are added to the command set in exactly the same sequence as with p2pkh, namely _<signature>_ _<pubkey>_ `OP_DUP OP_HASH160` _<20-byte hash>_ `OP_EQUALVERIFY OP_CHECKSIG`.
+<<p2wpkh_step_3>> shows the state that is encountered next.
+
+[[p2wpkh_step_3]]
+.p2wpkh step 3
+image::images/prbc_1307.png[p2wpkh step 3]
+
+The rest of the processing of p2wpkh is the same as the processing of p2pkh, as seen in <<chapter_script>>.
+The end state is a single 1 on the stack if and only if the 20-byte hash is the hash160 of the pubkey and the signature is valid (<<p2wpkh_step_4>>).
+
+[[p2wpkh_step_4]]
+.p2wpkh step 4
+image::images/prbc_1308.png[p2wpkh step 4]
+
+For an older node, processing stops at _<20-byte hash>_ 0, as older nodes don't know the special Segwit rule.
+Only upgraded nodes do the rest of the validation, much like with p2sh.
+Note that less data is sent over the network to older nodes.
+Also, nodes are given the option of not having to download (and hence not verify) transactions that are _x_ blocks old if they don't want to.
+In a sense, the signature has been witnessed by a bunch of people and a node can choose to trust that this is valid instead of validating directly if it so chooses.
+
+Note also that((("Segwit (segregated witness)", "Segwit version 0"))) this is a special rule for Segwit version 0.
+Segwit version 1 can have a completely different processing path.
+_<20-byte hash>_ `1` could be the special script sequence that triggers a different rule.
+Upgrades((("Schnorr signatures")))((("Graftroot")))((("Simplicity"))) of Segwit can introduce Schnorr signatures, Graftroot, or even a different scripting system altogether, like Simplicity.
+Segwit gives us a clear upgrade path.
+Software that understands how to validate Segwit version X will validate such transactions, but software that isn't aware of Segwit version X simply processes only up to the point of the special rule.((("", startref="Sp2wpkh13")))
+
+=== p2sh-p2wpkh
+
+p2wpkh((("Segwit (segregated witness)", "p2sh-p2wpkh nested transactions", id="Sp2sh13")))((("p2sh (pay-to-script-hash)", "backward compatibility", id="p2shback13")))((("ScriptPubKeys", "p2sh-p2wpkh nested transactions", id="Hnest13")))((("p2sh-p2wpkh nested transactions", id="P2sh-p2wpkhnest13"))) is great, but unfortunately, this is a new type of script and older wallets cannot send bitcoins to p2wpkh ScriptPubKeys.
+p2wpkh uses a new address format called Bech32, defined((("BIP (Bitcoin Improvement Proposals)", "BIP0173"))) in BIP0173, whose ScriptPubKeys older wallets don't know how to create.
+
+The Segwit authors found an ingenious way to make Segwit backward compatible by "wrapping" p2wpkh inside p2sh.
+This is called "nested" Segwit as the Segwit script is nested in a p2sh RedeemScript.
+
+A p2sh-p2wpkh address is a normal p2sh address, but the RedeemScript is `OP_0` _<20-byte hash>_, or the ScriptPubKey of p2wpkh.
+As with p2wpkh, different transactions are sent to older nodes (<<p2sh_p2wpkh_to_pre_bip0141_software>>) versus newer nodes (<<p2sh_p2wpkh_to_post_bip0141_software>>).
+
+[[p2sh_p2wpkh_to_pre_bip0141_software]]
+.Pay-to-script-hash-pay-to-witness-pubkey-hash (p2sh-p2wpkh) to pre-BIP0141 software
+image::images/prbc_1309.png[p2sh-p2wpkh to Old Nodes]
+
+[[p2sh_p2wpkh_to_post_bip0141_software]]
+.p2sh-p2wpkh to post-BIP0141 software
+image::images/prbc_1310.png[p2sh-p2wpkh to New Nodes]
+
+The difference from p2wpkh is that the ScriptSig is no longer empty.
+The ScriptSig has a RedeemScript, which is equal to the ScriptPubkey in p2wpkh.
+As this is a p2sh script, the ScriptPubKey is the same as in any other p2sh script.
+The combined script looks like <<p2sh_p2wpkh_scriptpubkey_is_the_same_as_a_normal_p2sh_scriptpubkey>>.
+
+[[p2sh_p2wpkh_scriptpubkey_is_the_same_as_a_normal_p2sh_scriptpubkey]]
+.p2sh-p2wpkh ScriptPubKey is the same as a normal p2sh ScriptPubKey
+image::images/prbc_1311.png[p2sh-p2wpkh ScriptPubKey]
+
+We start the script evaluation like in <<p2sh_p2wpkh_start>>.
+
+[[p2sh_p2wpkh_start]]
+.p2sh-p2wpkh start
+image::images/prbc_1312.png[p2sh-p2wpkh start]
+
+Notice that the commands to be processed are exactly what triggers the p2sh special rule.
+The RedeemScript goes on the stack (<<p2sh_p2wpkh_step_1>>).
+
+[[p2sh_p2wpkh_step_1]]
+.p2sh-p2wpkh step 1
+image::images/prbc_1313.png[p2sh-p2wpkh step 1]
+
+The `OP_HASH160` will return the RedeemScript's hash (<<p2sh_p2wpkh_step_2>>).
+
+[[p2sh_p2wpkh_step_2]]
+.p2sh-p2wpkh step 2
+image::images/prbc_1314.png[p2sh-p2wpkh step 2]
+
+The hash will go on the stack, and we then get to `OP_EQUAL` (<<p2sh_p2wpkh_step_3>>).
+
+[[p2sh_p2wpkh_step_3]]
+.p2sh-p2wpkh step 3
+image::images/prbc_1315.png[p2sh-p2wpkh step 3]
+
+At((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) this point, if the hashes are equal, pre-BIP0016 nodes will simply mark the input as valid, as they are unaware of the p2sh validation rules.
+However, post-BIP0016 nodes recognize the special script sequence for p2sh, so the RedeemScript will then be evaluated as Script commands.
+The RedeemScript is `OP_0` _<20-byte hash>_, which is the same as the ScriptPubKey for p2wpkh.
+This makes the script state look like <<p2sh_p2wpkh_step_4>>.
+
+[[p2sh_p2wpkh_step_4]]
+.p2sh-p2wpkh step 4
+image::images/prbc_1316.png[p2sh-p2wpkh step 4]
+
+This should look familiar, as this is the state that p2wpkh starts with.
+After `OP_0` and the 20-byte hash we are left with <<p2sh_p2wpkh_step_5>>.
+
+[[p2sh_p2wpkh_step_5]]
+.p2sh-p2wpkh step 5
+image::images/prbc_1317.png[p2sh-p2wpkh step 5]
+
+At this point, pre-Segwit nodes will mark this input as valid as they are unaware of the Segwit validation rules.
+However, post-Segwit nodes will recognize the special script sequence for p2wpkh.
+The signature and pubkey from the witness field along with the 20-byte hash will add the p2pkh commands (<<p2sh_p2wpkh_step_6>>).
+
+[[p2sh_p2wpkh_step_6]]
+.p2sh-p2wpkh step 6
+image::images/prbc_1318.png[p2sh-p2wpkh step 6]
+
+The rest of the processing is the same as p2pkh (<<chapter_script>>).
+Assuming the signature and pubkey are valid, we are left with <<p2sh_p2wpkh_end>>.
+
+[[p2sh_p2wpkh_end]]
+.p2sh-p2wpkh end
+image::images/prbc_1319.png[p2sh-p2wpkh end]
+
+As you can see, a p2sh-p2wpkh transaction is backward compatible all the way to before BIP0016.
+A pre-BIP0016 node would consider the script valid once the RedeemScripts were equal, and a post-BIP0016, pre-Segwit node would consider the script valid at the 20-byte hash.
+Both would not do the full validation and would accept the transaction.
+A post-Segwit node would do the complete validation, including checking the signature and pubkey.
+
+[NOTE]
+.Can Anyone Spend Segwit Outputs?
+====
+Detractors of Segwit have referred to Segwit outputs as "anyone-can-spend."
+This would have been true if the Bitcoin community had rejected Segwit.
+In other words, if an economically significant part of the Bitcoin community had refused to do the Segwit validation and actively split from the network by accepting transactions that were not Segwit-valid, the outputs would have been anyone-can-spend.
+However, due to a variety of economic incentives, Segwit was activated on the network, there was no network split, a lot of bitcoins are now locked in Segwit outputs, and Segwit transactions are validated per the soft-fork rules by the vast economic majority of nodes.
+We can now say confidently that the detractors were wrong.((("", startref="p2shback13")))
+====
+
+=== Coding p2wpkh and p2sh-p2wpkh
+
+The((("ScriptPubKeys", "p2wpkh (pay-to-witness-pubkey-hash)")))((("p2wpkh (pay-to-witness-pubkey-hash)", "coding", id="paytowitcod13")))((("p2sh (pay-to-script-hash)", "coding", id="PTScode13"))) first change we're going to make is to the `Tx` class, where we need to mark whether the transaction is Segwit or not:
+
+[source,python]
+----
+include::code-ch13/tx.py[tag=source1]
+----
+
+Next, we change the `parse` method depending on the serialization we receive:
+
+[source,python]
+----
+class Tx:
+...
+include::code-ch13/tx.py[tag=source2]
+----
+<1> To determine whether we have a Segwit transaction or not, we look at the fifth byte.
+The first four are the version, the fifth is the Segwit marker.
+<2> The fifth byte being 0 is how we tell that this transaction is Segwit (this is not foolproof, but it's what we're going to use).
+We use different parsers depending on whether it's Segwit.
+<3> We put the stream back to the position before we examined the first 5 bytes.
+<4> We've moved the old `parse` method to `parse_legacy`.
+
+Here's a parser for the Segwit serialization: 
+
+[source,python]
+----
+class Tx:
+...
+include::code-ch13/tx.py[tag=source3]
+----
+<1> There are two new fields; one of them is the Segwit marker.
+<2> The second new field is witness, which contains items for each input.
+
+We now code the corresponding changes to the serialization methods:
+
+[source,python]
+----
+class Tx:
+...
+include::code-ch13/tx.py[tag=source4]
+----
+<1> What used to be called `serialize` is now `serialize_legacy`.
+<2> The Segwit serialization adds the markers.
+<3> The witness is serialized at the end.
+
+We also have to change the `hash` method to use the legacy serialization, even for Segwit transactions, as that will keep the transaction ID stable:
+
+[source,python]
+----
+class Tx:
+...
+include::code-ch13/tx.py[tag=source5]
+----
+
+The `verify_input` method requires a different `z` for Segwit transactions.
+The Segwit transaction signature hash calculation is specified in((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) BIP0143.
+In addition, the witness field is passed through to the script evaluation engine:
+
+[source,python]
+----
+class Tx:
+...
+    def verify_input(self, input_index):
+        tx_in = self.tx_ins[input_index]
+        script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
+        if script_pubkey.is_p2sh_script_pubkey():
+            command = tx_in.script_sig.commands[-1]
+            raw_redeem = int_to_little_endian(len(command), 1) + command
+            redeem_script = Script.parse(BytesIO(raw_redeem))
+            if redeem_script.is_p2wpkh_script_pubkey():  # <1>
+                z = self.sig_hash_bip143(input_index, redeem_script)  # <2>
+                witness = tx_in.witness
+            else:
+                z = self.sig_hash(input_index, redeem_script)
+                witness = None
+        else:
+            if script_pubkey.is_p2wpkh_script_pubkey():  # <3>
+                z = self.sig_hash_bip143(input_index)  # <2>
+                witness = tx_in.witness
+            else:
+                z = self.sig_hash(input_index)
+                witness = None
+        combined_script = tx_in.script_sig + tx_in.script_pubkey(self.testnet)
+        return combined_script.evaluate(z, witness)  # <4>
+----
+<1> This handles the p2sh-p2wpkh case.
+<2> The BIP0143 signature hash generation code is in _tx.py_ of this chapter's code.
+<3> This handles the p2wpkh case.
+<4> The witness passes through to the evaluation engine so that p2wpkh can construct the right commands.
+
+We also define what a p2wpkh script looks like in _script.py_:
+
+[source,python]
+----
+include::code-ch13/script.py[tag=source1]
+...
+include::code-ch13/script.py[tag=source2]
+----
+<1> This is OP_0 _<20-byte-hash>_.
+<2> This checks if the current script is a p2wpkh ScriptPubKey.
+
+Last, we need to implement the special rule in the `evaluate` method.
+
+[source,python]
+----
+class Script:
+...
+    def evaluate(self, z, witness):
+    ...
+        while len(commands) > 0:
+        ...
+            else:
+                stack.append(command)
+		...
+include::code-ch13/script.py[tag=source3]
+----
+<1> This is where we execute witness program version 0 for p2wpkh.
+We make a p2pkh combined script from the 20-byte hash, signature, and pubkey and evaluate.((("", startref="p2wpkh13")))((("", startref="Sp2sh13")))((("", startref="PTScode13")))((("", startref="paytowitcod13")))((("", startref="Hnest13")))((("", startref="P2sh-p2wpkhnest13")))
+
+=== Pay-to-Witness-Script-Hash (p2wsh)
+
+While((("ScriptPubKeys", "p2wsh (pay-to witness-script-hash)", id="Hp2wsh13")))((("p2wsh (pay-to witness-script-hash)", id="p2witscripthash13")))((("Segwit (segregated witness)", "p2wsh (pay-to witness-script-hash)", id="Spaywithash13"))) p2wpkh takes care of a major use case, we need something more flexible if we want more complicated (e.g., multisig) scripts.
+This is where pay-to-witness-script-hash (p2wsh) comes in. p2wsh is like p2sh, but with all the ScriptSig data in the witness field instead.
+
+As((("BIP (Bitcoin Improvement Proposals)", "BIP0141"))) with p2wpkh, we send different data to pre-BIP0141 software (<<p2wsh_as_seen_by_pre_bip0141_software>>) versus post-BIP0141 software (<<p2wsh_as_seen_by_post_bip0141_software>>).
+
+[[p2wsh_as_seen_by_pre_bip0141_software]]
+.Pay-to-witness-script-hash as seen by pre-BIP0141 software
+image::images/prbc_1320.png[p2wsh to old nodes]
+
+[[p2wsh_as_seen_by_post_bip0141_software]]
+.Pay-to-witness-script-hash as seen by post-BIP0141 software
+image::images/prbc_1321.png[p2wsh to new nodes]
+
+The ScriptPubKey for p2wsh script is `OP_0` _<32-byte hash>_.
+This sequence triggers another special rule.
+The ScriptSig, as with p2wpkh, is empty.
+When p2wsh outputs are being spent, the combined script looks like <<p2wsh_scriptpubkey>>.
+
+[[p2wsh_scriptpubkey]]
+.Pay-to-witness-script-hash (p2wsh) ScriptPubKey
+image::images/prbc_1322.png[p2wsh ScriptPubKey]
+
+The processing of this script starts similarly to p2wpkh (Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#p2wsh_start">#p2wsh_start</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#p2wsh_step_1">#p2wsh_step_1</a>]).
+
+[[p2wsh_start]]
+.p2sh start
+image::images/prbc_1323.png[p2wsh start]
+
+[[p2wsh_step_1]]
+.p2wsh step 1
+image::images/prbc_1324.png[p2wsh step 1]
+
+The 32-byte hash is an element, so it is pushed to the stack (<<p2wsh_step_2>>).
+
+[[p2wsh_step_2]]
+.p2wsh step 2
+image::images/prbc_1325.png[p2wsh step 2]
+
+As with p2wpkh, older nodes will stop here because there are no more Script commands to be processed.
+Newer nodes will recognize the special sequence and do additional validation by looking at the witness field.
+
+The witness field for p2wsh in our case is a 2-of-3 multisig (<<p2wsh_witness>>).
+
+[[p2wsh_witness]]
+.p2wsh witness
+image::images/prbc_1326.png[p2wsh witness]
+
+The last item of the witness is called the _WitnessScript_ and must sha256 to the 32-byte hash from the ScriptPubKey.
+Note this is sha256, not hash256.
+Once the WitnessScript is validated by having the same hash value, it is interpreted as script commands and put into the command set.
+The WitnessScript looks like <<p2wsh_witness_script>>.
+
+[[p2wsh_witness_script]]
+.p2wsh WitnessScript
+image::images/prbc_1327.png[p2wsh WitnessScript]
+
+The rest of the witness field is put on top to produce the command set in <<p2wsh_step_3>>.
+
+[[p2wsh_step_3]]
+.p2wsh step 3
+image::images/prbc_1328.png[p2wsh step 3]
+
+As you can see, this is a 2-of-3 multisig much like what was explored in <<chapter_p2sh>> (<<p2wsh_step_4>>).
+
+[[p2wsh_step_4]]
+.p2wsh step 4
+image::images/prbc_1329.png[p2wsh step 4]
+
+If the signatures are valid, we end like <<p2wsh_step_5>>.
+
+[[p2wsh_step_5]]
+.p2wsh step 5
+image::images/prbc_1330.png[p2wsh step 5]
+
+The WitnessScript is very similar to the RedeemScript in that the sha256 of the serialization is addressed in the ScriptPubKey, but only revealed when the output is being spent.
+Once the sha256 of the WitnessScript is found to be the same as the 32-byte hash, the WitnessScript is interpreted as script commands and added to the command set.
+The rest of the witness field is then added to the command set as well, producing the final set of commands to be evaluated.
+p2wsh is particularly important, as unmalleable multisig transactions are required for creating bidirectional payment channels for the Lightning Network.((("", startref="Hp2wsh13")))
+
+=== p2sh-p2wsh
+
+Like((("ScriptPubKeys", "p2sh-p2wsh nested transactions", id="Hp2wshnest13")))((("Segwit (segregated witness)", "p2sh-p2wsh nested transactions", id="Sp2wshnest13")))((("p2sh-p2wsh nested transactions", id="p2shnested13"))) p2sh-p2wpkh, p2sh-p2wsh is a way to make p2wsh backward compatible.
+Again, different transactions are sent to older nodes (<<p2sh_p2wsh_to_pre_bip0141_software>>) versus newer nodes (<<p2sh_p2wsh_to_post_bip0141_software>>).
+
+[[p2sh_p2wsh_to_pre_bip0141_software]]
+.Pay-to-script-hash-pay-to-witness-script-hash (p2sh-p2wsh) to pre-BIP0141 software
+image::images/prbc_1331.png[p2sh-p2wsh to Old Nodes]
+
+[[p2sh_p2wsh_to_post_bip0141_software]]
+.p2sh-p2wsh to post-BIP0141 software
+image::images/prbc_1332.png[p2sh-p2wsh to New Nodes]
+
+[role="pagebreak-before"]
+As with p2sh-p2wpkh, the ScriptPubKey is indistinguishable from any other p2sh address and the ScriptSig is only the RedeemScript (<<p2sh_p2wsh_scriptpubkey>>).
+
+[[p2sh_p2wsh_scriptpubkey]]
+.p2sh-p2wsh ScriptPubKey
+image::images/prbc_1311.png[p2sh-p2wsh ScriptPubKey]
+
+We start the p2sh-p2wsh script evaluation in exactly the same way that p2sh-p2wpkh script evaluation starts (<<p2sh_p2wsh_start>>).
+
+[[p2sh_p2wsh_start]]
+.p2sh-p2wsh start
+image::images/prbc_1312.png[p2sh-p2wsh start]
+
+The RedeemScript is pushed to the stack (<<p2sh_p2wsh_step_1>>).
+
+[[p2sh_p2wsh_step_1]]
+.p2sh-p2wsh step 1
+image::images/prbc_1313.png[p2sh-p2wsh step 1]
+
+The `OP_HASH160` will return the RedeemScript's hash (<<p2sh_p2wsh_step_2>>).
+
+[[p2sh_p2wsh_step_2]]
+.p2sh-p2wsh step 2
+image::images/prbc_1314.png[p2sh-p2wsh step 2]
+
+The hash is pushed to the stack, and we then get to `OP_EQUAL` (<<p2sh_p2wsh_step_3>>).
+
+[[p2sh_p2wsh_step_3]]
+.p2sh-p2wsh step 3
+image::images/prbc_1315.png[p2sh-p2wsh step 3]
+
+As((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) with p2sh-p2wpkh, if the hashes are equal, pre-BIP0016 nodes will mark the input as valid as they are unaware of the p2sh validation rules.
+However, post-BIP0016 nodes will recognize the special script sequence for p2sh, so the RedeemScript will be interpreted as new script commands.
+The RedeemScript is `OP_0` _32-byte hash_, which is the same as the ScriptPubKey for p2wsh (<<p2sh_p2wsh_redeemscript>>).
+
+[[p2sh_p2wsh_redeemscript]]
+.p2sh-p2wsh RedeemScript
+image::images/prbc_1338.png[p2sh-p2wsh RedeemScript]
+
+This makes the script state look like <<p2sh_p2wsh_step_4>>.
+
+[[p2sh_p2wsh_step_4]]
+.p2sh-p2wsh step 4
+image::images/prbc_1323.png[p2sh-p2wsh step 4]
+
+Of course, this is the exact same starting state as for p2wsh (<<p2sh_p2wsh_step_5>>).
+
+[[p2sh_p2wsh_step_5]]
+.p2sh-p2wsh step 5
+image::images/prbc_1324.png[p2sh-p2wsh step 5]
+
+The 32-byte hash is an element, so it is pushed to the stack (<<p2sh_p2wsh_step_6>>).
+
+[[p2sh_p2wsh_step_6]]
+.p2sh-p2wsh step 6
+image::images/prbc_1325.png[p2sh-p2wsh step 6]
+
+At this point, pre-Segwit nodes will mark this input as valid, as they are unaware of the Segwit validation rules.
+However, post-Segwit nodes will recognize the special script sequence for p2wsh.
+The witness field (<<p2sh_p2wsh_witness>>) contains the WitnessScript (<<p2sh_p2wsh_witness_script>>). The sha256 of the WitnessScript is checked against the 32-byte hash, and if they're equal the WitnessScript is interpreted as script commands and put into the command set (<<p2sh_p2wsh_step_7>>).
+
+[[p2sh_p2wsh_witness]]
+.p2sh-p2wsh witness
+image::images/prbc_1342.png[p2sh-p2wsh witness]
+
+[[p2sh_p2wsh_witness_script]]
+.p2sh-p2wsh WitnessScript
+image::images/prbc_1327.png[p2wsh WitnessScript]
+
+[[p2sh_p2wsh_step_7]]
+.p2sh-p2wsh step 7
+image::images/prbc_1328.png[p2sh-p2wsh step 7]
+
+As you can see, this is a 2-of-3 multisig as in <<chapter_p2sh>>.
+If the signatures are valid, we end like <<p2sh_p2wsh_end>>.
+
+[[p2sh_p2wsh_end]]
+.p2sh-p2wsh end
+image::images/prbc_1330.png[p2sh-p2wsh end]
+
+This makes p2wsh backward compatible, allowing older wallets to send to p2sh ScriptPubKeys that they can handle.
+
+=== Coding p2wsh and p2sh-p2wsh
+
+The parsing and serialization are exactly the same as before.
+The main changes have to do with `verify_input` in _tx.py_ and `evaluate` in _script.py_:
+
+[source,python]
+----
+class Tx:
+...
+    def verify_input(self, input_index):
+        tx_in = self.tx_ins[input_index]
+        script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
+        if script_pubkey.is_p2sh_script_pubkey():
+            command = tx_in.script_sig.commands[-1]
+            raw_redeem = int_to_little_endian(len(command), 1) + command
+            redeem_script = Script.parse(BytesIO(raw_redeem))
+            if redeem_script.is_p2wpkh_script_pubkey():
+                z = self.sig_hash_bip143(input_index, redeem_script)
+                witness = tx_in.witness
+            elif redeem_script.is_p2wsh_script_pubkey():  # <1>
+                command = tx_in.witness[-1]
+                raw_witness = encode_varint(len(command)) + command
+                witness_script = Script.parse(BytesIO(raw_witness))
+                z = self.sig_hash_bip143(input_index,           
+                                         witness_script=witness_script)
+                witness = tx_in.witness
+            else:
+                z = self.sig_hash(input_index, redeem_script)
+                witness = None
+        else:
+            if script_pubkey.is_p2wpkh_script_pubkey():
+                z = self.sig_hash_bip143(input_index)
+                witness = tx_in.witness
+            elif script_pubkey.is_p2wsh_script_pubkey():  # <2>
+                command = tx_in.witness[-1]
+                raw_witness = encode_varint(len(command)) + command
+                witness_script = Script.parse(BytesIO(raw_witness))
+                z = self.sig_hash_bip143(input_index, 
+                                         witness_script=witness_script)
+                witness = tx_in.witness
+            else:
+                z = self.sig_hash(input_index)
+                witness = None
+        combined_script = tx_in.script_sig + tx_in.script_pubkey(self.testnet)
+        return combined_script.evaluate(z, witness)
+----
+<1> This takes care of p2sh-p2wsh.
+<2> This takes care of p2wsh.
+
+Next, we code a way to identify p2wsh in _script.py_:
+
+[source,python]
+----
+include::code-ch13/script.py[tag=source4]
+...
+class Script:
+...
+include::code-ch13/script.py[tag=source5]
+----
+<1> `OP_0` _<32-byte script>_ is what we expect.
+
+Last, we handle the special rule for p2wsh:
+
+[source,python]
+----
+class Script:
+...
+    def evaluate(self, z, witness):
+    ...
+        while len(commands) > 0:
+        ...
+	   else:
+                stack.append(command)
+    	        ...
+include::code-ch13/script.py[tag=source6]
+----
+<1> The top element is the sha256 hash of the WitnessScript.
+<2> The second element is the witness version, 0.
+<3> Everything but the WitnessScript is added to the command set.
+<4> The WitnessScript is the last item of the witness field.
+<5> The WitnessScript must hash to the sha256 that was in the stack.
+<6> We parse the WitnessScript and add it to the command set.((("", startref="p2witscripthash13")))((("", startref="Spaywithash13")))((("", startref="Sp2wshnest13")))((("", startref="p2shnested13")))((("", startref="Hp2wshnest13")))
+
+=== Other Improvements
+
+Segwit((("Segwit (segregated witness)", "other improvements"))) also fixes the quadratic hashing problem through a different calculation of the signature hash.
+A lot of the calculations for the signature hash, _z_, can be reused instead of requiring a new hash256 hash for each input.
+The((("BIP (Bitcoin Improvement Proposals)", "BIP0143"))) signature hash calculation is detailed in BIP0143 and can be seen in _code-ch13/tx.py_.
+
+Another improvement is that by policy, uncompressed SEC pubkeys are now forbidden; only compressed SEC pubkeys are used for Segwit, saving space.
+
+=== Conclusion
+
+The chapter covered the details of Segwit as a taste of what's now possible.
+<<chapter_advanced>> discusses the next steps that you can take on your Bitcoin developer journey.

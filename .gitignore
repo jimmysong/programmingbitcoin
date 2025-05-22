@@ -1,0 +1,7 @@
+*~
+.venv/*
+*/__pycache__/*
+*/.ipynb_checkpoints/*
+*.orig
+*.rej
+*.patch

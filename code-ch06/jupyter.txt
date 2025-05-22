@@ -1,0 +1,24 @@
+import op
+import script
+---
+exercise1:op:OpTest:test_op_hash160
+---
+example1
+---
+exercise2:op:OpTest:test_op_checksig
+---
+exercise3:
+from script import Script
+
+script_pubkey = Script(0x76, 0x76, 0x95, 0x93, 0x56, 0x87)
+script_sig = Script([])  # FILL THIS IN
+combined_script = script_sig + script_pubkey
+print(combined_script.evaluate(0))
+---
+exercise4:
+from script import Script
+
+script_pubkey = Script(0x6e, 0x87, 0x91, 0x91, 0x69, 0xa7, 0x7c, 0xa7, 0x87)
+script_sig = Script([])  # FILL THIS IN
+combined_script = script_sig + script_pubkey
+print(combined_script.evaluate(0))

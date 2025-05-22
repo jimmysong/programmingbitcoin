@@ -1,0 +1,416 @@
+[[chapter_p2sh]]
+
+== Pay-to-Script Hash
+
+[.lead]
+Up((("multisig (multiple signatures)", "benefits of"))) to this point in the book, we've been doing single-key transactions, or transactions with only a single private key per input.
+What if we wanted something a little more complicated?
+A company that has $100 million in bitcoin might not want the funds locked to a single private key: if that single key were lost or stolen, all funds would then be lost.
+What can we do to reduce the risk of this single point of failure?
+
+The solution is _multisig_, or multiple signatures.
+This was built into Bitcoin from the beginning, but was clunky at first and so wasn't used.
+As we'll discover later in this chapter, Satoshi probably didn't test multisig, as it has an off-by-one error (see <<off-by-one>>).
+The bug has had to stay in the protocol because fixing it would require a hard fork.
+
+[NOTE]
+.Multiple Private Keys to a Single Aggregated Public Key
+====
+It is possible to "split" a single private key into multiple private keys and use an interactive method to aggregate signatures without ever reconstructing the private key, but this is not a common practice.
+Schnorr signatures((("Schnorr signatures"))) will make aggregating signatures easier and perhaps more common in the future.
+====
+
+=== Bare Multisig
+
+Bare multisig((("multisig (multiple signatures)", "bare multisig", id="MSbare08")))((("bare multisig", id="baremulti08"))) was the first attempt at creating transaction outputs that require signatures from multiple parties.
+The idea is to change from a single point of failure to something a little more resilient to hacks.
+To((("OP_CHECKMULTISIG operation", id="opcheck08"))) understand bare multisig, one must first understand the `OP_CHECKMULTISIG` opcode.
+As discussed in <<chapter_script>>, Script has a lot of different opcodes.
+`OP_CHECKMULTISIG` is one of them, at `0xae`.
+The opcode pass:[<span class="keep-together">consumes</span>] a lot of elements from the stack and returns whether or not the required number of signatures are valid for a transaction input.
+
+The transaction output is called "bare" multisig because it's a long ScriptPubKey.
+<<bare_multisig_scriptpubkey>> shows what a ScriptPubKey for a 1-of-2 multisig looks like.
+
+[[bare_multisig_scriptpubkey]]
+.Bare multisig ScriptPubKey
+image::images/prbc_0801.png[Bare multisig ScriptPubKey]
+
+Among bare multisig ScriptPubKeys, this one is on the small end, and we can already see that it's long.
+The ScriptPubKey for p2pkh is only 25 bytes, whereas this bare multisig is 101 bytes (though obviously, compressed SEC format would reduce it some), and this is a 1-of-2!
+<<bare_multisig_scriptsig>> shows what the ScriptSig looks like.
+
+[[bare_multisig_scriptsig]]
+.Bare multisig ScriptSig
+image::images/prbc_0802.png[Bare multisig ScriptSig]
+
+We only need 1 signature for this 1-of-2 multisig, so this is relatively short; something like a 5-of-7 would require 5 DER signatures and would be a lot longer (360 bytes or so).
+<<bare_multisig_combined_script>> shows how the ScriptSig and ScriptPubKey combine.
+
+[[bare_multisig_combined_script]]
+.Bare multisig combined script
+image::images/prbc_0803.png[Bare multisig combined script]
+
+I've generalized here to show what an __m__-of-__n__ bare multisig would look like (_m_ and _n_ can be anything from 1 to 20 inclusive, though the numerical opcodes only go((("OP_16 operation"))) up to `OP_16`; values of 17 to 20 would require `0112` to push a number like 18 to the stack).
+The starting state looks like <<bare_multisig_start>>.
+
+[[bare_multisig_start]]
+.Bare multisig start
+image::images/prbc_0804.png[Bare multisig start]
+
+`OP_0` will((("OP_0 operation"))) push the number 0 to the stack (<<bare_multisig_step_1>>).
+
+[[bare_multisig_step_1]]
+.Bare multisig step 1
+image::images/prbc_0805.png[Bare multisig step 1]
+
+The signatures are elements, so they'll be pushed directly to the stack (<<bare_multisig_step_2>>).
+
+[[bare_multisig_step_2]]
+.Bare multisig step 2
+image::images/prbc_0806.png[Bare multisig step 2]
+
+`OP_m` will push the number _m_ to the stack, the public keys will be pushed to the stack, and `OP_n` will push the number _n_ to the stack (<<bare_multisig_step_3>>).
+
+[[bare_multisig_step_3]]
+.Bare multisig step 3
+image::images/prbc_0807.png[Bare multisig step 3]
+
+At this point, `OP_CHECKMULTISIG` will consume __m__ + __n__ + 3 elements (see <<off-by-one>>) and push a 1 to the stack if _m_ of the signatures are valid for _m_ distinct public keys from the list of _n_ public keys; otherwise, it pushes a 0.
+Assuming that the signatures are valid, the stack has a single 1, which validates the combined script (<<bare_multisig_end>>).
+
+[[bare_multisig_end]]
+.Bare multisig end
+image::images/prbc_0808.png[Bare multisig end]
+
+[[off-by-one]]
+[NOTE]
+.OP_CHECKMULTISIG Off-by-One Bug
+====
+The stack elements consumed by `OP_CHECKMULTISIG` are supposed to be _m_, _m_ different signatures, _n_ and _n_ different pubkeys. The number of elements consumed should be 2 (_m_ and _n_ themselves) + _m_ (signatures) + _n_ (pubkeys).
+Unfortunately, the opcode consumes one more element than the _m_ + _n_ + 2 elements that it's supposed to.
+`OP_CHECKMULTISIG` consumes _m_ + _n_ + 3 elements, so an extra element is added (`OP_0` in our example) so as to not cause a failure.
+
+The opcode does nothing with that extra element, and that extra element can be anything. As a way to combat malleability, however, most nodes on the Bitcoin network will not relay the transaction unless the extra element is `OP_0`.
+Note that if we had _m_ + _n_ + 2 elements, `OP_CHECKMULTISIG` would fail as there are not enough elements to be consumed and the combined script would fail, causing the transaction to be invalid.
+====
+
+=== Coding OP_CHECKMULTISIG
+
+In an __m__-of-__n__ bare multisig, the stack contains _n_ as the top element, then _n_ pubkeys, then _m_, then _m_ signatures, and finally a filler item due to the off-by-one bug.
+The code for `OP_CHECKMULTISIG` in _op.py_ is mostly written here:
+
+[source,python]
+----
+include::code-ch08/op.py[tag=source1]
+----
+<1> Each DER signature is assumed to be signed with `SIGHASH_ALL`.
+<2> We take care of the off-by-one error by consuming the only remaining element of the stack and not doing anything with the element.
+<3> This is the part that you will need to code for the next exercise.((("", startref="opcheck08")))
+
+include::code-ch08/answers.py[tag=exercise1,indent=0]
+
+=== Problems with Bare Multisig
+
+Bare multisig is a bit ugly, but it is functional.
+It avoids the single point of failure by requiring _m_ of _n_ signatures to unlock a UTXO.
+There is plenty of utility in making outputs multisig, especially if you're a business.
+However, bare multisig suffers from a few problems:
+
+. A bare multisig ScriptPubKey has many different public keys, and that makes the ScriptPubKey long.
+Unlike p2pkh or even p2pk ScriptPubKeys, these are not easily communicated using voice or even text messages.
+
+. Because the output is so long—5 to 20 times larger than a normal p2pkh output—it requires more resources for node software.
+Nodes keep track of the UTXO set, and a big ScriptPubKey is more expensive to keep track of.
+A large output is more expensive to keep in fast-access storage (like RAM).
+
+. Because the ScriptPubKey can be so big, bare multisig can and has been abused.
+The entire PDF of Satoshi's original whitepaper is encoded in this transaction in block 230009:
++
+----
+54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713
+----
++
+The creator of this transaction split up the whitepaper PDF into 64-byte chunks, which were then made into invalid uncompressed public keys.
+The whitepaper was encoded into 947 1-of-3 bare multisig outputs.
+These outputs are not spendable but have to be indexed in the UTXO sets of full nodes.
+This is a tax every full node has to pay and is in that sense abusive.
+
+To mitigate these problems, pay-to-script-hash (p2sh) was born.((("", startref="baremulti08")))((("", startref="MSbare08")))
+
+=== Pay-to-Script-Hash (p2sh)
+
+Pay-to-script-hash (p2sh)((("p2sh (pay-to-script-hash)", "operation of", id="p2shoper08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) operation", id="MSp2shoper08")))((("ScriptPubKeys", "p2sh (pay-to-script-hash)", id="Hp2sh08"))) is a general solution to the long address/ScriptPubKey problem.
+More complicated ScriptPubKeys than bare multisig can easily be made, and they have the same problems as bare multisig.
+
+The solution that p2sh implements is to take the hash of some Script commands and then reveal the preimage Script commands later.
+Pay-to-script-hash was introduced in 2011 to a lot of controversy.
+There were multiple proposals, but as we'll see, p2sh is kludgy but works.
+
+In p2sh, a special rule gets executed only when the pattern shown in <<pay_to_script_hash_pattern_that_executes_the_special_rule>> is encountered.
+
+[[pay_to_script_hash_pattern_that_executes_the_special_rule]]
+.Pay-to-script-hash pattern (p2sh) that executes the special rule
+image::images/prbc_0809.png[p2sh Pattern]
+
+If((("RedeemScript"))) this exact command set ends with a 1 on the stack, then the RedeemScript (the top item in <<pay_to_script_hash_pattern_that_executes_the_special_rule>>) is parsed and then added to the Script command set.
+This((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) special pattern was introduced in BIP0016, and Bitcoin software that implements BIP0016 (anything post 2011) checks for the pattern.
+The RedeemScript does not add new Script commands for processing unless this _exact_ sequence is encountered and ends with a 1.
+
+If this sounds hacky, it is.
+But before we get to that, let's look a little more closely at exactly how this plays out.
+
+Let's say we have a 2-of-2 multisig ScriptPubKey (<<pay_to_script_hash_p2sh_redeemscript>>).
+
+[[pay_to_script_hash_p2sh_redeemscript]]
+.Pay-to-script-hash (p2sh) RedeemScript
+image::images/prbc_0810.png[p2sh RedeemScript]
+
+This is a ScriptPubKey for a bare multisig.
+What we need to do to convert this to p2sh is to take a hash of this script and keep the script handy for when we want to redeem it.
+We call this the RedeemScript, because the script is only revealed during redemption.
+We put the hash of the RedeemScript as the ScriptPubKey (<<pay_to_script_hash_p2sh_scriptpubkey>>).
+
+[[pay_to_script_hash_p2sh_scriptpubkey]]
+.Pay-to-script-hash (p2sh) ScriptPubKey
+image::images/prbc_0811.png[p2sh ScriptPubKey]
+
+The hash digest here is the hash160 of the RedeemScript, or what was previously the ScriptPubKey.
+We're locking the funds to the _hash_ of the RedeemScript, which needs to be revealed at unlock time.
+
+Creating the ScriptSig for a p2sh script involves not only revealing the RedeemScript, but also unlocking the RedeemScript.
+At this point, you might be wondering where the RedeemScript is stored. It's not on the blockchain until actual redemption, so it must be stored by the creator of the p2sh address.
+If the RedeemScript is lost and cannot be reconstructed, the funds are lost, so it's very important to keep track of it!
+
+[WARNING]
+.Importance of Keeping the RedeemScript
+====
+If you are receiving to a p2sh address, be sure to store and back up the RedeemScript!
+Better yet, make it easy to reconstruct!
+====
+
+The ScriptSig for the 2-of-2 multisig looks like <<pay_to_script_has_p2sh_scriptsig>>.
+
+[[pay_to_script_has_p2sh_scriptsig]]
+.Pay-to-script-hash (p2sh) ScriptSig
+image::images/prbc_0812.png[p2sh ScriptSig]
+
+This produces the combined script in <<p2sh_combined>>.
+
+[[p2sh_combined]]
+.p2sh combined script
+image::images/prbc_0813.png[p2sh Combined script]
+
+As before, `OP_0` is there because of the `OP_CHECKMULTISIG` bug.
+The key to understanding p2sh is the execution of the exact sequence shown in <<p2sh_pattern_that_executes_the_special_rule>>.
+
+[[p2sh_pattern_that_executes_the_special_rule]]
+.p2sh pattern that executes the special rule
+image::images/prbc_0814.png[p2sh Pattern]
+
+Upon execution of this sequence, if the stack is left with a 1, the RedeemScript is inserted into the Script command set.
+In other words, if we reveal a RedeemScript whose hash160 is the same as the hash160 in the ScriptPubKey, that RedeemScript acts like the ScriptPubKey instead.
+We hash the script that locks the funds and put that into the blockchain instead of the script itself.
+This is why we call this ScriptPubKey pay-to-script-_hash_.
+
+Let's go through exactly how this works.
+We start with the Script commands (<<p2sh_start>>).
+
+[[p2sh_start]]
+.p2sh start
+image::images/prbc_0815.png[p2sh start]
+
+`OP_0` will push a 0 to the stack, and the two signatures and the RedeemScript will be pushed to the stack directly, leading to <<p2sh_step_1>>.
+
+[[p2sh_step_1]]
+.p2sh step 1
+image::images/prbc_0816.png[p2sh step 1]
+
+`OP_HASH160` will hash the RedeemScript, which will make the stack look like <<p2sh_step_2>>.
+
+[[p2sh_step_2]]
+.p2sh step 2
+image::images/prbc_0817.png[p2sh step 2]
+
+The 20-byte hash will be pushed to the stack (<<p2sh_step_3>>).
+
+[[p2sh_step_3]]
+.p2sh step 3
+image::images/prbc_0818.png[p2sh step 3]
+
+And((("OP_EQUAL operation"))) finally, `OP_EQUAL` will compare the top two elements.
+If the software checking this transaction is pre-BIP0016, we will end up with <<p2sh_end_if_evaluating_with_pre_bip0016_software>>.
+
+[[p2sh_end_if_evaluating_with_pre_bip0016_software]]
+.p2sh end if evaluating with pre-BIP0016 software
+image::images/prbc_0819.png[p2sh pre-BIP0016 End]
+
+This would end evaluation for pre-BIP0016 nodes and the result would be valid, assuming the hashes are equal.
+
+On the other hand, BIP0016 nodes, which as of this writing are the vast majority, will parse the RedeemScript as Script commands (<<p2sh_redeemscript>>).
+
+[[p2sh_redeemscript]]
+.p2sh RedeemScript
+image::images/prbc_0820.png[p2sh RedeemScript]
+
+These go into the Script column as commands (<<p2sh_step_4>>).
+
+[[p2sh_step_4]]
+.p2sh step 4
+image::images/prbc_0821.png[p2sh step 4]
+
+`OP_2` pushes((("OP_2 operation"))) a 2 to the stack, the pubkeys are also pushed, and a final `OP_2` pushes another 2 to the stack (<<p2sh_step_5>>).
+
+[[p2sh_step_5]]
+.p2sh step 5
+image::images/prbc_0822.png[p2sh step 5]
+
+`OP_CHECKMULTISIG` consumes _m_ + _n_ + 3 elements, which is the entire stack, and we end the same way we did for bare multisig (<<p2sh_end_for_post_bip_0016_software>>).
+
+[[p2sh_end_for_post_bip_0016_software]]
+.p2sh end for post-BIP0016 software
+image::images/prbc_0823.png[p2sh End]
+
+The RedeemScript substitution is a bit hacky, and there's special-cased code in Bitcoin software to handle this.
+Why((("BIP (Bitcoin Improvement Proposals)", "BIP0012"))) wasn't something a lot less hacky and more intuitive chosen?
+BIP0012 was a competing proposal at the time((("OP_EVAL operation"))) that used `OP_EVAL` and was considered more elegant.
+A ScriptPubKey like <<op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element>> would have worked with BIP0012.
+
+[[op_eval_would_have_been_an_command_which_adds_additional_commands_based_on_the_top_element]]
+.OP_EVAL would have been a command that adds additional commands based on the top element
+image::images/prbc_0824.png[`OP_EVAL`]
+
+`OP_EVAL` would have consumed the top element of the stack and interpreted that as Script commands to be put into the Script column.
+
+Unfortunately, this((("Turing completeness"))) more elegant solution comes with an unwanted side effect, namely Turing completeness.
+Turing completeness is undesirable as it makes the security of a smart contract much harder to guarantee (see <<chapter_script>>).
+Thus, the((("BIP (Bitcoin Improvement Proposals)", "BIP0016"))) more hacky but more secure option of special-casing was chosen in BIP0016.
+BIP0016 (or p2sh) was implemented in 2011 and continues to be a part of the network today.((("", startref="p2shoper08")))((("", startref="MSp2shoper08")))
+
+=== Coding p2sh
+
+The((("p2sh (pay-to-script-hash)", "coding", id="p2shcode08")))((("multisig (multiple signatures)", "p2sh (pay-to-script-hash) coding", id="MSp2shcode08")))((("OP_HASH160 operation"))) special pattern of RedeemScript, `OP_HASH160`, hash160, and `OP_EQUAL` needs handling.
+The `evaluate` method in _script.py_ is where we handle the special case:
+
+[source,python]
+----
+class Script:
+...
+    def evaluate(self, z):
+...
+        while len(commands) > 0:
+            command = commands.pop(0)
+            if type(command) == int:
+...
+include::code-ch08/script.py[tag=source1]
+----
+<1> `0xa9` is `OP_HASH160`, `0x87` is `OP_EQUAL`.
+We're checking that the next three commands conform to the BIP0016 special pattern.
+<2> We know that this is `OP_HASH160`, so we just pop it off.
+Similarly, we know the next command is the 20-byte hash value and the third command is `OP_EQUAL`, which is what we tested for in the `if` statement above it.
+<3> We run the `OP_HASH160`, 20-byte hash push to the stack, and `OP_EQUAL` as normal.
+<4> There should be a 1 remaining, which is what `op_verify` checks for (`OP_VERIFY` consumes one element and does not put anything back).
+<5> Because we want to parse the RedeemScript, we need to prepend the length.
+<6> We extend the command set with the parsed commands from the RedeemScript.
+
+==== More Complicated Scripts
+
+The((("OP_PUSHDATA2 operation"))) nice thing about p2sh is that the RedeemScript can be as long as the largest single element from `OP_PUSHDATA2`, which is 520 bytes.
+Multisig is just one possibility.
+You can have scripts that define more complicated logic, like "2 of 3 of these keys or 5 of 7 of these other keys."
+The main feature of p2sh is that it's flexible and at the same time reduces the UTXO set size by pushing the burden of storing part of the script back to the user.
+
+In <<chapter_segwit>>, p2sh is also used to make Segwit backward compatible.
+
+==== Addresses
+
+To compute p2sh addresses, we use a process similar to how we compute p2pkh addresses.
+The hash160 is prepended with a prefix byte and appended with a checksum.
+
+Mainnet p2sh uses the `0x05` byte, which causes addresses to start with a `3` in Base58, while testnet p2sh uses the `0xc4` byte to cause addresses to start with a `2`.
+We can calculate the address using the `encode_base58_checksum` function from _helper.py_:((("", startref="p2shcode08")))
+
+[source,pycon]
+----
+include::code-ch08/examples.py[tag=example1]
+----
+
+include::code-ch08/answers.py[tag=exercise2,indent=0]
+
+include::code-ch08/answers.py[tag=exercise3,indent=0]
+
+==== p2sh Signature Verification
+
+As((("p2sh (pay-to-script-hash)", "signature verification", id="p2shsignver08"))) with p2pkh, one of the tricky aspects of p2sh is verifying the signatures. p2sh signature verification is different from the p2pkh process covered in <<chapter_tx>>.
+
+Unlike with p2pkh, where there's only one signature and one public key, we have some number of pubkeys (in SEC format in the RedeemScript) and some equal or smaller number of signatures (in DER format in the ScriptSig).
+Thankfully, the signatures have to be in the same order as the pubkeys or the signatures are not considered valid.
+
+Once we have a particular signature and public key, we only need the signature hash, or _z_, to figure out whether the signature is valid (<<validation_of_p2sh_inputs>>).
+
+[[validation_of_p2sh_inputs]]
+.Validation of p2sh inputs
+image::images/prbc_0825.png[Validation Start]
+
+As with p2pkh, finding the signature hash is the most difficult part of the p2sh signature validation process. We'll now proceed to cover this in detail.
+
+===== Step 1: Empty all the ScriptSigs
+
+The first step is to empty all the ScriptSigs when checking the signature (<<empty_each_inputs_scriptsig>>).
+The same procedure is used for creating the signature.
+
+[[empty_each_inputs_scriptsig]]
+.Empty each input's ScriptSig
+image::images/prbc_0826.png[Validation Step 1]
+
+===== Step 2: Replace the ScriptSig of the p2sh input being signed with the RedeemScript
+
+Each p2sh input has a RedeemScript.
+We take the RedeemScript and put that in place of the empty ScriptSig (<<replace_the_scriptsig_of_the_input_were_checking_with_the_redeemscript>>).
+This is different from p2pkh in that it's not the ScriptPubKey.
+
+[[replace_the_scriptsig_of_the_input_were_checking_with_the_redeemscript]]
+.Replace the ScriptSig of the input we're checking with the RedeemScript
+image::images/prbc_0827.png[Validation Step 2]
+
+===== Step 3: Append the hash type
+
+Last, we add a 4-byte hash type to the end.
+This is the same as in p2pkh. The integer corresponding to `SIGHASH_ALL` is 1 and this has to be encoded in little-endian over 4 bytes, which makes the transaction look like <<append_the_hash_type_sighash_all_or_the_blue_part_at_the_end>>.
+
+[[append_the_hash_type_sighash_all_or_the_blue_part_at_the_end]]
+.Append the hash type (SIGHASH_ALL), 01000000
+image::images/prbc_0828.png[Validation Step 3]
+
+The hash256 of this interpreted as a big-endian integer is our _z_.
+The code for getting our signature hash looks like this:
+
+[source,python]
+----
+include::code-ch08/examples.py[tag=example2]
+----
+
+Now that we have our _z_, we can grab the SEC public key and DER signature from the ScriptSig and RedeemScript  (<<der_and_sec_within_the_p2sh_scriptsig_and_redeemscript>>).
+
+[[der_and_sec_within_the_p2sh_scriptsig_and_redeemscript]]
+.DER signature and SEC pubkey within the p2sh ScriptSig and RedeemScript
+image::images/prbc_0829.png[DER and SEC]
+
+We can now validate the signature:
+
+[source,python]
+----
+include::code-ch08/examples.py[tag=example3]
+----
+<1> `z` is from the code on page 185.
+
+We've verified one of the two signatures that are required to unlock this p2sh pass:[<span class="keep-together">multisig</span>].((("", startref="p2shsignver08")))((("", startref="MSp2shcode08")))((("", startref="Hp2sh08")))
+
+include::code-ch08/answers.py[tag=exercise4,indent=0]
+
+include::code-ch08/answers.py[tag=exercise5,indent=0]
+
+=== Conclusion
+
+In this chapter we learned how p2sh ScriptPubKeys are created and how they're redeemed.
+We've covered transactions for the last four chapters; we now turn to how they are grouped in blocks.

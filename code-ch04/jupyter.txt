@@ -1,0 +1,58 @@
+import ecc
+import helper
+---
+exercise1:
+from ecc import PrivateKey
+
+# 5000
+# 2018**5
+# 0xdeadbeef12345
+# privatekey.point is the public key for a private key
+---
+exercise2:
+from ecc import PrivateKey
+
+# 5001
+# 2019**5
+# 0xdeadbeef54321
+---
+exercise3:
+from ecc import Signature
+
+r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
+s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+---
+exercise4:
+from helper import encode_base58
+
+# 7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d
+# eff69ef2b1bd93a66ed5219add4fb51e11a840f404876325a1e8ffe0529a2c
+# c7207fee197d27c618aea621406f6bf5ef6fca38681d82b2f06fddbdce6feab6
+---
+exercise5:
+from ecc import PrivateKey
+
+# 5002 (use uncompressed SEC, on testnet)
+# 2020**5 (use compressed SEC, on testnet)
+# 0x12345deadbeef (use compressed SEC on mainnet)
+---
+exercise6:
+from ecc import PrivateKey
+
+# 5003
+# 2021**5
+# 0x54321deadbeef
+---
+exercise7:helper:HelperTest:test_little_endian_to_int
+---
+exercise8:helper:HelperTest:test_int_to_little_endian
+---
+exercise9:
+from ecc import PrivateKey
+from helper import hash256, little_endian_to_int
+
+# select a passphrase here, add your email address into the passphrase for security
+# passphrase = b'your@email.address some secret only you know'
+# secret = little_endian_to_int(hash256(passphrase))
+# create a private key using your secret
+# print an address from the public point of the private key with testnet=True

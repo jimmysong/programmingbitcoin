@@ -1,0 +1,456 @@
+[[chapter_serialization]]
+
+== Serialization
+
+[.lead]
+We've((("mathematical tools", "serialization", id="MTserial04"))) created a lot of classes thus far, including `PrivateKey`, `S256Point`, and `Signature`.
+We now need to start thinking about how to transmit these objects to other computers on the network, or even to disk.
+This is where serialization comes into play.
+We want to communicate or store a `S256Point` or a `Signature` or a `PrivateKey`.
+Ideally, we want to do this efficiently, for reasons we'll see in <<chapter_networking>>.
+
+=== Uncompressed SEC Format
+
+We'll((("S256Point class", "serialization of")))((("serialization", "uncompressed SEC format")))((("SEC serialization format", "uncompressed format"))) start with the `S256Point` class, which is the public key class.
+Recall that the public key in elliptic curve cryptography is really a coordinate in the form of (_x_,_y_).
+How can we serialize this data?
+
+It turns out there's already a standard for serializing ECDSA public keys, called((("Standard for Efficient Cryptography", see="SEC format"))) _Standards for Efficient Cryptography_ (SEC)—and as the word "Efficient" in the name suggests, it has minimal overhead.
+There are two forms of SEC format that we need to be concerned with: uncompressed and compressed. We'll begin with the former, and look at the compressed format in the next section.
+
+Here is how the uncompressed SEC format for a given point _P_ = (_x_,_y_) is generated:
+
+1. Start with the prefix byte, which is `0x04`.
+2. Next, append the _x_ coordinate in 32 bytes as a big-endian integer.
+3. Next, append the _y_ coordinate in 32 bytes as a big-endian integer.
+
+The uncompressed SEC format is shown in <<uncompressed_sec_format>>.
+
+[[uncompressed_sec_format]]
+.Uncompressed SEC format
+image::images/prbc_0401.png[Uncompressed SEC format]
+
+[NOTE]
+.Big- and Little-Endian
+====
+The((("serialization", "big- and little-endian encodings")))((("big-endian encoding")))((("little-endian encoding"))) motivation for big- and little-endian encodings is storing a number on disk.
+A number under 256 is easy enough to encode, as a single byte (2^8^) is enough to hold it.
+When it's bigger than 256, how do we serialize the number to bytes?
+
+Arabic numerals are read left to right.
+A number like 123 is 100 + 20 + 3 and not 1 + 20 + 300.
+This is what we call big-endian, because the "big end" starts first.
+
+Computers can sometimes be more efficient using the opposite order, or little-endian—that is, starting with the little end first.
+
+Since computers work in bytes, which have 8 bits, we have to think in base 256.
+This means that a number like 500 looks like `01f4` in big-endian—that is, 500 = 1 &#xd7; 256 + 244 (`f4` in hexadecimal).
+The same number looks like `f401` in little-endian.
+
+Unfortunately, some serializations in Bitcoin (like the SEC format _x_ and _y_ coordinates) are big-endian, while others (like the transaction version number in <<chapter_tx_parsing>>) are little-endian.
+This book will let you know which ones are big- versus little-endian.
+====
+
+Creating the uncompressed SEC format serialization is pretty straightforward.
+The trickiest part is converting a 256-bit number into 32 bytes, big-endian.
+Here's how this is done in code:
+
+[source,python]
+----
+class S256Point(Point):
+...
+    def sec(self):
+        '''returns the binary version of the SEC format'''
+	return b'\x04' + self.x.num.to_bytes(32, 'big') \
+            + self.y.num.to_bytes(32, 'big')  # <1>
+----
+<1> In Python 3, you can convert a number to bytes using the `to_bytes` method.
+The first argument is how many bytes it should take up and the second argument is the endianness (see the preceding note).
+
+include::code-ch04/answers.py[tag=exercise1,indent=0]
+
+=== Compressed SEC Format
+
+Recall((("serialization", "compressed SEC format")))((("SEC serialization format", "compressed format"))) that for any _x_ coordinate, there are at most two _y_ coordinates due to the __y__^2^ term in the elliptic curve equation (<<the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve>>).
+
+[role="width-90"]
+[[the_two_possible_values_for_y_are_where_this_vertical_line_intersects_the_curve]]
+.The two possible values for y are where this vertical line intersects the curve
+image::images/prbc_0212.png[Elliptic Curve Vertical Line]
+
+It turns out that even over a finite field, we have the same symmetry.
+
+This is because for any (_x_,_y_) that satisfies __y__^2^ = __x__^3^ + __ax__ + __b__, (_x_,–__y__) also satisfies the equation.
+Furthermore, in a finite field, –__y__ % _p_ = (_p_ – _y_) % _p_.
+Or, more accurately, if (_x_,_y_) satisfies the elliptic curve equation, (_x_,_p_ – _y_) also satisfies the equation.
+These are the only two solutions for a given _x_, as shown, so if we know _x_, we know the _y_ coordinate has to be either _y_ or _p_ – _y_.
+
+Since _p_ is a prime number greater than 2, we know that _p_ is odd.
+Thus, if _y_ is even, pass:[<span class="keep-together"><em>p</em> – <em>y</em></span>] (odd minus even) will be odd.
+If _y_ is odd, _p_ – _y_ will be even.
+In other words, between _y_ and _p_ – _y_, exactly one will be even and one will be odd.
+This is something we can use to our advantage to shorten the uncompressed SEC format: we can provide the _x_ coordinate and the evenness of the _y_ coordinate.
+We call this the _compressed SEC format_ because of how the _y_ coordinate is compressed into a single byte (namely, whether it's even or odd).
+
+Here is the serialization of the compressed SEC format for a given point _P_ = (_x_,_y_):
+
+1. Start with the prefix byte.
+If _y_ is even, it's `0x02`; otherwise, it's `0x03`.
+2. Next, append the _x_ coordinate in 32 bytes as a big-endian integer.
+
+The compressed SEC format is shown in <<compressed_sec_format>>.
+
+[[compressed_sec_format]]
+.Compressed SEC format
+image::images/prbc_0403.png[Compressed SEC format]
+
+Again, the procedure is pretty straightforward.
+We can update the `sec` method to handle compressed SEC keys:
+
+[source,python]
+----
+class S256Point(Point):
+...
+include::code-ch04/ecc.py[tag=source1]
+----
+
+The big advantage of the compressed SEC format is that it only takes up 33 bytes instead of 65 bytes.
+This is a big savings when amortized over millions of transactions.
+
+At this point, you may be wondering how you can analytically calculate _y_ given the _x_ coordinate.
+This requires us to calculate a square root in a finite field.
+
+Stated mathematically:
+
+++++
+<ul class="simplelist">
+<li>Find <em>w</em> such that <em>w</em><sup>2</sup> = <em>v</em> when we know <em>v</em>.</li>
+</ul>
+++++
+
+It turns out that if the finite field prime _p_ % 4 = 3, we can do this rather easily.
+Here's how.
+
+First, we know:
+
+++++
+<ul class="simplelist">
+<li><em>p</em> % 4 = 3</li>
+</ul>
+++++
+
+which implies:
+
+++++
+<ul class="simplelist">
+<li>(<em>p</em> + 1) % 4 = 0</li>
+</ul>
+++++
+
+That is, (__p__ + 1)/4 is an integer.
+
+By definition:
+
+++++
+<ul class="simplelist">
+<li><em>w</em><sup>2</sup> = <em>v</em></li>
+</ul>
+++++
+
+We are looking for a formula to calculate _w_.
+From Fermat's little theorem:
+
+
+++++
+<ul class="simplelist">
+<li><em>w</em><sup><em>p</em>–1</sup> % <em>p</em> = 1</li>
+</ul>
+++++
+
+which means:
+
+++++
+<ul class="simplelist">
+<li><em>w</em><sup>2</sup> = <em>w</em><sup>2</sup> ⋅ 1 = <em>w</em><sup>2</sup> ⋅ <em>w</em><sup><em>p</em>–1</sup> = <em>w</em><sup>(<em>p</em>+1)</sup></li>
+</ul>
+++++
+
+Since _p_ is odd (recall _p_ is prime), we know we can divide (_p_+1) by 2 and still get an integer, implying:
+
+++++
+<ul class="simplelist">
+<li><em>w</em> = <em>w</em><sup>(<em>p</em>+1)/2</sup></li>
+</ul>
+++++
+
+Now we can use (_p_+1)/4 being an integer this way:
+
+++++
+<ul class="simplelist">
+<li><em>w</em> = <em>w</em><sup>(<em>p</em>+1)/2</sup> = <em>w</em><sup>2(<em>p</em>+1)/4</sup> = (<em>w</em><sup>2</sup>)<sup>(<em>p</em>+1)/4</sup> = <em>v</em><sup>(<em>p</em>+1)/4</sup></li>
+</ul>
+++++
+
+So our formula for finding the square root becomes:
+
+++++
+<ul class="simplelist">
+<li>if <em>w</em><sup>2</sup> = <em>v</em> and <em>p</em> % 4 = 3, <em>w</em> = <em>v</em><sup>(<em>p</em>+1)/4</sup></li>
+</ul>
+++++
+
+It turns out that the _p_ used in secp256k1 is such that _p_ % 4 == 3, so we can use this formula:
+
+++++
+<ul class="simplelist">
+<li><em>w</em><sup>2</sup> = <em>v</em></li>
+<li><em>w</em> = <em>v</em><sup>(<em>p</em>+1)/4</sup></li>
+</ul>
+++++
+
+That will be one of the two possible __w__'s; the other will be _p_ – _w_.
+This is due to taking the square root means that both the positive and negative will work.
+
+We can add this as a general method in the +S256Field+ class:
+
+[source,python]
+----
+class S256Field(FieldElement):
+...
+include::code-ch04/ecc.py[tag=source2]
+----
+
+When we get a serialized SEC pubkey, we can write a `parse` method to figure out which _y_ we need:
+
+[source,python]
+----
+class S256Point:
+...
+include::code-ch04/ecc.py[tag=source3]
+----
+<1> The uncompressed SEC format is pretty straightforward.
+<2> The evenness of the _y_ coordinate is given in the first byte.
+<3> We take the square root of the right side of the elliptic curve equation to get _y_.
+<4> We determine evenness and return the correct point.
+
+include::code-ch04/answers.py[tag=exercise2,indent=0]
+
+=== DER Signatures
+
+Another((("serialization", "DER Signature format")))((("Signature class", "serialization of")))((("DER (Distinguished Encoding Rules) Signature format")))((("signing and verification", "serializing signatures"))) class that we need to learn to serialize is `Signature`.
+Much like the SEC format, it needs to encode two different numbers, `r` and `s`.
+Unfortunately, unlike `S256Point`, `Signature` cannot be compressed as `s` cannot be derived solely from `r`.
+
+The((("Distinguished Encoding Rules (DER)"))) standard for serializing signatures (and lots of other things, for that matter) is called Distinguished Encoding Rules (DER) format. DER format was used by Satoshi to serialize signatures.
+This was most likely because the standard was already defined in 2008, was supported in the OpenSSL library (used in Bitcoin at the time), and was easy enough to adopt, rather than creating a new standard.
+
+DER signature format is defined like this:
+
+1. Start with the `0x30` byte.
+2. Encode the length of the rest of the signature (usually `0x44` or `0x45`) and append.
+3. Append the marker byte, `0x02`.
+4. Encode `r` as a big-endian integer, but prepend it with the `0x00` byte if `r`'s first byte &ge; `0x80`.
+Prepend the resulting length to `r`.
+Add this to the result.
+5. Append the marker byte, `0x02`.
+6. Encode `s` as a big-endian integer, but prepend with the `0x00` byte if `s`'s first byte &ge; `0x80`.
+Prepend the resulting length to `s`.
+Add this to the result.
+
+The rules for #4 and #6 with the first byte starting with something greater than or equal to `0x80` are because DER is a general encoding and allows for negative numbers to be encoded.
+The first bit being 1 means that the number is negative.
+All numbers in an ECDSA signature are positive, so we have to prepend with `0x00` if the first bit is 1, which is equivalent to first byte &ge; `0x80`.
+
+The DER format is shown in <<der_format>>.
+
+[[der_format]]
+.DER format
+image::images/prbc_0404.png[DER format]
+
+Because we know `r` is a 256-bit integer, `r` will be at most 32 bytes expressed as big-endian.
+It's also possible the first byte could be &ge; +0x80+, so #4 can be at most 33 bytes.
+However, if `r` is a relatively small number, it could be less than 32 bytes.
+The same goes for `s` and #6.
+
+Here's how this is coded in Python:
+
+[source,python]
+----
+class Signature:
+...
+include::code-ch04/ecc.py[tag=source4]
+----
+<1> In Python 3, you can convert a list of numbers to the byte equivalents using `bytes([some_integer1, some_integer2])`.
+
+Overall, this is an inefficient way to encode `r` and `s` as there are at least 6 bytes that aren't strictly necessary.
+
+include::code-ch04/answers.py[tag=exercise3,indent=0]
+
+=== Base58
+
+In((("serialization", "Base58")))((("Base58", id="base58"))) the early days of Bitcoin, bitcoins were assigned to public keys specified in SEC format (uncompressed) and then were redeemed using DER signatures.
+For reasons we'll get to in <<chapter_script>>, using this particular very simple script turned out to be both wasteful for storing unspent transaction outputs (UTXOs) and a little less secure than the scripts in more prominent use now.
+For now, we'll go through what addresses are and how they are encoded.
+
+==== Transmitting Your Public Key
+
+In((("serialization", "transmitting public keys")))((("public key cryptography", "transmitting public keys"))) order for Alice to pay Bob, she has to know where to send the money.
+This is true not just in Bitcoin, but for any method of payment.
+Since Bitcoin is a digital bearer instrument, the address can be something like a public key in a public key cryptography scheme.
+Unfortunately, SEC format, especially uncompressed, is a bit long (65 or 33 bytes).
+Furthermore, the 65 or 33 bytes are in binary format—not something that's easy to read, at least raw.
+
+There are three major considerations.
+The first is that the public key be readable (easy to hand-write and not too difficult to mistake, say, over the phone).
+The second is that it's short (not so long that it's cumbersome).
+The third is that it's secure (so it's harder to make mistakes).
+
+So how do we get readability, compression, and security?
+If we express the SEC format in hexadecimal (4 bits per character), it's double the length (130 or 66 characters).
+Can we do better?
+
+We((("Base64"))) can use something like Base64, which can express 6 bits per character. This results in 87 characters for uncompressed SEC and 44 characters for compressed SEC.
+Unfortunately, Base64 is prone to mistakes, as a lot of letters and numbers look similar (`0` and `O`, `l` and `I`, `-` and `_`).
+If we remove these characters, we can achieve a result that has good readability and decent compression (around 5.86 bits per character).
+Lastly, we can add a checksum at the end to ensure that mistakes are easy to detect.
+
+This construction is called _Base58_.
+Instead of hexadecimal (base 16) or Base64, we're encoding numbers in Base58.
+
+The actual mechanics of doing the Base58 encoding are as follows.
+
+All numbers, uppercase letters, and lowercase letters are utilized, except for the aforementioned `0/O` and `l/I`.
+That leaves us with 10 + 26 + 26 – 4 = 58.
+Each of these characters represents a digit in Base58.
+We can encode with a function that does exactly this:
+
+[source,python]
+----
+include::code-ch04/helper.py[tag=source1]
+...
+include::code-ch04/helper.py[tag=source2]
+----
+<1> The purpose of this loop is to determine how many of the bytes at the front are 0 bytes.
+We want to add them back at the end.
+<2> This is the loop that figures out what Base58 digit to use.
+<3> Finally, we prepend all the zeros that we counted at the front, because otherwise they wouldn't show up as prefixed ones.
+This annoyingly happens with pay-to-pubkey-hash (p2pkh); more on that in <<chapter_script>>.
+
+This function will take any bytes in Python 3 and convert them to Base58.
+
+[NOTE]
+.Why Base58 Is on the Way Out
+====
+Base58 has been used for a long time, and while it does make it somewhat easier than something like Base64 to communicate, it's not really that convenient.
+Most people prefer to copy and paste the addresses, and if you've ever tried to communicate a Base58 address vocally, you know it can be a nightmare.
+
+What's((("Bech32 standard")))((("BIP (Bitcoin Improvement Proposals)", "BIP0173"))) much better is the new Bech32 standard, which is defined in BIP0173.
+Bech32 uses a 32-character alphabet that's just numbers and lowercase letters, except `1`, `b`, `i`, and `o`.
+Thus far, it's only used for Segwit (<<chapter_segwit>>).((("", startref="base58")))
+====
+
+[role="pagebreak-before"]
+include::code-ch04/answers.py[tag=exercise4,indent=0]
+
+==== Address Format
+
+The((("serialization", "address format")))((("address format"))) 264 bits from compressed SEC format are still a bit too long, not to mention a bit less secure (see <<chapter_script>>).
+To both shorten the address and increase security, we can use the ripemd160 hash.
+
+By not using the SEC format directly, we can go from 33 bytes to 20 bytes, shortening the address significantly.
+Here is how a Bitcoin address is created:
+
+1. For mainnet addresses, start with the prefix `0x00`, for testnet `0x6f`.
+2. Take the SEC format (compressed or uncompressed) and do a sha256 operation followed by the ripemd160 hash operation, the combination of which is called a hash160 operation.
+3. Combine the prefix from #1 and resulting hash from #2.
+4. Do a hash256 of the result from #3 and get the first 4 bytes.
+5. Take the combination of #3 and #4 and encode it in Base58.
+
+The result of step 4 of this process is called the _checksum_.
+We can do steps 4 and 5 in one go this way:
+
+[source,python]
+----
+include::code-ch04/helper.py[tag=source3]
+----
+
+[NOTE]
+.What Is Testnet?
+====
+Testnet((("testnet"))) is a parallel Bitcoin network that's meant to be used by developers.
+The coins on there are not worth anything and the proof-of-work required to find a block is relatively easy.
+The mainnet chain as of this writing has around 550,000 blocks, while testnet has significantly more (around 1,450,000 blocks).
+====
+
+((("ripemd160 operation")))((("sha256 operation")))((("hash160 operation")))We can implement the hash160 operation in _helper.py_:
+
+[source,python]
+----
+include::code-ch04/helper.py[tag=source4]
+----
+<1> Note that `hashlib.sha256(s).digest` does the sha256 and the wrapper around it does the ripemd160.
+
+We can also update `S256Point` with `hash160` and `address` methods:
+
+[source,python]
+----
+class S256Point:
+...
+include::code-ch04/ecc.py[tag=source5]
+----
+
+include::code-ch04/answers.py[tag=exercise5,indent=0]
+
+==== WIF Format
+
+The((("serialization", "WIF format")))((("WIF (Wallet Import Format)"))) private key in our case is a 256-bit number.
+Generally, we are not going to need to serialize our secret that often, as it doesn't get broadcast (that would be a bad idea!).
+That said, there are instances where you may want to transfer your private key from one wallet to another—for example, from a paper wallet to a software wallet.
+
+For this purpose, you can use Wallet Import Format (WIF).
+WIF is a serialization of the private key that's meant to be human-readable.
+WIF uses the same Base58 encoding that addresses use.
+
+Here is how the WIF format is created:
+
+1. For mainnet private keys, start with the prefix `0x80`, for testnet `0xef`.
+2. Encode the secret in 32-byte big-endian.
+3. If the SEC format used for the public key address was compressed, add a suffix of `0x01`.
+4. Combine the prefix from #1, serialized secret from #2, and suffix from #3.
+5. Do a hash256 of the result from #4 and get the first 4 bytes.
+6. Take the combination of #4 and #5 and encode it in Base58.
+
+We((("PrivateKey class", "serialization of"))) can now create the `wif` method on the `PrivateKey` class:
+
+[source,python]
+----
+class PrivateKey
+...
+include::code-ch04/ecc.py[tag=source6]
+----
+
+include::code-ch04/answers.py[tag=exercise6,indent=0]
+
+=== Big- and Little-Endian Redux
+
+It((("serialization", "big- and little-endian encodings")))((("big-endian encoding")))((("little-endian encoding"))) will be very useful to know how big- and little-endian are done in Python, as the next few chapters will be parsing and serializing numbers to and from big-/little-endian quite a bit.
+In particular, Satoshi used a lot of little-endian for Bitcoin and unfortunately, there's no easy-to-learn rule for where little-endian is used and where big-endian is used.
+Recall that SEC format uses big-endian encoding, as do addresses and WIF.
+From <<chapter_tx_parsing>> onward, we will use little-endian encoding a lot more.
+For this reason, we turn to the next two exercises.
+The last exercise of this section is to create a testnet address for yourself.
+
+include::code-ch04/answers.py[tag=exercise7,indent=0]
+
+include::code-ch04/answers.py[tag=exercise8,indent=0]
+
+include::code-ch04/answers.py[tag=exercise9,indent=0]
+
+Go to a https://faucet.programmingbitcoin.com[testnet faucet] and send some testnet coins to that address (it should start with `m` or `n`, or else something is wrong).
+If you succeeded, congrats!
+You're now the proud owner of some testnet coins!((("", startref="MTserial04")))
+
+=== Conclusion
+
+In this chapter we learned how to serialize a lot of different structures that we created in the previous chapters.
+We now turn to parsing and understanding transactions.

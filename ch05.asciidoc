@@ -1,0 +1,429 @@
+[[chapter_tx_parsing]]
+
+== Transactions
+
+[.lead]
+Transactions((("transactions", "overview of", id="Tover05"))) are at the heart of Bitcoin.
+Transactions, simply put, are value transfers from one entity to another.
+We'll see in <<chapter_script>> how "entities" in this case are really smart contracts—but we're getting ahead of ourselves.
+Let's first look at what transactions in Bitcoin are, what they look like, and how they are parsed.
+
+=== Transaction Components
+
+At a high level, a transaction really only has four components.
+They are:
+
+1. Version
+2. Inputs
+3. Outputs
+4. Locktime
+
+A general overview of these fields might be helpful.
+The version indicates what additional features the transaction uses, inputs define what bitcoins are being spent, outputs define where the bitcoins are going, and locktime defines when this transaction starts being valid.
+We'll go through each component in depth.
+
+<<transaction_components_version_inputs_output_locktime>> shows a hexadecimal dump of a typical transaction that shows which parts are which.
+
+[[transaction_components_version_inputs_output_locktime]]
+.Transaction components: version, inputs, outputs, and locktime
+image::images/prbc_0501.png[Transaction Version Inputs Outputs and Locktime]
+
+The differently highlighted parts represent the version, inputs, outputs, and locktime, respectively.
+
+With this in mind, we can start constructing the((("transactions", "creating transaction class (Tx)"))) transaction class, which we'll call `Tx`:
+
+[source,python]
+----
+include::code-ch05/tx.py[tag=source1]
+----
+<1> Input and output are very generic terms, so we specify what kind of inputs they are.
+We'll define the specific object types later.
+<2> We need to know which network this transaction is on to be able to validate it fully.
+<3> The `id` is what block explorers((("block explorers"))) use for looking up transactions.
+It's the hash256 of the transaction in hexadecimal format.
+<4> The hash is the hash256 of the serialization in little-endian.
+Note we don't have the `serialize` method yet; so until we do, this won't work.
+
+The rest of this chapter will be concerned with parsing transactions.
+We could, at this point, write code like this:
+
+[source,python]
+----
+class Tx:
+    ...
+
+    @classmethod  # <1>
+    def parse(cls, serialization):
+        version = serialization[0:4]  # <2>
+	...
+----
+<1> This method has to be a class method as the serialization will return a new instance of a `Tx` object.
+<2> We assume here that the variable `serialization` is a byte array.
+
+This could definitely work, but the transaction may be very large.
+Ideally, we want to be able to parse from a _stream_ instead.
+This will allow us to not need the entire serialized transaction before we start parsing, and that allows us to fail early and be more efficient.
+Thus, the code for parsing a transaction will look more like this:
+
+[source,python]
+----
+class Tx:
+    ...
+
+    @classmethod
+    def parse(cls, stream):
+        serialized_version = stream.read(4)  # <1>
+	...
+----
+<1> The `read` method will allow us to parse on the fly as we won't have to wait on I/O.
+
+This is advantageous from an engineering perspective as the stream can be a socket connection on the network or a file handle.
+We can start parsing the stream right away instead of waiting for the whole thing to be transmitted or read first.
+Our method will be able to handle any sort of stream and return the `Tx` object that we need.((("", startref="Tover05")))
+
+=== Version
+
+When((("transactions", "version component")))((("version numbers", "of transactions"))) you see a version number in something (<<version_chap_five>> shows an example), it's meant to give the receiver information about what the versioned thing is supposed to represent.
+If, for example, you are running Windows 3.1, that's a version number that's very different than Windows 8 or Windows 10.
+You could specify just "Windows," but specifying the version number after the operating system helps you know what features it has and what APIs you can program against.
+
+[[version_chap_five]]
+.Version
+image::images/prbc_0502.png[Version]
+
+Similarly, Bitcoin transactions have version numbers.
+In Bitcoin's case, the transaction version is generally 1, but there are cases where it can be 2 (transactions((("OP_CHECKSEQUENCEVERIFY operation"))) using an opcode called `OP_CHECKSEQUENCEVERIFY` as defined in((("BIP (Bitcoin Improvement Proposals)", "BIP0112"))) BIP0112 require use of version > 1).
+
+You may notice here that the actual value in hexadecimal is `01000000`, which doesn't look like 1.
+Interpreted as a little-endian integer, however, this number is actually 1 (recall the discussion from <<chapter_serialization>>).
+
+include::code-ch05/answers.py[tag=exercise1,indent=0]
+
+=== Inputs
+
+Each((("transactions", "input component", id="Tinput05")))((("inputs", id="inputs05"))) input points to an output of a previous transaction (see <<inputs_chap_five>>).
+This fact requires more explanation, as it's not intuitively obvious at first.
+
+[[inputs_chap_five]]
+.Inputs
+image::images/prbc_0503.png[Inputs]
+
+Bitcoin's inputs are spending outputs of a previous transaction.
+That is, you need to have received bitcoins first to spend something.
+This makes intuitive sense.
+You cannot spend money unless you've received money first.
+The inputs refer to bitcoins that belong to you. Each input needs two things:
+
+* A reference to bitcoins you received previously
+* Proof that these are yours to spend
+
+The second part uses ECDSA (<<chapter_elliptic_curve_cryptography>>).
+You don't want people to be able to forge this, so most inputs contain signatures that only the owner(s) of the private key(s) can produce.
+
+The inputs field can contain more than one input.
+This is analogous to using either a single $100 bill to pay for a $70 meal, or a $50 and a $20.
+The former only requires one input ("bill"); the latter requires two.
+There are situations where there could be even more inputs.
+In our analogy, we could pay for a $70 meal with 14 $5 bills, or even 7,000 pennies.
+This would be analogous to 14 inputs or 7,000 inputs.
+
+The number of inputs is the next part of the transaction, as highlighted in <<number_of_inputs>>.
+
+[[number_of_inputs]]
+.Number of inputs
+image::images/prbc_0504.png[Inputs]
+
+We can see that the byte is actually `01`, which means that this transaction has one input.
+It may be tempting here to assume that it's always a single byte, but it's not.
+A single byte has 8 bits, so anything over 255 inputs will not be expressible in a single byte.
+
+This((("variable integer (varint)"))) is where _varints_ come in.
+Varint is shorthand for _variable integer_, which is a way to encode an integer into bytes that range from 0 to 2^64^ – 1.
+We could, of course, always reserve 8 bytes for the number of inputs, but that would be a lot of wasted space if we expect the number of inputs to be relatively small (say, under 200).
+This is the case with the number of inputs in a normal transaction, so using varints helps to save space.
+You can see how they work in the following sidebar.
+
+[role="pagebreak-before less_space"]
+.Varints
+****
+Variable integers work by these rules:
+
+* If the number is below 253, encode that number as a single byte (e.g., 100 -> `0x64`).
+* If the number is between 253 and 2^16^ – 1, start with the 253 byte (`fd`) and then encode the number in 2 bytes in little-endian (e.g., 255 -> `0xfdff00`, 555 -> `0xfd2b02`).
+* If the number is between 2^16^ and 2^32^ – 1, start with the 254 byte (`fe`) and then encode the number in 4 bytes in little-endian (e.g., 70015 -> `0xfe7f110100`).
+* If the number is between 2^32^ and 2^64^ – 1, start with the 255 byte (`ff`) and then encode the number in 8 bytes in little-endian (e.g., 18005558675309 -> `0xff6dc7ed3e60100000`).
+
+Two functions from _helper.py_ will be used to parse and serialize varint fields:
+
+[source,python]
+----
+include::code-ch05/helper.py[tag=source1]
+----
+
+`read_varint` will read from a stream and return the integer that was encoded.
+`encode_varint` will do the opposite, which is to take an integer and return the varint byte representation.
+****
+
+Each input contains four fields.
+The first two fields point to the previous transaction output and the last two fields define how the previous transaction output can be spent.
+The fields are as follows:
+
+* Previous transaction ID
+* Previous transaction index
+* ScriptSig
+* Sequence
+
+As just explained, each input has a reference to a previous transaction's output.
+The previous transaction ID is the hash256 of the previous transaction's contents.
+This uniquely defines the previous transaction, as the probability of a hash collision is impossibly low.
+
+As we'll see, each transaction has to have at least one output, but may have many.
+Thus, we need to define exactly which output _within a transaction_ we're spending, which is captured in the previous transaction index.
+
+Note that the previous transaction ID is 32 bytes and that the previous transaction index is 4 bytes.
+Both are in little-endian.
+
+The ScriptSig((("ScriptSig field (inputs)"))) has to do with Bitcoin's smart contract language, Script, discussed more thoroughly in <<chapter_script>>.
+For now, think of the ScriptSig as opening a locked box—something that can only be done by the owner of the transaction output.
+The ScriptSig field is a variable-length field, not a fixed-length field like most of what we've seen so far.
+A variable-length field requires us to define exactly how long the field will be, which is why the field is preceded by a varint telling us how long it is.
+
+The sequence((("high-frequency trades")))((("sequence field (inputs)"))) was originally intended as a way to do what Satoshi called "high-frequency trades" with the locktime field (see <<sequence_and_locktime>>), but is currently used with Replace-By-Fee (RBF) and `OP_CHECKSEQUENCEVERIFY`.
+The sequence is also in little-endian and takes up 4 bytes.
+
+The fields of the input look like <<the_fields_of_an_input_previous_tx_previous_index_scriptsig_and_sequence>>.
+
+[[the_fields_of_an_input_previous_tx_previous_index_scriptsig_and_sequence]]
+.The fields of an input: previous transaction ID, previous index, ScriptSig, and sequence
+image::images/prbc_0505.png[Input Fields]
+
+[[sequence_and_locktime]]
+.Sequence and Locktime
+****
+Originally, Satoshi((("locktime"))) wanted the sequence and locktime fields to be used for something called "high-frequency trades."
+What Satoshi envisioned was a way to do payments back and forth with another party without making lots of on-chain transactions.
+For example, if Alice pays Bob _x_ bitcoins for something and then Bob pays Alice _y_ bitcoins for something else (say, if _x_ > _y_), then Alice can just pay Bob _x_ – _y_, instead of there being two separate transactions on-chain.
+We could do the same thing if Alice and Bob had 100 transactions between them—that is, compress a bunch of transactions into a single transaction.
+
+That's the idea that Satoshi had: a continuously updating mini-ledger between the two parties involved that gets settled on-chain.
+Satoshi's intent was to use the sequence and locktime fields to update the high-frequency trade transaction every time a new payment between the two parties occurred.
+The trade transaction would have two inputs (one from Alice and one from Bob) and two outputs (one to Alice and one to Bob).
+The trade transaction would start with sequence at 0 and with a far-away locktime (say, 500 blocks from now, so valid in 500 blocks).
+This would be the base transaction where Alice and Bob get the same amounts as they put in.
+
+After the first transaction, where Alice pays Bob _x_ bitcoins, the sequence of each input would be 1.
+After the second transaction, where Bob pays Alice _y_ bitcoins, the sequence of each input would be 2.
+Using this method, we could have lots of payments compressed into a single on-chain transaction as long as they happened before the locktime became valid.
+
+Unfortunately, as clever as this is, it turns out that it's quite easy for a miner to cheat.
+In our example, Bob could be a miner; he could ignore the updated trade transaction with sequence number 2 and mine the trade transaction with sequence number 1, cheating Alice out of _y_ bitcoins.
+
+A much better design was created later with "payment channels," which is the basis for the Lightning Network.
+****
+
+[role="pagebreak-before"]
+Now that we know what the fields are, we can start creating a `TxIn` class in Python:
+
+[source,python]
+----
+include::code-ch05/tx.py[tag=source2]
+----
+<1> We default to an empty ScriptSig.
+
+There are a couple things to note here.
+First, the amount of each input is not specified.
+We have no idea how much is being spent unless we look it up in the blockchain for the transaction(s) that we're spending.
+Furthermore, we don't even know if the transaction is unlocking the right box, so to speak, without knowing about the previous transaction.
+Every node must verify that this transaction unlocks the right box and that it doesn't spend nonexistent bitcoins.
+How we do that is further discussed in <<chapter_tx>>.
+
+==== Parsing Script
+
+We'll((("Script", "creating Script objects"))) delve more deeply into how Script is parsed in <<chapter_script>>, but for now, here's how you get a `Script` object from hexadecimal in Python:
+
+----
+include::code-ch05/examples.py[tag=example1]
+----
+<1> The `Script` class will be more thoroughly explored in <<chapter_script>>.
+For now, please trust that the `Script.parse` method will create the object that we need.((("", startref="Tinput05")))((("", startref="inputs05")))
+
+include::code-ch05/answers.py[tag=exercise2,indent=0]
+
+=== Outputs
+
+As((("transactions", "output component")))((("outputs"))) hinted in the previous section, outputs define where the bitcoins are going.
+Each transaction must have one or more outputs.
+Why would anyone have more than one output?
+An exchange may batch transactions, for example, and pay out to a lot of people at once instead of generating a single transaction for every single person that requests bitcoins.
+
+Like with inputs, output serialization starts with how many outputs there are as a varint, as shown in <<number_of_outputs>>.
+
+[[number_of_outputs]]
+.Number of outputs
+image::images/prbc_0506.png[Outputs]
+
+Each((("amount field (outputs)")))((("ScriptPubKey field (outputs)"))) output has two fields: amount and ScriptPubKey.
+The amount is the amount of bitcoins being assigned and is specified in satoshis, or 1/100,000,000ths of a bitcoin.
+This allows us to divide bitcoins very finely, down to 1/300th of a penny in USD terms as of this writing.
+The absolute maximum for the amount is the asymptotic limit of 21 million bitcoins in satoshis, which is 2,100,000,000,000,000 (2,100 trillion) satoshis.
+This number is greater than 2^32^ (4.3 billion or so) and is thus stored in 64 bits, or 8 bytes.
+The amount is serialized in little-endian.
+
+The ScriptPubKey, like the ScriptSig, has to do with Bitcoin's smart contract language, Script.
+Think of the ScriptPubKey as the locked box that can only be opened by the holder of the key.
+It's like a one-way safe that can receive deposits from anyone, but can only be opened by the owner of the safe.
+We'll explore this in more detail in <<chapter_script>>.
+Like ScriptSig, ScriptPubKey is a variable-length field and is preceded by the length of the field in a varint.
+
+A complete output looks like <<output_fields_amount_and_scriptpubkey_this_one_is_at_index_0>>.
+
+[[output_fields_amount_and_scriptpubkey_this_one_is_at_index_0]]
+.A complete output field, showing the amount and ScriptPubKey—this one is at index 0
+image::images/prbc_0507.png[Output Fields]
+
+.UTXO Set
+****
+UTXO((("UTXO (unspent transaction output) Set"))) stands for _unspent transaction output_.
+The entire set of unspent transaction outputs at any given moment is called the _UTXO set_.
+The reason why UTXOs are important is because at any moment in time, they represent all the bitcoins that are available to be spent.
+In other words, these are the bitcoins that are in circulation.
+Full nodes on the network must keep track of the UTXO set, and keeping the UTXO set indexed makes validating new transactions much faster.
+
+For example, it's easy to enforce a no-double-spending rule by looking up the previous transaction output in the UTXO set.
+If the input of a new transaction is using a transaction output that's not in the UTXO set, that's an attempt at a double-spend or a nonexistent output and thus invalid.
+Keeping the UTXO set handy is also very useful for validating transactions.
+As we'll see in <<chapter_script>>, we need to look up the amount and ScriptPubKey from the previous transaction output to validate transactions, so having these UTXOs handy can speed up transaction validation.
+****
+
+We can now start coding the `TxOut` class:
+
+[source,python]
+----
+include::code-ch05/tx.py[tag=source3]
+----
+
+include::code-ch05/answers.py[tag=exercise3,indent=0]
+
+=== Locktime
+
+Locktime((("locktime")))((("transactions", "locktime component")))((("high-frequency trades"))) is a way to time-delay a transaction.
+A transaction with a locktime of 600,000 cannot go into the blockchain until block 600,001.
+This was originally construed as a way to do high-frequency trades (see <<sequence_and_locktime>>), which turned out to be insecure.
+If the locktime is greater than or equal to 500,000,000, it's a Unix timestamp.
+If it's less than 500,000,000, it's a block number.
+This way, transactions can be signed but unspendable until a certain point in Unix time or block height is reached.
+
+.When Locktime Is Ignored
+[WARNING]
+====
+Note that locktime is ignored if the sequence numbers for every input are `ffffffff`.
+====
+
+The serialization is in little-endian and 4 bytes (<<locktime>>).
+
+[[locktime]]
+.Locktime
+image::images/prbc_0508.png[Locktime]
+
+The main problem with using locktime is that the recipient of the transaction has no certainty that the transaction will be good when the locktime comes.
+This is similar to a postdated bank check, which has the possibility of bouncing.
+The sender can spend the inputs prior to the locktime transaction getting into the blockchain, thus invalidating the transaction at locktime.
+
+The((("BIP (Bitcoin Improvement Proposals)", "BIP0065"))) uses before BIP0065 were limited.
+BIP0065((("OP_CHECKLOCKTIMEVERIFY operation"))) introduced `OP_CHECKLOCKTIMEVERIFY`, which makes locktime more useful by making an output unspendable until a certain locktime.
+
+include::code-ch05/answers.py[tag=exercise4,indent=0]
+
+include::code-ch05/answers.py[tag=exercise5,indent=0]
+
+=== Coding Transactions
+
+We've((("transactions", "coding transactions"))) parsed the transaction; now we want to do the opposite, which is serializing the transaction.
+Let's start with `TxOut`:
+
+[source,python]
+----
+class TxOut:
+...
+include::code-ch05/tx.py[tag=source4]
+----
+<1> We're going to serialize the +TxOut+ object to a bunch of bytes.
+
+We can then proceed to `TxIn`:
+
+[source,python]
+----
+class TxIn:
+...
+include::code-ch05/tx.py[tag=source5]
+----
+
+Lastly, we can serialize `Tx`:
+
+[source,python]
+----
+class Tx:
+...
+include::code-ch05/tx.py[tag=source6]
+----
+
+We've used the `serialize` methods of both `TxIn` and `TxOut` to serialize `Tx`.
+
+Note that the transaction fee is not specified anywhere!
+This is because the fee is an implied amount, as described in the next section.
+
+=== Transaction Fee
+
+One((("transactions", "transaction fees"))) of the consensus rules of Bitcoin is that for any non-coinbase transactions (more on coinbase transactions in <<chapter_blocks>>), the sum of the inputs has to be greater than or equal to the sum of the outputs.
+You may be wondering why the inputs and outputs can't just be forced to be equal.
+This is because if every transaction had zero cost, there wouldn't be any incentive for miners to include transactions in blocks (see <<chapter_blocks>>).
+Fees((("mempool transactions"))) are a way to incentivize miners to include transactions.
+Transactions not in blocks (so-called _mempool transactions_) are not part of the blockchain and are not final.
+
+The transaction fee is simply the sum of the inputs minus the sum of the outputs.
+This difference is what the miner gets to keep.
+As inputs don't have an amount field, we have to look up the amount.
+This requires access to the blockchain, specifically the UTXO set.
+If you are not running a full node, this can be tricky, as you now need to trust some other entity to provide you with this information.
+
+We((("TxFetcher class"))) are creating a new class to handle this, called `TxFetcher`:
+
+[source,python]
+----
+include::code-ch05/tx.py[tag=source7]
+----
+<1> We check that the ID is what we expect it to be.
+
+You may be wondering why we don't get just the specific output for the transaction and instead get the entire transaction.
+This is because we don't want to be trusting a third party!
+By getting the entire transaction, we can verify the transaction ID (the hash256 of its contents) and be sure that we are indeed getting the transaction we asked for.
+This is impossible unless we receive the entire transaction.
+
+.Why We Minimize Trusting Third Parties
+[WARNING]
+====
+As((("third parties, minimizing risk of")))((("trusted third parties"))) Nick Szabo eloquently wrote in his seminal essay https://nakamotoinstitute.org/trusted-third-parties/["Trusted Third Parties are Security Holes"], trusting third parties to provide correct data is _not_ a good security practice.
+The third party may be behaving well now, but you never know when it may get hacked, have an employee go rogue, or start implementing policies that are against your interests.
+Part of what makes Bitcoin secure is _not_ trusting, but verifying the data that we're given.
+====
+
+We can now create the appropriate method in `TxIn` to fetch the previous transaction and methods to get the previous transaction output's amount and ScriptPubKey (the latter to be used in <<chapter_script>>):
+
+[source,python]
+----
+class TxIn:
+...
+include::code-ch05/tx.py[tag=source8]
+----
+
+==== Calculating the Fee
+
+Now that we have the `value` method in `TxIn` that lets us access how many bitcoins are in each transaction input, we can calculate the fee for a transaction.
+
+include::code-ch05/answers.py[tag=exercise6,indent=0]
+
+=== Conclusion
+
+We've covered exactly how to parse and serialize transactions and defined what the fields mean.
+There are two fields that require more explanation, both related to Bitcoin's smart contract language, Script.
+To that topic we go in <<chapter_script>>.

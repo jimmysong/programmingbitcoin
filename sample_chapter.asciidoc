@@ -1,0 +1,106 @@
+[[unique_chapter_id]]
+== Chapter Title
+
+Chapter text begins here. Replace any of this placeholder text with your opus. The following portion outlines heading levels and section structure.
+
+=== This Is a Top-Level Heading (A-Head)
+
+Within a chapter, the first and highest heading level uses three equals signs.
+
+==== This Is a Second-Level Heading (B-Head)
+
+The second-level heading uses four equals signs. This heading level should only follow a top-level heading (A-head).
+
+===== This Is a Third-Level Heading (C-Head)
+
+The third-level heading uses five equals signs. This heading level should only follow a second-level heading (B-head).
+
+Next we've included a few examples of commonly used block elements. You can add these elements using the buttons in the toolbar, as well.
+
+.This Is a Note
+[NOTE]
+====
+Many people use notes to qualify a statement they made in the preceding paragraphs, or to warn their readers about pitfalls they might run into.
+====
+
+[WARNING]
+====
+This is a warning, used to alert readers to something important or encourage caution. Headings are optional for admonitions like notes and warnings.
+====
+
+Here is an informal code listing:
+
+[source,python]
+----
+print('hello world')
+----
+
+And this is a formal listing, or example:
+
+[[EX1]]
+.Hello World in Python
+====
+[source,python]
+----
+print "Hello World"
+# Formal listings have titles that will be numbered in output.
+----
+====
+
+For either type of listing, you have the option of specifying the code language displayed; see http://docs.atlas.oreilly.com/ch12.html#asciidocref for more details.
+
+You can also specify inline text as code: +print "Hello World"+.
+
+Now, let's take a look at a figure with a caption:
+
+.Figures like this will be automatically numbered in output.
+image::images/images/tarsier.png["Drawing of Tarsiers"]
+
+Here is a blockquote with an author attribution:
+
+[quote, Lewis Carol]
+____
+Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, 'and what is the use of a book,' thought Alice 'without pictures or conversation?'
+____
+
+There are three types of lists available. Numbered (ordered) lists are often used to describe steps in a process:
+
+. Parse the request.
+. Choose a handler function.
+. Run the handler function.
+
+Bulleted (unordered) lists are good for describing a set of requirements:
+
+* HTML source
+* CSS stylesheets
+* JavaScript code
+
+Definition/variable lists serve as glossaries of terminology:
+
+selectSource::
+  Returns a Source containing all the IDs and values from the database. This allows you to write streaming code.
+selectList::
+  Returns a list containing all the IDs and values from the database. All records will be loaded into memory.
+selectFirst::
+  Takes just the first ID and value from the database, if available.
+selectKeys::
+  Returns only the keys, without the values, as a +Source+.
+
+.Sidebar Title
+****
+Here's a sidebar. Sidebars are great for setting aside a section of text that is related to the surrounding content but that doesn't necessarily fit into the main flow.
+****
+
+Finally, here's a sample table:
+
+.Features supported by Hadoop release series
+[options="header"]
+|=======
+|Feature|1.x|0.22|2.x
+|Secure authentication|Yes|No|Yes
+|Old configuration names|Yes|Deprecated|Deprecated
+|New configuration names|No|Yes|Yes
+|Old MapReduce API|Yes|Yes|Yes
+|New MapReduce API|Yes (with some missing libraries)|Yes|Yes
+|=======
+

@@ -1,0 +1,1033 @@
+[[chapter_elliptic_curve_cryptography]]
+== Elliptic Curve Cryptography
+
+[.lead]
+The((("mathematical tools", "elliptic curve cryptography", id="MTelipcurcrypt03"))) previous two chapters covered some fundamental math.
+We learned how finite fields work and what an elliptic curve is.
+In this chapter, we're going to combine the two concepts to learn elliptic curve cryptography.
+Specifically, we're going to build the primitives needed to sign and verify messages, which is at the heart of what Bitcoin does.
+
+=== Elliptic Curves over Reals
+
+We((("elliptic curve cryptography", "elliptic curves over real numbers")))((("real numbers"))) discussed in <<chapter_elliptic_curves>> what an elliptic curve looks like visually because we were plotting the curve over _real_ numbers.
+Specifically, it's not just integers or even rational numbers, but all real numbers.
+Pi, __sqrt__(2), __e__+7th root of 19, and the like are all real numbers.
+
+This worked because real numbers are also a field.
+Unlike a _finite_ field, there are an _infinite_ number of real numbers, but otherwise the same properties hold:
+
+1. If _a_ and _b_ are in the set, _a_ + _b_ and _a_ ⋅ _b_ are in the set.
+2. 0 exists and has the property _a_ + 0 = _a_.
+3. 1 exists and has the property _a_ ⋅ 1 = _a_.
+4. If _a_ is in the set, _–a_ is in the set, which is defined as the value that makes _a_ + (–__a__) = 0.
+5. If _a_ is in the set and is not 0, __a__^–1^ is in the set, which is defined as the value that makes _a_ ⋅ __a__^–1^ = 1.
+
+Clearly, all of these are true: normal addition and multiplication apply for the first part, the additive and multiplicative identities 0 and 1 exist, –__x__ is the additive inverse, and 1/__x__ is the multiplicative inverse.
+
+Real numbers are easy to plot on a graph.
+For example, __y__^2^ = __x__^3^ + 7 can be plotted like <<secp256k1_over_real_numbers>>.
+
+[[secp256k1_over_real_numbers]]
+.secp256k1 over real numbers
+image::images/prbc_0209.png[secp256k1 Curve]
+
+It turns out we can use the point addition equations over any field, including the finite fields we learned about in <<chapter_finite_fields>>.
+The only difference is that we have to use the addition/subtraction/multiplication/division as defined in <<chapter_finite_fields>>, not the "normal" versions that the real numbers use.
+
+=== Elliptic Curves over Finite Fields
+
+So((("elliptic curve cryptography", "elliptic curves over finite fields", id="ECCfinite03")))((("finite fields", "elliptic curves over", id="FFelliptic03"))) what does an elliptic curve over a finite field look like?
+Let's look at the equation __y__^2^ = __x__^3^ + 7 over _F_~103~.
+We can verify that the point (17,64) is on the curve by calculating both sides of the equation:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = 64<sup>2</sup> % 103 = 79</li>
+<li><em>x</em><sup>3</sup> + 7 = (17<sup>3</sup>+7) % 103 = 79</li>
+</ul>
+++++
+
+We've verified that the point is on the curve using finite field math.
+
+[role="pagebreak-before"]
+Because we're evaluating the equation over a finite field, the plot of the equation looks vastly different (<<elliptic_curve_over_a_finite_field>>).
+
+[[elliptic_curve_over_a_finite_field]]
+.Elliptic curve over a finite field
+image::images/prbc_0302.png[Elliptic curve over a finite field]
+
+As you can see, it's very much a scattershot of points and there's no smooth curve here.
+This is not surprising since the points are discrete.
+About the only pattern is that the curve is symmetric right around the middle, because of the __y__^2^ term.
+The graph is not symmetric over the x-axis as in the curve over reals, but about halfway up the y-axis due to there not being negative numbers in a finite field.
+
+What's amazing is that we can use the same point addition equations with the addition, subtraction, multiplication, division, and exponentiation as we defined them for finite fields, and everything still works.
+This may seem surprising, but abstract math has regularities like this despite being different from the traditional modes of calculation you may be familiar with.
+
+include::code-ch03/answers.py[tag=exercise1,indent=0]
+
+=== Coding Elliptic Curves over Finite Fields
+
+Because we defined an elliptic curve point and defined the `+`, `-` ,`*` and `/` operators for finite fields, we can combine the two classes to create elliptic curve points over a finite field:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example1]
+----
+
+When initializing `Point`, we will run through this part of the code:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source1]
+----
+
+The addition (`+`), multiplication (`*`), exponentiation (`**`), and not equals (`!=`) operators here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField`, respectively, and _not_ the integer equivalents.
+Being able to do the same equation but with different definitions for the basic arithmetic operators is how we construct an elliptic curve cryptography library.
+
+We've already coded the two classes that we need to implement elliptic curve points over a finite field.
+However, to check our work, it will be useful to create a test suite.
+We will do this using the results of Exercise 1:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source2]
+----
+<1> We pass in `FieldElement` objects to the `Point` class for initialization.
+This will, in turn, use all the overloaded math operations in `FieldElement`.
+
+We can now run this test like so:
+
+[source,pycon]
+----
+>>> import ecc
+>>> from helper import run  # <1>
+>>> run(ecc.ECCTest('test_on_curve'))
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+----
+<1> `helper` is a module with some very useful utility functions, including the ability to run unit tests individually.((("", startref="ECCfinite03")))((("", startref="FFelliptic03")))
+
+=== Point Addition over Finite Fields
+
+We((("elliptic curve cryptography", "point addition over finite fields", id="ECCpoint03")))((("point addition", "over finite fields", id="PAfinite03"))) can use all the same equations over finite fields, including the linear equation:
+
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>mx</em> + <em>b</em></li>
+</ul>
+++++
+
+It turns out that a "line" in a finite field is not quite what you'd expect (<<line_over_a_finite_field>>).
+
+[[line_over_a_finite_field]]
+.Line over a finite field
+image::images/prbc_0303.png[Line over a finite field]
+
+The equation nevertheless works, and we can calculate what _y_ should be for a given _x_.
+
+Remarkably, point addition works over finite fields as well.
+This is because elliptic curve point addition works over all fields!
+The same exact formulas we used to calculate point addition over reals work over finite fields.
+Specifically, when __x__~1~ ≠ __x__~2~:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+And when __P__~1~ = __P__~2~:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>1</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + <em>a</em>)/(2<em>y</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+All of the equations for elliptic curves work over finite fields, which sets us up to create some cryptographic primitives.
+
+=== Coding Point Addition over Finite Fields
+
+Because we coded +FieldElement+ in such a way as to define `__add__`, `__sub__`, `__mul__`, `__truediv__`, `__pow__`, `__eq__`, and `__ne__`, we can simply initialize `Point` with `FieldElement` objects and point addition will((("", startref="ECCpoint03")))((("", startref="PAfinite03"))) work:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example3]
+----
+
+include::code-ch03/answers.py[tag=exercise2,indent=0]
+
+include::code-ch03/answers.py[tag=exercise3,indent=0]
+
+=== Scalar Multiplication for Elliptic Curves
+
+Because((("scalar multiplication", "for elliptic curves", id="SMelliptic03")))((("elliptic curve cryptography", "scalar multiplication for elliptic curves", id="ECCscalar03"))) we can add a point to itself, we can introduce some new notation:
+
+++++
+<ul class="simplelist">
+<li>(170,142) + (170,142) = 2 ⋅ (170,142)</li>
+</ul>
+++++
+
+Similarly, because we have associativity, we can actually add the point again:
+
+++++
+<ul class="simplelist">
+<li>2 ⋅ (170,142) + (170,142) = 3 ⋅ (170, 142)</li>
+</ul>
+++++
+
+We can do this as many times as we want.
+This is what we call _scalar multiplication_.
+That is, we have a _scalar_ number in front of the point.
+We can do this because we have defined point addition and point addition is associative.
+
+One property of scalar multiplication is that it's really hard to predict without calculating (see <<scalar_multiplication_results_for_y_2_x_3_7>>).
+
+[[scalar_multiplication_results_for_y_2_x_3_7]]
+.Scalar multiplication results for y^2^ = x^3^ + 7 over F~223~ for point (170,142)
+image::images/prbc_0304.png[Scalar Multiplication Results]
+
+Each point is labeled by how many times we've added the point.
+You can see that this is a complete scattershot.
+This is because point addition is nonlinear and not easy to calculate.
+Performing scalar multiplication is straightforward, but doing the opposite, point division, is not.
+
+This((("discrete log problem"))) is called the _discrete log problem_ and is the basis of elliptic curve cryptography.
+
+Another property of scalar multiplication is that at a certain multiple, we get to the point at infinity (remember, the point at infinity is the additive identity or 0).
+If we imagine a point _G_ and scalar-multiply until we get the point at infinity, we end up with a set:
+
+++++
+<ul class="simplelist">
+<li>{ <em>G</em>, 2<em>G</em>, 3<em>G</em>, 4<em>G</em>, ... <em>nG</em> } where <em>nG</em> = 0</li>
+</ul>
+++++
+
+It turns out that this set is called a _group_, and because _n_ is finite, we have a _finite group_ (or more specifically, a _finite cyclic group_).
+Groups are interesting mathematically because they behave well with respect to addition:
+
+++++
+<ul class="simplelist">
+<li><em>G</em> + 4<em>G</em> = 5<em>G</em> or <em>aG</em> + <em>bG</em> = (<em>a</em> + <em>b</em>)<em>G</em></li>
+</ul>
+++++
+
+When we combine the fact that scalar multiplication is easy to do in one direction but hard in the other and the mathematical properties of a group, we have exactly what we need for elliptic curve cryptography.
+
+.Why Is This Called the Discrete Log Problem?
+****
+You may be wondering why the problem of reversing scalar _multiplication_ is referred to as the discrete _log_ problem.
+
+We called the operation between the points "addition," but we could easily have called it a point "operation."
+Typically, a new operation that you define in math is denoted with the dot operator (⋅).
+The dot operator is also used for multiplication, and it sometimes helps to think that way:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> ⋅ <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+</ul>
+++++
+
+When you do lots of multiplying, that's the same as exponentiation.
+Scalar multiplication when we called it "point addition" becomes scalar exponentiation when thinking "point multiplication":
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sup>7</sup> = <em>Q</em></li>
+</ul>
+++++
+
+The discrete log problem in this context is the ability to reverse this equation, which ends up being:
+
+++++
+<ul class="simplelist">
+<li>log<sub>P</sub><em>Q</em> = 7</li>
+</ul>
+++++
+
+The log equation on the left has no analytically calculable algorithm.
+That is, there is no known formula that you can plug in to get the answer generally.
+This is all a bit confusing, but it's fair to say that we could call the problem the "discrete point division" problem instead of the discrete log problem.
+****
+
+include::code-ch03/answers.py[tag=exercise4,indent=0]
+
+=== Scalar Multiplication Redux
+
+Scalar multiplication is adding the same point to itself some number of times.
+The key to making scalar multiplication into public key cryptography is using the fact that scalar multiplication on elliptic curves is very hard to reverse.
+Note the previous exercise.
+Most likely, you calculated the point _s_ ⋅ (47,71) in __F__~223~ for _s_ from 1 until 21.
+Here are the results:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example4]
+----
+
+If you look closely at the numbers, there's no real discernible pattern to the scalar multiplication.
+The _x_ coordinates don't always increase or decrease, and neither do the _y_ coordinates.
+About the only pattern is that between 10 and 11, the _x_ coordinates are equal (10 and 11 have the same _x_, as do 9 and 12, 8 and 13, and so on).
+This is due to the fact that 21 ⋅ (47,71) = 0.
+
+[role="pagebreak-before"]
+Scalar multiplication looks really random, and that's what gives this equation _asymmetry_.
+An((("asymmetric problems"))) _asymmetric_ problem is one that's easy to calculate in one direction, but hard to reverse.
+For example, it's easy enough to calculate 12 ⋅ (47,71).
+But if we were presented with this:
+
+++++
+<ul class="simplelist">
+<li><em>s</em> ⋅ (47,71) = (194,172)</li>
+</ul>
+++++
+
+would we be able to solve for _s_?
+We can look up the results shown earlier, but that's because we have a small group.
+We'll see in <<definingCurveBC>> that when we have numbers that are a lot larger, discrete log becomes an intractable problem.((("", startref="ECCscalar03")))((("", startref="SMelliptic03")))
+
+=== Mathematical Groups
+
+The((("elliptic curve cryptography", "mathematical groups", id="ECCmath03"))) preceding math (finite fields, elliptic curves, combining the two) was really to bring us to this point.
+What we actually want to generate for the purposes of public key cryptography are((("finite cyclic groups", "generating"))) finite cyclic groups, and it turns out that if we take a generator point from an elliptic curve over a finite field, we can generate a finite cyclic group.
+
+Unlike fields, groups have only a single operation.
+In our case, point addition is the operation.
+Groups also have a few other properties, like closure, invertibility, commutativity, and associativity.
+Lastly, we need the identity.
+
+Let's look at each property, starting with that last one.
+
+==== Identity
+
+If((("identity")))((("finite cyclic groups", "identity property"))) you haven't guessed by now, the identity is defined as the point at infinity, which is guaranteed to be in the group since we generate the group when we get to the point at infinity.
+So:
+
+++++
+<ul class="simplelist">
+<li>0 + <em>A</em> = <em>A</em></li>
+</ul>
+++++
+
+
+We call 0 the point at infinity because visually, it's the point that exists to help the math work out (<<vertical_line_intersects_a_third_time>>).
+
+[[vertical_line_intersects_a_third_time]]
+.Vertical line "intersects" a third time at the point at infinity
+[role="width-75"]
+image::images/prbc_0212.png[Vertical Line]
+
+==== Closure
+
+This((("closure")))((("finite cyclic groups", "closure property"))) is perhaps the easiest property to prove since we generated the group in the first place by adding _G_ over and over.
+Thus, if we have two different elements that look like this:
+
+++++
+<ul class="simplelist">
+<li><em>aG</em> + <em>bG</em></li>
+</ul>
+++++
+
+
+We know that the result is going to be:
+
+++++
+<ul class="simplelist">
+<li>(<em>a</em> + <em>b</em>)<em>G</em></li>
+</ul>
+++++
+
+
+How do we know if this element is in the group?
+If _a+b < n_ (where _n_ is the order of the group), then we know it's in the group by definition.
+If _a_+_b_ >= _n_, then we know _a_ < _n_ and _b_ < _n_, so _a_+_b_ < 2__n__, so _a_+_b_–_n_ < _n_:
+
+++++
+<ul class="simplelist">
+<li>(<em>a</em> + <em>b</em> – <em>n</em>)<em>G</em> = <em>aG</em> + <em>bG</em> – <em>nG</em> = <em>aG</em> + <em>bG</em> – 0 = <em>aG</em> + <em>bG</em></li>
+</ul>
+++++
+
+More generally, (__a__ + __b__)__G__ = ((__a__ + _b_) % __n__)__G__, where _n_ is the order of the group.
+
+So we know that this element is in the group, proving closure.
+
+==== Invertibility
+
+Invertibility((("invertibility")))((("finite cyclic groups", "invertibility property"))) is easy to depict (<<each_point_is_invertible_by_taking_the_reflection_over_the_x_axis>>).
+
+[[each_point_is_invertible_by_taking_the_reflection_over_the_x_axis]]
+.Each point is invertible by taking the reflection over the x-axis
+[role="width-75"]
+image::images/prbc_0212.png[Vertical Line]
+
+Mathematically, we know that if _aG_ is in the group, (__n__ – __a__)__G__ is also in the group.
+You can add them together to get __aG__ + (__n__ – __a__)__G__ = (__a__ + __n__ – __a__)__G__ = _nG_ = 0.
+
+[role="pagebreak-before"]
+==== Commutativity
+
+We((("finite cyclic groups", "commutativity property")))((("commutativity"))) know from point addition that _A_ + _B_ = _B_ + _A_ (<<the_line_through_the_points_doesnt_change>>).
+
+[[the_line_through_the_points_doesnt_change]]
+.The line through the points doesn't change
+[role="width-75"]
+image::images/prbc_0214.png[Point addition]
+
+This means that _aG_ + _bG_ = _bG_ + _aG_, which proves commutativity.
+
+[role="pagebreak-before"]
+==== Associativity
+
+We((("associativity")))((("finite cyclic groups", "associativity property"))) know from point addition that _A_ + (_B_ + _C_) = (_A_ + _B_) + _C_ (see Figures pass:[<a data-type="xref" data-xrefstyle="select:labelnumber"  href="#a_b_c_case_one">#a_b_c_case_one</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#a_b_c_case_two">#a_b_c_case_two</a>]).
+
+[[a_b_c_case_one]]
+.(A + B) + C: A + B is computed first before C is added
+[role="width-75"]
+image::images/prbc_0216.png[Case 1]
+
+[[a_b_c_case_two]]
+.A + (B + C): B + C is added first before adding A (note that this results in the same point as in <<a_b_c_case_one>>)
+[role="width-75"]
+image::images/prbc_0217.png[Case 2]
+
+Thus, _aG_ + (_bG_ + _cG_) = (_aG_ + _bG_) + _cG_, proving associativity.((("", startref="ECCmath03")))
+
+include::code-ch03/answers.py[tag=exercise5,indent=0]
+
+[role="pagebreak-before"]
+=== Coding Scalar Multiplication
+
+What((("scalar multiplication", "coding for")))((("elliptic curve cryptography", "scalar multiplication coding"))) we're trying to do with Exercise 5 is this:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example5]
+----
+
+We want to be able to scalar-multiply the point with some number.
+Thankfully, there's((("&#x005F;&#x005F;rmul&#x005F;&#x005F; method"))) a method in Python called `__rmul__` that can be used to override the front multiplication.
+A naive implementation looks something like this:
+
+[source,python]
+----
+class Point:
+    ...
+    def __rmul__(self, coefficient):
+        product = self.__class__(None, None, self.a, self.b) # <1>
+        for _ in range(coefficient): # <2>
+            product += self
+        return product
+----
+<1> We start the `product` at 0, which in the case of point addition is the point at infinity.
+<2> We loop `coefficient` times and add the point each time.
+
+This is fine for small coefficients, but what if we have a very large coefficient—that is, a number that's so large that we won't be able to get out of this loop in a reasonable amount of time?
+For example, a coefficient of 1 trillion is going to take a really long time.
+
+There's((("binary expansion"))) a cool technique called _binary expansion_ that allows us to perform multiplication in log~2~(_n_) loops, which dramatically reduces the calculation time for large numbers.
+For example, 1 trillion is 40 bits in binary, so we only have to loop 40 times for a number that's generally considered very large:
+
+[source,python]
+----
+class Point:
+    ...
+include::code-ch03/ecc.py[tag=source3]
+----
+<1> `current` represents the point that's at the current bit.
+The first time through the loop it represents 1 &#xd7; +self+; the second time it will be 2 &#xd7; +self+, the third time 4 &#xd7; +self+, then 8 &#xd7; +self+, and so on.
+We double the point each time.
+In binary the coefficients are 1, 10, 100, 1000, 10000, etc.
+<2> We start the result at 0, or the point at infinity.
+<3> We are looking at whether the rightmost bit is a 1.
+If it is, then we add the value of the current bit.
+<4> We need to double the point until we're past how big the coefficient can be.
+<5> We bit-shift the coefficient to the right.
+
+This is an advanced technique. If you don't understand bitwise operators, think of representing the coefficient in binary and only adding the point where there are 1's.
+
+With `__add__` and `__rmul__`, we can start defining some more complicated elliptic curves.
+
+[[definingCurveBC]]
+=== Defining the Curve for Bitcoin
+
+While((("elliptic curve cryptography", "secp256k1 curve", id="ECCsecp03")))((("secp256k1 curve", id="secp03")))((("elliptic curves", "secp256k1 curve", id="ECsecp03"))) we've been using relatively small primes for the sake of examples, we are not restricted to such small numbers.
+Small primes mean that we can use a computer to search through the entire group.
+If the group has a size of 301, the computer can easily do 301 computations to reverse scalar multiplication or break discrete log.
+
+But what if we made the prime larger?
+It turns out that we can choose much larger primes than we've been using.
+The security of elliptic curve cryptography depends on computers _not_ being able to go through an appreciable fraction of the group.
+
+An elliptic curve for public key cryptography is defined with the following pass:[<span class="keep-together">parameters</span>]:
+
+* We specify the _a_ and _b_ of the curve __y__^2^ = __x__^3^ + _ax_ + _b_.
+* We specify the prime of the finite field, _p_.
+* We specify the _x_ and _y_ coordinates of the generator point _G_.
+* We specify the order of the group generated by _G_, _n_.
+
+These numbers are known publicly and together form the cryptographic curve.
+There are many cryptographic curves and they have different security/convenience trade-offs, but the one we're most interested in is the one Bitcoin uses: secp256k1.
+The parameters for secp256k1 are these:
+
+* _a_ = 0, _b_ = 7, making the equation __y__^2^ = __x__^3^ + 7
+* _p_ = 2^256^ – 2^32^ – 977
+* __G~x~__ = pass:[<br/>]0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
+
+* __G~y~__ = pass:[<br/>]0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
+
+* _n_ = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+
+__G~x~__ refers to the _x_ coordinate of the point _G_ and __G~y~__ the _y_ coordinate.
+The numbers starting with 0x are hexadecimal numbers. 
+
+There are a few things to notice about this curve. First, the equation is relatively simple.
+Many curves have _a_ and _b_ values that are much bigger.
+
+Second, _p_ is extremely close to 2^256^.
+This means that most numbers under 2^256^ are in the prime field, and thus any point on the curve has _x_ and _y_ coordinates that are expressible in 256 bits each.
+_n_ is also very close to 2^256^.
+This means any scalar multiple can also be expressed in 256 bits.
+
+Third, 2^256^ is a huge number (see sidebar).
+Amazingly, any number below 2^256^ can be stored in 32 bytes.
+This means that we can store the private key relatively easily.
+
+.How Big is 2^256^?
+****
+2^256^ doesn't seem that big because we can express it succinctly, but in reality, it is an enormous number.
+To give you an idea, here are some relative scales:
+
+++++
+<dl><dt class="plain">2<sup>256</sup> ~ 10<sup>77</sup></dt>
+<dd>
+<ul>
+<li>Number of atoms in and on Earth ~ 10<sup>50</sup></li>
+<li>Number of atoms in the solar system ~ 10<sup>57</sup></li>
+<li>Number of atoms in the Milky Way ~ 10<sup>68</sup></li>
+<li>Number of atoms in the universe ~ 10<sup>80</sup></li></ul>
+</dd></dl>
+++++
+
+A trillion (10^12^) computers doing a trillion computations every trillionth (10^–12^) of a second for a trillion years is still less than 10^56^ computations.
+
+Think of finding a private key this way: there are as many possible private keys in Bitcoin as there are atoms in a billion galaxies.
+****
+
+==== Working with secp256k1
+
+Since we know all of the parameters for secp256k1, we can verify in Python whether the generator point, _G_, is on the curve __y__^2^ = __x__^3^ + 7:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example6]
+----
+
+Furthermore, we can verify in Python whether the generator point, _G_, has the order _n_:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example7]
+----
+
+Since we know the curve we will work in, this is a good time to create a subclass in Python to work exclusively with the parameters for secp256k1.
+We'll define the equivalent `FieldElement` and `Point` objects, but specific to the secp256k1 curve.
+Let's start by defining the field we'll be working in:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source4]
+...
+include::code-ch03/ecc.py[tag=source5]
+----
+
+We're subclassing the `FieldElement` class so we don't have to pass in _P_ all the time.
+We also want to display a 256-bit number consistently by filling 64 characters so we can see any leading zeros.
+
+Similarly, we((("S256Point class", "creating"))) can define a point on the secp256k1 curve and call it `S256Point`:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source6]
+...
+include::code-ch03/ecc.py[tag=source7]
+----
+<1> In case we initialize with the point at infinity, we need to let _x_ and _y_ through directly instead of using the `S256Field` class.
+
+We now have an easier way to initialize a point on the secp256k1 curve, without having to define +a+ and +b+ every time like we have to with the `Point` class.
+
+We can also define `__rmul__` a bit more efficiently, since we know the order of the group, _n_.
+Since we're coding Python, we'll name this with a capital `N` to make it clear that `N` is a constant:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source9]
+...
+class S256Point(Point):
+    ...
+include::code-ch03/ecc.py[tag=source8]
+----
+<1> We can mod by _n_ because _nG_ = 0.
+That is, every _n_ times we cycle back to zero or the point at infinity.
+
+We can now define _G_ directly and keep it around since we'll be using it a lot going forward:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source10]
+----
+
+Now((("", startref="ECsecp03")))((("", startref="secp03")))((("", startref="ECCsecp03"))) checking that the order of _G_ is _n_ is trivial:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example8]
+----
+
+=== Public Key Cryptography
+
+At((("elliptic curve cryptography", "public key cryptography")))((("public key cryptography", "asymmetric equation"))) last, we have the tools that we need to do public key cryptography operations.
+The key operation that we need is _P_ = _eG_, which is an asymmetric equation.
+We can easily compute _P_ when we know _e_ and _G_, but we cannot easily compute _e_ when we know _P_ and _G_.
+This is the discrete log problem described earlier.
+
+The difficulty of discrete log will be essential to understanding signing and verification algorithms.
+
+Generally, we call _e_ the _private key_ and _P_ the _public key_.
+Note here that the private key is a single 256-bit number and the public key is a coordinate (_x_,_y_), where _x_ and _y_ are _each_ 256-bit numbers.
+
+=== Signing and Verification
+
+To((("elliptic curve cryptography", "signing and verification", id="ECCsign03")))((("signing and verification", "purpose of"))) set up the motivation for why signing and verification exists, imagine this scenario.
+You want to prove that you are a really good archer, like at the level where you can hit any target you want within 500 yards as opposed to being able to hit any particular target.
+
+Now, if someone could observe you and interact with you, proving this would be easy.
+Perhaps they would position your son 400 yards away with an apple on his head and challenge you to hit that apple with an arrow.
+You, being a very good archer, could do this and prove your expertise.
+The target, if specified by the challenger, makes your archery skill easy to verify.
+
+Unfortunately, this doesn't scale very well.
+If, for example you wanted to prove this to 10 people, you would have to shoot 10 different arrows at 10 different targets from 10 different challenges.
+You could try to do something like have 10 people watch you shoot a single arrow, but since they can't all choose the target, they can never be sure that you're not just good at hitting one particular target instead of an arbitrary target.
+What we want is something that you can do once, that requires no interaction back and forth with the verifiers, but that still proves that you are indeed, a good archer that can hit _any_ target.
+
+If, for example, you simply shot an arrow into a target of your choosing, the people observing afterward wouldn't necessarily be convinced.
+After all, you might have painted the target around wherever your arrow happened to land.
+So what can you do?
+
+Here's a very clever thing you can do.
+Inscribe the tip of the arrow with the position of the target that you're hitting ("apple on top of my son's head") and then hit that target with your arrow.
+Now anyone seeing the target can take an X-ray machine and look at the tip of the embedded arrow and see that the tip indeed says exactly where it was going to hit.
+The tip clearly had to be inscribed before the arrow was shot, so this can prove you are actually  a good archer (provided the actual target isn't just one that you've practiced hitting over and over).
+
+This is the same technique we're using with signing and verification, except what we're proving isn't that we're good archers, but that we know a secret number.
+We want to prove possession of the secret without revealing the secret itself.
+We do this by putting the target into our calculation and hitting that target.
+
+Ultimately this is going to be used in transactions, which will prove that the rightful owners of the secrets are spending the bitcoins.
+
+==== Inscribing the Target
+
+The((("signing and verification", "signature algorithm")))((("signature algorithm")))((("Elliptic Curve Digital Signature Algorithm (ECDSA)")))((("ECDSA (Elliptic Curve Digital Signature Algorithm)"))) inscribing of the target depends on the _signature algorithm_, and in our case that algorithm is called the Elliptic Curve Digital Signature Algorithm, or ECDSA for short.
+
+The secret in our case is _e_ satisfying the following:
+
+++++
+<ul class="simplelist">
+<li><em>eG</em> = <em>P</em></li>
+</ul>
+++++
+
+where _P_ is the public key and _e_ is the private key.
+
+The target that we're going to aim at is a random 256-bit number, _k_.
+We then do this:
+
+++++
+<ul class="simplelist">
+<li><em>kG</em> = <em>R</em></li>
+</ul>
+++++
+
+
+_R_ is now the target that we're aiming for.
+In fact, we're only going to care about the _x_ coordinate of _R_, which we'll call _r_.
+You may have guessed already that _r_ here stands for _random_.
+
+We claim at this point that the following equation is equivalent to the discrete log problem:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>kG</em></li>
+</ul>
+++++
+
+where _k_ was chosen randomly, _u_,_v_ ≠ 0 can be chosen by the signer, and _G_ and _P_ are known. This is due to the fact that:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>kG</em> implies <em>vP</em> = (<em>k</em> – <em>u</em>)<em>G</em></li>
+</ul>
+++++
+
+Since _v_ ≠ 0, we can divide by the scalar multiple _v_:
+
+++++
+<ul class="simplelist">
+<li><em>P</em> = ((<em>k</em> – <em>u</em>)/<em>v</em>)<em>G</em></li>
+</ul>
+++++
+
+
+If we know _e_, we have:
+
+++++
+<ul class="simplelist">
+<li><em>eG</em> = ((<em>k</em> – <em>u</em>)/<em>v</em>)<em>G</em> or <em>e</em> = (<em>k</em> – <em>u</em>)/<em>v</em></li>
+</ul>
+++++
+
+This means that any (_u_,_v_) combination that satisfies the preceding equation will suffice.
+
+Now suppose we don't know _e_, but we can solve __uG + vP = kG__ with some (_u_,_v_) combination.
+Then __e = (k–u)/v__ gives a solution to _P_ = _eG_ while knowing only _P_ and _G_.
+In other words, we'd have broken the discrete log problem.
+
+This means to provide a correct _u_ and _v_, we either have to break the discrete log problem or know the secret _e_.
+Since we assume discrete log is hard, we can say _e_ is assumed to be known by the one who came up with _u_ and _v_.
+
+One subtle thing that we haven't talked about is that we have to incorporate the purpose of our shooting.
+This is a contract that gets fulfilled as a result of shooting at the target.
+William Tell, for example, was shooting so that he could save his son (shoot the target and you get to save your son).
+You can imagine there would be other reasons to hit the target and other "rewards" that the person hitting the target would receive.
+This has to be incorporated into our equations.
+
+In((("hashes", "signature hash")))((("signing and verification", "signature hash")))((("signature hash"))) signature/verification parlance, this is called the _signature hash_.
+A hash is a deterministic function that takes arbitrary data into data of fixed size.
+This is a fingerprint of the message containing the intent of the shooter, which anyone verifying the message already knows.
+We denote this with the letter _z_.
+This is incorporated into our _uG_ + _vP_ calculation this way:
+
+++++
+<ul class="simplelist">
+<li><em>u</em> = <em>z</em>/<em>s</em>, <em>v</em> = <em>r</em>/<em>s</em></li>
+</ul>
+++++
+
+Since _r_ is used in the calculation of _v_, we now have the tip of the arrow inscribed.
+We also have the intent of the shooter incorporated into _u_, so both the reason for shooting and the target that is being aimed at are now part of the equation.
+
+To make the equation work, we can calculate _s_:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>R</em> = <em>kG</em></li>
+<li><em>uG</em> + <em>veG</em> = <em>kG</em></li>
+<li><em>u</em> + <em>ve</em> = <em>k</em></li>
+<li><em>z</em>/<em>s</em> + <em>re</em>/<em>s</em> = <em>k</em></li>
+<li>(<em>z</em> + <em>re</em>)/<em>s</em> = <em>k</em></li>
+<li><em>s</em> = (<em>z</em> + <em>re</em>)/<em>k</em></li>
+</ul>
+++++
+
+This is the basis of the signature algorithm, and the two numbers in a signature are _r_ and _s_.
+
+Verification is straightforward:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> where <em>u</em>,<em>v</em> ≠ 0</li>
+<li><em>uG</em> + <em>vP</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>re</em>/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/((<em>z</em> + <em>re</em>)/<em>k</em>))<em>G</em> = <em>kG</em> = (<em>r</em>,<em>y</em>)</li>
+</ul>
+++++
+
+[WARNING]
+.Why We Don't Reveal `k`
+====
+At this point, you might be wondering why we don't reveal _k_ and instead reveal the _x_ coordinate of _R_, or _r_.
+If we were to reveal _k_, then:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = <em>R</em></li>
+<li><em>uG</em> + <em>veG</em> = <em>kG</em></li>
+<li><em>kG</em> – <em>uG</em> = <em>veG</em></li>
+<li>(<em>k</em> – <em>u</em>)<em>G</em> = <em>veG</em></li>
+<li>(<em>k</em> – <em>u</em>) = <em>ve</em></li>
+<li>(<em>k</em> – <em>u</em>)/<em>v</em> = <em>e</em></li>
+</ul>
+++++
+
+means that our secret would be revealed, which would defeat the whole purpose of the signature.
+We can, however, reveal _R_.
+
+It's worth mentioning again: make sure you're using truly random numbers for _k_, as even accidentally revealing _k_ for a known signature is the equivalent of revealing your secret and losing your funds!
+====
+
+==== Verification in Depth
+
+Signatures((("signing and verification", "verification process"))) sign some fixed-length value (our "contract")—in our case, something that's 32 bytes.
+The fact that 32 bytes is 256 bits is not a coincidence, as the thing we're signing will be a scalar for _G_.
+
+To guarantee that the thing we're signing is 32 bytes, we hash the document first.
+In Bitcoin, the hashing function is hash256, or two rounds of sha256.
+This guarantees the thing that we're signing is exactly 32 bytes.
+We will call the result of the hash the _signature hash_, or _z_.
+
+The signature that we are verifying has two components, (_r_,_s_).
+_r_ is the _x_ coordinate of some point _R_ that we'll come back to.
+The formula for _s_ is as above:
+
+++++
+<ul class="simplelist">
+<li><em>s</em> = (<em>z</em>+<em>re</em>)/<em>k</em></li>
+</ul>
+++++
+
+Keep in mind that we know _e_ (_P_ = _eG_, or what we're proving we know in the first place), we know _k_ (_kG_ = _R_, remember?), and we know _z_.
+
+We will now construct _R_ = _uG_ + _vP_ by defining _u_ and _v_ this way:
+
+++++
+<ul class="simplelist">
+<li><em>u</em> = <em>z</em>/<em>s</em></li>
+<li><em>v</em> = <em>r</em>/<em>s</em></li>
+</ul>
+++++
+
+Thus:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>r</em>/<em>s</em>)<em>P</em> = (<em>z</em>/<em>s</em>)<em>G</em> + (<em>re</em>/<em>s</em>)<em>G</em> = ((<em>z</em> + <em>re</em>)/<em>s</em>)<em>G</em></li>
+</ul>
+++++
+
+We know _s_ = (_z_ + _re_)/_k_, so:
+
+++++
+<ul class="simplelist">
+<li><em>uG</em> + <em>vP</em> = ((<em>z</em> + <em>re</em>) / ((<em>z</em> + <em>re</em>)/<em>k</em>))<em>G</em> = <em>kG</em> = <em>R</em></li>
+</ul>
+++++
+
+We've successfully chosen _u_ and _v_ in such a way as to generate _R_ as we intended.
+Furthermore, we used _r_ in the calculation of _v_, proving we knew what _R_ would be.
+The only way we can know the details of _R_ beforehand is if we know _e_.
+
+To wit, here are the steps:
+
+1. We are given (_r_,_s_) as the signature, _z_ as the hash of the thing being signed, and _P_ as the public key (or public point) of the signer.
+2. We calculate _u_ = __z__/__s__, _v_ = __r__/__s__.
+3. We calculate _uG_ + _vP_ = _R_.
+4. If __R__'s _x_ coordinate equals _r_, the signature is valid.
+
+[NOTE]
+.Why Two Rounds of sha256?
+====
+The calculation of _z_ requires two rounds of sha256, or hash256.
+You may be wondering why there are two rounds when only one is necessary to get a 256-bit number.
+The reason is for security.
+
+There is a well-known hash collision attack on SHA-1 called a _birthday attack_ that makes finding collisions much easier.
+https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html[Google found a SHA-1 collision] using some modifications of a birthday attack and a lot of other things in 2017.
+Using SHA-1 twice, or _double SHA-1_, is the way to defeat or slow down some forms of this attack.
+
+Two rounds of sha256 don't necessarily prevent all possible attacks, but doing two rounds is a defense against some potential pass:[<span class="keep-together">weaknesses</span>].
+====
+
+==== Verifying a Signature
+
+We((("signing and verification", "signature verification", id="SAVsign03"))) can now verify a signature using some of the primitives that we have:
+
+[source,python]
+----
+include::code-ch03/examples.py[tag=example9]
+----
+<1> Note that we use Fermat's little theorem for 1/_s_, since _n_ is prime.
+<2> _u_ = _z_/_s_.
+<3> _v_ = _r_/_s_.
+<4> _uG_ + _vP_ = (_r_,_y_).
+We need to check that the _x_ coordinate is _r_.
+
+include::code-ch03/answers.py[tag=exercise6,indent=0]
+
+==== Programming Signature Verification
+
+We already have a class `S256Point`, which is the public point for the private key.
+We((("Signature class", "creating"))) create a `Signature` class that houses the _r_ and _s_ values:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source11]
+----
+
+We will be doing more with this class in <<chapter_serialization>>.
+
+We can now write the `verify` method on `S256Point` based on this:
+
+[source,python]
+----
+class S256Point(Point):
+    ...
+include::code-ch03/ecc.py[tag=source12]
+----
+<1> `s_inv` (1/_s_) is calculated using Fermat's little theorem on the order of the group, _n_, which is prime.
+<2> _u_ = _z_/_s_.
+Note that we can mod by _n_ as that's the order of the group.
+<3> _v_ = _r_/_s_.
+Note that we can mod by _n_ as that's the order of the group.
+<4> _uG_ + _vP_ should be _R_.
+<5> We check that the _x_ coordinate is _r_.
+
+So, given a public key that is a point on the secp256k1 curve and a signature hash, _z_, we can verify whether a signature is valid or not.((("", startref="SAVsign03")))
+
+==== Signing in Depth
+
+Given((("signing and verification", "signing process"))) that we know how verification should work, signing is straightforward.
+The only missing step is figuring out what _k_, and thus _R_ = _kG_, to use.
+We do this by choosing a random _k_.
+
+The signing procedure is as follows:
+
+1. We are given _z_ and know _e_ such that _eG_ = _P_.
+2. Choose a random _k_.
+3. Calculate _R_ = _kG_ and _r_ = _x_ coordinate of _R_.
+4. Calculate _s_ = (_z_ + _re_)/_k_.
+5. Signature is (_r_,_s_).
+
+Note that the public key (pubkey) _P_ has to be transmitted to whoever wants to verify it, and _z_ must be known by the verifier.
+We'll see later that _z_ is computed and _P_ is sent along with the signature.
+
+==== Creating a Signature
+
+We((("signing and verification", "signature creation", id="SAVsig03"))) can now create a signature.
+
+.Be Careful with Random Number Generation
+[WARNING]
+====
+Note((("random number generation"))) that using something like the `random` library from Python to do cryptography is generally not a good idea.
+This library is for teaching purposes only, so please don't use any of the code explained to you here for production purposes.
+====
+
+We do this using some of the primitives that we have:
+
+[source,pycon]
+----
+include::code-ch03/examples.py[tag=example10]
+----
+<1> This is an example of a "brain wallet," which is a way to keep the private key in your head without having to memorize something too difficult.
+Please don't use this for a real secret.
+<2> This is the signature hash, or hash of the message that we're signing.
+<3> We're going to use a fixed _k_ here for demonstration purposes.
+<4> _kG_ = (_r_,_y_), so we take the _x_ coordinate only.
+<5> _s_ = (_z_ + _re_)/_k_.
+We can mod by _n_ because we know this is a cyclical group of order _n_.
+<6> The public point needs to be known by the verifier.
+
+include::code-ch03/answers.py[tag=exercise7,indent=0]
+
+==== Programming Message Signing
+
+To((("PrivateKey class", "creating"))) program message signing, we now create a `PrivateKey` class, which will house our secret:
+
+[source,python]
+----
+include::code-ch03/ecc.py[tag=source13]
+----
+<1> We keep around the public key, `self.point`, for convenience.
+
+We then create the `sign` method:
+
+[source,python]
+----
+from random import randint
+...
+class PrivateKey:
+...
+    def sign(self, z):
+        k = randint(0, N)  # <1>
+        r = (k*G).x.num  # <2>
+        k_inv = pow(k, N-2, N)  # <3>
+        s = (z + r*self.secret) * k_inv % N  # <4>
+        if s > N/2:  # <5>
+            s = N - s
+        return Signature(r, s) # <6>
+----
+<1> `randint` chooses a random integer from ++[0,__n__)++.
+Please don't use this function in production, because the random number from this library is not nearly random enough.
+<2> _r_ is the _x_ coordinate of _kG_.
+<3> We use Fermat's little theorem again, and _n_, which is prime.
+<4> _s_ = (_z_ + _re_)/_k_.
+<5> It turns out that using the low-_s_ value will get nodes to relay our transactions.
+This is for malleability reasons.
+<6> We return a `Signature` object from the class defined earlier.
+
+[role="pagebreak-before less_space"]
+.Importance of a Unique `k`
+****
+There's an important rule in signatures that utilize a random component like we have here: the _k_ needs to be unique per signature.
+That is, it cannot get reused.
+In fact, a _k_ that's reused will result in you revealing your secret!
+Why?
+
+If our secret is _e_ and we are reusing _k_ to sign __z__~1~ and __z__~2~:
+
+++++
+<ul class="simplelist">
+<li><em>kG</em> = (<em>r</em>,<em>y</em>)</li>
+<li><em>s</em><sub>1</sub> = (<em>z</em><sub>1</sub> + <em>re</em>) / <em>k</em>, <em>s</em><sub>2</sub> = (<em>z</em><sub>2</sub> + <em>re</em>) / <em>k</em></li>
+<li><em>s</em><sub>1</sub>/<em>s</em><sub>2</sub> = (<em>z</em><sub>1</sub> + <em>re</em>) / (<em>z</em><sub>2</sub> + <em>re</em>)</li>
+<li><em>s</em><sub>1</sub>(<em>z</em><sub>2</sub> + <em>re</em>) = <em>s</em><sub>2</sub>(<em>z</em><sub>1</sub> + <em>re</em>)</li>
+<li><em>s</em><sub>1</sub><em>z</em><sub>2</sub> + <em>s</em><sub>1</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> + <em>s</em><sub>2</sub><em>re</em></li>
+<li><em>s</em><sub>1</sub><em>re</em> – <em>s</em><sub>2</sub><em>re</em> = <em>s</em><sub>2</sub><em>z</em><sub>1</sub> – <em>s</em><sub>1</sub><em>z</em><sub>2</sub></li>
+<li><em>e</em> = (<em>s</em><sub>2</sub><em>z</em><sub>1</sub> – <em>s</em><sub>1</sub><em>z</em><sub>2</sub>) / (<em>rs</em><sub>1</sub> – <em>rs</em><sub>2</sub>)</li>
+</ul>
+++++
+
+If anyone sees both signatures, they can use this formula and find our secret!
+The https://arstechnica.com/gaming/2010/12/ps3-hacked-through-poor-implementation-of-cryptography/[PlayStation 3 hack] back in 2010 was due to the reuse of the _k_ value in multiple signatures.
+
+To combat this, there is a deterministic _k_ generation standard that uses the secret and _z_ to create a unique, deterministic _k_ every time.
+The specification is in https://tools.ietf.org/html/rfc6979[RFC 6979] and the code changes to look like this:
+
+[source,python]
+----
+class PrivateKey:
+...
+include::code-ch03/ecc.py[tag=source14]
+----
+<1> We are using the deterministic _k_ instead of a random one.
+Everything else about `sign` remains the same.
+<2> This algorithm returns a candidate that's suitable.
+
+A deterministic _k_ will be unique with very high probability.
+This is because sha256 is collision-resistant, and no collisions have been found to date.
+
+Another benefit from a testing perspective is that the signature for a given _z_ and the same private key will be the same every time.
+This makes debugging much easier and unit tests a lot easier to write.
+In addition, transactions that use deterministic _k_ will create the same transaction every time, as the signature will not change.
+This makes transactions less malleable (more on that in <<chapter_segwit>>).((("", startref="MTelipcurcrypt03")))((("", startref="SAVsig03")))((("", startref="ECCsign03")))
+
+****
+
+### Conclusion
+
+We've covered elliptic curve cryptography and can now prove that we know a secret by signing something. We can also verify that the person with the secret actually signed a message.
+Even if you don't read another page in this book, you've learned to implement what was once considered https://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States["weapons-grade munitions"].
+This is a major step in your journey and will be essential for the rest of the book!
+
+We now turn to serializing a lot of these structures so that we can store them on disk and send them over the network.

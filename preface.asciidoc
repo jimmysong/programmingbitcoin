@@ -1,0 +1,308 @@
+[preface]
+== Preface
+
+This((("Bitcoin", "approach to learning"))) book will teach you the technology of Bitcoin at a fundamental level.
+It doesn't cover the monetary, economic, or social dynamics of Bitcoin, but knowing how Bitcoin works under the hood should give you greater insight into what's possible.
+There's a tendency to hype Bitcoin and blockchain without really understanding what's going on; this book is meant to be an antidote to that tendency.
+
+After all, there are lots of books about Bitcoin, covering the history and the economic aspects and giving technical descriptions.
+The aim of this book is to get you to understand Bitcoin by coding all of the components necessary for a Bitcoin library.
+The library is not meant to be exhaustive or efficient.
+The aim of the library is to help you learn.
+
+=== Who Is This Book For?
+
+This((("Bitcoin", "target audience"))) book is for programmers who want to learn how Bitcoin works by coding it themselves.
+You will learn Bitcoin by coding the "bare metal" stuff in a Bitcoin library you will create from scratch.
+This is not a reference book where you can look up the specification for a particular feature.
+
+The material from this book has been largely taken from my https://programmingblockchain.com[two-day seminar] where I teach developers all about Bitcoin.
+The material has been refined extensively, as I've taught this course more than 20 times, to over 400 people as of this writing.
+
+By the time you're done with the book, you'll not only be able to create transactions, but also get all the data you need from peers and send the transactions over the network.
+It covers everything needed to accomplish this, including the math, parsing, network connectivity, and block validation.
+
+=== What Do I Need to Know?
+
+A((("Bitcoin", "prerequisites to learning"))) prerequisite for this book is that you know programming—Python, in particular.
+The library itself is written in Python 3, and a lot of the exercises can be done in a controlled environment like a Jupyter notebook.
+An intermediate knowledge of Python is preferable, but even a beginning knowledge is probably sufficient to get a lot of the concepts.
+
+Some knowledge of math is required, especially for Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>].
+These chapters introduce mathematical concepts probably not familiar to those who didn't major in mathematics.
+Math knowledge around algebra level should suffice to understand the new concepts and to code the exercises covered in those chapters.
+
+General computer science knowledge, for example, of hash functions, will come in handy but is not strictly necessary to complete the exercises in this book.
+
+=== How Is the Book Arranged?
+
+This((("Bitcoin", "topics covered"))) book is split into 14 chapters. Each is meant to build on the previous one as the Bitcoin library gets built from scratch all the way to the end.
+
+Roughly speaking, Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_serialization">#chapter_serialization</a>] establish the mathematical tools that we need; Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_tx_parsing">#chapter_tx_parsing</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_p2sh">#chapter_p2sh</a>] cover transactions, which are the fundamental unit of Bitcoin; and Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_blocks">#chapter_blocks</a>–<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] cover blocks and networking.
+The last two chapters cover some advanced topics but don't actually require you to write code.
+
+Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_finite_fields">#chapter_finite_fields</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_elliptic_curves">#chapter_elliptic_curves</a>] cover some math that we need.
+Finite fields and elliptic curves are needed to understand elliptic curve cryptography in <<chapter_elliptic_curve_cryptography>>.
+After we've established the public key cryptography at the end of <<chapter_elliptic_curve_cryptography>>, <<chapter_serialization>> adds parsing and serialization, which are how cryptographic primitives are stored and transmitted.
+
+<<chapter_tx_parsing>> covers the transaction structure.
+<<chapter_script>> goes into the smart contract language behind Bitcoin, called Script.
+<<chapter_tx>> builds on all the previous chapters, showing how to validate and create transactions based on the elliptic curve cryptography from the first four chapters.
+<<chapter_p2sh>> establishes how pay-to-script-hash (p2sh) works, which is a way to make more powerful smart contracts.
+
+<<chapter_blocks>> covers blocks, which are groups of ordered transactions.
+<<chapter_networking>> covers network communication in Bitcoin. Chapters pass:[<a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_spv">#chapter_spv</a> and <a data-type="xref" data-xrefstyle="select:labelnumber" href="#chapter_bloom_filters">#chapter_bloom_filters</a>] go into how a light client, or software without access to the entire blockchain, might request and broadcast data to and from nodes that store the entire blockchain.
+
+<<chapter_segwit>> covers Segwit, a backward-compatible upgrade introduced in 2017, and <<chapter_advanced>> provides suggestions for further study.
+These chapters are not strictly necessary, but are included as a way to give you a taste of what more there is to learn.
+
+Chapters 1–12 have exercises that require you to build up the library from scratch.
+The answers are in <<appendix_solutions>> and in the corresponding chapter directory in the https://github.com/jimmysong/programmingbitcoin[GitHub repo].
+You will be writing many Python classes and building toward not just validating transactions/blocks, but also creating your own transactions and broadcasting them on the network.
+
+The last exercise in <<chapter_bloom_filters>> specifically asks you to connect to another node on the testnet network, calculate what you can spend, construct and sign a transaction of your devising, and broadcast that on the network.
+The first 11 chapters essentially prepare you for this exercise.
+
+There will be a lot of unit tests that your code will need to pass.
+The book has been designed this way so you can do the "fun" part of coding.
+To aid your progress, we will be looking at a lot of code and diagrams throughout.
+
+[[setting_up]]
+=== Setting Up
+
+To((("Bitcoin", "downloading and installation", id="Bdown00")))((("example code", "environment setup", id="ECset00")))((("environment setup", id="envset00")))((("exercises", "environment setup", id="Eset00"))) get the most out of this book, you'll want to create an environment where you can run the example code and do the exercises.
+Here are the steps required to set everything up:
+
+. Install Python 3.5 or higher on your machine:
++
+Windows:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe[]
+macOS:: https://www.python.org/ftp/python/3.6.2/python-3.6.2-macosx10.6.pkg[]
+Linux:: See your distro docs (many Linux distributions, like Ubuntu, come with Python 3.5+ preinstalled)
+
+. Install pip by downloading this script: https://bootstrap.pypa.io/get-pip.py[].
+
+. Run this script using Python 3:
++
+[source,bash]
+----
+$ python3 get-pip.py
+----
+
+. Install Git. The commands for downloading and installing it are at https://git-scm.com/downloads[].
+
+. Download the source code for this book:
++
+----
+$ git clone https://github.com/jimmysong/programmingbitcoin
+$ cd programmingbitcoin
+----
+
+. Install virtualenv:
++
+[source,bash]
+----
+$ pip install virtualenv --user
+----
+
+. Install the requirements:
++
+Linux/macOS::
++
+[source,bash]
+----
+$ virtualenv -p python3 .venv
+$ . .venv/bin/activate
+(.venv) $ pip install -r requirements.txt
+----
++
+Windows::
++
+----
+C:\programmingbitcoin> virtualenv -p
+    C:\PathToYourPythonInstallation\Python.exe .venv
+C:\programmingbitcoin> .venv\Scripts\activate.bat
+C:\programmingbitcoin> pip install -r requirements.txt
+----
+
+. Run Jupyter((("Jupyter Notebook", "running"))) Notebook:
++
+----
+(.venv) $ jupyter notebook
+[I 11:13:23.061 NotebookApp] Serving notebooks from local directory:
+  /home/jimmy/programmingbitcoin
+[I 11:13:23.061 NotebookApp] The Jupyter Notebook is running at:
+[I 11:13:23.061 NotebookApp] http://localhost:8888/?token=
+  f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+[I 11:13:23.061 NotebookApp] Use Control-C to stop this server and 
+  shut down all kernels (twice to skip confirmation).
+[C 11:13:23.065 NotebookApp]
+
+    Copy/paste this URL into your browser when you connect for 
+    the first time, to login with a token:
+        http://localhost:8888/?token=
+        f849627e4d9d07d2158e3fcde93590eff4a9a7a01f65a8e7
+----
+
+You should have a browser open up automatically, as shown in <<pr0001>>.
+
+[[pr0001]]
+.Jupyter
+image::images/prbc_0001.png[Jupyter]
+
+From here, you can((("Jupyter Notebook", "navigating chapter directories"))) navigate to the chapter directories. To do the exercises from <<chapter_finite_fields>>, you would navigate to _code-ch01_ (<<pr0002>>).
+
+[[pr0002]]
+.Jupyter directory view
+image::images/prbc_0002.png[Chapter 1 Directory]
+
+From here you can open _Chapter1.ipynb_ (<<pr0003>>).
+
+[[pr0003]]
+.Jupyter notebook
+image::images/prbc_0003.png[Chapter 1 Notebook]
+
+You may want to familiarize yourself with this interface if you haven't seen it before, but the gist of Jupyter is that it can run Python code from the browser in a way that makes experimenting easy.
+You can run each "cell" and see the results as if this were an interactive Python shell.
+
+A large portion of the exercises will be coding concepts introduced in the book.
+The((("exercises", "unit tests")))((("unit tests"))) unit tests are written for you, but you will need to write the Python code to make the tests pass.
+You can check whether your code is correct directly in Jupyter.
+You will need to edit the corresponding file by clicking through a link like the "this test" link in <<pr0003>>.
+This will take you to a browser tab like the one shown in <<pr0004>>.
+
+[[pr0004]]
+.ecc.py
+image::images/prbc_0004.png[Chapter 1 ecc.py]
+
+To make the test pass, edit the file here and save.((("", startref="Bdown00")))((("", startref="ECset00")))((("", startref="envset00")))((("", startref="Eset00")))
+
+=== Answers
+
+All((("exercises", "answers to"))) the answers to the various exercises in this book are in <<appendix_solutions>>.
+They are also available in the __code-ch<xx>/answers.py__ files, where __<xx>__ is the chapter that you're on.
+
+=== Conventions Used in This Book
+
+The((("typographical conventions"))) following typographical conventions are used in this book:
+
+_Italic_:: Indicates new terms, URLs, email addresses, filenames, and file extensions.
+
++Constant width+:: Used for program listings, as well as within paragraphs to refer to program elements such as variable or function names, databases, data types, environment variables, statements, and keywords.
+
+**`Constant width bold`**:: Shows commands or other text that should be typed literally by the user.
+
+_++Constant width italic++_:: Shows text that should be replaced with user-supplied values or by values determined by context.
+
+
+[TIP]
+====
+This element signifies a tip or suggestion.
+====
+
+[NOTE]
+====
+This element signifies a general note.
+====
+
+[WARNING]
+====
+This element indicates a warning or caution.
+====
+
+=== Using Code Examples
+
+Supplemental((("example code", "downloading and using")))((("code examples, obtaining and using"))) material (code examples, exercises, etc.) is available for download at link:$$https://github.com/jimmysong/programmingbitcoin$$[].
+
+This book is here to help you get your job done.
+In general, if example code is offered with this book, you may use it in your programs and documentation.
+You do not need to contact us for permission unless you’re reproducing a significant portion of the code.
+For example, writing a program that uses several chunks of code from this book does not require permission.
+Selling or distributing a CD-ROM of examples from O’Reilly books does require permission.
+Answering a question by citing this book and quoting example code does not require permission.
+Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
+
+We((("attributions"))) appreciate, but do not require, attribution.
+An attribution usually includes the title, author, publisher, and ISBN.
+For example: “_Programming Bitcoin_ by Jimmy Song (O’Reilly).
+Copyright 2019 Jimmy Song, 978-1-492-03149-9.”
+
+If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
+
+=== O'Reilly Online Learning 
+
+[role = "ormenabled"]
+[NOTE]
+====
+For almost 40 years, pass:[<a href="http://oreilly.com" class="orm:hideurl"><em class="hyperlink">O’Reilly Media</em></a>] has provided technology and business training, knowledge, and insight to help companies succeed.
+====
+
+Our unique network of experts and innovators share their knowledge and expertise through books, articles, conferences, and our online learning platform. O’Reilly’s online learning platform gives you on-demand access to live training courses, in-depth learning paths, interactive coding environments, and a vast collection of text and video from O'Reilly and 200+ other publishers. For more information, please visit pass:[<a href="http://oreilly.com" class="orm:hideurl"><em>http://oreilly.com</em></a>].  
+
+=== How to Contact Us
+
+Please((("contact information")))((("questions and comments")))((("comments and questions"))) address comments and questions concerning this book to the publisher:
+
+++++
+<ul class="simplelist">
+  <li>O’Reilly Media, Inc.</li>
+  <li>1005 Gravenstein Highway North</li>
+  <li>Sebastopol, CA 95472</li>
+  <li>800-998-9938 (in the United States or Canada)</li>
+  <li>707-829-0515 (intenational or local)</li>
+  <li>707-829-0104 (fax)</li>
+</ul>
+++++
+
+We have a web page for this book, where we list errata, examples, and any additional information.
+You can access this page at http://bit.ly/programmingBitcoin[].
+
+To comment or ask technical questions about this book, send email to pass:[<a class="email" href="mailto:bookquestions@oreilly.com"><em>bookquestions@oreilly.com</em></a>].
+
+For more information about our books, courses, conferences, and news, see our website at link:$$http://www.oreilly.com$$[].
+
+Find us on Facebook: link:$$http://facebook.com/oreilly$$[]
+
+Follow us on Twitter: link:$$http://twitter.com/oreillymedia$$[]
+
+Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
+
+=== Acknowledgments
+
+The((("acknowledgments", id="ack00"))) number of people that got me here is legion. The experiences and knowledge that an author draws from tend to have a lot of sources, and it's difficult to give them all their proper credit. This is my way of saying that I'm probably going to forget a significant number of people, and for that I sincerely apologize.
+
+First, I want to thank my Lord Jesus Christ for putting me on this journey. If not for my faith, I would not have had the ethical conviction to blog about the importance of sound money in general and Bitcoin in particular, which ultimately led to the writing of this book.
+
+My parents, Kathy and Kyung-Sup, had the courage to immigrate to America back when I was eight years old, which ultimately led to the opportunities I've had. My dad got me my first computers (a Commodore 16, a generic Hyundai 8086, and a 486 33-Mhz from a manufacturer I don't remember), and my mom got me private programming tutoring as a sixth- and seventh-grader from a woman whose name I can't remember. How she found her when I showed some proclivity for programming, I don't know. That teacher-whose-name-I-can't-remember stoked that natural tendency, and I hope this acknowledgment finds its way to her.
+
+Speaking of which, I've had many teachers along the way, some of whom I hated at the time. Mr. Marain, Mrs. Edelman, and Mrs. Nelson taught me math and computer science back in high school. I'm not necessarily a fan of the current education system, but what I learned in those classes was instrumental to my love of math and programming.
+
+My high school classmate Eric Silberstein gave me my first job out of college as a programmer at Idiom Technologies. I was slated to go down the consulting path before a fateful phone call back in 1998 that led me down the programmer/startup path instead. In a sense, I've never left.
+
+At that first job, I met Ken Liu, and I'm amazed that we're where we are in our careers writing books. He not only gave me great advice about book publishing, but also wrote the wonderful foreword. He's also a great sounding board and an amazing friend, and I'm privileged to know him.
+
+With regard to Bitcoin, the anonymous developer((("Bitcoin", "developer of"))) Satoshi Nakamoto invented what I thought before was impossible: decentralized digital scarcity. Bitcoin is a profound invention that the world hasn't fully grokked. The website http://slashdot.org[Slashdot] introduced me to Bitcoin in 2011, and Alex Mizrahi gave me my first work as a Bitcoin developer in 2013. I had no idea what I was doing, but I learned quite a bit about what Bitcoin was about through his direction.
+
+The Austin Bitcoin Meetup in 2013 was where I met a lot of Bitcoiners, and at the subsequent Texas Bitcoin Conference in 2014 I met a ton of people that I still know today. Though this meetup and conference are not ones I attend anymore, I am grateful for the people I met there—among them Michael Goldstein, Daniel Krawisz, and Napoleon Cole.
+
+Alan Reiner recruited me to Armory back in 2014, and I'm grateful I had the opportunity to contribute to such a significant project.
+
+Paxos/itBit was where I worked next. Chad Cascarilla and Raj Nair were the CEO and VP of Engineering who stretched me while I was there. Raj, in particular, made me write some blog posts for Paxos, which I was surprised to find I enjoyed. This led to blog posts on my own site, which eventually led to my seminars, which finally led to this book.
+
+Three colleagues I met at Paxos were particularly significant. Richard Kiss, creator of pycoin, was the impetus for my writing this book, as he proposed that we write one together. Somewhere along the way, that turned into just me writing a book, but I'm grateful to him for giving me the idea. Aaron Caswell is a great dev who has helped me out in my seminars and reviewed this book. He's a great programmer and mathematician, and a pretty good karate fighter from what I hear. Michael Flaxman has reviewed almost everything Bitcoin-related I've written, including my blog, many of my GitHub libraries, and this book. He's also helped me out on my seminars and is just a great person to talk to. He's one of those people who make others sharper, and I'm grateful for his significant friendship.
+
+Vortex, Thomas Hunt, and Tone Vays brought me into the World Crypto Network back in 2017, which launched my YouTube career. Tone in particular has been an inspiration on working hard and being dedicated to a craft.
+
+John Newbery was very helpful to me when I first contributed to Bitcoin Core, and he's just a really good person, period. He's become such a significant contributor in a relatively short time, which speaks to his talent and dedication. I'm grateful to other Core developers too, like Marco Falke, Wladimir van der Laan, Alex Morcos, Pieter Wuille, Matt Corallo, Suhas Daftuar, and Greg Maxwell, who have reviewed some of my code and blog posts.
+
+David Harding was exceptional in his technical review of this book. He reviewed the text three times, with a lot of great comments. He'd better write a book about Bitcoin at some point, because he has an encyclopedic knowledge of nearly everything that's happend in Bitcoin's history.
+
+Jim Calvin helped me get in contact with people at O'Reilly, and Mike Loukides was the intake editor who green-lighted the project. Andreas Antonopolous gave me some great pointers and recommended me to people at O'Reilly. Michele Cronin kept me on track during my year-long writing spree. Kristen Brown was the production editor who did a lot to get this book out on time. James Fraleigh did copyediting. I'm a big fan of this publisher, and Tim O'Reilly has done a great service to the tech community by making such great books available.
+
+The crew of Bitcoiners in Austin have helped keep me on track. They include Bryan Bishop, Will Cole, Napoleon Cole, Tipton Cole, Tuur Demeester, Johnny Dilley, Michael Flaxman, Parker Lewis, Justin Moon, Alan Piscitello, and Andrew Poelstra. There's also a Slack channel (TAAS) where Saifedean Ammous announced that he was writing a book whose success inspired me. 
+
+Alumni of my course, Programming Blockchain, in addition to Bitcoiners on GitHub also did tech reviews of my book. Jeff Flowers, Brian Liotti, Casey Bowman, Johnson Lau, Albert Chen, Jason Les, Thomas Braunberger, Eduardo Cobain, and Spencer Hanson are among the people who found issues. Katrina Javier is my faithful assistant that helped me make a lot of the diagrams.
+
+My subscribers on YouTube, my followers on Twitter, and my readers on Medium have been instrumental in helping me find my voice and setting me on my path as an entrepreneur.
+
+Lastly, my wife, Julie, and my kids supported me throughout the past couple of years. If not for them, I doubt I'd have had the motivation to work as I have.((("", startref="ack00")))
+

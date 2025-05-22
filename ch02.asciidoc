@@ -1,0 +1,591 @@
+[[chapter_elliptic_curves]]
+== Elliptic Curves
+
+[.lead]
+In((("mathematical tools", "elliptic curves", id="MTeliptic02"))) this chapter we're going to learn about elliptic curves.
+In <<chapter_elliptic_curve_cryptography>>, we will combine elliptic curves with finite fields to make elliptic curve cryptography.
+
+Like finite fields, elliptic curves can look intimidating if you haven't seen them before.
+But again, the actual math isn't very difficult.
+Most of what you need to know about elliptic curves could have been taught to you after algebra.
+In this chapter, we'll explore what these curves are and what we can do with them.
+
+=== Definition
+
+Elliptic curves((("elliptic curves", "definition of"))) are like many equations you've seen since pre-algebra.
+They have _y_ on one side and _x_ on the other, in some form.
+elliptic curves have a form like this:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
+
+You've worked with other equations that look similar.
+For example, you probably learned the linear equation back in pre-algebra:
+
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>mx</em> + <em>b</em></li>
+</ul>
+++++
+
+You may even remember that _m_ here has the name _slope_ and _b_ is the _y-intercept_.
+You can also graph linear equations, as shown in <<linear_equation>>.
+
+[[linear_equation]]
+.Linear equation
+image::images/prbc_0201.png[Linear equation]
+
+Similarly, you're probably familiar with the quadratic equation and its graph (<<quadratic_equation>>):
+
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>ax</em><sup>2</sup> + <em>bx</em> + <em>c</em></li>
+</ul>
+++++
+
+And sometime around algebra, you did even higher orders of __x__—something called the cubic equation and its graph (<<cubic_equation>>):
+
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>ax</em><sup>3</sup> + <em>bx</em><sup>2</sup> + <em>cx</em> + <em>d</em></li>
+</ul>
+++++
+
+[[quadratic_equation]]
+[role="width-90"]
+.Quadratic equation
+image::images/prbc_0202.png[Quadratic equation]
+
+[[cubic_equation]]
+[role="width-90"]
+.Cubic equation
+image::images/prbc_0203.png[Cubic equation]
+
+An elliptic curve isn't all that different:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
+
+The only real difference between the elliptic curve and the cubic curve in <<cubic_equation>> is the __y__^2^ term on the left side.
+This has the effect of making the graph symmetric over the x-axis, as shown in <<continuous_elliptic_curve>>.
+
+[[continuous_elliptic_curve]]
+.Continuous elliptic curve
+[role="width-75"]
+image::images/prbc_0204.png[Elliptic curve equation]
+
+[role="pagebreak-before"]
+The elliptic curve is also less steep than the cubic curve.
+Again, this is because of the __y__^2^ term on the left side.
+At times, the curve may even be disjoint, as in <<disjoint_elliptic_curve>>.
+
+[[disjoint_elliptic_curve]]
+.Disjoint elliptic curve
+[role="width-75"]
+image::images/prbc_0205.png[Elliptic curve equation]
+
+[role="pagebreak-before"]
+If it helps, an elliptic curve can be thought of as taking a cubic equation graph (<<step_1_a_cubic_equation>>), flattening out the part above the x-axis (<<step_2_a_cubic_equation>>), and then mirroring that part below the x-axis (<<step_3_a_cubic_equation>>).
+
+[[step_1_a_cubic_equation]]
+.Step 1: A cubic equation
+[role="width-75"]
+image::images/prbc_0206.png[Start]
+
+[[step_2_a_cubic_equation]]
+.Step 2: Stretched cubic equation
+[role="width-50"]
+image::images/prbc_0207.png[Stretch]
+
+[[step_3_a_cubic_equation]]
+.Step 3: Reflected over the x-axis
+[role="width-50"]
+image::images/prbc_0208.png[Symmetric]
+
+Specifically, the((("secp256k1 curve")))((("elliptic curves", "secp256k1 curve"))) elliptic curve used in Bitcoin is called _secp256k1_ and it uses this particular equation:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + 7</li>
+</ul>
+++++
+
+The canonical form is pass:[<em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em>], so the curve is defined by the constants _a_ = 0, pass:[<span class="keep-together"><em>b</em> = 7</span>].
+It looks like <<secp256k1_curve>>.
+
+[[secp256k1_curve]]
+.secp256k1 curve
+image::images/prbc_0209.png[secp256k1 curve]
+
+=== Coding Elliptic Curves in Python
+
+For((("elliptic curves", "coding in Python"))) a variety of reasons that will be made clear later, we are not interested in the curve itself, but specific points on the curve.
+For example, in the curve __y__^2^ = __x__^3^ + 5__x__ + 7, we are interested in the coordinate (–1,1).
+We((("Point class"))) are thus going to define the class `Point` to be a _point_ on a specific curve.
+The curve has the form __y__^2^ = __x__^3^ + _ax_ + _b_, so we can define the curve with just the two numbers _a_ and _b_:
+
+[source,python]
+----
+include::code-ch02/ecc.py[tag=source1]
+----
+<1> We check here that the point is actually on the curve.
+<2> Points are equal if and only if they are on the same curve and have the same coordinates.
+
+We can now create `Point` objects, and we will get an error if the point is not on the curve:
+
+[source,python]
+----
+include::code-ch02/examples.py[tag=example1]
+----
+
+In other words, `__init__` will raise an exception when the point is not on the curve.
+
+include::code-ch02/answers.py[tag=exercise1,indent=0]
+
+include::code-ch02/answers.py[tag=exercise2,indent=0]
+
+=== Point Addition
+
+Elliptic curves((("elliptic curves", "point addition"))) are useful because of something called _point addition_.
+Point addition is where we can do an operation on two of the points on the curve and get a third point, also on the curve.
+This is called _addition_ because the operation has a lot of the intuitions we associate with the mathematical operation of addition.
+For example, point addition is commutative.
+That is, adding point A to point B is the same as adding point B to point A.
+
+The((("point addition", "definition of"))) way we define point addition is as follows.
+It turns out that for every elliptic curve, a line will intersect it at either one point (<<line_intersects_at_only_1_point>>) or three points (<<line_intersects_at_3_points>>), except in a couple of special cases.
+
+[[line_intersects_at_only_1_point]]
+.Line intersects at only one point
+[role="width-50"]
+image::images/prbc_0210.png[Line intersecting at one point]
+
+[[line_intersects_at_3_points]]
+.Line intersects at three points
+[role="width-50"]
+image::images/prbc_0211.png[Line intersecting at three points]
+
+[role="pagebreak-before"]
+The two exceptions are when a line is exactly vertical (<<line_intersects_at_2_points_because_its_vertical>>) and when a line is _tangent_ to the curve (<<line_intersects_at_2_points_because_its_tangent_to_the_curve>>).
+
+[[line_intersects_at_2_points_because_its_vertical]]
+.Line intersects at two points because it's vertical
+[role="width-50"]
+image::images/prbc_0212.png[Vertical Line]
+
+[[line_intersects_at_2_points_because_its_tangent_to_the_curve]]
+.Line intersects at two points because it's tangent to the curve
+[role="width-50"]
+image::images/prbc_0213.png[Tangent Line]
+
+We will come back to these two cases later.
+
+We can define point addition using the fact that lines intersect one or three times with the elliptic curve.
+Two points define a line, so since that line must intersect the curve one more time, that third point reflected over the x-axis is the result of the point addition.
+
+So, for any two points __P__~1~ = (__x__~1~,__y__~1~) and __P__~2~ = (__x__~2~,__y__~2~), we get __P__~1~ + __P__~2~ as follows:
+
+* Find the point intersecting the elliptic curve a third time by drawing a line through __P__~1~ and __P__~2~.
+* Reflect the resulting point over the x-axis.
+
+Visually, it looks like <<point_addition>>.
+
+[[point_addition]]
+.Point addition
+[role="width-75"]
+image::images/prbc_0214.png[Point addition]
+
+We first draw a line through the two points we're adding (_A_ and _B_).
+The third intersection point is _C_.
+We then reflect that point over the x-axis, which puts us at the _A_ + _B_ point in <<point_addition>>.
+
+One of the properties that we are going to use is that point addition is not easily predictable.
+We can calculate point addition easily enough with a formula, but intuitively, the result of point addition can be almost anywhere given two points on the curve.
+Going back to <<point_addition>>, _A_ + _B_ is to the right of both points, _A_ + _C_ would be somewhere between _A_ and _C_ on the x-axis, and _B_ + _C_ would be to the left of both points.
+In mathematics parlance, point addition is _nonlinear_.
+
+=== Math of Point Addition
+
+((("elliptic curves", "point addition math")))((("point addition", "math of")))Point addition satisfies certain properties that we associate with addition, such as:
+
+* Identity
+* Commutativity
+* Associativity
+* Invertibility
+
+_Identity_ here((("identity"))) means that there's a zero.
+That is, there exists some point _I_ that, when added to a point _A_, results in _A_:
+
+++++
+<ul class="simplelist">
+<li><em>I</em> + <em>A</em> = <em>A</em></li>
+</ul>
+++++
+
+We'll((("point at infinity"))) call this point the _point at infinity_ (reasons for this will become clear in a moment).
+
+This((("invertibility"))) is related to _invertibility_.
+For some point _A_, there's some other point –_A_ that results in the identity point.
+That is:
+
+++++
+<ul class="simplelist">
+<li><em>A</em> + (–<em>A</em>) = <em>I</em></li>
+</ul>
+++++
+
+Visually, these points are opposite one another over the x-axis on the curve (see <<vertical_line_intersection>>).
+
+[[vertical_line_intersection]]
+.Vertical line intersection
+[role="width-50"]
+image::images/prbc_0212.png[Vertical Line]
+
+This is why we call this point the point at infinity.
+We have one extra point in the elliptic curve, which makes the vertical line intersect the curve a third time.
+
+_Commutativity_ means((("commutativity"))) that _A_ + _B_ = _B_ + _A_.
+This is obvious since the line going through _A_ and _B_ will intersect the curve a third time in the same place, no matter the order.
+
+_Associativity_ means((("associativity"))) that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
+This isn't obvious and is the reason for flipping over the x-axis. This is shown in pass:[Figures <a data-type="xref" href="#a_b_c_case_1" data-xrefstyle="select:labelnumber">#a_b_c_case_1</a> and 
+<a data-type="xref" href="#a_b_c_case_2" data-xrefstyle="select:labelnumber">#a_b_c_case_2</a>.]
+
+You can see that in both <<a_b_c_case_1>> and <<a_b_c_case_2>>, the final point is the same.
+In other words, we have good reason to believe that (_A_ + _B_) + _C_ = _A_ + (_B_ + _C_).
+While this doesn't prove the associativity of point addition, the visual should at least give you the intuition that this is true.
+
+[[a_b_c_case_1]]
+.(A + B) + C
+[role="width-75"]
+image::images/prbc_0216.png[Case 1]
+
+[[a_b_c_case_2]]
+.A + (B + C)
+[role="width-75"]
+image::images/prbc_0217.png[Case 2]
+
+To code point addition, we're going to split it up into three steps:
+
+1. Where the points are in a vertical line or using the identity point
+2. Where the points are not in a vertical line, but are different
+3. Where the two points are the same
+
+=== Coding Point Addition
+
+We((("elliptic curves", "point addition coding", id="ECpoindcode02")))((("point addition", "coding", id="PAcode02"))) first handle the identity point, or point at infinity.
+Since we can't easily use infinity in Python, we'll use the `None` value instead.
+What we want is this to work:
+
+[source,python]
+----
+include::code-ch02/examples.py[tag=example2]
+----
+
+To make this work, we have to do two things. First, we have to adjust the `__init__` method slightly so it doesn't check that the curve equation is satisfied when we have the point at infinity.
+Second, we have to overload the addition operator or `__add__` as we did with the `FieldElement` class:
+
+[source,python]
+----
+class Point:
+
+    def __init__(self, x, y, a, b):
+        self.a = a
+        self.b = b
+        self.x = x
+        self.y = y
+include::code-ch02/ecc.py[tag=source2]
+        if self.y**2 != self.x**3 + a * x + b:
+            raise ValueError('({}, {}) is not on the curve'.format(x, y))
+
+include::code-ch02/ecc.py[tag=source3]
+----
+<1> The _x_ coordinate and _y_ coordinate being `None` is how we signify the point at infinity.
+Note that the next +if+ statement will fail if we don't return here.
+<2> We overload the `+` operator here.
+<3> `self.x` being `None` means that `self` is the point at infinity, or the additive identity.
+Thus, we return `other`.
+<4> `other.x` being `None` means that `other` is the point at infinity, or the additive identity.
+Thus, we return `self`.
+
+include::code-ch02/answers.py[tag=exercise3,indent=0]
+
+=== Point Addition for When x~1~≠x~2~
+
+Now that we've covered the vertical line, let's examine when the points are different.
+When we have points where the `x`'s differ, we can add using a fairly simple formula.
+To help with intuition, we'll first find the slope created by the two points.
+We can figure this out using a formula from pre-algebra:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+</ul>
+++++
+
+This((("slope"))) is the _slope_, and we can use the slope to calculate __x__~3~.
+Once we know __x__~3~, we can calculate __y__~3~.
+__P__~3~ can be derived using this formula:
+
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+Remember that __y__~3~ is the reflection over the x-axis.
+
+.Deriving the Point Addition Formula
+****
+
+Supposing:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>2</sub> = (<em>x</em><sub>2</sub>,<em>y</em><sub>2</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>P</em><sub>3</sub></li>
+</ul>
+++++
+
+We((("point addition", "deriving the point addition Formula"))) want to know what __P__~3~ is.
+
+Let's start with the fact that the line goes through __P__~1~ and __P__~2~, and has this formula:
+
+++++
+<ul class="simplelist">
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+<li><em>y</em> = <em>s</em>(<em>x</em> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+The second formula is the equation of the line that intersects at both __P__~1~ and __P__~2~.
+Using this formula and plugging it into the elliptic curve equation, we get:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+<li><em>y</em><sup>2</sup> = (<em>s</em>(<em>x</em> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub>)<sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
+
+Gathering all the terms, we have this polynomial equation:
+
+++++
+<ul class="simplelist">
+<li><em>x</em><sup>3</sup> – <em>s</em><sup>2</sup><em>x</em><sup>2</sup> + (<em>a</em> + 2<em>s</em><sup>2</sup><em>x</em><sub>1</sub> – 2<em>sy</em><sub>1</sub>)<em>x</em> + <em>b</em> – <em>s</em><sup>2</sup><em>x</em><sub>1</sub><sup>2</sup> + 2<em>sx</em><sub>1</sub><em>y</em><sub>1</sub> – <em>y</em><sub>1</sub><sup>2</sup> = 0</li>
+</ul>
+++++
+
+We also know that __x__~1~, __x__~2~, and __x__~3~ are solutions to this equation, thus:
+
+++++
+<ul class="simplelist">
+<li>(<em>x</em> – <em>x</em><sub>1</sub>)(<em>x</em> – <em>x</em><sub>2</sub>)(<em>x</em> – <em>x</em><sub>3</sub>) = 0</li>
+<li><em>x</em><sup>3</sup> – (<em>x</em><sub>1</sub> + <em>x</em><sub>2</sub> + <em>x</em><sub>3</sub>)<em>x</em><sup>2</sup> + (<em>x</em><sub>1</sub><em>x</em><sub>2</sub> + <em>x</em><sub>1</sub><em>x</em><sub>3</sub> + <em>x</em><sub>2</sub><em>x</em><sub>3</sub>)<em>x</em> – <em>x</em><sub>1</sub><em>x</em><sub>2</sub><em>x</em><sub>3</sub> = 0</li>
+</ul>
+++++
+
+From earlier, we know that:
+
+++++
+<ul class="simplelist">
+<li><em>x</em><sup>3</sup> – <em>s</em><sup>2</sup><em>x</em><sup>2</sup> + (<em>a</em> + 2<em>s</em><sup>2</sup><em>x</em><sub>1</sub> – 2<em>sy</em>~1~)<em>x</em> + <em>b</em> – <em>s</em><sup>2</sup><em>x</em><sub>1</sub><sup>2</sup> + 2<em>sx</em><sub>1</sub><em>y</em><sub>1</sub> – <em>y</em><sub>1</sub><sup>2</sup> = 0</li>
+</ul>
+++++
+
+There's((("Vieta’s Formula"))) a result from what's called http://bit.ly/2HXJtMp[Vieta's formula], which states that the coefficients have to equal each other if the roots are the same.
+The first coefficient that's interesting is the coefficient in front of __x__^2^:
+
+++++
+<ul class="simplelist">
+<li>–<em>s</em><sup>2</sup> = –(<em>x</em><sub>1</sub> + <em>x</em><sub>2</sub> + <em>x</em><sub>3</sub>)</li>
+</ul>
+++++
+
+We can use this to derive the formula for __x__~3~:
+
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+</ul>
+++++
+
+We can plug this into the formula for the line above:
+
+++++
+<ul class="simplelist">
+<li><em>y</em> = <em>s</em>(<em>x</em> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+But we have to reflect over the x-axis, so the right side has to be negated:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sub>3</sub> = –(<em>s</em>(<em>x</em><sub>3</sub> – <em>x</em><sub>1</sub>) + <em>y</em><sub>1</sub>) = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+QED.
+****
+
+include::code-ch02/answers.py[tag=exercise4,indent=0]
+
+=== Coding Point Addition for When x~1~≠x~2~
+
+We now code this into our library.
+That means we have to adjust the `__add__` method to handle the case where __x__~1~≠__x__~2~.
+We have the formulas:
+
+++++
+<ul class="simplelist">
+<li><em>s</em> = (<em>y</em><sub>2</sub> – <em>y</em><sub>1</sub>)/(<em>x</em><sub>2</sub> – <em>x</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – <em>x</em><sub>1</sub> – <em>x</em><sub>2</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+At the end of the method, we return an instance of the class `Point` using `self.__class__` to make subclassing easier.
+
+include::code-ch02/answers.py[tag=exercise5,indent=0]
+
+=== Point Addition for When P~1~ = P~2~
+
+When the _x_ coordinates are the same and the _y_ coordinate is different, we have the situation where the points are opposite each other over the x-axis.
+We know that this means:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = –<em>P</em><sub>2</sub> or <em>P</em><sub>1</sub> + <em>P</em><sub>2</sub> = <em>I</em></li>
+</ul>
+++++
+
+We've already handled this in Exercise 3.
+
+What happens when __P__~1~ = __P__~2~?
+Visually, we have to calculate the line that's _tangent_ to the curve at __P__~1~ and find the point at which the line intersects the curve.
+The situation looks like <<line_thats_tangent_to_the_curve>>, as we saw before.
+
+[[line_thats_tangent_to_the_curve]]
+.Line that's tangent to the curve
+[role="width-75"]
+image::images/prbc_0213.png[Tangent Line]
+
+Once again, we'll find the slope of the tangent point:
+
+++++
+<ul class="simplelist">
+<li><em>P</em><sub>1</sub> = (<em>x</em><sub>1</sub>,<em>y</em><sub>1</sub>), <em>P</em><sub>3</sub> = (<em>x</em><sub>3</sub>,<em>y</em><sub>3</sub>)</li>
+<li><em>P</em><sub>1</sub> + <em>P</em><sub>1</sub> = <em>P</em><sub>3</sub></li>
+<li><em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + <em>a</em>)/(2<em>y</em><sub>1</sub>)</li>
+</ul>
+++++
+
+The rest of the formula goes through as before, except __x__~1~ = __x__~2~, so we can combine them:
+
+++++
+<ul class="simplelist">
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+[NOTE]
+.Deriving the Slope Tangent to the Curve
+====
+We can derive the slope of the tangent line using some slightly more advanced math: calculus.
+We know that the slope at a given point is:
+
+++++
+<ul class="simplelist">
+<li><em>dy</em>/<em>dx</em></li>
+</ul>
+++++
+
+
+To get this, we need to take the derivative of both sides of the elliptic curve equation:
+
+++++
+<ul class="simplelist">
+<li><em>y</em><sup>2</sup> = <em>x</em><sup>3</sup> + <em>ax</em> + <em>b</em></li>
+</ul>
+++++
+
+
+
+Taking the derivative of both sides, we get:
+
+++++
+<ul class="simplelist">
+<li>2<em>y dy</em> = (3<em>x</em><sup>2</sup> + <em>a</em>) <em>dx</em></li>
+</ul>
+++++
+
+
+Solving for __dy__/__dx__, we get:
+
+++++
+<ul class="simplelist">
+<li><em>dy</em>/<em>dx</em> = (3<em>x</em><sup>2</sup> + <em>a</em>)/(2<em>y</em>)</li>
+</ul>
+++++
+
+
+That's how we arrive at the slope formula.
+The rest of the results from the point addition formula derivation hold.
+====
+
+include::code-ch02/answers.py[tag=exercise6,indent=0]
+
+=== Coding Point Addition for When P~1~ = P~2~
+
+We adjust the `__add__` method to account for this particular case.
+We have the formulas, and now we implement them:
+
+++++
+<ul class="simplelist">
+<li><em>s</em> = (3<em>x</em><sub>1</sub><sup>2</sup> + <em>a</em>)/(2<em>y</em><sub>1</sub>)</li>
+<li><em>x</em><sub>3</sub> = <em>s</em><sup>2</sup> – 2<em>x</em><sub>1</sub></li>
+<li><em>y</em><sub>3</sub> = <em>s</em>(<em>x</em><sub>1</sub> – <em>x</em><sub>3</sub>) – <em>y</em><sub>1</sub></li>
+</ul>
+++++
+
+include::code-ch02/answers.py[tag=exercise7,indent=0]
+
+=== Coding One More Exception
+
+There is one more exception, and this involves the case where the tangent line is vertical (<<vertical_and_tangent_to_the_curve>>).
+
+[[vertical_and_tangent_to_the_curve]]
+.Vertical and tangent to the curve
+[role="width-75"]
+image::images/prbc_0219.png[Tangent Vertical]
+
+This can only happen if __P__~1~ = __P__~2~ and the _y_ coordinate is 0, in which case the slope calculation will end up with a 0 in the denominator.
+
+We handle this with a special case:
+
+[source,python]
+----
+class Point:
+    ...
+    def __add__(self, other):
+    	...
+	if self == other and self.y == 0 * self.x:  # <1>
+	    return self.__class__(None, None, self.a, self.b)
+----
+<1> If the two points are equal and the _y_ coordinate is 0, we return the point at pass:[<span class="keep-together">infinity</span>].((("", startref="MTeliptic02")))((("", startref="ECpoindcode02")))((("", startref="PAcode02")))
+
+=== Conclusion
+
+We've covered what elliptic curves are, how they work, and how to do point addition.
+We'll now combine the concepts from the first two chapters to learn elliptic curve cryptography in <<chapter_elliptic_curve_cryptography>>.
