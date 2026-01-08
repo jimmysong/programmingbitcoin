@@ -82,7 +82,7 @@ When initializing `Point`, we will run through this part of the code:
 include::code-ch03/ecc.py[tag=source1]
 ----
 
-The addition (`+`), multiplication (`*`), exponentiation (`**`), and not equals (`!=`) operators here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FiniteField`, respectively, and _not_ the integer equivalents.
+The addition (`+`), multiplication (`*`), exponentiation (`**`), and not equals (`!=`) operators here use the `__add__`, `__mul__`, `__pow__`, and `__ne__` methods from `FieldElement`, respectively, and _not_ the integer equivalents.
 Being able to do the same equation but with different definitions for the basic arithmetic operators is how we construct an elliptic curve cryptography library.
 
 We've already coded the two classes that we need to implement elliptic curve points over a finite field.
