@@ -58,7 +58,7 @@ The witness field, and the whole Segwit serialization of a transaction, is only 
 In other words, old nodes that haven't upgraded to Segwit don't receive the witness field and don't verify the pubkey and signature.
 
 If this sounds familiar, it should.
-This is similar to how p2sh works (<<chapter_p2sh>>) in that newer nodes do additional validation that older nodes do not, and is the basis for why Segwit is a soft fork (backward-compatible upgrade) and not a hard fork (backward-incompatible upgrade).
+This is similar to how p2sh works (xref:ch08.asciidoc#chapter_p2sh[]) in that newer nodes do additional validation that older nodes do not, and is the basis for why Segwit is a soft fork (backward-compatible upgrade) and not a hard fork (backward-incompatible upgrade).
 
 === p2wpkh Transactions
 
@@ -107,8 +107,8 @@ image::images/prbc_1306.png[p2wpkh step 2]
 
 At this point, older nodes will stop as there are no more Script commands to be processed.
 Since the top element is nonzero, this will be counted as a valid script.
-This is very similar to p2sh (<<chapter_p2sh>>) in that older nodes cannot validate further.
-Newer nodes, however, have a special Segwit rule much like the special rule for p2sh (see <<chapter_p2sh>>).
+This is very similar to p2sh (xref:ch08.asciidoc#chapter_p2sh[]) in that older nodes cannot validate further.
+Newer nodes, however, have a special Segwit rule much like the special rule for p2sh (see xref:ch08.asciidoc#chapter_p2sh[]).
 Recall that with p2sh, the exact script sequence of _<RedeemScript>_ `OP_HASH160` _<hash>_ `OP_EQUAL` triggers a special rule.
 
 In the case of p2wpkh, the script sequence is `OP_0` _<20-byte hash>_.
@@ -423,7 +423,7 @@ The rest of the witness field is put on top to produce the command set in <<p2ws
 .p2wsh step 3
 image::images/prbc_1328.png[p2wsh step 3]
 
-As you can see, this is a 2-of-3 multisig much like what was explored in <<chapter_p2sh>> (<<p2wsh_step_4>>).
+As you can see, this is a 2-of-3 multisig much like what was explored in xref:ch08.asciidoc#chapter_p2sh[] (<<p2wsh_step_4>>).
 
 [[p2wsh_step_4]]
 .p2wsh step 4
@@ -526,7 +526,7 @@ image::images/prbc_1327.png[p2wsh WitnessScript]
 .p2sh-p2wsh step 7
 image::images/prbc_1328.png[p2sh-p2wsh step 7]
 
-As you can see, this is a 2-of-3 multisig as in <<chapter_p2sh>>.
+As you can see, this is a 2-of-3 multisig as in xref:ch08.asciidoc#chapter_p2sh[].
 If the signatures are valid, we end like <<p2sh_p2wsh_end>>.
 
 [[p2sh_p2wsh_end]]
