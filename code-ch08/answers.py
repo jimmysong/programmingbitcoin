@@ -106,6 +106,8 @@ def op_checkmultisig(stack, z):
                 point = points.pop(0)
                 if point.verify(z, sig):
                     break
+            else:
+                return False
         stack.append(encode_num(1))
     except (ValueError, SyntaxError):
         return False
