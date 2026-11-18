@@ -724,6 +724,8 @@ def op_checkmultisig(stack, z):
                 # we check if this signature goes with the current point
                 if point.verify(z, sig):
                     break
+            else:
+                return False
         # the signatures are valid, so push a 1 to the stack
         stack.append(encode_num(1))
     except (ValueError, SyntaxError):
@@ -796,6 +798,25 @@ class OpTest(TestCase):
         stack = [b'', sig1, sig2, b'\x02', sec1, sec2, b'\x02']
         self.assertTrue(op_checkmultisig(stack, z))
         self.assertEqual(decode_num(stack[0]), 1)
+
+        cases = [
+            ('valid 1-of-1', [sig1], [sec1], True),
+            ('invalid 1-of-1', [sig2], [sec1], False),
+            ('invalid last signature', [sig2, sig2], [sec1, sec2], False),
+            ('reversed signatures', [sig2, sig1], [sec1, sec2], False),
+            ('skip a nonmatching key', [sig1], [sec1, sec2], True),
+            ('leave an unused key', [sig2], [sec1, sec2], True),
+            ('zero signatures', [], [], True),
+        ]
+        for name, signatures, pubkeys, expected in cases:
+            with self.subTest(case=name):
+                stack = ([b''] + signatures + [encode_num(len(signatures))]
+                         + pubkeys + [encode_num(len(pubkeys))])
+                self.assertEqual(op_checkmultisig(stack, z), expected)
+                if expected:
+                    self.assertEqual(stack, [encode_num(1)])
+                else:
+                    self.assertEqual(stack, [])
 
 
 OP_CODE_FUNCTIONS = {
